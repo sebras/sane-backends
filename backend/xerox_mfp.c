@@ -1332,6 +1332,13 @@ sane_read(SANE_Handle h, SANE_Byte *buf, SANE_Int maxlen, SANE_Int *lenp)
 		    dev->total_out_size += *lenp;
                 return SANE_STATUS_GOOD;
             }
+        } else if (dev->composition != MODE_RGB24) {
+            int diff = dev->total_img_size - dev->total_out_size;
+            int bufLen = (diff < maxlen) ? diff : maxlen;
+            if (diff > 0 && copy_plain_trim(dev, buf, bufLen, lenp) > 0) {
+                dev->total_out_size += *lenp;
+                return SANE_STATUS_GOOD;
+            }
         }
 
         /* and we don't need to acquire next block */
