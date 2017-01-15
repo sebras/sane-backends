@@ -1318,7 +1318,7 @@ sane_read(SANE_Handle h, SANE_Byte *buf, SANE_Int maxlen, SANE_Int *lenp)
         return SANE_STATUS_EOF;
 
     /* if there is no data to read or output from buffer */
-    if (!dev->blocklen && dev->datalen <= PADDING_SIZE) {
+    if (!dev->blocklen && (dev->datalen <= PADDING_SIZE || dev->final_block)) {
 
         /* copying uncompressed data */
         if (dev->composition == MODE_RGB24 &&
@@ -1382,23 +1382,27 @@ sane_read(SANE_Handle h, SANE_Byte *buf, SANE_Int maxlen, SANE_Int *lenp)
         int olen; /* output len */
 
         /* read as much data into the buffer */
-        datalen = DATAROOM(dev) & USB_BLOCK_MASK;
+        datalen = MIN(dev->blocklen, DATAROOM(dev) & USB_BLOCK_MASK);
         while (datalen && dev->blocklen) {
             SANE_Byte *rbuf = dev->data + DATATAIL(dev);
 
             DBG(9, "<> request len: %lu, [%d, %d; %d]\n",
                 (u_long)datalen, dev->dataoff, DATATAIL(dev), dev->datalen);
+
             if ((status = dev->io->dev_request(dev, NULL, 0, rbuf, &datalen)) !=
                 SANE_STATUS_GOOD)
                 return status;
+
             dev->datalen += datalen;
             dev->blocklen -= datalen;
+
             DBG(9, "<> got %lu, [%d, %d; %d]\n",
                 (u_long)datalen, dev->dataoff, DATATAIL(dev), dev->datalen);
+
             if (dev->blocklen < 0)
                 return ret_cancel(dev, SANE_STATUS_IO_ERROR);
 
-            datalen = DATAROOM(dev) & USB_BLOCK_MASK;
+            datalen = MIN(dev->blocklen, DATAROOM(dev) & USB_BLOCK_MASK);
         }
 
         if (buf && lenp) { /* read mode */
