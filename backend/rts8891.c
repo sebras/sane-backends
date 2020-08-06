@@ -2986,7 +2986,7 @@ set_lamp_brightness (struct Rts8891_Device *dev, int level)
       dev->regs[0x10] = 0x20;
       dev->regs[0x11] = 0x3b;
     }
-  if (dev->sensor != SENSOR_TYPE_4400)
+  else if (dev->sensor != SENSOR_TYPE_4400)
     {
       dev->regs[0x10] = 0x28;
       dev->regs[0x11] = 0x3f;

@@ -456,7 +456,7 @@ rts8891_move (struct Rts8891_Device *device, SANE_Byte * regs,
       regs10 = 0x20;
       regs11 = 0x3b;
     }
-  if (device->sensor != SENSOR_TYPE_4400
+  else if (device->sensor != SENSOR_TYPE_4400
       && device->sensor != SENSOR_TYPE_4400_BARE)
     {
       regs10 = 0x20;
