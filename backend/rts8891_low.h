@@ -131,6 +131,8 @@ typedef struct Rts8891_Model
   /* default sensor type */
   SANE_Int sensor;
 
+  SANE_Int calibration_width;
+
   /* default gamma table */
   SANE_Word gamma[256];
   SANE_Int buttons;		/* number of buttons for the scanner */

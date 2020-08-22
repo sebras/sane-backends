@@ -96,10 +96,8 @@
 #include "../include/sane/sanei_config.h"
 #include "../include/sane/sanei_backend.h"
 
-//#define DARK_TARGET		3.1	/* 3.5 target average for dark calibration */
-#define DARK_TARGET		1.5	/* 3.5 target average for dark calibration */
-//#define DARK_MARGIN		0.3	/* acceptable margin for dark average */
-#define DARK_MARGIN		0.5	/* acceptable margin for dark average */
+#define DARK_TARGET		3.1	/* 3.5 target average for dark calibration */
+#define DARK_MARGIN		0.3	/* acceptable margin for dark average */
 
 #define OFFSET_TARGET		3.5	/* target average for offset calibration */
 #define OFFSET_MARGIN		0.3	/* acceptable margin for offset average */
@@ -110,13 +108,6 @@
 #define GAIN_MARGIN		  2	/* acceptable margin for gain average */
 
 #define MARGIN_LEVEL            128	/* white level for margin detection */
-
-/* width used for calibration */
-//#define CALIBRATION_WIDTH       637
-#define CALIBRATION_WIDTH       750
-
-/* data size for calibration: one RGB line*/
-#define CALIBRATION_SIZE        CALIBRATION_WIDTH*3
 
 /* #define FAST_INIT 1 */
 
@@ -1477,12 +1468,6 @@ compute_parameters (Rts8891_Session * session)
   dev->xdpi = dpi;
   dev->ydpi = dpi;
 
-  if (dev->xdpi == 100)		/* emulated 100 DPI for UMAX */
-    {
-	dev->xdpi = 200;	/* real resolution is 200x100 DPI */
-	dev->pixels *= 2;
-    }
-
   /* handle bounds of motor's dpi range */
   if (dev->ydpi > dev->model->max_ydpi)
     {
@@ -1882,8 +1867,8 @@ sane_read (SANE_Handle handle, SANE_Byte * buf,
 	  /* data is received in RGB format */
 	  /* these switches are there to handle reads not aligned
 	   * on pixels that are allowed by the SANE standard */
-	  if ((dev->xdpi == 2 * dev->ydpi) && (dev->ydpi != 100))
-	    {			/* ydpi is half of xdpi except 200x100 dpi */
+	  if (dev->xdpi == dev->model->max_xdpi)
+	    {			/* at max xdpi, data received is distorted and ydpi is half of xdpi */
 	      if (session->emulated_gray == SANE_TRUE)
 		{
 		  /* in emulated gray mode we are always reading 3 bytes of raw data */
@@ -1963,7 +1948,7 @@ sane_read (SANE_Handle handle, SANE_Byte * buf,
 		  dev->current -= dev->bytes_per_line;
 		}
 	    }
-	  else if ((dev->ydpi == session->val[OPT_RESOLUTION].w) || (dev->ydpi == 100))
+	  else if (dev->ydpi == session->val[OPT_RESOLUTION].w)
 	    {
 	      if (session->emulated_gray == SANE_TRUE)
 		{
@@ -1993,10 +1978,6 @@ sane_read (SANE_Handle handle, SANE_Byte * buf,
 		    }
 		  session->sent++;
 		  dev->current += 3;
-		  if (dev->ydpi == 100) /* UMAX 100 DPI emulation */
-		    {
-		      dev->current += 3;
-		    }
 		}
 	      else
 		{
@@ -2015,10 +1996,6 @@ sane_read (SANE_Handle handle, SANE_Byte * buf,
 		  (*len)++;
 		  session->sent++;
 		  dev->current++;
-		  if (dev->ydpi == 100 && (dev->current - dev->start) % 3 == 0)
-		    { /* UMAX 100 DPI emulation */
-		      dev->current += 3;
-		    }
 		}
 	    }
 	  else
@@ -3462,6 +3439,7 @@ find_margin (struct Rts8891_Device *dev)
 
   if (dev->sensor == SENSOR_TYPE_UMAX)
     {
+      sanei_rts88xx_set_offset (dev->regs, 0xad, 0xb2, 0xb1);
       sanei_rts88xx_set_gain (dev->regs, 0x00, 0x00, 0x00);
       startx = 66;
     }
@@ -4848,7 +4826,7 @@ detect_device (struct Rts8891_Device *dev)
 /**
  * Do dark calibration. We scan a well defined area until average pixel value
  * of the black area is about 0x03 for each color channel. This calibration is
- * currently done at 75 dpi (200 for UMAX) regardless of the final scan dpi.
+ * currently done at 75 dpi (100 for UMAX) regardless of the final scan dpi.
  */
 static SANE_Status
 dark_calibration (struct Rts8891_Device *dev, int mode, int light)
@@ -4858,7 +4836,7 @@ dark_calibration (struct Rts8891_Device *dev, int mode, int light)
   int ro = 250, tro = 250, bro = 0;
   int bo = 250, tbo = 250, bbo = 0;
   int go = 250, tgo = 250, bgo = 0;
-  unsigned char image[CALIBRATION_SIZE];
+  unsigned char image[dev->model->calibration_width * 3];
   float global, ra, ga, ba;
   int num = 0;
   char name[32];
@@ -4877,14 +4855,12 @@ dark_calibration (struct Rts8891_Device *dev, int mode, int light)
   sanei_rts88xx_set_gain (dev->regs, 0, 0, 0);
   if (dev->sensor == SENSOR_TYPE_UMAX)
     {
-      sanei_rts88xx_set_scan_area (dev->regs, 1, 2, 2, 2 + CALIBRATION_WIDTH);
-      ro = 0xaa;
-      bo = 0xaa;
-      go = 0xaa;
+      /* UMAX calibratration area is 1500 but the width is halved by reg. 0x7a */
+      sanei_rts88xx_set_scan_area (dev->regs, 1, 2, 2, 2 + 2 * dev->model->calibration_width);
     }
   else
     {
-      sanei_rts88xx_set_scan_area (dev->regs, 1, 2, 4, 4 + CALIBRATION_WIDTH);
+      sanei_rts88xx_set_scan_area (dev->regs, 1, 2, 4, 4 + dev->model->calibration_width);
     }
 
   sanei_rts88xx_set_status (dev->devnum, dev->regs, mode, light);
@@ -5005,7 +4981,7 @@ dark_calibration (struct Rts8891_Device *dev, int mode, int light)
       dev->regs[0x33] = 0x01;
       dev->regs[0x35] = 0x47;
       dev->regs[0x40] = 0xa0;
-      /* dev->regs[0x7a] = 0x02; */// this breaks scanning
+      dev->regs[0x7a] = 0x02;
       dev->regs[0x8d] = 0x46;
       dev->regs[0xc0] = 0x66;
       dev->regs[0xc1] = 0xc0;
@@ -5059,7 +5035,7 @@ dark_calibration (struct Rts8891_Device *dev, int mode, int light)
       /* do scan */
       status =
 	rts8891_simple_scan (dev->devnum, dev->regs, dev->reg_count, 0x02,
-			     CALIBRATION_SIZE, image);
+			     dev->model->calibration_width * 3, image);
       if (status != SANE_STATUS_GOOD)
 	{
 	  DBG (DBG_error, "dark_calibration: failed to scan\n");
@@ -5070,12 +5046,13 @@ dark_calibration (struct Rts8891_Device *dev, int mode, int light)
       if (DBG_LEVEL >= DBG_io2)
 	{
 	  sprintf (name, "dark%03d.pnm", num);
-	  write_rgb_data (name, image, CALIBRATION_WIDTH, 1);
+	  write_rgb_data (name, image, dev->model->calibration_width, 1);
 	  num++;
 	}
 
       /* we now compute the average of red pixels from the first 15 pixels */
       global = average_area (SANE_TRUE, image, 15, 1, &ra, &ga, &ba);
+//      global = average_area (SANE_TRUE, image, dev->model->calibration_width, 1, &ra, &ga, &ba);
       DBG (DBG_info,
 	   "dark_calibration: global=%.2f, channels=(%.2f,%.2f,%.2f)\n",
 	   global, ra, ga, ba);
@@ -5173,9 +5150,9 @@ gain_calibration (struct Rts8891_Device *dev, int mode, int light)
   int trg, tbg, tgg, bgg, brg, bbg;
   int num = 0;
   char name[32];
-  int width = CALIBRATION_WIDTH;
-  int length = CALIBRATION_SIZE;
-  unsigned char image[CALIBRATION_SIZE];
+  int width = dev->model->calibration_width;
+  int length = dev->model->calibration_width * 3;
+  unsigned char image[dev->model->calibration_width * 3];
   int pass = 0;
   int timing=0;
 
@@ -5184,7 +5161,10 @@ gain_calibration (struct Rts8891_Device *dev, int mode, int light)
   DBG (DBG_proc, "gain_calibration: start\n");
 
   /* set up starting values */
-  sanei_rts88xx_set_scan_area (dev->regs, 1, 2, xstart, xstart + width);
+  if (dev->sensor == SENSOR_TYPE_UMAX)
+    sanei_rts88xx_set_scan_area (dev->regs, 1, 2, xstart, xstart + 2 * width);
+  else
+    sanei_rts88xx_set_scan_area (dev->regs, 1, 2, xstart, xstart + width);
   sanei_rts88xx_set_offset (dev->regs, dev->red_offset, dev->green_offset,
 			    dev->blue_offset);
 
@@ -5330,7 +5310,7 @@ gain_calibration (struct Rts8891_Device *dev, int mode, int light)
       dev->regs[0x33] = 0x01;
       dev->regs[0x35] = 0x47;
       dev->regs[0x40] = 0xa0;
-      /* dev->regs[0x7a] = 0x02; */// this breaks scanning
+      dev->regs[0x7a] = 0x02;
       timing = 0x32;
       dev->regs[0x8d] = 0x4f;
       dev->regs[0xc0] = 0x66;
@@ -5587,7 +5567,7 @@ offset_calibration (struct Rts8891_Device *dev, int mode, int light)
   int ro = 250, tro = 250, bro = 123;
   int go = 250, tgo = 250, bgo = 123;
   int bo = 250, tbo = 250, bbo = 123;
-  unsigned char image[CALIBRATION_SIZE];
+  unsigned char image[dev->model->calibration_width * 3];
   float global, ra, ga, ba;
   int num = 0;
   char name[32];
@@ -5598,7 +5578,10 @@ offset_calibration (struct Rts8891_Device *dev, int mode, int light)
   /* gains from previous step are a little higher than the one used */
   sanei_rts88xx_set_gain (dev->regs, dev->red_gain, dev->green_gain,
 			  dev->blue_gain);
-  sanei_rts88xx_set_scan_area (dev->regs, 1, 2, 4, 4 + CALIBRATION_WIDTH);
+  if (dev->sensor == SENSOR_TYPE_UMAX)
+    sanei_rts88xx_set_scan_area (dev->regs, 1, 2, 4, 4 + 2 * dev->model->calibration_width);
+  else
+    sanei_rts88xx_set_scan_area (dev->regs, 1, 2, 4, 4 + dev->model->calibration_width);
 
   dev->regs[0x32] = 0x00;
   dev->regs[0x33] = 0x03;
@@ -5705,7 +5688,7 @@ offset_calibration (struct Rts8891_Device *dev, int mode, int light)
       dev->regs[0x33] = 0x01;
       dev->regs[0x35] = 0x47;
       dev->regs[0x40] = 0xa0;
-      /* dev->regs[0x7a] = 0x02; */// this breaks scanning
+      dev->regs[0x7a] = 0x02;
       /* timing = 0x32; */
       dev->regs[0x8d] = 0x46;
       dev->regs[0xc0] = 0x66;
@@ -5756,13 +5739,13 @@ offset_calibration (struct Rts8891_Device *dev, int mode, int light)
       sanei_rts88xx_set_offset (dev->regs, ro, go, bo);
       sanei_rts88xx_set_status (dev->devnum, dev->regs, mode, light);
       rts8891_simple_scan (dev->devnum, dev->regs, dev->reg_count, 0x02,
-			   CALIBRATION_SIZE, image);
+			   dev->model->calibration_width * 3, image);
 
       /* save scanned picture for data debugging */
       if (DBG_LEVEL >= DBG_io2)
 	{
 	  sprintf (name, "offset%03d.pnm", num);
-	  write_rgb_data (name, image, CALIBRATION_WIDTH, 1);
+	  write_rgb_data (name, image, dev->model->calibration_width, 1);
 	  num++;
 	}
 
@@ -5870,7 +5853,7 @@ setup_shading_calibration (struct Rts8891_Device *dev, int mode, int *light, int
       *status1 |= 0x08;
     }
 
-  /* we default to 75 dpi (200 for UMAX) then override needed registers */
+  /* we default to 75 dpi (100 for UMAX) then override needed registers */
   timing=0x00b0;
   regs[0x32] = 0x20;
   regs[0x33] = 0x83;
@@ -5951,6 +5934,7 @@ setup_shading_calibration (struct Rts8891_Device *dev, int mode, int *light, int
   if (dev->sensor == SENSOR_TYPE_UMAX)
     {
       regs[0x36] = 0x29;
+      regs[0x7a] = 0x02;
       timing = 0x32;
       regs[0x8d] = 0x4f;
       regs[0xe2] = 0x00;
@@ -5964,7 +5948,7 @@ setup_shading_calibration (struct Rts8891_Device *dev, int mode, int *light, int
   switch (dev->xdpi)
     {
     case 75:
-    case 100: /* emulated */
+    case 100:
     case 200:
       break;
 
@@ -6220,6 +6204,7 @@ setup_shading_calibration (struct Rts8891_Device *dev, int mode, int *light, int
 	       "setup_shading_calibration: setting up SENSOR_TYPE_UMAX for 300 dpi\n");
 	  regs[0x36] = 0x2c;
 	  regs[0x40] = 0x20;
+	  regs[0x7a] = 0x01;
 	  regs[0x8d] = 0x12;
 	  regs[0xc0] = 0x87;
 	  regs[0xc1] = 0x07;
@@ -6406,6 +6391,7 @@ setup_shading_calibration (struct Rts8891_Device *dev, int mode, int *light, int
 
 	  regs[0x36] = 0x2c;
 	  regs[0x40] = 0x20;
+	  regs[0x7a] = 0x01;
 	  regs[0x8d] = 0x24;
 	  regs[0xc0] = 0xff;
 	  regs[0xc1] = 0x07;
@@ -6595,6 +6581,7 @@ setup_shading_calibration (struct Rts8891_Device *dev, int mode, int *light, int
 	  *status1 = 0x20;
 	  regs[0x36] = 0x2c;
 	  regs[0x40] = 0x20;
+	  regs[0x7a] = 0x01;
 	  regs[0x8d] = 0x48;
 
 	  regs[0xc0] = 0x1f;
@@ -6638,7 +6625,10 @@ setup_shading_calibration (struct Rts8891_Device *dev, int mode, int *light, int
   /* in logs, the driver use the computed offset minus 2 */
   sanei_rts88xx_set_offset (regs, dev->red_offset, dev->green_offset, dev->blue_offset);
   sanei_rts88xx_set_gain (regs, dev->red_gain, dev->green_gain, dev->blue_gain);
-  sanei_rts88xx_set_scan_area (regs, 1, 1 + lines, dev->xstart, dev->xstart + dev->pixels);
+  if (dev->sensor == SENSOR_TYPE_UMAX && dev->xdpi == 100)
+    sanei_rts88xx_set_scan_area (regs, 1, 1 + lines, dev->xstart, dev->xstart + 2 * dev->pixels);
+  else
+    sanei_rts88xx_set_scan_area (regs, 1, 1 + lines, dev->xstart, dev->xstart + dev->pixels);
 
   DBG (DBG_proc, "setup_shading_calibration: exit\n");
   return status;
@@ -6678,7 +6668,10 @@ shading_calibration (struct Rts8891_Device *dev, SANE_Bool color, int mode, int 
     }
   if (dev->shading_data != NULL)
     free (dev->shading_data);
-  dev->shading_data = (unsigned char *) malloc (dev->bytes_per_line);
+  if (dev->sensor == SENSOR_TYPE_UMAX && dev->xdpi == 100)
+    dev->shading_data = (unsigned char *) malloc (2 * dev->bytes_per_line);
+  else
+    dev->shading_data = (unsigned char *) malloc (dev->bytes_per_line);
   if (dev->shading_data == NULL)
     {
       free (image);
@@ -6742,7 +6735,13 @@ shading_calibration (struct Rts8891_Device *dev, SANE_Bool color, int mode, int 
 	{
 	  sum += image[x + y * width];
 	}
-      dev->shading_data[x] = sum / (lines - 13);
+      if (dev->sensor == SENSOR_TYPE_UMAX && dev->xdpi == 100)
+        {
+          dev->shading_data[2 * x] = sum / (lines - 13);
+          dev->shading_data[2 * x + 1] = sum / (lines - 13);
+        }
+      else
+        dev->shading_data[x] = sum / (lines - 13);
     }
   if (DBG_LEVEL >= DBG_io2)
     {
@@ -6817,10 +6816,17 @@ send_calibration_data (struct Rts8891_Session *session)
   /* 675 pixels at 75 DPI, 16 bits values, 3 color channels */
   /* 5400 pixels at max sensor 600 dpi                      */
   /* 3 16bits 256 value gamma tables plus start/end markers */
-  /* must multiple of 32 */
-  data_size = (675 * dev->xdpi) / 75;
-
-  width = dev->pixels;
+  /* must multple of 32 */
+  if (dev->sensor == SENSOR_TYPE_UMAX && dev->xdpi == 100)
+    {
+      data_size = (675 * 2 * dev->xdpi) / 75;
+      width = 2 * dev->pixels;
+    }
+  else
+    {
+      data_size = (675 * dev->xdpi) / 75;
+      width = dev->pixels;
+    }
 
   /* effective data calibration size */
   size = data_size * 2 * 3 + 3 * (512 + 2);
@@ -7088,7 +7094,11 @@ setup_scan_registers (struct Rts8891_Session *session, SANE_Byte *status1, SANE_
       DBG (DBG_warn,
 	   "setup_scan_registers: native gray modes not implemented for this model, failure expected\n");
     }
-  sanei_rts88xx_set_scan_area (regs, dev->ystart, dev->ystart + dev->lines, dev->xstart, dev->xstart + dev->pixels);
+  DBG (DBG_info, "setup_scan_registers: dev->xdpi = %d\n", dev->xdpi);
+  if (dev->sensor == SENSOR_TYPE_UMAX && dev->xdpi == 100)
+    sanei_rts88xx_set_scan_area (regs, dev->ystart, dev->ystart + dev->lines, dev->xstart, dev->xstart + 2 * dev->pixels);
+  else
+    sanei_rts88xx_set_scan_area (regs, dev->ystart, dev->ystart + dev->lines, dev->xstart, dev->xstart + dev->pixels);
   DBG (DBG_info, "setup_scan_registers: xstart=%d, pixels=%d\n", dev->xstart, dev->pixels);
   DBG (DBG_info, "setup_scan_registers: ystart=%d, lines =%d\n", dev->ystart, dev->lines);
 
@@ -7115,7 +7125,7 @@ setup_scan_registers (struct Rts8891_Session *session, SANE_Byte *status1, SANE_
       *status2 = 0x3b;
     }
 
-  /* default to 75 dpi (200 for UMAX) color scan */
+  /* default to 75 dpi (100 for UMAX) color scan */
   regs[0x0b] = 0x70;
   regs[0x0c] = 0x00;
   regs[0x0d] = 0x00;
@@ -7456,7 +7466,7 @@ setup_scan_registers (struct Rts8891_Session *session, SANE_Byte *status1, SANE_
       regs[0x32] = 0x80;
       regs[0x33] = 0x81;
       regs[0x40] = 0xa4;
-      /*regs[0x7a] = 0x02;*////this breaks scanning, scanner returns only half of the data requested
+      regs[0x7a] = 0x02;
       timing=0x0182;
       regs[0x85] = 0x10;
       regs[0x86] = 0x14;
@@ -7513,7 +7523,7 @@ setup_scan_registers (struct Rts8891_Session *session, SANE_Byte *status1, SANE_
   switch (dev->xdpi)
     {
     case 75:
-    case 100: /* emulated */
+    case 100:
     case 200:
       break;
     case 150:
@@ -7636,6 +7646,7 @@ setup_scan_registers (struct Rts8891_Session *session, SANE_Byte *status1, SANE_
 	  regs[0x32] = 0x20;
 	  regs[0x33] = 0x83;
 	  regs[0x40] = 0x2c;
+	  regs[0x7a] = 0x01;
 	  regs[0x8d] = 0x09;
 	  regs[0xc1] = 0x06;
 	  regs[0xc2] = 0x7e;
@@ -7831,6 +7842,7 @@ setup_scan_registers (struct Rts8891_Session *session, SANE_Byte *status1, SANE_
 	  regs[0x35] = 0x0e;
 	  regs[0x3a] = 0x0e;
 	  regs[0x40] = 0x2c;
+	  regs[0x7a] = 0x01;
 	  timing=0x022b;
 	  regs[0x85] = 0x18;
 	  regs[0x86] = 0x1b;
@@ -8086,6 +8098,7 @@ setup_scan_registers (struct Rts8891_Session *session, SANE_Byte *status1, SANE_
 	  regs[0x36] = 0x29;
 	  regs[0x3a] = 0x1b;
 	  regs[0x40] = 0x2c;
+	  regs[0x7a] = 0x01;
 	  regs[0x85] = 0x30;
 	  regs[0x86] = 0x30;
 	  regs[0x87] = 0x60;
@@ -8344,6 +8357,7 @@ setup_scan_registers (struct Rts8891_Session *session, SANE_Byte *status1, SANE_
 	  regs[0x36] = 0x29;
 	  regs[0x3a] = 0x0e;
 	  regs[0x40] = 0x2c;
+	  regs[0x7a] = 0x01;
 	  timing=0x081a;
 	  regs[0x85] = 0x60;
 	  regs[0x86] = 0x5a;
