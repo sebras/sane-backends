@@ -227,6 +227,8 @@ static SANE_Status find_origin (struct Rts8891_Device *dev,
 static SANE_Status find_margin (struct Rts8891_Device *dev);
 static SANE_Status dark_calibration (struct Rts8891_Device *dev, int mode,
 				     int light);
+static SANE_Status lamp_warm_up (struct Rts8891_Device *dev, int mode,
+				     int light);
 static SANE_Status gain_calibration (struct Rts8891_Device *dev, int mode,
 				     int light);
 static SANE_Status offset_calibration (struct Rts8891_Device *dev, int mode,
@@ -1132,7 +1134,7 @@ sane_start (SANE_Handle handle)
   init_lamp (dev);
 
   /* do warming up if needed: just detected or at sane_open() */
-  if (dev->needs_warming == SANE_TRUE)
+  if (dev->needs_warming == SANE_TRUE && dev->sensor != SENSOR_TYPE_UMAX)
     {
       DBG (DBG_info, "sane_start: warming lamp ...\n");
 #ifdef HAVE_SYS_TIME_H
@@ -1273,6 +1275,21 @@ sane_start (SANE_Handle handle)
   dev->regs[LAMP_BRIGHT_REG] = 0xA7;
   sanei_rts88xx_write_reg (dev->devnum, LAMP_BRIGHT_REG,
 			   dev->regs + LAMP_BRIGHT_REG);
+
+  /* step 3a: lamp warm-up (UMAX-only) */
+  if (dev->sensor == SENSOR_TYPE_UMAX)
+    {
+      status = lamp_warm_up(dev, mode, light);
+      if (status != SANE_STATUS_GOOD)
+        {
+          if (dev->conf.allowsharing == SANE_TRUE)
+            {
+              sanei_usb_release_interface (dev->devnum, 0);
+            }
+          DBG (DBG_error, "sane_start: lamp warm-up failed!\n");
+          return status;
+        }
+    }
 
   /* step 4: gain calibration */
   status = gain_calibration (dev, mode, light);
@@ -5130,6 +5147,133 @@ dark_calibration (struct Rts8891_Device *dev, int mode, int light)
   DBG (DBG_info, "dark_calibration: final offsets=(%d,%d,%d)\n", bro, bgo,
        bbo);
   DBG (DBG_proc, "dark_calibration: exit\n");
+  return status;
+}
+
+/*
+ * wait until lamp is warmed up enough. We repeat 6 single-line scans at
+ * 1200dpi until the average value change between first and last is below
+ * 0.3 %
+ */
+static SANE_Status
+lamp_warm_up (struct Rts8891_Device *dev, int mode, int light)
+{
+  SANE_Status status = SANE_STATUS_GOOD;
+  int num = 0;
+  char name[32];
+  unsigned char image[9600 * 3];
+  float global, ra, ga, ba, first = 0;
+  int seq = 1;
+#define LAMP_MAX_CYCLES	360	/* max. 2 minutes (120s/2s * 6) */
+
+  DBG (DBG_proc, "lamp_warm_up: start\n");
+
+  sanei_rts88xx_set_gain (dev->regs, 0, 0, 0);
+  sanei_rts88xx_set_scan_area (dev->regs, 1, 2, 400, 400 + 9600); /* why 400? */
+
+  sanei_rts88xx_set_status (dev->devnum, dev->regs, mode, light);
+
+  dev->regs[0x00] = 0xe5;	/* scan */
+  dev->regs[0x32] = 0x00;
+  dev->regs[0x33] = 0x03;
+  dev->regs[0x35] = 0x0e;
+  dev->regs[0x36] = 0x22;
+  dev->regs[0x3a] = 0x0e;
+  dev->regs[0x40] = 0x20;
+
+  dev->regs[0x7a] = 0x01;
+
+  dev->regs[0x8d] = 0x84;
+  dev->regs[0x8e] = 0x63;
+
+  dev->regs[0xb2] = 0x02;
+
+  dev->regs[0xc0] = 0x1f;
+  dev->regs[0xc1] = 0x00;
+  dev->regs[0xc2] = 0xfe;
+  dev->regs[0xc3] = 0xe0;
+  dev->regs[0xc4] = 0xff;
+  dev->regs[0xc5] = 0x01;
+  dev->regs[0xc6] = 0x1f;
+  dev->regs[0xc7] = 0x00;
+  dev->regs[0xc8] = 0xfe;
+  dev->regs[0xc9] = 0x00;
+  dev->regs[0xca] = 0x00;
+  dev->regs[0xcb] = 0x1c;
+  dev->regs[0xcc] = 0x00;
+  dev->regs[0xcd] = 0xc0;
+  dev->regs[0xce] = 0x01;
+  dev->regs[0xcf] = 0xeb;
+  dev->regs[0xd0] = 0xed;
+  dev->regs[0xd1] = 0xe1;
+  dev->regs[0xd2] = 0x02;
+  dev->regs[0xd3] = 0x12;
+  dev->regs[0xd4] = 0xf4;
+  dev->regs[0xd5] = 0x86;
+  dev->regs[0xd6] = 0x1b;
+  dev->regs[0xd7] = 0x10;
+  dev->regs[0xd8] = 0xa6;
+  dev->regs[0xd9] = 0x2d;
+  dev->regs[0xda] = 0x00;
+  dev->regs[0xe2] = 0x00;
+
+  /*dev->regs[0xe5] = 0xf7;
+  dev->regs[0xe6] = 0x2a; */
+  SET_DOUBLE (dev->regs, EXPOSURE_REG, 0x2af7);
+
+  dev->regs[0xe7] = 0x00;
+  dev->regs[0xe8] = 0x00;
+  dev->regs[0xe9] = 0x00;
+  dev->regs[0xea] = 0x00;
+  dev->regs[0xeb] = 0x00;
+  dev->regs[0xec] = 0x00;
+  dev->regs[0xed] = 0x00;
+  dev->regs[0xef] = 0x00;
+  dev->regs[0xf0] = 0x00;
+  dev->regs[0xf2] = 0x00;
+
+  /* scan 9600 pixels wide area in color mode 6 times
+   * if average value difference between first and last scan is 0.3% or greater,
+   * retry after 2 seconds */
+  sanei_rts88xx_set_status (dev->devnum, dev->regs, mode, light);
+  while (seq < LAMP_MAX_CYCLES)
+    {
+      /* do scan */
+      status =
+	rts8891_simple_scan (dev->devnum, dev->regs, dev->reg_count, 0x12,
+			     9600 * 3, image);
+      if (status != SANE_STATUS_GOOD)
+	{
+	  DBG (DBG_error, "lamp_warm_up: failed to scan\n");
+	  return status;
+	}
+
+      /* save scanned picture for data debugging */
+      if (DBG_LEVEL >= DBG_io2)
+	{
+	  sprintf (name, "warm%03d.pnm", num);
+	  write_rgb_data (name, image, 9600, 1);
+	  num++;
+	}
+      global = average_area (SANE_TRUE, image, 9600, 1, &ra, &ga, &ba);
+      if (seq % 6 == 1)
+        first = global;
+      if (seq % 6 == 0)
+        {
+          DBG (DBG_info, "lamp_warm_up: change=%f\n", global / first);
+          if (global / first < 1.003)
+            break;
+          sleep(2);
+        }
+      seq++;
+    }
+  if (seq >= LAMP_MAX_CYCLES)
+    {
+      DBG (DBG_error0, "lamp_warm_up: timed out waiting for lamp to stabilize\n");
+      /* continue anyway */
+    }
+
+  DBG (DBG_proc, "lamp_warm_up: exit\n");
   return status;
 }
 
