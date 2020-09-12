@@ -1619,7 +1619,7 @@ libsane_rts8891_la_LIBADD = $(COMMON_LIBS) \
     sane_strstatus.lo \
     ../sanei/sanei_scsi.lo \
     ../sanei/sanei_usb.lo \
-    $(SCSI_LIBS) $(USB_LIBS) $(RESMGR_LIBS) $(RESMGR_LIBS)
+    $(MATH_LIB) $(SCSI_LIBS) $(USB_LIBS) $(RESMGR_LIBS) $(RESMGR_LIBS)
 EXTRA_DIST += rts8891.conf.in
 # TODO: Why are these distributed but not compiled?
 EXTRA_DIST += rts8891_devices.c rts8891_low.c rts8891_low.h

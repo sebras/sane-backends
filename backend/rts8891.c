@@ -83,6 +83,7 @@
 #include <string.h>
 #include <ctype.h>
 #include <time.h>
+#include <math.h>
 
 #include <sys/types.h>
 #include <unistd.h>
@@ -2937,6 +2938,15 @@ average_area (int color, SANE_Byte * data, int width, int height,
   return global;
 }
 
+static void
+gamma_correction (unsigned char *data, int length, float gamma)
+{
+  int i;
+
+  for (i = 0; i < length; i++)
+    data[i] = 255 * pow(data[i] / 255.0, 1/gamma);
+}
+
 
 /**
  * Sets lamp brightness (hum, maybe some timing before light off)
@@ -3286,6 +3296,16 @@ find_origin (struct Rts8891_Device *dev, SANE_Bool * changed)
       write_gray_data (data, "find_origin.pnm", width, height);
     }
 
+  /* strong gamma correction (16) for reliable detection with cold lamp */
+  if (dev->sensor == SENSOR_TYPE_UMAX)
+    {
+      gamma_correction(data, total, 16);
+      if (DBG_LEVEL > DBG_io2)
+        {
+          write_gray_data (data, "find_origin_gamma.pnm", width, height);
+        }
+    }
+
   /* now we have the data, search for the black area so that we can      */
   /* deduce start of scan area                                           */
   /* we apply an Y direction sobel filter to get reliable edge detection */
@@ -3398,6 +3418,7 @@ find_origin (struct Rts8891_Device *dev, SANE_Bool * changed)
 	}
 
       /* move by a fixed amount relative to the 'top' of the scanner */
+      DBG (DBG_info, "find_origin: moving back %d lines\n", height - sum + 10);
       sanei_rts88xx_set_scan_area (dev->regs, height - sum + 10,
 				   height - sum + 11, 637, 893);
       rts8891_write_all (dev->devnum, dev->regs, dev->reg_count);
@@ -3629,11 +3650,28 @@ find_margin (struct Rts8891_Device *dev)
       write_gray_data (data, "find_margin.pnm", width, height);
     }
 
-  /* we search from left to right the first white pixel */
+  /* gamma correction (2) for reliable detection with cold lamp */
+  if (dev->sensor == SENSOR_TYPE_UMAX)
+    {
+      gamma_correction(data, total, 2);
+      if (DBG_LEVEL > DBG_io2)
+        {
+          write_gray_data (data, "find_margin_gamma.pnm", width, height);
+        }
+    }
+
+  /* search from left for the first white pixel (4 consecutive for UMAX) */
   x = 0;
-  while (x < width && data[x] < margin_level)
-    x++;
-  if (x == width)
+  if (dev->sensor == SENSOR_TYPE_UMAX)
+    while (x < width - 3 && (data[x] < margin_level ||
+                             data[x + 1] < margin_level ||
+                             data[x + 2] < margin_level ||
+                             data[x + 3] < margin_level))
+      x++;
+  else
+    while (x < width && data[x] < margin_level)
+      x++;
+  if (x == width || (dev->sensor == SENSOR_TYPE_UMAX && x == width - 3))
     {
       DBG (DBG_warn, "find_margin: failed to find left margin!\n");
       DBG (DBG_warn, "find_margin: using default...\n");
