@@ -53,16 +53,20 @@ static int count_finish = 0;
  */
 static void
 resolve_callback(AvahiServiceResolver *r, AVAHI_GCC_UNUSED AvahiIfIndex interface,
-                            AVAHI_GCC_UNUSED AvahiProtocol protocol,
-                            AvahiResolverEvent event, const char *name,
+                            AvahiProtocol protocol,
+                            AvahiResolverEvent event,
+                            const char *name,
                             const char __sane_unused__ *type,
                             const char __sane_unused__ *domain,
                             const char __sane_unused__ *host_name,
-                            const AvahiAddress *address, uint16_t port, AvahiStringList *txt,
+                            const AvahiAddress *address,
+                            uint16_t port,
+                            AvahiStringList *txt,
                             AvahiLookupResultFlags __sane_unused__ flags,
                             void __sane_unused__ *userdata)
 {
-    char a[AVAHI_ADDRESS_STR_MAX], *t;
+    char a[(AVAHI_ADDRESS_STR_MAX + 2)] = { 0 };
+    char *t;
     const char *is;
     const char *uuid;
     AvahiStringList   *s;
@@ -71,7 +75,13 @@ resolve_callback(AvahiServiceResolver *r, AVAHI_GCC_UNUSED AvahiIfIndex interfac
     case AVAHI_RESOLVER_FAILURE:
         break;
     case AVAHI_RESOLVER_FOUND:
-        avahi_address_snprint(a, sizeof(a), address);
+        if (protocol == AVAHI_PROTO_INET6) {
+            char b[AVAHI_ADDRESS_STR_MAX] = { 0 };
+            avahi_address_snprint(b, sizeof(b), address);
+	    snprintf(a, sizeof(a), "[%s]", b);
+	}
+	else
+            avahi_address_snprint(a, sizeof(a), address);
         t = avahi_string_list_to_string(txt);
         if (strstr(t, "\"rs=eSCL\"") || strstr(t, "\"rs=/eSCL\"")) {
 	    char ip_add[PATH_MAX] = {0};
