@@ -220,6 +220,8 @@ reload:
     escl_curl_url(curl_handle, device, scanner_status);
     curl_easy_setopt(curl_handle, CURLOPT_WRITEFUNCTION, memory_callback_s);
     curl_easy_setopt(curl_handle, CURLOPT_WRITEDATA, (void *)var);
+    curl_easy_setopt(curl_handle, CURLOPT_FOLLOWLOCATION, 1L);
+    curl_easy_setopt(curl_handle, CURLOPT_MAXREDIRS, 3L);
     CURLcode res = curl_easy_perform(curl_handle);
     if (res != CURLE_OK) {
         DBG( 1, "The scanner didn't respond: %s\n", curl_easy_strerror(res));
