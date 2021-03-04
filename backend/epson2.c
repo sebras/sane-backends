@@ -910,6 +910,7 @@ sane_init(SANE_Int *version_code, SANE_Auth_Callback __sane_unused__ authorize)
 					  EPSON2_BUILD);
 
 	sanei_usb_init();
+	sanei_usb_set_timeout(60 * 1000);
 
 	return SANE_STATUS_GOOD;
 }
