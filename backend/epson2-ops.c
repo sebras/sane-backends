@@ -588,7 +588,7 @@ e2_discover_capabilities(Epson_Scanner *s)
 	/* ESC F, request status */
 	status = esci_request_status(s, &scanner_status);
 	if (status != SANE_STATUS_GOOD)
-		return status;;
+		return status;
 
 	/* set capabilities */
 	if (scanner_status & STATUS_OPTION)
@@ -1596,7 +1596,7 @@ e2_check_adf(Epson_Scanner * s)
 
 		status = esci_request_extended_status(s, &buf, NULL);
 		if (status != SANE_STATUS_GOOD)
-			return status;;
+			return status;
 
 		t = buf[1];
 
