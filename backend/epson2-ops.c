@@ -1649,9 +1649,21 @@ e2_start_ext_scan(Epson_Scanner * s)
 	if (buf[0] != STX)
 		return SANE_STATUS_INVAL;
 
-	if (buf[1] & 0x80) {
+	if (buf[1] & STATUS_FER) {
 		DBG(1, "%s: fatal error\n", __func__);
 		return SANE_STATUS_IO_ERROR;
+	}
+
+	/*
+	 * The 12000XL signals busy only with FS+G, all other status queries
+	 * say non-busy. Probably because you can in deed communicate with the
+	 * device, just scanning is not yet possible. I tried polling with FS+G
+	 * every 5 seconds, but that made scary noises. So, bail out and let
+	 * the user retry manually.
+	 */
+	if (buf[1] & STATUS_NOT_READY) {
+		DBG(1, "%s: device not ready\n", __func__);
+		return SANE_STATUS_DEVICE_BUSY;
 	}
 
 	s->ext_block_len = le32atoh(&buf[2]);
