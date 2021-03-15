@@ -226,7 +226,7 @@ class BasicStreamStateSaver
 {
 public:
     explicit BasicStreamStateSaver(std::basic_ios<Char, Traits>& stream) :
-        stream_{stream}
+        stream_(stream)
     {
         flags_ = stream_.flags();
         width_ = stream_.width();
