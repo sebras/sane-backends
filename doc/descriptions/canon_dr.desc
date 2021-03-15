@@ -407,3 +407,9 @@
 :interface "USB"
 :usbid "0x1083" "0x1648"
 :status :untested
+
+:model "R40"
+:interface "USB"
+:usbid "0x1083" "0x1679"
+:status :basic
+:comment "Letter-size ADF. Hardware provides: Gray/Color, Simplex/Duplex, Full-width, 300/600dpi horizontal, with front mirrored horizontally. Driver provides: Binary, Despeckle, Deskew, Cropping, Calibration, other resolutions. Multistream unsupported."

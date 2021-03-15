@@ -1168,6 +1168,7 @@ init_inquire (struct scanner *s)
   if (strncmp ("DR", s->model_name, 2)
    && strncmp ("CR", s->model_name, 2)
    && strncmp ("P-", s->model_name, 2)
+   && strncmp ("R", s->model_name, 1)
   ) {
     DBG (5, "The device at '%s' is reported to be a '%s'\n",
       s->device_name, s->model_name);
@@ -1489,6 +1490,34 @@ init_model (struct scanner *s)
     /*lies*/
     s->can_halftone=0;
     s->can_monochrome=0;
+  }
+
+  else if (strstr (s->model_name,"R40")
+  ){
+	/* confirmed */
+    s->gray_interlace[SIDE_FRONT] = GRAY_INTERLACE_C120;
+    s->gray_interlace[SIDE_BACK] = GRAY_INTERLACE_C120;
+    s->color_interlace[SIDE_FRONT] = COLOR_INTERLACE_C120;
+    s->color_interlace[SIDE_BACK] = COLOR_INTERLACE_C120;
+    s->duplex_interlace = DUPLEX_INTERLACE_2510;
+    /*s->duplex_offset = 320; now set in config file*/
+    s->fixed_width = 1;
+    s->need_ccal = 1;
+    s->fcal_src = FCAL_SRC_SCAN;
+    s->fcal_dest = FCAL_DEST_SW;
+    s->rgb_format = 1;
+    s->sw_lut = 1;
+
+    /*only in Y direction, so we trash them in X*/
+    s->std_res_x[DPI_100]=0;
+    s->std_res_x[DPI_150]=0;
+    s->std_res_x[DPI_200]=0;
+    s->std_res_x[DPI_240]=0;
+    s->std_res_x[DPI_400]=0;
+
+    /* suspected settings */
+    s->ccal_version = 3;
+    s->has_df_ultra = 1;
   }
 
   /* copied from 2510, possibly incorrect */
