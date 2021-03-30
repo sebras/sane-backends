@@ -38,6 +38,7 @@ enum options {
     OPT_MODE,		/* color */
     OPT_THRESHOLD,	/* brightness */
     OPT_SOURCE,		/* affects max window size */
+    OPT_JPEG,
     OPT_GROUP_GEO,
     OPT_SCAN_TL_X,	/* for (OPT_SCAN_TL_X to OPT_SCAN_BR_Y) */
     OPT_SCAN_TL_Y,
@@ -103,6 +104,7 @@ struct device {
     int doc_source;		/* document source */
     int threshold;		/* brightness */
     int compressionTypes;
+    SANE_Bool compressionEnabled;
 
     /* CMD_READ data. It is per block only, image could be in many blocks */
     int blocklen;			/* image data block len (padding incl.) */

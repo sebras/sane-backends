@@ -223,6 +223,11 @@ static int isSupportedDevice(struct device __sane_unused__ *dev)
 #endif
 }
 
+static int isJPEGEnabled(struct device __sane_unused__ *dev)
+{
+    return isSupportedDevice(dev) && dev->compressionEnabled;
+}
+
 static void dbg_dump(struct device *dev)
 {
     int i;
@@ -595,6 +600,22 @@ static void init_options(struct device *dev)
     dev->opt[OPT_SOURCE].constraint_type = SANE_CONSTRAINT_STRING_LIST;
     dev->opt[OPT_SOURCE].constraint.string_list = doc_sources;
 
+    dev->opt[OPT_JPEG].name = "jpeg";
+    dev->opt[OPT_JPEG].title = SANE_I18N("jpeg compression");
+    dev->opt[OPT_JPEG].desc = SANE_I18N("JPEG Image Compression");
+    dev->opt[OPT_JPEG].unit = SANE_UNIT_NONE;
+    dev->opt[OPT_JPEG].type = SANE_TYPE_BOOL;
+    dev->opt[OPT_JPEG].cap |= SANE_CAP_ADVANCED;
+#ifdef HAVE_LIBJPEG
+    dev->compressionEnabled = SANE_TRUE;
+    if (!isSupportedDevice(dev))
+        dev->opt[OPT_JPEG].cap |= SANE_CAP_INACTIVE;
+    dev->val[OPT_JPEG].b = SANE_TRUE;
+#else
+    dev->opt[OPT_JPEG].cap |= SANE_CAP_INACTIVE;
+    dev->val[OPT_JPEG].b = SANE_FALSE;
+#endif
+
     dev->opt[OPT_GROUP_GEO].name = SANE_NAME_GEOMETRY;
     dev->opt[OPT_GROUP_GEO].title = SANE_TITLE_GEOMETRY;
     dev->opt[OPT_GROUP_GEO].desc = SANE_DESC_GEOMETRY;
@@ -647,7 +668,10 @@ static void set_parameters(struct device *dev)
     dev->para.pixels_per_line = dev->win_width / px_to_len;
     dev->para.bytes_per_line = dev->para.pixels_per_line;
 
-    if (!isSupportedDevice(dev)) {
+    DBG(5, dev->val[OPT_JPEG].b ? "JPEG compression enabled\n" : "JPEG compression disabled\n" );
+    dev->compressionEnabled = dev->val[OPT_JPEG].b;
+
+    if (!isJPEGEnabled(dev)) {
 #if BETTER_BASEDPI
         px_to_len = 1213.9 / dev->val[OPT_RESOLUTION].w;
 #endif
@@ -776,7 +800,7 @@ static int dev_set_window(struct device *dev)
     /* Set to JPEG Lossy Compression, if mode is color (only for supported model)...
      * else go with Uncompressed (For backard compatibility with old models )*/
     if (dev->composition == MODE_RGB24) {
-        if (isSupportedDevice(dev)) {
+        if (isJPEGEnabled(dev)) {
             cmd[0x14] = 0x6;
         }
     }
@@ -1295,7 +1319,7 @@ sane_read(SANE_Handle h, SANE_Byte *buf, SANE_Int maxlen, SANE_Int *lenp)
 
         /* copying uncompressed data */
         if (dev->composition == MODE_RGB24 &&
-            isSupportedDevice(dev) &&
+            isJPEGEnabled(dev) &&
             dev->decDataSize > 0) {
             int diff = dev->total_img_size - dev->total_out_size;
             int bufLen = (diff < maxlen) ? diff : maxlen;
@@ -1322,7 +1346,7 @@ sane_read(SANE_Handle h, SANE_Byte *buf, SANE_Int maxlen, SANE_Int *lenp)
                 /* this will never happen */
                 DBG(1, "image overflow %d bytes\n", dev->total_img_size - dev->total_out_size);
             }
-            if (isSupportedDevice(dev) &&
+            if (isJPEGEnabled(dev) &&
                 dev->composition == MODE_RGB24) {
                 remove(encTmpFileName);
             }
@@ -1377,7 +1401,7 @@ sane_read(SANE_Handle h, SANE_Byte *buf, SANE_Int maxlen, SANE_Int *lenp)
         if (buf && lenp) { /* read mode */
             /* copy will do minimal of valid data */
             if (dev->para.format == SANE_FRAME_RGB && dev->line_order) {
-                if (isSupportedDevice(dev)) {
+                if (isJPEGEnabled(dev)) {
                     clrlen = dump_to_tmp_file(dev);
                     /* decompress after reading entire block data*/
                     if (0 == dev->blocklen) {
@@ -1491,7 +1515,7 @@ sane_start(SANE_Handle h)
 
     dev->total_img_size = dev->para.bytes_per_line * dev->para.lines;
 
-    if (isSupportedDevice(dev) &&
+    if (isJPEGEnabled(dev) &&
         dev->composition == MODE_RGB24) {
 	int fd;
         remove(encTmpFileName);
