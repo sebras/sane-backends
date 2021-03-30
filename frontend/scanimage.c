@@ -633,6 +633,9 @@ print_option (SANE_Device * device, int opt_num, const SANE_Option_Descriptor *o
   else if(!(opt->cap & SANE_CAP_SOFT_SELECT) && (opt->cap & SANE_CAP_SOFT_DETECT))
     fputs (" [read-only]", stdout);
 
+  else if (opt->cap & SANE_CAP_ADVANCED)
+    fputs (" [advanced]", stdout);
+
   fputs ("\n        ", stdout);
 
   column = 8;
