@@ -753,7 +753,7 @@ sanei_pieusb_init_options (Pieusb_Scanner* scanner)
     scanner->opt[OPT_FAST_INFRARED].cap |= SANE_CAP_SOFT_SELECT;
 
     /* automatically advance to next slide after scan */
-    scanner->opt[OPT_ADVANCE_SLIDE].name = "advcane";
+    scanner->opt[OPT_ADVANCE_SLIDE].name = "advance";
     scanner->opt[OPT_ADVANCE_SLIDE].title = "Advance slide";
     scanner->opt[OPT_ADVANCE_SLIDE].desc = "Automatically advance to next slide after scan";
     scanner->opt[OPT_ADVANCE_SLIDE].type = SANE_TYPE_BOOL;

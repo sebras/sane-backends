@@ -110,6 +110,8 @@ extern void write_tiff_rgbi_header (FILE *fptr, int width, int height, int depth
 /* device flags */
 
 #define FLAG_SLIDE_TRANSPORT 0x01
+/* Some scanners do understand SLIDE_TRANSPORT but not CMD_17 - introducing a new flag */
+#define FLAG_CMD_17_NOSUPPORT 0x02
 
 /* --------------------------------------------------------------------------
  *
@@ -1004,10 +1006,12 @@ sane_start (SANE_Handle handle)
     /* ----------------------------------------------------------------------
      *
      * Function 17
+     * This function is not supported by all scanners which are capable of
+     *  slide transport, therefore FLAG_CMD_17_NOSUPPORT was introduced.
      *
      * ---------------------------------------------------------------------- */
 
-    if (scanner->device->flags & FLAG_SLIDE_TRANSPORT) {
+    if ( (scanner->device->flags & FLAG_SLIDE_TRANSPORT) & !(scanner->device->flags & FLAG_CMD_17_NOSUPPORT) )     {
         sanei_pieusb_cmd_17 (scanner->device_number, 1, &status);
         if (status.pieusb_status != PIEUSB_STATUS_GOOD) {
           DBG (DBG_error, "sane_start(): sanei_pieusb_cmd_17 failed: %d\n", status.pieusb_status);
