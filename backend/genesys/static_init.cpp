@@ -57,12 +57,15 @@ void add_function_to_run_at_backend_exit(const std::function<void()>& function)
 
 void run_functions_at_backend_exit()
 {
-    for (auto it = s_functions_run_at_backend_exit->rbegin();
-         it != s_functions_run_at_backend_exit->rend(); ++it)
-    {
-        (*it)();
-    }
-    s_functions_run_at_backend_exit.reset();
+	if (s_functions_run_at_backend_exit)
+	{
+		for (auto it = s_functions_run_at_backend_exit->rbegin();
+			 it != s_functions_run_at_backend_exit->rend(); ++it)
+		{
+			(*it)();
+		}
+    	s_functions_run_at_backend_exit.reset();
+	}
 }
 
 } // namespace genesys
