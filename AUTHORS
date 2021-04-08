@@ -27,7 +27,7 @@ Backends:
  dmc:           David F. Skoll
  epjitsu:       m. allan noah (*)
  epson:         Karl Heinz Kremer
- epson2:        Alessandro Zummo
+ epson2:        Alessandro Zummo, Wolfram Sang (*)
  epsonds:       Alessandro Zummo
  escl:          Touboul Nathane, Thierry HUCHARD (*)
  fujitsu:       Randolph Bentson, Frederik Ramm, Oliver Schirrmeister,
@@ -257,4 +257,5 @@ Troy Rollo <sane@troy.rollo.name>
 Ullrich Sigwanz <usigwanz@freesurf.ch>
 Ulrich Deiters <ukd@xenon.pc.Uni-Koeln.DE>
 Wittawat Yamwong <wittawat@web.de>
+Wolfram Sang <wsa@kernel.org>
 m. allan noah <kitno455 at gmail dot com>
