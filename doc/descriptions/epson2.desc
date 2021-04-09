@@ -8,7 +8,6 @@
 ; distributed with "Image Scan!" and released under GPL.
 
 :backend "epson2"
-:version "1.0.124 (unmaintained)"
 :new :no
 :manpage "sane-epson2"
 
