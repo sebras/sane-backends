@@ -28,7 +28,7 @@
 #include <string.h>
 #include <unistd.h>		/* usleep */
 #include <time.h>
-#include <math.h>		/* exp() */
+#include <math.h>		/* pow() */
 #ifdef HAVE_OS2_H
 #include <sys/types.h>		/* mode_t */
 #endif
@@ -110,12 +110,15 @@ cp2155_set (int fd, CP2155_Register reg, byte data)
   cmd_buffer[3] = 0x00;
   cmd_buffer[4] = data;
 
+/*  if (cmd_buffer[0]==0 && cmd_buffer[1]>0x21 && cmd_buffer[1]<0x44)
+    { */
   DBG (1, "cp2155_set %02x %02x %02x %02x %02x\n",
        cmd_buffer[0], cmd_buffer[1], cmd_buffer[2],
        cmd_buffer[3], cmd_buffer[4]);
-/*
-  usleep (100 * MSEC);
-*/
+/*    } */
+/* */
+  usleep (0.0 * MSEC);
+/* */
   status = sanei_usb_write_bulk (fd, cmd_buffer, &count);
 
   if (status != SANE_STATUS_GOOD)
@@ -311,7 +314,8 @@ make_descending_slope (size_t start_descent, double coefficient,
       value_hi = (value >> 8) & 0xff;
       buf[position] = value_lo;
       buf[position + 1] = value_hi;
-      DBG (1, "position = %03lx  buf[position]= %02x buf[position+1] = %02x\n",
+      DBG (1,
+	   "position = %03lx  buf[position]= %02x buf[position+1] = %02x\n",
 	   position, buf[position], buf[position + 1]);
       position += 2;
     }
@@ -436,6 +440,49 @@ general_motor_2224 (int fd)
 }
 
 void
+register_table (int fd, unsigned char register_value, unsigned char *buf)
+{
+  cp2155_set (fd, 0x1a, 0x00);
+  cp2155_set (fd, 0x1b, 0x00);
+  cp2155_set (fd, 0x1c, 0x02);
+  cp2155_set (fd, 0x15, 0x80);
+  cp2155_set (fd, 0x14, 0x7c);
+  cp2155_set (fd, 0x17, 0x01);
+  cp2155_set (fd, 0x43, 0x1c);
+  cp2155_set (fd, 0x44, 0x9c);
+  cp2155_set (fd, 0x45, 0x38);
+  if (register_value > 0)
+    {
+      unsigned char register_number = 0x23;
+      while (register_number < 0x43)
+	{
+	  cp2155_set (fd, register_number, register_value);
+	  register_number++;
+	}
+    }
+  else
+    {
+      int buffer_index = 0;
+      cp2155_set (fd, 0x23 + buffer_index, buf[buffer_index]);
+      cp2155_set (fd, 0x33 + buffer_index, buf[buffer_index]);
+      buffer_index++;
+      while (buffer_index < 9)
+	{
+	  cp2155_set (fd, 0x23 + buffer_index, buf[buffer_index]);
+	  cp2155_set (fd, 0x33 + buffer_index, buf[buffer_index]);
+	  cp2155_set (fd, 0x43 - buffer_index, buf[buffer_index]);
+	  cp2155_set (fd, 0x33 - buffer_index, buf[buffer_index]);
+	  buffer_index++;
+	}
+    }
+
+  cp2155_set (fd, 0xca, 0x00);
+  cp2155_set (fd, 0xca, 0x00);
+  cp2155_set (fd, 0xca, 0x00);
+
+}
+
+void
 startblob_2225_0075 (CANON_Handle * chndl, unsigned char *buf)
 {
 
@@ -443,6 +490,15 @@ startblob_2225_0075 (CANON_Handle * chndl, unsigned char *buf)
   fd = chndl->fd;
   size_t count;
 
+  unsigned int top_value = 0x2580;
+  unsigned char value_62 = 0x2e;
+
+/* original:
+  unsigned int top_value = 0x2580;
+  unsigned char value_62 = 0x2e;
+  ratio 320 decimal
+
+*/
   cp2155_set (fd, 0x90, 0xd8);
   cp2155_set (fd, 0x90, 0xd8);
   cp2155_set (fd, 0xb0, 0x03);
@@ -459,7 +515,7 @@ startblob_2225_0075 (CANON_Handle * chndl, unsigned char *buf)
   cp2155_set (fd, 0x64, 0x00);
   cp2155_set (fd, 0x65, 0x00);
   cp2155_set (fd, 0x61, 0x00);
-  cp2155_set (fd, 0x62, 0x2e);
+  cp2155_set (fd, 0x62, value_62);
   cp2155_set (fd, 0x63, 0x00);
   cp2155_set (fd, 0x50, 0x04);
   cp2155_set (fd, 0x50, 0x04);
@@ -520,61 +576,20 @@ startblob_2225_0075 (CANON_Handle * chndl, unsigned char *buf)
   cp2155_set (fd, 0x66, 0x00);
   cp2155_set (fd, 0x67, chndl->value_67);
   cp2155_set (fd, 0x68, chndl->value_68);
-  cp2155_set (fd, 0x1a, 0x00);
-  cp2155_set (fd, 0x1b, 0x00);
-  cp2155_set (fd, 0x1c, 0x02);
-  cp2155_set (fd, 0x15, 0x83);
-  cp2155_set (fd, 0x14, 0x7c);
-  cp2155_set (fd, 0x17, 0x02);
-  cp2155_set (fd, 0x43, 0x1c);
-  cp2155_set (fd, 0x44, 0x9c);
-  cp2155_set (fd, 0x45, 0x38);
-  cp2155_set (fd, 0x23, 0x28);
-  cp2155_set (fd, 0x33, 0x28);
-  cp2155_set (fd, 0x24, 0x27);
-  cp2155_set (fd, 0x34, 0x27);
-  cp2155_set (fd, 0x25, 0x25);
-  cp2155_set (fd, 0x35, 0x25);
-  cp2155_set (fd, 0x26, 0x21);
-  cp2155_set (fd, 0x36, 0x21);
-  cp2155_set (fd, 0x27, 0x1c);
-  cp2155_set (fd, 0x37, 0x1c);
-  cp2155_set (fd, 0x28, 0x16);
-  cp2155_set (fd, 0x38, 0x16);
-  cp2155_set (fd, 0x29, 0x0f);
-  cp2155_set (fd, 0x39, 0x0f);
-  cp2155_set (fd, 0x2a, 0x08);
-  cp2155_set (fd, 0x3a, 0x08);
-  cp2155_set (fd, 0x2b, 0x00);
-  cp2155_set (fd, 0x3b, 0x00);
-  cp2155_set (fd, 0x2c, 0x08);
-  cp2155_set (fd, 0x3c, 0x08);
-  cp2155_set (fd, 0x2d, 0x0f);
-  cp2155_set (fd, 0x3d, 0x0f);
-  cp2155_set (fd, 0x2e, 0x16);
-  cp2155_set (fd, 0x3e, 0x16);
-  cp2155_set (fd, 0x2f, 0x1c);
-  cp2155_set (fd, 0x3f, 0x1c);
-  cp2155_set (fd, 0x30, 0x21);
-  cp2155_set (fd, 0x40, 0x21);
-  cp2155_set (fd, 0x31, 0x25);
-  cp2155_set (fd, 0x41, 0x25);
-  cp2155_set (fd, 0x32, 0x27);
-  cp2155_set (fd, 0x42, 0x27);
-  cp2155_set (fd, 0xca, 0x01);
-  cp2155_set (fd, 0xca, 0x01);
-  cp2155_set (fd, 0xca, 0x11);
+
+  memcpy (buf, "\x28\x27\x25\x21\x1c\x16\x0f\x08\x00", 9);
+  register_table (fd, 0, buf);
   cp2155_set (fd, 0x18, 0x00);
 
   count = 260;
-  make_slope_table (count, 0x2580, 0x6a, 0.021739, buf);
+  make_slope_table (count, top_value, 0x6a, 0.021739, buf);
 
   write_buf (fd, count, buf, 0x03, 0x00);
   write_buf (fd, count, buf, 0x03, 0x02);
   write_buf (fd, count, buf, 0x03, 0x06);
 
   count = 36;
-  make_slope_table (count, 0x2580, 0x06, 0.15217, buf);
+  make_slope_table (count, top_value, 0x06, 0.15217, buf);
 
   write_buf (fd, count, buf, 0x03, 0x04);
   write_buf (fd, count, buf, 0x03, 0x08);
@@ -590,6 +605,14 @@ startblob_2225_0150 (CANON_Handle * chndl, unsigned char *buf)
   fd = chndl->fd;
   size_t count;
 
+  unsigned int top_value = 0x2580;
+  unsigned char value_62 = 0x1e;
+
+/* original:
+  unsigned int top_value = 0x2580;
+  unsigned char value_62 = 0x1e;
+  ratio 320 decimal
+*/
   cp2155_set (fd, 0x90, 0xd8);
   cp2155_set (fd, 0x90, 0xd8);
   cp2155_set (fd, 0xb0, 0x02);
@@ -606,7 +629,7 @@ startblob_2225_0150 (CANON_Handle * chndl, unsigned char *buf)
   cp2155_set (fd, 0x64, 0x00);
   cp2155_set (fd, 0x65, 0x00);
   cp2155_set (fd, 0x61, 0x00);
-  cp2155_set (fd, 0x62, 0x1e);
+  cp2155_set (fd, 0x62, value_62);
   cp2155_set (fd, 0x63, 0xa0);
   cp2155_set (fd, 0x50, 0x04);
   cp2155_set (fd, 0x50, 0x04);
@@ -667,61 +690,20 @@ startblob_2225_0150 (CANON_Handle * chndl, unsigned char *buf)
   cp2155_set (fd, 0x66, 0x00);
   cp2155_set (fd, 0x67, chndl->value_67);
   cp2155_set (fd, 0x68, chndl->value_68);
-  cp2155_set (fd, 0x1a, 0x00);
-  cp2155_set (fd, 0x1b, 0x00);
-  cp2155_set (fd, 0x1c, 0x02);
-  cp2155_set (fd, 0x15, 0x84);
-  cp2155_set (fd, 0x14, 0x7c);
-  cp2155_set (fd, 0x17, 0x02);
-  cp2155_set (fd, 0x43, 0x1c);
-  cp2155_set (fd, 0x44, 0x9c);
-  cp2155_set (fd, 0x45, 0x38);
-  cp2155_set (fd, 0x23, 0x28);
-  cp2155_set (fd, 0x33, 0x28);
-  cp2155_set (fd, 0x24, 0x27);
-  cp2155_set (fd, 0x34, 0x27);
-  cp2155_set (fd, 0x25, 0x25);
-  cp2155_set (fd, 0x35, 0x25);
-  cp2155_set (fd, 0x26, 0x21);
-  cp2155_set (fd, 0x36, 0x21);
-  cp2155_set (fd, 0x27, 0x1c);
-  cp2155_set (fd, 0x37, 0x1c);
-  cp2155_set (fd, 0x28, 0x16);
-  cp2155_set (fd, 0x38, 0x16);
-  cp2155_set (fd, 0x29, 0x0f);
-  cp2155_set (fd, 0x39, 0x0f);
-  cp2155_set (fd, 0x2a, 0x08);
-  cp2155_set (fd, 0x3a, 0x08);
-  cp2155_set (fd, 0x2b, 0x00);
-  cp2155_set (fd, 0x3b, 0x00);
-  cp2155_set (fd, 0x2c, 0x08);
-  cp2155_set (fd, 0x3c, 0x08);
-  cp2155_set (fd, 0x2d, 0x0f);
-  cp2155_set (fd, 0x3d, 0x0f);
-  cp2155_set (fd, 0x2e, 0x16);
-  cp2155_set (fd, 0x3e, 0x16);
-  cp2155_set (fd, 0x2f, 0x1c);
-  cp2155_set (fd, 0x3f, 0x1c);
-  cp2155_set (fd, 0x30, 0x21);
-  cp2155_set (fd, 0x40, 0x21);
-  cp2155_set (fd, 0x31, 0x25);
-  cp2155_set (fd, 0x41, 0x25);
-  cp2155_set (fd, 0x32, 0x27);
-  cp2155_set (fd, 0x42, 0x27);
-  cp2155_set (fd, 0xca, 0x01);
-  cp2155_set (fd, 0xca, 0x01);
-  cp2155_set (fd, 0xca, 0x11);
+
+  memcpy (buf, "\x28\x27\x25\x21\x1c\x16\x0f\x08\x00", 9);
+  register_table (fd, 0, buf);
   cp2155_set (fd, 0x18, 0x00);
 
   count = 260;
-  make_slope_table (count, 0x2580, 0x06, 0.0089185, buf);
+  make_slope_table (count, top_value, 0x06, 0.0089185, buf);
 
   write_buf (fd, count, buf, 0x03, 0x00);
   write_buf (fd, count, buf, 0x03, 0x02);
   write_buf (fd, count, buf, 0x03, 0x06);
 
   count = 36;
-  make_slope_table (count, 0x2580, 0x06, 0.102968, buf);
+  make_slope_table (count, top_value, 0x06, 0.102968, buf);
 
   write_buf (fd, count, buf, 0x03, 0x04);
   write_buf (fd, count, buf, 0x03, 0x08);
@@ -737,6 +719,14 @@ startblob_2225_0300 (CANON_Handle * chndl, unsigned char *buf)
   fd = chndl->fd;
   size_t count;
 
+  unsigned int top_value = 0x2580;
+  unsigned char value_62 = 0x2a;
+
+/* original:
+  unsigned int top_value = 0x2580;
+  unsigned char value_62 = 0x2a;
+  ratio 228 decimal
+*/
   cp2155_set (fd, 0x90, 0xd8);
   cp2155_set (fd, 0x90, 0xd8);
   cp2155_set (fd, 0xb0, 0x01);
@@ -753,7 +743,7 @@ startblob_2225_0300 (CANON_Handle * chndl, unsigned char *buf)
   cp2155_set (fd, 0x64, 0x00);
   cp2155_set (fd, 0x65, 0x00);
   cp2155_set (fd, 0x61, 0x00);
-  cp2155_set (fd, 0x62, 0x2a);
+  cp2155_set (fd, 0x62, value_62);
   cp2155_set (fd, 0x63, 0x80);
   cp2155_set (fd, 0x50, 0x04);
   cp2155_set (fd, 0x50, 0x04);
@@ -814,61 +804,19 @@ startblob_2225_0300 (CANON_Handle * chndl, unsigned char *buf)
   cp2155_set (fd, 0x66, 0x00);
   cp2155_set (fd, 0x67, chndl->value_67);
   cp2155_set (fd, 0x68, chndl->value_68);
-  cp2155_set (fd, 0x1a, 0x00);
-  cp2155_set (fd, 0x1b, 0x00);
-  cp2155_set (fd, 0x1c, 0x02);
-  cp2155_set (fd, 0x15, 0x83);
-  cp2155_set (fd, 0x14, 0x7c);
-  cp2155_set (fd, 0x17, 0x02);
-  cp2155_set (fd, 0x43, 0x1c);
-  cp2155_set (fd, 0x44, 0x9c);
-  cp2155_set (fd, 0x45, 0x38);
-  cp2155_set (fd, 0x23, 0x14);
-  cp2155_set (fd, 0x33, 0x14);
-  cp2155_set (fd, 0x24, 0x14);
-  cp2155_set (fd, 0x34, 0x14);
-  cp2155_set (fd, 0x25, 0x14);
-  cp2155_set (fd, 0x35, 0x14);
-  cp2155_set (fd, 0x26, 0x14);
-  cp2155_set (fd, 0x36, 0x14);
-  cp2155_set (fd, 0x27, 0x14);
-  cp2155_set (fd, 0x37, 0x14);
-  cp2155_set (fd, 0x28, 0x14);
-  cp2155_set (fd, 0x38, 0x14);
-  cp2155_set (fd, 0x29, 0x14);
-  cp2155_set (fd, 0x39, 0x14);
-  cp2155_set (fd, 0x2a, 0x14);
-  cp2155_set (fd, 0x3a, 0x14);
-  cp2155_set (fd, 0x2b, 0x14);
-  cp2155_set (fd, 0x3b, 0x14);
-  cp2155_set (fd, 0x2c, 0x14);
-  cp2155_set (fd, 0x3c, 0x14);
-  cp2155_set (fd, 0x2d, 0x14);
-  cp2155_set (fd, 0x3d, 0x14);
-  cp2155_set (fd, 0x2e, 0x14);
-  cp2155_set (fd, 0x3e, 0x14);
-  cp2155_set (fd, 0x2f, 0x14);
-  cp2155_set (fd, 0x3f, 0x14);
-  cp2155_set (fd, 0x30, 0x14);
-  cp2155_set (fd, 0x40, 0x14);
-  cp2155_set (fd, 0x31, 0x14);
-  cp2155_set (fd, 0x41, 0x14);
-  cp2155_set (fd, 0x32, 0x14);
-  cp2155_set (fd, 0x42, 0x14);
-  cp2155_set (fd, 0xca, 0x00);
-  cp2155_set (fd, 0xca, 0x00);
-  cp2155_set (fd, 0xca, 0x00);
+
+  register_table (fd, 0x14, buf);
   cp2155_set (fd, 0x18, 0x00);
 
   count = 52;
-  make_slope_table (count, 0x2580, 0x06, 0.0038363, buf);
+  make_slope_table (count, top_value, 0x06, 0.0038363, buf);
 
   write_buf (fd, count, buf, 0x03, 0x00);
   write_buf (fd, count, buf, 0x03, 0x02);
   write_buf (fd, count, buf, 0x03, 0x06);
 
   count = 36;
-  make_slope_table (count, 0x2580, 0x06, 0.0080213, buf);
+  make_slope_table (count, top_value, 0x06, 0.0080213, buf);
 
   write_buf (fd, count, buf, 0x03, 0x04);
   write_buf (fd, count, buf, 0x03, 0x08);
@@ -884,6 +832,14 @@ startblob_2225_0600 (CANON_Handle * chndl, unsigned char *buf)
   fd = chndl->fd;
   size_t count;
 
+  unsigned int top_value = 0x2580;
+  unsigned char value_62 = 0x15;
+
+/* original:
+  unsigned int top_value = 0x2580;
+  unsigned char value_62 = 0x15;
+  ratio 457 decimal
+*/
   cp2155_set (fd, 0x90, 0xd8);
   cp2155_set (fd, 0x90, 0xd8);
   cp2155_set (fd, 0xb0, 0x00);
@@ -900,7 +856,7 @@ startblob_2225_0600 (CANON_Handle * chndl, unsigned char *buf)
   cp2155_set (fd, 0x64, 0x00);
   cp2155_set (fd, 0x65, 0x00);
   cp2155_set (fd, 0x61, 0x00);
-  cp2155_set (fd, 0x62, 0x15);
+  cp2155_set (fd, 0x62, value_62);
   cp2155_set (fd, 0x63, 0xe0);
   cp2155_set (fd, 0x50, 0x04);
   cp2155_set (fd, 0x50, 0x04);
@@ -958,61 +914,19 @@ startblob_2225_0600 (CANON_Handle * chndl, unsigned char *buf)
   cp2155_set (fd, 0x66, 0x00);
   cp2155_set (fd, 0x67, chndl->value_67);
   cp2155_set (fd, 0x68, chndl->value_68);
-  cp2155_set (fd, 0x1a, 0x00);
-  cp2155_set (fd, 0x1b, 0x00);
-  cp2155_set (fd, 0x1c, 0x02);
-  cp2155_set (fd, 0x15, 0x01);
-  cp2155_set (fd, 0x14, 0x01);
-  cp2155_set (fd, 0x17, 0x01);
-  cp2155_set (fd, 0x43, 0x1c);
-  cp2155_set (fd, 0x44, 0x9c);
-  cp2155_set (fd, 0x45, 0x38);
-  cp2155_set (fd, 0x23, 0x14);
-  cp2155_set (fd, 0x33, 0x14);
-  cp2155_set (fd, 0x24, 0x14);
-  cp2155_set (fd, 0x34, 0x14);
-  cp2155_set (fd, 0x25, 0x14);
-  cp2155_set (fd, 0x35, 0x14);
-  cp2155_set (fd, 0x26, 0x14);
-  cp2155_set (fd, 0x36, 0x14);
-  cp2155_set (fd, 0x27, 0x14);
-  cp2155_set (fd, 0x37, 0x14);
-  cp2155_set (fd, 0x28, 0x14);
-  cp2155_set (fd, 0x38, 0x14);
-  cp2155_set (fd, 0x29, 0x14);
-  cp2155_set (fd, 0x39, 0x14);
-  cp2155_set (fd, 0x2a, 0x14);
-  cp2155_set (fd, 0x3a, 0x14);
-  cp2155_set (fd, 0x2b, 0x14);
-  cp2155_set (fd, 0x3b, 0x14);
-  cp2155_set (fd, 0x2c, 0x14);
-  cp2155_set (fd, 0x3c, 0x14);
-  cp2155_set (fd, 0x2d, 0x14);
-  cp2155_set (fd, 0x3d, 0x14);
-  cp2155_set (fd, 0x2e, 0x14);
-  cp2155_set (fd, 0x3e, 0x14);
-  cp2155_set (fd, 0x2f, 0x14);
-  cp2155_set (fd, 0x3f, 0x14);
-  cp2155_set (fd, 0x30, 0x14);
-  cp2155_set (fd, 0x40, 0x14);
-  cp2155_set (fd, 0x31, 0x14);
-  cp2155_set (fd, 0x41, 0x14);
-  cp2155_set (fd, 0x32, 0x14);
-  cp2155_set (fd, 0x42, 0x14);
-  cp2155_set (fd, 0xca, 0x00);
-  cp2155_set (fd, 0xca, 0x00);
-  cp2155_set (fd, 0xca, 0x00);
+
+  register_table (fd, 0x14, buf);
   cp2155_set (fd, 0x18, 0x00);
 
   count = 84;
-  make_slope_table (count, 0x2580, 0x06, 0.0020408, buf);
+  make_slope_table (count, top_value, 0x06, 0.0020408, buf);
 
   write_buf (fd, count, buf, 0x03, 0x00);
   write_buf (fd, count, buf, 0x03, 0x02);
   write_buf (fd, count, buf, 0x03, 0x06);
 
   count = 36;
-  make_slope_table (count, 0x2580, 0x06, 0.0064935, buf);
+  make_slope_table (count, top_value, 0x06, 0.0064935, buf);
 
   write_buf (fd, count, buf, 0x03, 0x04);
   write_buf (fd, count, buf, 0x03, 0x08);
@@ -1177,6 +1091,13 @@ startblob_2225_1200 (CANON_Handle * chndl, unsigned char *buf)
   fd = chndl->fd;
   size_t count;
 
+  unsigned int top_value = 0xff00;
+  unsigned char value_62 = 0xaa;
+
+/* original:
+  unsigned int top_value = 0xff00;
+  unsigned char value_62 = 0xaa;
+*/
   cp2155_set (fd, 0x90, 0xc8);
   cp2155_set (fd, 0x90, 0xe8);
   cp2155_set (fd, 0xb0, 0x00);
@@ -1193,7 +1114,7 @@ startblob_2225_1200 (CANON_Handle * chndl, unsigned char *buf)
   cp2155_set (fd, 0x64, 0x00);
   cp2155_set (fd, 0x65, 0x00);
   cp2155_set (fd, 0x61, 0x00);
-  cp2155_set (fd, 0x62, 0xaa);
+  cp2155_set (fd, 0x62, value_62);
   cp2155_set (fd, 0x63, 0x00);
   cp2155_set (fd, 0x50, 0x04);
   cp2155_set (fd, 0x50, 0x04);
@@ -1254,54 +1175,13 @@ startblob_2225_1200 (CANON_Handle * chndl, unsigned char *buf)
   cp2155_set (fd, 0x66, 0x00);
   cp2155_set (fd, 0x67, chndl->value_67);
   cp2155_set (fd, 0x68, chndl->value_68);
-  cp2155_set (fd, 0x1a, 0x00);
-  cp2155_set (fd, 0x1b, 0x00);
-  cp2155_set (fd, 0x1c, 0x02);
-  cp2155_set (fd, 0x15, 0x80);
-  cp2155_set (fd, 0x14, 0x7c);
-  cp2155_set (fd, 0x17, 0x01);
-  cp2155_set (fd, 0x43, 0x1c);
-  cp2155_set (fd, 0x44, 0x9c);
-  cp2155_set (fd, 0x45, 0x38);
-  cp2155_set (fd, 0x23, 0x14);
-  cp2155_set (fd, 0x33, 0x14);
-  cp2155_set (fd, 0x24, 0x14);
-  cp2155_set (fd, 0x34, 0x14);
-  cp2155_set (fd, 0x25, 0x12);
-  cp2155_set (fd, 0x35, 0x12);
-  cp2155_set (fd, 0x26, 0x11);
-  cp2155_set (fd, 0x36, 0x11);
-  cp2155_set (fd, 0x27, 0x0e);
-  cp2155_set (fd, 0x37, 0x0e);
-  cp2155_set (fd, 0x28, 0x0b);
-  cp2155_set (fd, 0x38, 0x0b);
-  cp2155_set (fd, 0x29, 0x08);
-  cp2155_set (fd, 0x39, 0x08);
-  cp2155_set (fd, 0x2a, 0x04);
-  cp2155_set (fd, 0x3a, 0x04);
-  cp2155_set (fd, 0x2b, 0x00);
-  cp2155_set (fd, 0x3b, 0x00);
-  cp2155_set (fd, 0x2c, 0x04);
-  cp2155_set (fd, 0x3c, 0x04);
-  cp2155_set (fd, 0x2d, 0x08);
-  cp2155_set (fd, 0x3d, 0x08);
-  cp2155_set (fd, 0x2e, 0x0b);
-  cp2155_set (fd, 0x3e, 0x0b);
-  cp2155_set (fd, 0x2f, 0x0e);
-  cp2155_set (fd, 0x3f, 0x0e);
-  cp2155_set (fd, 0x30, 0x11);
-  cp2155_set (fd, 0x40, 0x11);
-  cp2155_set (fd, 0x31, 0x12);
-  cp2155_set (fd, 0x41, 0x12);
-  cp2155_set (fd, 0x32, 0x14);
-  cp2155_set (fd, 0x42, 0x14);
-  cp2155_set (fd, 0xca, 0x00);
-  cp2155_set (fd, 0xca, 0x00);
-  cp2155_set (fd, 0xca, 0x00);
+
+  memcpy (buf, "\x14\x14\x12\x11\x0e\x0b\x08\x04\x00", 9);
+  register_table (fd, 0, buf);
   cp2155_set (fd, 0x18, 0x01);
 
   count = 36;
-  make_slope_table (count, 0xff00, 0x06, 0.0, buf);
+  make_slope_table (count, top_value, 0x06, 0.0, buf);
 
   write_buf (fd, count, buf, 0x03, 0x00);
   write_buf (fd, count, buf, 0x03, 0x02);
@@ -1320,6 +1200,14 @@ startblob_2224_0075 (CANON_Handle * chndl, unsigned char *buf)
   fd = chndl->fd;
   size_t count;
 
+  unsigned int top_value = 0x2580;
+  unsigned char value_62 = 0x2e;
+
+/* original:
+  unsigned int top_value = 0x2580;
+  unsigned char value_62 = 0x2e;
+  ratio 208 decimal
+*/
   cp2155_set (fd, 0x90, 0xe8);
   cp2155_set (fd, 0x9b, 0x06);
   cp2155_set (fd, 0x9b, 0x04);
@@ -1338,7 +1226,7 @@ startblob_2224_0075 (CANON_Handle * chndl, unsigned char *buf)
   cp2155_set (fd, 0x64, 0x00);
   cp2155_set (fd, 0x65, 0x00);
   cp2155_set (fd, 0x61, 0x00);
-  cp2155_set (fd, 0x62, 0x2e);
+  cp2155_set (fd, 0x62, value_62);
   cp2155_set (fd, 0x63, 0x00);
   cp2155_set (fd, 0x50, 0x04);
   cp2155_set (fd, 0x50, 0x04);
@@ -1400,61 +1288,19 @@ startblob_2224_0075 (CANON_Handle * chndl, unsigned char *buf)
   cp2155_set (fd, 0x66, 0x00);
   cp2155_set (fd, 0x67, chndl->value_67);
   cp2155_set (fd, 0x68, chndl->value_68);
-  cp2155_set (fd, 0x1a, 0x00);
-  cp2155_set (fd, 0x1b, 0x00);
-  cp2155_set (fd, 0x1c, 0x02);
-  cp2155_set (fd, 0x15, 0x83);
-  cp2155_set (fd, 0x14, 0x7c);
-  cp2155_set (fd, 0x17, 0x02);
-  cp2155_set (fd, 0x43, 0x1c);
-  cp2155_set (fd, 0x44, 0x9c);
-  cp2155_set (fd, 0x45, 0x38);
-  cp2155_set (fd, 0x23, 0x0f);
-  cp2155_set (fd, 0x33, 0x0f);
-  cp2155_set (fd, 0x24, 0x0f);
-  cp2155_set (fd, 0x34, 0x0f);
-  cp2155_set (fd, 0x25, 0x0f);
-  cp2155_set (fd, 0x35, 0x0f);
-  cp2155_set (fd, 0x26, 0x0f);
-  cp2155_set (fd, 0x36, 0x0f);
-  cp2155_set (fd, 0x27, 0x0f);
-  cp2155_set (fd, 0x37, 0x0f);
-  cp2155_set (fd, 0x28, 0x0f);
-  cp2155_set (fd, 0x38, 0x0f);
-  cp2155_set (fd, 0x29, 0x0f);
-  cp2155_set (fd, 0x39, 0x0f);
-  cp2155_set (fd, 0x2a, 0x0f);
-  cp2155_set (fd, 0x3a, 0x0f);
-  cp2155_set (fd, 0x2b, 0x0f);
-  cp2155_set (fd, 0x3b, 0x0f);
-  cp2155_set (fd, 0x2c, 0x0f);
-  cp2155_set (fd, 0x3c, 0x0f);
-  cp2155_set (fd, 0x2d, 0x0f);
-  cp2155_set (fd, 0x3d, 0x0f);
-  cp2155_set (fd, 0x2e, 0x0f);
-  cp2155_set (fd, 0x3e, 0x0f);
-  cp2155_set (fd, 0x2f, 0x0f);
-  cp2155_set (fd, 0x3f, 0x0f);
-  cp2155_set (fd, 0x30, 0x0f);
-  cp2155_set (fd, 0x40, 0x0f);
-  cp2155_set (fd, 0x31, 0x0f);
-  cp2155_set (fd, 0x41, 0x0f);
-  cp2155_set (fd, 0x32, 0x0f);
-  cp2155_set (fd, 0x42, 0x0f);
-  cp2155_set (fd, 0xca, 0x00);
-  cp2155_set (fd, 0xca, 0x00);
-  cp2155_set (fd, 0xca, 0x00);
+
+  register_table (fd, 0x0f, buf);
   cp2155_set (fd, 0x18, 0x00);
 
   count = 516;
-  make_slope_table (count, 0x2580, 0x6a, 0.0084116, buf);
+  make_slope_table (count, top_value, 0x6a, 0.0084116, buf);
 
   write_buf (fd, count, buf, 0x03, 0x00);
   write_buf (fd, count, buf, 0x03, 0x02);
   write_buf (fd, count, buf, 0x03, 0x06);
 
   count = 36;
-  make_slope_table (count, 0x2580, 0x06, 0.15217, buf);
+  make_slope_table (count, top_value, 0x06, 0.15217, buf);
 
   write_buf (fd, count, buf, 0x03, 0x04);
   write_buf (fd, count, buf, 0x03, 0x08);
@@ -1471,6 +1317,14 @@ startblob_2224_0150 (CANON_Handle * chndl, unsigned char *buf)
   fd = chndl->fd;
   size_t count;
 
+  unsigned int top_value = 0x2580;
+  unsigned char value_62 = 0x1e;
+
+/* original:
+  unsigned int top_value = 0x2580;
+  unsigned char value_62 = 0x1e;
+  ratio 320 decimal
+*/
   cp2155_set (fd, 0x90, 0xe8);
   cp2155_set (fd, 0x9b, 0x06);
   cp2155_set (fd, 0x9b, 0x04);
@@ -1489,7 +1343,7 @@ startblob_2224_0150 (CANON_Handle * chndl, unsigned char *buf)
   cp2155_set (fd, 0x64, 0x00);
   cp2155_set (fd, 0x65, 0x00);
   cp2155_set (fd, 0x61, 0x00);
-  cp2155_set (fd, 0x62, 0x1e);
+  cp2155_set (fd, 0x62, value_62);
   cp2155_set (fd, 0x63, 0xa0);
   cp2155_set (fd, 0x50, 0x04);
   cp2155_set (fd, 0x50, 0x04);
@@ -1551,61 +1405,19 @@ startblob_2224_0150 (CANON_Handle * chndl, unsigned char *buf)
   cp2155_set (fd, 0x66, 0x00);
   cp2155_set (fd, 0x67, chndl->value_67);
   cp2155_set (fd, 0x68, chndl->value_68);
-  cp2155_set (fd, 0x1a, 0x00);
-  cp2155_set (fd, 0x1b, 0x00);
-  cp2155_set (fd, 0x1c, 0x02);
-  cp2155_set (fd, 0x15, 0x84);
-  cp2155_set (fd, 0x14, 0x7c);
-  cp2155_set (fd, 0x17, 0x02);
-  cp2155_set (fd, 0x43, 0x1c);
-  cp2155_set (fd, 0x44, 0x9c);
-  cp2155_set (fd, 0x45, 0x38);
-  cp2155_set (fd, 0x23, 0x0d);
-  cp2155_set (fd, 0x33, 0x0d);
-  cp2155_set (fd, 0x24, 0x0d);
-  cp2155_set (fd, 0x34, 0x0d);
-  cp2155_set (fd, 0x25, 0x0d);
-  cp2155_set (fd, 0x35, 0x0d);
-  cp2155_set (fd, 0x26, 0x0d);
-  cp2155_set (fd, 0x36, 0x0d);
-  cp2155_set (fd, 0x27, 0x0d);
-  cp2155_set (fd, 0x37, 0x0d);
-  cp2155_set (fd, 0x28, 0x0d);
-  cp2155_set (fd, 0x38, 0x0d);
-  cp2155_set (fd, 0x29, 0x0d);
-  cp2155_set (fd, 0x39, 0x0d);
-  cp2155_set (fd, 0x2a, 0x0d);
-  cp2155_set (fd, 0x3a, 0x0d);
-  cp2155_set (fd, 0x2b, 0x0d);
-  cp2155_set (fd, 0x3b, 0x0d);
-  cp2155_set (fd, 0x2c, 0x0d);
-  cp2155_set (fd, 0x3c, 0x0d);
-  cp2155_set (fd, 0x2d, 0x0d);
-  cp2155_set (fd, 0x3d, 0x0d);
-  cp2155_set (fd, 0x2e, 0x0d);
-  cp2155_set (fd, 0x3e, 0x0d);
-  cp2155_set (fd, 0x2f, 0x0d);
-  cp2155_set (fd, 0x3f, 0x0d);
-  cp2155_set (fd, 0x30, 0x0d);
-  cp2155_set (fd, 0x40, 0x0d);
-  cp2155_set (fd, 0x31, 0x0d);
-  cp2155_set (fd, 0x41, 0x0d);
-  cp2155_set (fd, 0x32, 0x0d);
-  cp2155_set (fd, 0x42, 0x0d);
-  cp2155_set (fd, 0xca, 0x00);
-  cp2155_set (fd, 0xca, 0x00);
-  cp2155_set (fd, 0xca, 0x00);
+
+  register_table (fd, 0x0d, buf);
   cp2155_set (fd, 0x18, 0x00);
 
   count = 260;
-  make_slope_table (count, 0x2580, 0x86, 0.017979, buf);
+  make_slope_table (count, top_value, 0x86, 0.017979, buf);
 
   write_buf (fd, count, buf, 0x03, 0x00);
   write_buf (fd, count, buf, 0x03, 0x02);
   write_buf (fd, count, buf, 0x03, 0x06);
 
   count = 36;
-  make_slope_table (count, 0x2580, 0x06, 0.102968, buf);
+  make_slope_table (count, top_value, 0x06, 0.102968, buf);
 
   write_buf (fd, count, buf, 0x03, 0x04);
   write_buf (fd, count, buf, 0x03, 0x08);
@@ -1617,11 +1429,18 @@ startblob_2224_0150 (CANON_Handle * chndl, unsigned char *buf)
 void
 startblob_2224_0300 (CANON_Handle * chndl, unsigned char *buf)
 {
-
   int fd;
   fd = chndl->fd;
   size_t count;
 
+  unsigned int top_value = 0x3200;
+  unsigned char value_62 = 0x15;
+
+/* original:
+  unsigned int top_value = 0x3200;
+  unsigned char value_62 = 0x15;
+  ratio 609.52 decimal
+*/
   cp2155_set (fd, 0x90, 0xe8);
   cp2155_set (fd, 0x9b, 0x06);
   cp2155_set (fd, 0x9b, 0x04);
@@ -1640,7 +1459,7 @@ startblob_2224_0300 (CANON_Handle * chndl, unsigned char *buf)
   cp2155_set (fd, 0x64, 0x00);
   cp2155_set (fd, 0x65, 0x00);
   cp2155_set (fd, 0x61, 0x00);
-  cp2155_set (fd, 0x62, 0x15);
+  cp2155_set (fd, 0x62, value_62);
   cp2155_set (fd, 0x63, 0xe0);
   cp2155_set (fd, 0x50, 0x04);
   cp2155_set (fd, 0x50, 0x04);
@@ -1699,61 +1518,19 @@ startblob_2224_0300 (CANON_Handle * chndl, unsigned char *buf)
   cp2155_set (fd, 0x66, 0x00);
   cp2155_set (fd, 0x67, chndl->value_67);
   cp2155_set (fd, 0x68, chndl->value_68);
-  cp2155_set (fd, 0x1a, 0x00);
-  cp2155_set (fd, 0x1b, 0x00);
-  cp2155_set (fd, 0x1c, 0x02);
-  cp2155_set (fd, 0x15, 0x01);
-  cp2155_set (fd, 0x14, 0x01);
-  cp2155_set (fd, 0x17, 0x01);
-  cp2155_set (fd, 0x43, 0x1c);
-  cp2155_set (fd, 0x44, 0x9c);
-  cp2155_set (fd, 0x45, 0x38);
-  cp2155_set (fd, 0x23, 0x0a);
-  cp2155_set (fd, 0x33, 0x0a);
-  cp2155_set (fd, 0x24, 0x0a);
-  cp2155_set (fd, 0x34, 0x0a);
-  cp2155_set (fd, 0x25, 0x0a);
-  cp2155_set (fd, 0x35, 0x0a);
-  cp2155_set (fd, 0x26, 0x0a);
-  cp2155_set (fd, 0x36, 0x0a);
-  cp2155_set (fd, 0x27, 0x0a);
-  cp2155_set (fd, 0x37, 0x0a);
-  cp2155_set (fd, 0x28, 0x0a);
-  cp2155_set (fd, 0x38, 0x0a);
-  cp2155_set (fd, 0x29, 0x0a);
-  cp2155_set (fd, 0x39, 0x0a);
-  cp2155_set (fd, 0x2a, 0x0a);
-  cp2155_set (fd, 0x3a, 0x0a);
-  cp2155_set (fd, 0x2b, 0x0a);
-  cp2155_set (fd, 0x3b, 0x0a);
-  cp2155_set (fd, 0x2c, 0x0a);
-  cp2155_set (fd, 0x3c, 0x0a);
-  cp2155_set (fd, 0x2d, 0x0a);
-  cp2155_set (fd, 0x3d, 0x0a);
-  cp2155_set (fd, 0x2e, 0x0a);
-  cp2155_set (fd, 0x3e, 0x0a);
-  cp2155_set (fd, 0x2f, 0x0a);
-  cp2155_set (fd, 0x3f, 0x0a);
-  cp2155_set (fd, 0x30, 0x0a);
-  cp2155_set (fd, 0x40, 0x0a);
-  cp2155_set (fd, 0x31, 0x0a);
-  cp2155_set (fd, 0x41, 0x0a);
-  cp2155_set (fd, 0x32, 0x0a);
-  cp2155_set (fd, 0x42, 0x0a);
-  cp2155_set (fd, 0xca, 0x00);
-  cp2155_set (fd, 0xca, 0x00);
-  cp2155_set (fd, 0xca, 0x00);
+
+  register_table (fd, 0x0a, buf);
   cp2155_set (fd, 0x18, 0x00);
 
   count = 260;
-  make_slope_table (count, 0x3200, 0x66, 0.0129596, buf);
+  make_slope_table (count, top_value, 0x66, 0.0129596, buf);
 
   write_buf (fd, count, buf, 0x03, 0x00);
   write_buf (fd, count, buf, 0x03, 0x02);
   write_buf (fd, count, buf, 0x03, 0x06);
 
   count = 36;
-  make_slope_table (count, 0x3200, 0x06, 0.09307359, buf);
+  make_slope_table (count, top_value, 0x06, 0.09307359, buf);
 
   write_buf (fd, count, buf, 0x03, 0x04);
   write_buf (fd, count, buf, 0x03, 0x08);
@@ -1770,6 +1547,14 @@ startblob_2224_0600 (CANON_Handle * chndl, unsigned char *buf)
   fd = chndl->fd;
   size_t count;
 
+  unsigned int top_value = 0x7f80;
+  unsigned char value_62 = 0x55;
+
+/* original:
+  unsigned int top_value = 0x7f80;
+  unsigned char value_62 = 0x55;
+  ratio 384 decimal
+*/
   cp2155_set (fd, 0x90, 0xe8);
   cp2155_set (fd, 0x9b, 0x06);
   cp2155_set (fd, 0x9b, 0x04);
@@ -1788,7 +1573,7 @@ startblob_2224_0600 (CANON_Handle * chndl, unsigned char *buf)
   cp2155_set (fd, 0x64, 0x00);
   cp2155_set (fd, 0x65, 0x00);
   cp2155_set (fd, 0x61, 0x00);
-  cp2155_set (fd, 0x62, 0x55);
+  cp2155_set (fd, 0x62, value_62);
   cp2155_set (fd, 0x63, 0x00);
   cp2155_set (fd, 0x50, 0x04);
   cp2155_set (fd, 0x50, 0x04);
@@ -1850,54 +1635,12 @@ startblob_2224_0600 (CANON_Handle * chndl, unsigned char *buf)
   cp2155_set (fd, 0x66, 0x00);
   cp2155_set (fd, 0x67, chndl->value_67);
   cp2155_set (fd, 0x68, chndl->value_68);
-  cp2155_set (fd, 0x1a, 0x00);
-  cp2155_set (fd, 0x1b, 0x00);
-  cp2155_set (fd, 0x1c, 0x02);
-  cp2155_set (fd, 0x15, 0x80);
-  cp2155_set (fd, 0x14, 0x7a);
-  cp2155_set (fd, 0x17, 0x02);
-  cp2155_set (fd, 0x43, 0x1c);
-  cp2155_set (fd, 0x44, 0x9c);
-  cp2155_set (fd, 0x45, 0x38);
-  cp2155_set (fd, 0x23, 0x0c);
-  cp2155_set (fd, 0x33, 0x0c);
-  cp2155_set (fd, 0x24, 0x0c);
-  cp2155_set (fd, 0x34, 0x0c);
-  cp2155_set (fd, 0x25, 0x0c);
-  cp2155_set (fd, 0x35, 0x0c);
-  cp2155_set (fd, 0x26, 0x0c);
-  cp2155_set (fd, 0x36, 0x0c);
-  cp2155_set (fd, 0x27, 0x0c);
-  cp2155_set (fd, 0x37, 0x0c);
-  cp2155_set (fd, 0x28, 0x0c);
-  cp2155_set (fd, 0x38, 0x0c);
-  cp2155_set (fd, 0x29, 0x0c);
-  cp2155_set (fd, 0x39, 0x0c);
-  cp2155_set (fd, 0x2a, 0x0c);
-  cp2155_set (fd, 0x3a, 0x0c);
-  cp2155_set (fd, 0x2b, 0x0c);
-  cp2155_set (fd, 0x3b, 0x0c);
-  cp2155_set (fd, 0x2c, 0x0c);
-  cp2155_set (fd, 0x3c, 0x0c);
-  cp2155_set (fd, 0x2d, 0x0c);
-  cp2155_set (fd, 0x3d, 0x0c);
-  cp2155_set (fd, 0x2e, 0x0c);
-  cp2155_set (fd, 0x3e, 0x0c);
-  cp2155_set (fd, 0x2f, 0x0c);
-  cp2155_set (fd, 0x3f, 0x0c);
-  cp2155_set (fd, 0x30, 0x0c);
-  cp2155_set (fd, 0x40, 0x0c);
-  cp2155_set (fd, 0x31, 0x0c);
-  cp2155_set (fd, 0x41, 0x0c);
-  cp2155_set (fd, 0x32, 0x0c);
-  cp2155_set (fd, 0x42, 0x0c);
-  cp2155_set (fd, 0xca, 0x00);
-  cp2155_set (fd, 0xca, 0x00);
-  cp2155_set (fd, 0xca, 0x00);
+
+  register_table (fd, 0x0c, buf);
   cp2155_set (fd, 0x18, 0x00);
 
   count = 36;
-  make_slope_table (count, 0x7f80, 0x06, 0.0, buf);
+  make_slope_table (count, top_value, 0x06, 0.0, buf);
 
   write_buf (fd, count, buf, 0x03, 0x00);
   write_buf (fd, count, buf, 0x03, 0x02);
@@ -1910,7 +1653,7 @@ startblob_2224_0600 (CANON_Handle * chndl, unsigned char *buf)
 }
 
 void
-startblob_2224_1200 (CANON_Handle * chndl, unsigned char *buf)
+startblob_2224_1199 (CANON_Handle * chndl, unsigned char *buf)
 {
 
   int fd;
@@ -1918,10 +1661,15 @@ startblob_2224_1200 (CANON_Handle * chndl, unsigned char *buf)
   size_t count;
 
   cp2155_set (fd, 0x90, 0xe8);
+  usleep (10.0 * MSEC);
   cp2155_set (fd, 0x9b, 0x06);
+  usleep (10.0 * MSEC);
   cp2155_set (fd, 0x9b, 0x04);
+  usleep (10.0 * MSEC);
   cp2155_set (fd, 0x9b, 0x06);
+  usleep (10.0 * MSEC);
   cp2155_set (fd, 0x9b, 0x04);
+  usleep (10.0 * MSEC);
   cp2155_set (fd, 0x90, 0xf8);
   cp2155_set (fd, 0xb0, 0x00);
   cp2155_set (fd, 0x07, 0x00);
@@ -1937,7 +1685,7 @@ startblob_2224_1200 (CANON_Handle * chndl, unsigned char *buf)
   cp2155_set (fd, 0x64, 0x00);
   cp2155_set (fd, 0x65, 0x00);
   cp2155_set (fd, 0x61, 0x00);
-  cp2155_set (fd, 0x62, 0xaa);
+  cp2155_set (fd, 0x62, 0x29);
   cp2155_set (fd, 0x63, 0x00);
   cp2155_set (fd, 0x50, 0x04);
   cp2155_set (fd, 0x50, 0x04);
@@ -2046,14 +1794,182 @@ startblob_2224_1200 (CANON_Handle * chndl, unsigned char *buf)
   cp2155_set (fd, 0x18, 0x00);
 
   count = 324;
-  make_slope_table (count, 0x7f80, 0x06, 0.0, buf);
+  make_slope_table (count, 0x7033, 0x06, 0.0, buf);
 
   write_buf (fd, count, buf, 0x03, 0x00);
   write_buf (fd, count, buf, 0x03, 0x02);
   write_buf (fd, count, buf, 0x03, 0x06);
 
   count = 36;
-  make_slope_table (count, 0x7f80, 0x06, 0.0, buf);
+  make_slope_table (count, 0x7033, 0x06, 0.0, buf);
+
+  write_buf (fd, count, buf, 0x03, 0x04);
+  write_buf (fd, count, buf, 0x03, 0x08);
+
+  general_motor_2224 (fd);
+
+}
+
+void
+startblob_2224_1200 (CANON_Handle * chndl, unsigned char *buf)
+{
+
+  int fd;
+  fd = chndl->fd;
+  size_t count;
+
+  unsigned int top_value = 0x7c71;
+  unsigned char value_62 = 0x29;
+
+/*
+  unsigned int top_value = 0x3fc7;
+  unsigned char value_62 = 0x15;
+  ratio 777 decimal
+*/
+
+  cp2155_set (fd, 0x90, 0xe8);
+  usleep (10.0 * MSEC);
+  cp2155_set (fd, 0x9b, 0x06);
+  usleep (10.0 * MSEC);
+  cp2155_set (fd, 0x9b, 0x04);
+  usleep (10.0 * MSEC);
+  cp2155_set (fd, 0x9b, 0x06);
+  usleep (10.0 * MSEC);
+  cp2155_set (fd, 0x9b, 0x04);
+  usleep (10.0 * MSEC);
+  cp2155_set (fd, 0x90, 0xf8);
+  cp2155_set (fd, 0xb0, 0x00);
+  cp2155_set (fd, 0x07, 0x00);
+  cp2155_set (fd, 0x07, 0x00);
+  cp2155_set (fd, 0x08, chndl->value_08);
+  cp2155_set (fd, 0x09, chndl->value_09);
+  cp2155_set (fd, 0x0a, chndl->value_0a);
+  cp2155_set (fd, 0x0b, chndl->value_0b);
+  cp2155_set (fd, 0xa0, 0x1d);
+  cp2155_set (fd, 0xa1, 0x00);
+  cp2155_set (fd, 0xa2, 0x63);
+  cp2155_set (fd, 0xa3, 0xd0);
+  cp2155_set (fd, 0x64, 0x00);
+  cp2155_set (fd, 0x65, 0x00);
+  cp2155_set (fd, 0x61, 0x00);
+  cp2155_set (fd, 0x62, value_62);
+  cp2155_set (fd, 0x63, 0x00);
+  cp2155_set (fd, 0x50, 0x04);
+  cp2155_set (fd, 0x50, 0x04);
+  cp2155_set (fd, 0x90, 0xf8);
+  cp2155_set (fd, 0x51, chndl->value_51);
+  cp2155_set (fd, 0x5a, 0xff);
+  cp2155_set (fd, 0x5b, 0xff);
+  cp2155_set (fd, 0x5c, 0xff);
+  cp2155_set (fd, 0x5d, 0xff);
+  cp2155_set (fd, 0x52, 0x19);
+  cp2155_set (fd, 0x53, 0x5a);
+  cp2155_set (fd, 0x54, 0x17);
+  cp2155_set (fd, 0x55, 0x98);
+  cp2155_set (fd, 0x56, 0x11);
+  cp2155_set (fd, 0x57, 0xae);
+  cp2155_set (fd, 0x58, 0xa9);
+  cp2155_set (fd, 0x59, 0x01);
+  cp2155_set (fd, 0x5e, 0x02);
+  cp2155_set (fd, 0x5f, 0x00);
+  cp2155_set (fd, 0x5f, 0x03);
+  cp2155_set (fd, 0x60, 0x01);
+  cp2155_set (fd, 0x60, 0x01);
+  cp2155_set (fd, 0x60, 0x01);
+  cp2155_set (fd, 0x60, 0x01);
+  cp2155_set (fd, 0x50, 0x04);
+  cp2155_set (fd, 0x51, chndl->value_51);
+  cp2155_set (fd, 0x81, 0x31);
+  cp2155_set (fd, 0x81, 0x31);
+  cp2155_set (fd, 0x82, 0x11);
+  cp2155_set (fd, 0x82, 0x11);
+  cp2155_set (fd, 0x83, 0x01);
+  cp2155_set (fd, 0x84, 0x05);
+  cp2155_set (fd, 0x80, 0x12);
+  cp2155_set (fd, 0x80, 0x12);
+  cp2155_set (fd, 0xb0, 0x08);
+
+  big_write (fd, 0xa714, buf);
+  usleep (10.0 * MSEC);
+
+  cp2155_set (fd, 0x10, 0x05);
+  cp2155_set (fd, 0x10, 0x05);
+  cp2155_set (fd, 0x10, 0x05);
+  cp2155_set (fd, 0x10, 0x05);
+  cp2155_set (fd, 0x11, 0x83);
+  cp2155_set (fd, 0x11, 0x83);
+  cp2155_set (fd, 0x11, 0x83);
+  cp2155_set (fd, 0x11, 0x83);
+  cp2155_set (fd, 0x11, 0x83);
+  cp2155_set (fd, 0x11, 0x81);
+  cp2155_set (fd, 0x11, 0x81);
+  cp2155_set (fd, 0x12, 0x50);
+  cp2155_set (fd, 0x13, 0x50);
+  cp2155_set (fd, 0x16, 0x50);
+  cp2155_set (fd, 0x21, 0x06);
+  cp2155_set (fd, 0x22, 0x50);
+  cp2155_set (fd, 0x20, 0x06);
+  cp2155_set (fd, 0x1d, 0x00);
+  cp2155_set (fd, 0x1e, 0x00);
+  cp2155_set (fd, 0x1f, 0x04);
+  cp2155_set (fd, 0x66, 0x00);
+  cp2155_set (fd, 0x67, chndl->value_67);
+  cp2155_set (fd, 0x68, chndl->value_68);
+  cp2155_set (fd, 0x1a, 0x00);
+  cp2155_set (fd, 0x1b, 0x00);
+  cp2155_set (fd, 0x1c, 0x02);
+  cp2155_set (fd, 0x15, 0x80);
+  cp2155_set (fd, 0x14, 0x7a);
+  cp2155_set (fd, 0x17, 0x02);
+  cp2155_set (fd, 0x43, 0x1c);
+  cp2155_set (fd, 0x44, 0x9c);
+  cp2155_set (fd, 0x45, 0x38);
+  cp2155_set (fd, 0x23, 0x01);
+  cp2155_set (fd, 0x33, 0x01);
+  cp2155_set (fd, 0x24, 0x03);
+  cp2155_set (fd, 0x34, 0x03);
+  cp2155_set (fd, 0x25, 0x05);
+  cp2155_set (fd, 0x35, 0x05);
+  cp2155_set (fd, 0x26, 0x07);
+  cp2155_set (fd, 0x36, 0x07);
+  cp2155_set (fd, 0x27, 0x09);
+  cp2155_set (fd, 0x37, 0x09);
+  cp2155_set (fd, 0x28, 0x0a);
+  cp2155_set (fd, 0x38, 0x0a);
+  cp2155_set (fd, 0x29, 0x0b);
+  cp2155_set (fd, 0x39, 0x0b);
+  cp2155_set (fd, 0x2a, 0x0c);
+  cp2155_set (fd, 0x3a, 0x0c);
+  cp2155_set (fd, 0x2b, 0x0c);
+  cp2155_set (fd, 0x3b, 0x0c);
+  cp2155_set (fd, 0x2c, 0x0b);
+  cp2155_set (fd, 0x3c, 0x0b);
+  cp2155_set (fd, 0x2d, 0x0a);
+  cp2155_set (fd, 0x3d, 0x0a);
+  cp2155_set (fd, 0x2e, 0x09);
+  cp2155_set (fd, 0x3e, 0x09);
+  cp2155_set (fd, 0x2f, 0x07);
+  cp2155_set (fd, 0x3f, 0x07);
+  cp2155_set (fd, 0x30, 0x05);
+  cp2155_set (fd, 0x40, 0x05);
+  cp2155_set (fd, 0x31, 0x03);
+  cp2155_set (fd, 0x41, 0x03);
+  cp2155_set (fd, 0x32, 0x01);
+  cp2155_set (fd, 0x42, 0x01);
+  cp2155_set (fd, 0xca, 0x00);
+  cp2155_set (fd, 0xca, 0x00);
+  cp2155_set (fd, 0xca, 0x00);
+  cp2155_set (fd, 0x18, 0x00);
+
+  count = 324;
+  make_slope_table (count, top_value, 0x06, 0.0, buf);
+
+  write_buf (fd, count, buf, 0x03, 0x00);
+  write_buf (fd, count, buf, 0x03, 0x02);
+  write_buf (fd, count, buf, 0x03, 0x06);
+
+  count = 36;
+  make_slope_table (count, top_value, 0x06, 0.0, buf);
 
   write_buf (fd, count, buf, 0x03, 0x04);
   write_buf (fd, count, buf, 0x03, 0x08);
@@ -2071,7 +1987,8 @@ send_start_blob (CANON_Handle * chndl)
   fd = chndl->fd;
 
 /* value_51: lamp colors
-   bit 0 set: red on, bit 1 set: green on, bit 2 set: blue on
+   bit 0 set: red on, bit 1 set: green on, bit 2 set: blue on,
+   bit 3 set: infrared on
    all bits off: no scan is made
 */
   chndl->value_51 = 0x07;
@@ -2099,13 +2016,15 @@ send_start_blob (CANON_Handle * chndl)
       chndl->value_68 = 0x18;
     }
 
+  unsigned char value_11 = 0xc1;	/* 0x00; */
+
   cp2155_set (fd, 0x80, 0x12);
-  cp2155_set (fd, 0x11, 0xc1);
+  cp2155_set (fd, 0x11, value_11);
   cp2155_set (fd, 0x80, 0x12);
-  cp2155_set (fd, 0x11, 0xc1);
+  cp2155_set (fd, 0x11, value_11);
   cp2155_set (fd, 0x90, 0xf8);
   cp2155_set (fd, 0x80, 0x12);
-  cp2155_set (fd, 0x11, 0xc1);
+  cp2155_set (fd, 0x11, value_11);
   cp2155_set (fd, 0x01, 0x29);
   cp2155_set (fd, 0x04, 0x0c);
   cp2155_set (fd, 0x05, 0x00);
@@ -2386,6 +2305,14 @@ void
 back2225 (int fd, unsigned char *buf)
 {
   size_t count;
+  unsigned int top_value = 0x2580;
+  unsigned char value_62 = 0x2e;
+
+/* original:
+  unsigned int top_value = 0x2580;
+  unsigned char value_62 = 0x2e;
+  ratio 320 decimal
+*/
   cp2155_set (fd, 0x90, 0xc8);
   cp2155_set (fd, 0x90, 0xc8);
   cp2155_set (fd, 0xb0, 0x03);
@@ -2402,7 +2329,7 @@ back2225 (int fd, unsigned char *buf)
   cp2155_set (fd, 0x64, 0x00);
   cp2155_set (fd, 0x65, 0x00);
   cp2155_set (fd, 0x61, 0x00);
-  cp2155_set (fd, 0x62, 0x2e);
+  cp2155_set (fd, 0x62, value_62);
   cp2155_set (fd, 0x63, 0x00);
   cp2155_set (fd, 0x50, 0x04);
   cp2155_set (fd, 0x50, 0x04);
@@ -2460,61 +2387,20 @@ back2225 (int fd, unsigned char *buf)
   cp2155_set (fd, 0x66, 0x00);
   cp2155_set (fd, 0x67, 0x00);
   cp2155_set (fd, 0x68, 0x06);
-  cp2155_set (fd, 0x1a, 0x00);
-  cp2155_set (fd, 0x1b, 0x00);
-  cp2155_set (fd, 0x1c, 0x02);
-  cp2155_set (fd, 0x15, 0x83);
-  cp2155_set (fd, 0x14, 0x7c);
-  cp2155_set (fd, 0x17, 0x02);
-  cp2155_set (fd, 0x43, 0x1c);
-  cp2155_set (fd, 0x44, 0x9c);
-  cp2155_set (fd, 0x45, 0x38);
-  cp2155_set (fd, 0x23, 0x28);
-  cp2155_set (fd, 0x33, 0x28);
-  cp2155_set (fd, 0x24, 0x27);
-  cp2155_set (fd, 0x34, 0x27);
-  cp2155_set (fd, 0x25, 0x25);
-  cp2155_set (fd, 0x35, 0x25);
-  cp2155_set (fd, 0x26, 0x21);
-  cp2155_set (fd, 0x36, 0x21);
-  cp2155_set (fd, 0x27, 0x1c);
-  cp2155_set (fd, 0x37, 0x1c);
-  cp2155_set (fd, 0x28, 0x16);
-  cp2155_set (fd, 0x38, 0x16);
-  cp2155_set (fd, 0x29, 0x0f);
-  cp2155_set (fd, 0x39, 0x0f);
-  cp2155_set (fd, 0x2a, 0x08);
-  cp2155_set (fd, 0x3a, 0x08);
-  cp2155_set (fd, 0x2b, 0x00);
-  cp2155_set (fd, 0x3b, 0x00);
-  cp2155_set (fd, 0x2c, 0x08);
-  cp2155_set (fd, 0x3c, 0x08);
-  cp2155_set (fd, 0x2d, 0x0f);
-  cp2155_set (fd, 0x3d, 0x0f);
-  cp2155_set (fd, 0x2e, 0x16);
-  cp2155_set (fd, 0x3e, 0x16);
-  cp2155_set (fd, 0x2f, 0x1c);
-  cp2155_set (fd, 0x3f, 0x1c);
-  cp2155_set (fd, 0x30, 0x21);
-  cp2155_set (fd, 0x40, 0x21);
-  cp2155_set (fd, 0x31, 0x25);
-  cp2155_set (fd, 0x41, 0x25);
-  cp2155_set (fd, 0x32, 0x27);
-  cp2155_set (fd, 0x42, 0x27);
-  cp2155_set (fd, 0xca, 0x02);
-  cp2155_set (fd, 0xca, 0x02);
-  cp2155_set (fd, 0xca, 0x22);
+
+  memcpy (buf, "\x28\x27\x25\x21\x1c\x16\x0f\x08\x00", 9);
+  register_table (fd, 0, buf);
   cp2155_set (fd, 0x18, 0x00);
 
   count = 260;
-  make_slope_table (count, 0x2580, 0x6a, 0.021739, buf);
+  make_slope_table (count, top_value, 0x6a, 0.021739, buf);
 
   write_buf (fd, count, buf, 0x03, 0x00);
   write_buf (fd, count, buf, 0x03, 0x02);
   write_buf (fd, count, buf, 0x03, 0x06);
 
   count = 36;
-  make_slope_table (count, 0x2580, 0x06, 0.15217, buf);
+  make_slope_table (count, top_value, 0x06, 0.15217, buf);
 
   write_buf (fd, count, buf, 0x03, 0x04);
   write_buf (fd, count, buf, 0x03, 0x08);
@@ -2532,10 +2418,18 @@ back2224 (int fd, unsigned char *buf)
 {
   size_t count;
 
-/*  cp2155_set (fd, 0x90, 0xe8); */
+  unsigned int top_value = 0x2580;
+  unsigned char value_62 = 0x2e;
+
+/* original:
+  unsigned int top_value = 0x2580;
+  unsigned char value_62 = 0x2e;
+  ratio 320 decimal
+*/
+  cp2155_set (fd, 0x90, 0xe8);
   cp2155_set (fd, 0x9b, 0x06);
   cp2155_set (fd, 0x9b, 0x04);
-/*  cp2155_set (fd, 0x90, 0xf8); */
+  cp2155_set (fd, 0x90, 0xf8);
   cp2155_set (fd, 0xb0, 0x03);
   cp2155_set (fd, 0x07, 0x00);
   cp2155_set (fd, 0x07, 0x00);
@@ -2550,7 +2444,7 @@ back2224 (int fd, unsigned char *buf)
   cp2155_set (fd, 0x64, 0x00);
   cp2155_set (fd, 0x65, 0x00);
   cp2155_set (fd, 0x61, 0x00);
-  cp2155_set (fd, 0x62, 0x2e);
+  cp2155_set (fd, 0x62, value_62);
   cp2155_set (fd, 0x63, 0x00);
   cp2155_set (fd, 0x50, 0x04);
   cp2155_set (fd, 0x50, 0x04);
@@ -2609,61 +2503,19 @@ back2224 (int fd, unsigned char *buf)
   cp2155_set (fd, 0x66, 0x00);
   cp2155_set (fd, 0x67, 0x00);
   cp2155_set (fd, 0x68, 0x06);
-  cp2155_set (fd, 0x1a, 0x00);
-  cp2155_set (fd, 0x1b, 0x00);
-  cp2155_set (fd, 0x1c, 0x02);
-  cp2155_set (fd, 0x15, 0x83);
-  cp2155_set (fd, 0x14, 0x7c);
-  cp2155_set (fd, 0x17, 0x02);
-  cp2155_set (fd, 0x43, 0x1c);
-  cp2155_set (fd, 0x44, 0x9c);
-  cp2155_set (fd, 0x45, 0x38);
-  cp2155_set (fd, 0x23, 0x0d);
-  cp2155_set (fd, 0x33, 0x0d);
-  cp2155_set (fd, 0x24, 0x0d);
-  cp2155_set (fd, 0x34, 0x0d);
-  cp2155_set (fd, 0x25, 0x0d);
-  cp2155_set (fd, 0x35, 0x0d);
-  cp2155_set (fd, 0x26, 0x0d);
-  cp2155_set (fd, 0x36, 0x0d);
-  cp2155_set (fd, 0x27, 0x0d);
-  cp2155_set (fd, 0x37, 0x0d);
-  cp2155_set (fd, 0x28, 0x0d);
-  cp2155_set (fd, 0x38, 0x0d);
-  cp2155_set (fd, 0x29, 0x0d);
-  cp2155_set (fd, 0x39, 0x0d);
-  cp2155_set (fd, 0x2a, 0x0d);
-  cp2155_set (fd, 0x3a, 0x0d);
-  cp2155_set (fd, 0x2b, 0x0d);
-  cp2155_set (fd, 0x3b, 0x0d);
-  cp2155_set (fd, 0x2c, 0x0d);
-  cp2155_set (fd, 0x3c, 0x0d);
-  cp2155_set (fd, 0x2d, 0x0d);
-  cp2155_set (fd, 0x3d, 0x0d);
-  cp2155_set (fd, 0x2e, 0x0d);
-  cp2155_set (fd, 0x3e, 0x0d);
-  cp2155_set (fd, 0x2f, 0x0d);
-  cp2155_set (fd, 0x3f, 0x0d);
-  cp2155_set (fd, 0x30, 0x0d);
-  cp2155_set (fd, 0x40, 0x0d);
-  cp2155_set (fd, 0x31, 0x0d);
-  cp2155_set (fd, 0x41, 0x0d);
-  cp2155_set (fd, 0x32, 0x0d);
-  cp2155_set (fd, 0x42, 0x0d);
-  cp2155_set (fd, 0xca, 0x00);
-  cp2155_set (fd, 0xca, 0x00);
-  cp2155_set (fd, 0xca, 0x00);
+
+  register_table (fd, 0x0d, buf);
   cp2155_set (fd, 0x18, 0x00);
 
   count = 516;
-  make_slope_table (count, 0x2580, 0x06, 0.0067225, buf);
+  make_slope_table (count, top_value, 0x06, 0.0067225, buf);
 
   write_buf (fd, count, buf, 0x03, 0x00);
   write_buf (fd, count, buf, 0x03, 0x02);
   write_buf (fd, count, buf, 0x03, 0x06);
 
   count = 36;
-  make_slope_table (count, 0x2580, 0x06, 0.15217, buf);
+  make_slope_table (count, top_value, 0x06, 0.15217, buf);
 
   write_buf (fd, count, buf, 0x03, 0x04);
   write_buf (fd, count, buf, 0x03, 0x08);
