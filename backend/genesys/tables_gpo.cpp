@@ -258,6 +258,21 @@ void genesys_init_gpo_tables()
 
 
     gpo = Genesys_Gpo();
+    gpo.id = GpioId::G4010;
+    gpo.regs = {
+        { 0x6c, 0x20 },
+        { 0x6d, 0x00 },
+        { 0x6e, 0xfc },
+        { 0x6f, 0x00 },
+        { 0xa6, 0x08 },
+        { 0xa7, 0x1e },
+        { 0xa8, 0x3e },
+        { 0xa9, 0x06 },
+    };
+    s_gpo->push_back(gpo);
+
+
+    gpo = Genesys_Gpo();
     gpo.id = GpioId::HP_N6310;
     gpo.regs = {
         { 0x6c, 0xa3 },
