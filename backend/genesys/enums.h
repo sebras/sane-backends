@@ -372,6 +372,7 @@ enum class GpioId : unsigned
     DP665,
     DP685,
     G4050,
+    G4010,
     HP2300,
     HP2400,
     HP3670,

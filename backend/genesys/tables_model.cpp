@@ -342,12 +342,12 @@ void genesys_init_usb_device_tables()
     model.is_sheetfed = false;
     model.sensor_id = SensorId::CCD_G4050;
     model.adc_id = AdcId::G4050;
-    model.gpio_id = GpioId::G4050;
+    model.gpio_id = GpioId::G4010;
     model.motor_id = MotorId::G4050;
     model.flags = ModelFlag::WARMUP |
                   ModelFlag::DARK_CALIBRATION |
                   ModelFlag::CUSTOM_GAMMA;
-    model.buttons = GENESYS_HAS_SCAN_SW | GENESYS_HAS_FILE_SW | GENESYS_HAS_COPY_SW;
+    model.buttons = GENESYS_HAS_SCAN_SW | GENESYS_HAS_FILE_SW | GENESYS_HAS_COPY_SW | GENESYS_HAS_EXTRA_SW;
     model.search_lines = 100;
 
     s_usb_devices->emplace_back(0x03f0, 0x4505, model);
