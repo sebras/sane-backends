@@ -69,7 +69,7 @@ to detach from the console and run in the background.
 The flag
 .B \-a
 is equivalent to the combination of
-.B \-l \-B \-u
+.B \-l \-D \-u
 .I username
 options.
 .PP
