@@ -40,7 +40,7 @@ recognises the following options:
 is equivalent to the combination of
 .B \-l \-D \-u
 .I username
-options. However, 
+options. However,
 .I username
 is optional and running user will only be set when specified.
 
@@ -64,7 +64,7 @@ given.
 .BR \-p "\fI port\fR, " \-\-port=\fIport\fR
 tells
 .B saned
-to listen on the 
+to listen on the
 .I port
 given.  A value of 0 tells
 .B saned
