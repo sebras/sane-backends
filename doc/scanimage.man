@@ -14,7 +14,7 @@ scanimage \- scan an image
 .RB [ \-f | \-\-formatted\-device\-list
 .IR format ]
 .RB [ \-b | \-\-batch
-.RI [= format ]]
+.RI [ format ]]
 .RB [ \-\-batch\-start
 .IR start ]
 .RB [ \-\-batch\-count
@@ -24,7 +24,8 @@ scanimage \- scan an image
 .RB [ \-\-batch\-double ]
 .RB [ \-\-accept\-md5\-only ]
 .RB [ \-p | \-\-progress ]
-.RB [ \-o | \-\-output-file ]
+.RB [ \-o | \-\-output-file
+.IR path ]
 .RB [ \-n | \-\-dont\-scan ]
 .RB [ \-T | \-\-test ]
 .RB [ \-A | \-\-all-options ]
@@ -76,16 +77,13 @@ To print all available options:
 
 .SH OPTIONS
 Parameters are separated by a blank from single-character options (e.g.
-.BR "\-d epson" )
+.BI "\-d " epson )
 and by a "=" from multi-character options (e.g.
-.BR \-\-device\-name=epson ).
+.BR \-\-device\-name =\fIepson\FR ).
 
-.PP
-The
-.B \-d
-or
-.B \-\-device\-name
-options must be followed by a SANE device-name like
+.TP
+.BR \-d "\fI dev\fR, " \-\-device\-name =\fIdev\fR
+specifies the device to access and must be followed by a SANE device-name like
 .RI ` epson:/dev/sg0 '
 or
 .RI ` hp:/dev/usbscanner0 '.
@@ -98,11 +96,10 @@ reads a device-name from the environment variable
 If this variable is not set,
 .B scanimage
 will attempt to open the first available device.
-.PP
-The
-.B \-\-format
-.I format
-option selects how image data is written to standard output or the file specified by
+
+.TP
+.BR \-\-format =\fIformat\fR
+selects how image data is written to standard output or the file specified by
 the
 .B \-\-output\-file
 option.
@@ -116,19 +113,15 @@ or
 If
 .B \-\-format
 is not specified, PNM is written by default.
-.PP
-The
-.B \-i
-or
-.B \-\-icc\-profile
-option is used to include an ICC profile into a TIFF file.
-.PP
-The
-.B \-L
-or
-.B \-\-list\-devices
-option requests a (partial) list of devices that are available.  The
-list is not complete since some devices may be available, but are not
+
+.TP
+.BR \-i "\fI profile\fR, " \-\-icc\-profile =\fIprofile\fR
+is used to include an ICC profile into a TIFF file.
+
+.TP
+.BR \-L ", " \-\-list\-devices
+requests a (partial) list of devices that are available.  The
+list may not be complete since some devices may be available, but are not
 listed in any of the configuration files (which are typically stored
 in directory
 .IR @CONFIGDIR@ ).
@@ -136,12 +129,10 @@ This is particularly the case when accessing scanners through the network.  If
 a device is not listed in a configuration file, the only way to access it is
 by its full device name.  You may need to consult your system administrator to
 find out the names of such devices.
-.PP
-The
-.B \-f
-or
-.B \-\-formatted\-device\-list
-option works similar to
+
+.TP
+.BR \-f "\fI format\fR, " \-\-formatted\-device\-list =\fIformat\fR
+works similar to
 .BR \-\-list\-devices ,
 but requires a format string.
 .B scanimage
@@ -149,25 +140,30 @@ replaces the placeholders
 .B %d %v %m %t %i %n
 with the device name, vendor name, model name, scanner type, an index
 number and newline respectively. The command
-.PP
+.LP
 .RS
 .B scanimage \-f
 .I \*(lq scanner number %i device %d is a %t, model %m, produced by %v \*(rq
-.PP
-.RE
+.LP
+
 will produce something like:
 .PP
 .RS
 scanner number 0  device sharp:/dev/sg1 is  a  flatbed scanner, model JX250
 SCSI, produced by SHARP
 .RE
+.RE
+
 .PP
 The
 .B \-\-batch*
-options provide the features for scanning documents using document
+options provide features for scanning documents using document
 feeders.
-.BR \-\-batch
-.RI [ format ]
+
+.RS
+
+.TP
+.BR \-b " [\fIformat\fR], " \-\-batch =[\fIformat\fR]
 is used to specify the format of the filename that each page will be written
 to.  Each page is written out to a single file.  If
 .I format
@@ -190,120 +186,117 @@ This option is incompatible with the
 option.
 .I format
 is given as a printf style string with one integer parameter.
-.B \-\-batch\-start
-.I start
+
+
+.TP
+.BR \-\-batch\-start =\fIstart\fR
 selects the page number to start naming files with. If this option is not
 given, the counter will start at 1.
-.B \-\-batch\-count
-.I count
+
+.TP
+.BR \-\-batch\-count =\fIcount\fR
 specifies the number of pages to attempt to scan.  If not given,
-scanimage will continue scanning until the scanner returns a state
+.B scanimage
+will continue scanning until the scanner returns a state
 other than OK.  Not all scanners with document feeders signal when the
-ADF is empty, use this command to work around them.
-With
-.B \-\-batch\-increment
-.I increment
-you can change the amount that the number in the filename is incremented
+ADF is empty. Use this option to work around them.
+
+.TP
+.BR \-\-batch\-increment =\fIincrement\fR
+sets the amount that the number in the filename is incremented
 by.  Generally this is used when you are scanning double-sided documents
-on a single-sided document feeder.  A specific command is provided to
-aid this:
+on a single-sided document feeder.
+.B \-\-batch\-double
+is a specific command provided to aid this.
+
+.TP
 .B \-\-batch\-double
 will automatically set the increment to 2.
+Equivalent to
+.BR \-\-batch\-increment =2
+
+.TP
 .B \-\-batch\-prompt
 will ask for pressing RETURN before scanning a page. This can be used for
 scanning multiple pages without an automatic document feeder.
-.PP
-The
+.RE
+
+.TP
 .B \-\-accept\-md5\-only
-option only accepts user authorization requests that support MD5 security. The
+only accepts user authorization requests that support MD5 security. The
 .B SANE
 network daemon
-.RB ( saned )
-is capable of doing such requests. See
-.BR saned (8).
-.PP
-The
-.B \-p
-or
-.B \-\-progress
-option requests that
+.BR saned (8)
+is capable of doing such requests.
+
+.TP
+.BR \-p ", " \-\-progress
+requests that
 .B scanimage
 prints a progress counter. It shows how much image data of the current image has
-already been received by
+already been received (in percent).
+
+.TP
+.BR \-o "\fI path\fR, " \-\-output\-file =\fIpath\fR
+requests that
 .B scanimage
-(in percent).
-.PP
-The
-.B \-o
-or
-.B \-\-output\-file
-option requests that
-.B scanimage
-saves the scanning output to the given path. This option is incompatible with the
-\-\-batch option. The program will try to guess
+saves the scanning output to the given
+.IR path .
+This option is incompatible with the
+.B \-\-batch
+option. The program will try to guess
 .B \-\-format
 from the file name. If that is not possible, it will print an error message and exit.
-.PP
-The
-.B \-n
-or
-.B \-\-dont\-scan
-option requests that
+
+.TP
+.BR \-n ", " \-\-dont\-scan
+requests that
 .B scanimage
 only sets the options provided by the user but doesn't actually perform a
 scan. This option can be used to e.g. turn off the scanner's lamp (if
 supported by the backend).
-.PP
-The
-.B \-T
-or
-.B \-\-test
-option requests that
+
+.TP
+.BR \-T ", " \-\-test
+requests that
 .B scanimage
 performs a few simple sanity tests to make sure the backend works as
 defined by the
 .B SANE
-API (in particular the
+API. In particular the
 .BR sane_read ()
-function is exercised by this test).
-.PP
-The
-.B \-A
-or
-.B \-\-all-options
-option requests that
+function is exercised by this test.
+
+.TP
+.BR \-A ", " \-\-all\-options
+requests that
 .B scanimage
-lists all available options exposed the backend, including button options.
-The information is printed on standard output and no scan will be done.
-.PP
-The
-.B \-h
-or
-.B \-\-help
-options request help information.  The information is printed on
-standard output and in this case, no attempt will be made to acquire
-an image.
-.PP
-The
-.B \-v
-or
-.B \-\-verbose
-options increase the verbosity of the output of
+lists all available options exposed by the backend, including button options.
+The information is printed on standard output and no scan will be performed.
+
+.TP
+.BR \-h ", " \-\-help
+requests help information.  The information is printed on
+standard output and no scan will be performed.
+
+.TP
+.BR \-v ", " \-\-verbose
+increases the verbosity of the output of
 .B scanimage.
 The option may be specified repeatedly, each time increasing the verbosity
 level.
-.PP
-The
-.B \-B
-option without argument changes the input buffer size from the default 32 KB to 1 MB.  For finer grained control, use
-.B \-\-buffer-size=
-followed by the number of KB.
-.PP
-The
-.B \-V
-or
-.B \-\-version
-option requests that
+
+.TP
+.BR \-B " [\fIsize\fR], " \-\-buffer\-size =[\fIsize\fR]
+changes input buffer size from the default of 32KB to
+.I size
+KB. If
+.I size
+is not specified then the buffer is set to 1 MB.
+
+.TP
+.BR \-V ", " \-\-version
+requests that
 .B scanimage
 prints the program and package name, the version number of
 the
