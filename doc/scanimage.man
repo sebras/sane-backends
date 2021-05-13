@@ -76,6 +76,25 @@ To print all available options:
   scanimage \-h
 
 .SH OPTIONS
+There are two sets of options available when running
+.BR scanimage .
+.PP
+The options that are provided by
+.B scanimage
+itself are listed below. In addition, each backend offers its own set of options and these
+can also be specified. Note that the options available from the backend may vary depending on the
+scanning device that is selected.
+.PP
+Often options that are similar in function may be implemented
+differently across backends. An example of this difference is
+.I \-\-mode Gray
+and
+.IR "\-\-mode Grayscale" .
+This may be due to differing backend author preferences.
+At other times, options are defined by the scanning device itself and therefore out of the
+control of the backend code.
+
+.PP
 Parameters are separated by a blank from single-character options (e.g.
 .BI "\-d " epson )
 and by a "=" from multi-character options (e.g.
