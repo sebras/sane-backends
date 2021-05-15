@@ -88,8 +88,6 @@
 #define MF4700_PID 0x2774
 #define MF8200_PID 0x2779
 /* the following are all untested */
-#define MF5630_PID 0x264e
-#define MF5650_PID 0x264f
 #define MF8100_PID 0x2659
 #define MF5880_PID 0x26f9
 #define MF6680_PID 0x26fa
@@ -949,8 +947,6 @@ const pixma_config_t pixma_iclass_devices[] = {
   DEV ("Canon i-SENSYS MF8300 Series", "MF8300", MF8300_PID, 600, 0, 640, 1050, PIXMA_CAP_ADF),
   DEV ("Canon imageCLASS D530", "D530", D530_PID, 600, 0, 640, 877, 0),
   /* FIXME: the following capabilities all need updating/verifying */
-  DEV ("Canon imageCLASS MF5630", "MF5630", MF5630_PID, 600, 0, 640, 877, PIXMA_CAP_ADF),
-  DEV ("Canon laserBase MF5650", "MF5650", MF5650_PID, 600, 0, 640, 877, PIXMA_CAP_ADF),
   DEV ("Canon imageCLASS MF8170c", "MF8170c", MF8100_PID, 600, 0, 640, 877, PIXMA_CAP_ADF),
   DEV ("Canon imageClass MF8030", "MF8030", MF8030_PID, 600, 0, 640, 877, PIXMA_CAP_ADF),
   DEV ("Canon i-SENSYS MF5880dn", "MF5880", MF5880_PID, 600, 0, 640, 877, PIXMA_CAP_ADFDUP),
