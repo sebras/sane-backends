@@ -7,9 +7,9 @@ msgstr ""
 "Project-Id-Version: sane-backends 1.0.32.60-2b0e4\n"
 "Report-Msgid-Bugs-To: sane-devel@alioth-lists.debian.net\n"
 "POT-Creation-Date: 2021-05-18 17:11+0300\n"
-"PO-Revision-Date: 2021-05-21 16:31+0800\n"
+"PO-Revision-Date: 2021-05-21 21:01+0800\n"
 "Last-Translator: Tyson Tan <tysontan@tysontan.com>\n"
-"Language-Team: Chinese <kde-i18n-doc@kde.org>\n"
+"Language-Team: Simplified Chinese <kde-i18n-doc@kde.org>\n"
 "Language: zh_CN\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -674,7 +674,7 @@ msgstr ""
 #: include/sane/saneopts.h:386
 #, no-c-format
 msgid "The filename of the image to be loaded."
-msgstr "图像要被加载为的文件名。"
+msgstr "将被加载图像的文件名。"
 
 #: include/sane/saneopts.h:389
 #, no-c-format
@@ -852,7 +852,7 @@ msgstr "取消按钮"
 #: include/sane/saneopts.h:458
 #, no-c-format
 msgid "Page loaded"
-msgstr "页面已加载"
+msgstr "页面已装载"
 
 #: include/sane/saneopts.h:459
 #, no-c-format
@@ -1707,13 +1707,13 @@ msgstr "对焦到玻璃表面上方 2.5mm"
 #: backend/epson2.c:160 backend/epson2.c:168 backend/epson2.c:180
 #, no-c-format
 msgid "Halftone A (Hard Tone)"
-msgstr "半调 A (锐利)"
+msgstr "半调 A (硬调)"
 
 #: backend/epson.c:556 backend/epson.c:564 backend/epson.c:576
 #: backend/epson2.c:161 backend/epson2.c:169 backend/epson2.c:181
 #, no-c-format
 msgid "Halftone B (Soft Tone)"
-msgstr "半调 B (柔和)"
+msgstr "半调 B (软调)"
 
 #: backend/epson.c:557 backend/epson.c:565 backend/epson.c:577
 #: backend/epson2.c:162 backend/epson2.c:170 backend/epson2.c:182
@@ -1799,17 +1799,17 @@ msgstr "默认"
 #: backend/epson.c:656 backend/epson2.c:250
 #, no-c-format
 msgid "High density printing"
-msgstr "高密度打印"
+msgstr "高密度印刷物"
 
 #: backend/epson.c:657 backend/epson2.c:251
 #, no-c-format
 msgid "Low density printing"
-msgstr "低密度打印"
+msgstr "低密度印刷物"
 
 #: backend/epson.c:658 backend/epson2.c:252
 #, no-c-format
 msgid "High contrast printing"
-msgstr "高对比度打印"
+msgstr "高对比度印刷物"
 
 #: backend/epson.c:676 backend/epson2.c:270
 #, no-c-format
@@ -1840,7 +1840,7 @@ msgstr "A5 横向"
 #: backend/kvs40xx_opt.c:131 backend/kvs40xx_opt.c:148
 #, no-c-format
 msgid "Letter"
-msgstr "美国信纸"
+msgstr "美国信纸 (Letter)"
 
 #: backend/epson.c:759 backend/kvs1025_opt.c:100 backend/kvs20xx_opt.c:74
 #: backend/kvs20xx_opt.c:302 backend/kvs40xx_opt.c:128
@@ -1987,7 +1987,7 @@ msgstr "快速预览"
 #: backend/epson.c:3243 backend/epson2.c:1263
 #, no-c-format
 msgid "Auto area segmentation"
-msgstr "自动区域分块"
+msgstr "自动分区"
 
 #: backend/epson.c:3256
 #, no-c-format
@@ -2127,22 +2127,22 @@ msgstr "用户定义 CCT 配置文件"
 #: backend/epsonds.c:757
 #, no-c-format
 msgid "Load"
-msgstr "加载"
+msgstr "装载"
 
 #: backend/epsonds.c:758
 #, no-c-format
 msgid "Load a sheet in the ADF"
-msgstr "加载自动输稿器中的一页文稿"
+msgstr "装载自动输稿器中的一页文稿"
 
 #: backend/epsonds.c:778
 #, no-c-format
 msgid "ADF Skew Correction"
-msgstr "自动输稿器倾斜校正"
+msgstr "自动输稿器倾斜纠正"
 
 #: backend/epsonds.c:780
 #, no-c-format
 msgid "Enables ADF skew correction"
-msgstr "启用自动输稿器倾斜校准"
+msgstr "启用自动输稿器倾斜纠正"
 
 #: backend/fujitsu.c:697 backend/hp-option.c:3325 backend/hp-option.c:3338
 #, no-c-format
@@ -2494,57 +2494,57 @@ msgstr ""
 #: backend/fujitsu.c:3679
 #, no-c-format
 msgid "DF action"
-msgstr "双张送入操作"
+msgstr "双张进纸操作"
 
 #: backend/fujitsu.c:3680
 #, no-c-format
 msgid "Action following double feed error"
-msgstr "双张送入错误后的操作"
+msgstr "双张进纸错误后的操作"
 
 #: backend/fujitsu.c:3696
 #, no-c-format
 msgid "DF skew"
-msgstr "双张送入倾斜"
+msgstr "双张进纸倾斜"
 
 #: backend/fujitsu.c:3697
 #, no-c-format
 msgid "Enable double feed error due to skew"
-msgstr "启用由于纸张倾斜造成的双张送入错误"
+msgstr "启用由于纸张倾斜造成的双张进纸错误"
 
 #: backend/fujitsu.c:3715
 #, no-c-format
 msgid "DF thickness"
-msgstr "双张送入厚度"
+msgstr "双张进纸厚度"
 
 #: backend/fujitsu.c:3716
 #, no-c-format
 msgid "Enable double feed error due to paper thickness"
-msgstr "启用由于纸张厚度造成的双张送入错误"
+msgstr "启用由于纸张厚度造成的双张进纸错误"
 
 #: backend/fujitsu.c:3734
 #, no-c-format
 msgid "DF length"
-msgstr "双张送入长度"
+msgstr "双张进纸长度"
 
 #: backend/fujitsu.c:3735
 #, no-c-format
 msgid "Enable double feed error due to paper length"
-msgstr "启用由于纸张长度造成的双张送入错误"
+msgstr "启用由于纸张长度造成的双张进纸错误"
 
 #: backend/fujitsu.c:3758
 #, no-c-format
 msgid "DF length difference"
-msgstr "双张送入长度差异"
+msgstr "双张进纸长度差异"
 
 #: backend/fujitsu.c:3759
 #, no-c-format
 msgid "Difference in page length to trigger double feed error"
-msgstr "纸张长度差异将激发双张送入错误"
+msgstr "纸张长度差异将激发双张进纸错误"
 
 #: backend/fujitsu.c:3782
 #, no-c-format
 msgid "DF recovery mode"
-msgstr "双张送入恢复模式"
+msgstr "双张进纸恢复模式"
 
 #: backend/fujitsu.c:3783
 #, no-c-format
@@ -2730,7 +2730,7 @@ msgstr ""
 #: backend/fujitsu.c:4082
 #, no-c-format
 msgid "Hardware deskew and crop"
-msgstr "硬件去倾斜和裁剪"
+msgstr "硬件倾斜纠正与裁剪"
 
 #: backend/fujitsu.c:4083
 #, no-c-format
@@ -2740,12 +2740,12 @@ msgstr "请求扫描仪对页面进行数码旋转和裁剪。"
 #: backend/fujitsu.c:4094 backend/kvs1025_opt.c:871
 #, no-c-format
 msgid "Software deskew"
-msgstr "软件去倾斜"
+msgstr "软件倾斜纠正"
 
 #: backend/fujitsu.c:4095
 #, no-c-format
 msgid "Request driver to rotate skewed pages digitally."
-msgstr "请求扫描仪对页面进行数码去倾斜。"
+msgstr "请求扫描仪对页面进行数码倾斜纠正。"
 
 #: backend/fujitsu.c:4107 backend/kvs1025_opt.c:880
 #, no-c-format
@@ -2934,17 +2934,17 @@ msgstr "检测到 B5 纸"
 #: backend/fujitsu.c:4478
 #, no-c-format
 msgid "OMR or DF"
-msgstr "光标阅卷机或双张送入"
+msgstr "光标阅卷机或双张进纸"
 
 #: backend/fujitsu.c:4479
 #, no-c-format
 msgid "OMR or double feed detected"
-msgstr "检测到光标阅卷机或双张送入"
+msgstr "检测到光标阅卷机或双张进纸"
 
 #: backend/fujitsu.c:4502
 #, no-c-format
 msgid "Card loaded"
-msgstr "名片已加载"
+msgstr "名片已装载"
 
 #: backend/fujitsu.c:4503
 #, no-c-format
@@ -2994,12 +2994,12 @@ msgstr "压印机墨量低"
 #: backend/fujitsu.c:4586
 #, no-c-format
 msgid "Double feed"
-msgstr "双张送入"
+msgstr "双张进纸"
 
 #: backend/fujitsu.c:4587
 #, no-c-format
 msgid "Double feed detected"
-msgstr "检测到双张送入"
+msgstr "检测到双张进纸"
 
 #: backend/fujitsu.c:4598
 #, no-c-format
@@ -4054,7 +4054,7 @@ msgstr "反相图像"
 #: backend/kvs1025.h:56 backend/kvs40xx_opt.c:404
 #, no-c-format
 msgid "Long paper mode"
-msgstr "长纸张模式"
+msgstr "加长纸张模式"
 
 #: backend/kvs1025.h:57 backend/kvs20xx_opt.c:230 backend/kvs40xx_opt.c:393
 #, no-c-format
@@ -4074,7 +4074,7 @@ msgstr "手动送纸超时"
 #: backend/kvs1025.h:60 backend/kvs20xx_opt.c:267 backend/kvs40xx_opt.c:441
 #, no-c-format
 msgid "Double feed detection"
-msgstr "双张送入检测"
+msgstr "双张进纸检测"
 
 #: backend/kvs1025.h:63 backend/kvs20xx_opt.c:205 backend/kvs40xx_opt.c:354
 #: backend/matsushita.h:217
@@ -4191,7 +4191,7 @@ msgstr "B6"
 #: backend/kvs40xx_opt.c:153
 #, no-c-format
 msgid "Legal"
-msgstr "美国法律文件"
+msgstr "美国法务用纸 (Legal)"
 
 #: backend/kvs1025_opt.c:148 backend/kvs40xx_opt.c:239
 #, no-c-format
@@ -4330,7 +4330,7 @@ msgstr "设置送纸模式"
 #: backend/kvs1025_opt.c:583
 #, no-c-format
 msgid "Enable/Disable long paper mode"
-msgstr "启用/禁用长纸张模式"
+msgstr "启用/禁用加长纸张模式"
 
 #: backend/kvs1025_opt.c:592
 #, no-c-format
@@ -4353,7 +4353,7 @@ msgstr "设置手动送纸超时，单位为秒"
 #: backend/kvs40xx_opt.c:442
 #, no-c-format
 msgid "Enable/Disable double feed detection"
-msgstr "启用/禁用双张送入检测"
+msgstr "启用/禁用双张进纸检测"
 
 #: backend/kvs1025_opt.c:630 backend/kvs20xx_opt.c:276
 #: backend/kvs40xx_opt.c:497
@@ -4527,7 +4527,7 @@ msgstr "A3"
 #: backend/kvs40xx_opt.c:132
 #, no-c-format
 msgid "Double letter 11x17 in"
-msgstr "双面美国信纸 11x17 英寸"
+msgstr "双面美国信纸 (Letter) 11x17 英寸"
 
 #: backend/kvs40xx_opt.c:133
 #, no-c-format
@@ -4579,38 +4579,38 @@ msgid ""
 "Long Paper Mode is a mode that the scanner reads the image after it divides "
 "long paper by the length which is set in Document Size option."
 msgstr ""
-"长纸张模式可令扫描仪"
+"加长纸张模式可令扫描仪"
 "按照文稿大小设置的长度拆分扫描图像"
 
 #: backend/kvs40xx_opt.c:449
 #, no-c-format
 msgid "Double feed detector sensitivity"
-msgstr "双张送入检测灵敏度"
+msgstr "双张进纸检测灵敏度"
 
 #: backend/kvs40xx_opt.c:450
 #, no-c-format
 msgid "Set the double feed detector sensitivity"
-msgstr "设置双张送入检测灵敏度"
+msgstr "设置双张进纸检测灵敏度"
 
 #: backend/kvs40xx_opt.c:461 backend/kvs40xx_opt.c:462
 #, no-c-format
 msgid "Do not stop after double feed detection"
-msgstr "检测到双张送入后不停止"
+msgstr "检测到双张进纸后不停止"
 
 #: backend/kvs40xx_opt.c:470 backend/kvs40xx_opt.c:471
 #, no-c-format
 msgid "Ignore left double feed sensor"
-msgstr "忽略左侧双张送入传感器"
+msgstr "忽略左侧双张进纸传感器"
 
 #: backend/kvs40xx_opt.c:479 backend/kvs40xx_opt.c:480
 #, no-c-format
 msgid "Ignore center double feed sensor"
-msgstr "忽略中间双张送入传感器"
+msgstr "忽略中间双张进纸传感器"
 
 #: backend/kvs40xx_opt.c:488 backend/kvs40xx_opt.c:489
 #, no-c-format
 msgid "Ignore right double feed sensor"
-msgstr "忽略右侧双张送入传感器"
+msgstr "忽略右侧双张进纸传感器"
 
 #: backend/kvs40xx_opt.c:642
 #, no-c-format
