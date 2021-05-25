@@ -74,7 +74,7 @@ typedef struct CANON_Handle
   long width, height;		/* at scan resolution */
   unsigned char value_08, value_09;	/* left */
   unsigned char value_0a, value_0b;	/* right */
-  unsigned char value_67, value_68;	/* bottom */
+  unsigned char value_66, value_67, value_68;	/* bottom */
   unsigned char value_51;	/* lamp colors */
   unsigned char value_90;	/* motor mode */
   int resolution;		/* dpi */
@@ -397,6 +397,27 @@ big_write (int fd, size_t count, unsigned char *buf)
   write_buf (fd, count, buf, 0x00, 0x00);
   write_buf (fd, count, buf, 0x00, 0xb0);
   write_buf (fd, count, buf, 0x01, 0x60);
+  write_buf (fd, count, buf, 0x02, 0x10);
+}
+
+void
+big_write_2224 (int fd, size_t count, unsigned char *buf)
+{
+  make_constant_buf (count, 62756, 30918, buf);
+  write_buf (fd, count, buf, 0x00, 0x00);
+  write_buf (fd, count, buf, 0x00, 0xb0);
+  write_buf (fd, count, buf, 0x01, 0x60);
+  write_buf (fd, count, buf, 0x02, 0x10);
+}
+
+void
+big_write_film (int fd, size_t count, unsigned char *buf)
+{
+  make_constant_buf (count, 62756, 20918, buf);
+  write_buf (fd, count, buf, 0x00, 0x00);
+  write_buf (fd, count, buf, 0x02, 0x00);
+  write_buf (fd, count, buf, 0x04, 0x00);
+  write_buf (fd, count, buf, 0x06, 0x00);
 }
 
 void
@@ -448,6 +469,49 @@ register_table (int fd, unsigned char register_value, unsigned char *buf)
   cp2155_set (fd, 0x15, 0x80);
   cp2155_set (fd, 0x14, 0x7c);
   cp2155_set (fd, 0x17, 0x01);
+  cp2155_set (fd, 0x43, 0x1c);
+  cp2155_set (fd, 0x44, 0x9c);
+  cp2155_set (fd, 0x45, 0x38);
+  if (register_value > 0)
+    {
+      unsigned char register_number = 0x23;
+      while (register_number < 0x43)
+	{
+	  cp2155_set (fd, register_number, register_value);
+	  register_number++;
+	}
+    }
+  else
+    {
+      int buffer_index = 0;
+      cp2155_set (fd, 0x23 + buffer_index, buf[buffer_index]);
+      cp2155_set (fd, 0x33 + buffer_index, buf[buffer_index]);
+      buffer_index++;
+      while (buffer_index < 9)
+	{
+	  cp2155_set (fd, 0x23 + buffer_index, buf[buffer_index]);
+	  cp2155_set (fd, 0x33 + buffer_index, buf[buffer_index]);
+	  cp2155_set (fd, 0x43 - buffer_index, buf[buffer_index]);
+	  cp2155_set (fd, 0x33 - buffer_index, buf[buffer_index]);
+	  buffer_index++;
+	}
+    }
+
+  cp2155_set (fd, 0xca, 0x00);
+  cp2155_set (fd, 0xca, 0x00);
+  cp2155_set (fd, 0xca, 0x00);
+
+}
+
+void
+register_table_4800 (int fd, unsigned char register_value, unsigned char *buf)
+{
+  cp2155_set (fd, 0x1a, 0x00);
+  cp2155_set (fd, 0x1b, 0x00);
+  cp2155_set (fd, 0x1c, 0x02);
+  cp2155_set (fd, 0x15, 0x80);
+  cp2155_set (fd, 0x14, 0x7a);
+  cp2155_set (fd, 0x17, 0x02);
   cp2155_set (fd, 0x43, 0x1c);
   cp2155_set (fd, 0x44, 0x9c);
   cp2155_set (fd, 0x45, 0x38);
@@ -935,155 +999,6 @@ startblob_2225_0600 (CANON_Handle * chndl, unsigned char *buf)
 }
 
 void
-startblob_2225_0600_extra (CANON_Handle * chndl, unsigned char *buf)
-{
-
-  int fd;
-  fd = chndl->fd;
-  size_t count;
-
-  cp2155_set (fd, 0x90, 0xd8);
-  cp2155_set (fd, 0x90, 0xd8);
-  cp2155_set (fd, 0xb0, 0x00);
-  cp2155_set (fd, 0x07, 0x00);
-  cp2155_set (fd, 0x07, 0x00);
-  cp2155_set (fd, 0x08, chndl->value_08);
-  cp2155_set (fd, 0x09, chndl->value_09);
-  cp2155_set (fd, 0x0a, chndl->value_0a);
-  cp2155_set (fd, 0x0b, chndl->value_0b);
-  cp2155_set (fd, 0xa0, 0x1d);
-  cp2155_set (fd, 0xa1, 0x00);
-  cp2155_set (fd, 0xa2, 0x31);
-  cp2155_set (fd, 0xa3, 0xf0);
-  cp2155_set (fd, 0x64, 0x00);
-  cp2155_set (fd, 0x65, 0x00);
-  cp2155_set (fd, 0x61, 0x00);
-  cp2155_set (fd, 0x62, 0x55);
-  cp2155_set (fd, 0x63, 0x00);
-  cp2155_set (fd, 0x50, 0x04);
-  cp2155_set (fd, 0x50, 0x04);
-  cp2155_set (fd, 0x51, chndl->value_51);
-  cp2155_set (fd, 0x5a, 0x32);
-  cp2155_set (fd, 0x5b, 0x32);
-  cp2155_set (fd, 0x5c, 0x32);
-  cp2155_set (fd, 0x5d, 0x32);
-  cp2155_set (fd, 0x52, 0x09);
-  cp2155_set (fd, 0x53, 0x5a);
-  cp2155_set (fd, 0x54, 0x06);
-  cp2155_set (fd, 0x55, 0x08);
-  cp2155_set (fd, 0x56, 0x05);
-  cp2155_set (fd, 0x57, 0x5f);
-  cp2155_set (fd, 0x58, 0xa9);
-  cp2155_set (fd, 0x59, 0xce);
-  cp2155_set (fd, 0x5e, 0x02);
-  cp2155_set (fd, 0x5f, 0x00);
-  cp2155_set (fd, 0x5f, 0x03);
-  cp2155_set (fd, 0x60, 0x15);
-  cp2155_set (fd, 0x60, 0x15);
-  cp2155_set (fd, 0x60, 0x15);
-  cp2155_set (fd, 0x60, 0x15);
-  cp2155_set (fd, 0x50, 0x04);
-  cp2155_set (fd, 0x51, chndl->value_51);
-  cp2155_set (fd, 0x81, 0x29);
-  cp2155_set (fd, 0x81, 0x29);
-  cp2155_set (fd, 0x82, 0x09);
-  cp2155_set (fd, 0x82, 0x09);
-  cp2155_set (fd, 0x83, 0x02);
-  cp2155_set (fd, 0x84, 0x06);
-  cp2155_set (fd, 0x80, 0x12);
-  cp2155_set (fd, 0x80, 0x12);
-  cp2155_set (fd, 0xb0, 0x08);
-
-  big_write (fd, 0x5174, buf);
-
-  cp2155_set (fd, 0x10, 0x05);
-  cp2155_set (fd, 0x10, 0x05);
-  cp2155_set (fd, 0x9b, 0x01);
-  cp2155_set (fd, 0x10, 0x05);
-  cp2155_set (fd, 0x11, 0x81);
-  cp2155_set (fd, 0x11, 0x81);
-  cp2155_set (fd, 0x11, 0x81);
-  cp2155_set (fd, 0x11, 0x81);
-  cp2155_set (fd, 0x11, 0x81);
-  cp2155_set (fd, 0x11, 0x81);
-  cp2155_set (fd, 0x11, 0x81);
-  cp2155_set (fd, 0x12, 0x06);
-  cp2155_set (fd, 0x13, 0x06);
-  cp2155_set (fd, 0x16, 0x06);
-  cp2155_set (fd, 0x21, 0x06);
-  cp2155_set (fd, 0x22, 0x06);
-  cp2155_set (fd, 0x20, 0x06);
-  cp2155_set (fd, 0x1d, 0x00);
-  cp2155_set (fd, 0x1e, 0x00);
-  cp2155_set (fd, 0x1f, 0x04);
-  cp2155_set (fd, 0x66, 0x00);
-  cp2155_set (fd, 0x67, 0x0f);
-  cp2155_set (fd, 0x68, 0x39);
-  cp2155_set (fd, 0x1a, 0x00);
-  cp2155_set (fd, 0x1b, 0x00);
-  cp2155_set (fd, 0x1c, 0x02);
-  cp2155_set (fd, 0x15, 0x80);
-  cp2155_set (fd, 0x14, 0x7c);
-  cp2155_set (fd, 0x17, 0x01);
-  cp2155_set (fd, 0x43, 0x1c);
-  cp2155_set (fd, 0x44, 0x9c);
-  cp2155_set (fd, 0x45, 0x38);
-  cp2155_set (fd, 0x23, 0x14);
-  cp2155_set (fd, 0x33, 0x14);
-  cp2155_set (fd, 0x24, 0x14);
-  cp2155_set (fd, 0x34, 0x14);
-  cp2155_set (fd, 0x25, 0x14);
-  cp2155_set (fd, 0x35, 0x14);
-  cp2155_set (fd, 0x26, 0x14);
-  cp2155_set (fd, 0x36, 0x14);
-  cp2155_set (fd, 0x27, 0x14);
-  cp2155_set (fd, 0x37, 0x14);
-  cp2155_set (fd, 0x28, 0x14);
-  cp2155_set (fd, 0x38, 0x14);
-  cp2155_set (fd, 0x29, 0x14);
-  cp2155_set (fd, 0x39, 0x14);
-  cp2155_set (fd, 0x2a, 0x14);
-  cp2155_set (fd, 0x3a, 0x14);
-  cp2155_set (fd, 0x2b, 0x14);
-  cp2155_set (fd, 0x3b, 0x14);
-  cp2155_set (fd, 0x2c, 0x14);
-  cp2155_set (fd, 0x3c, 0x14);
-  cp2155_set (fd, 0x2d, 0x14);
-  cp2155_set (fd, 0x3d, 0x14);
-  cp2155_set (fd, 0x2e, 0x14);
-  cp2155_set (fd, 0x3e, 0x14);
-  cp2155_set (fd, 0x2f, 0x14);
-  cp2155_set (fd, 0x3f, 0x14);
-  cp2155_set (fd, 0x30, 0x14);
-  cp2155_set (fd, 0x40, 0x14);
-  cp2155_set (fd, 0x31, 0x14);
-  cp2155_set (fd, 0x41, 0x14);
-  cp2155_set (fd, 0x32, 0x14);
-  cp2155_set (fd, 0x42, 0x14);
-  cp2155_set (fd, 0xca, 0x00);
-  cp2155_set (fd, 0xca, 0x00);
-  cp2155_set (fd, 0xca, 0x00);
-  cp2155_set (fd, 0x18, 0x00);
-
-  memcpy (buf + 0x00000000,
-	  "\x04\x70\x18\x00\x80\x7f\x80\x7f\x80\x7f\x80\x7f\x80\x7f\x80\x7f",
-	  16);
-  memcpy (buf + 0x00000010,
-	  "\x80\x7f\x80\x7f\x80\x7f\x80\x7f\x80\x7f\x80\x7f\x00\x00\x00\x00",
-	  16);
-  memcpy (buf + 0x00000020, "\x00\x00\x00\x00", 4);
-  count = 36;
-  make_constant_buf (count, 0x7f80, 0x7f80, buf);
-  write_buf (fd, count, buf, 0x03, 0x00);
-  write_buf (fd, count, buf, 0x03, 0x02);
-  write_buf (fd, count, buf, 0x03, 0x06);
-  write_buf (fd, count, buf, 0x03, 0x04);
-  write_buf (fd, count, buf, 0x03, 0x08);
-
-  general_motor_2225 (fd);
-}
-
-void
 startblob_2225_1200 (CANON_Handle * chndl, unsigned char *buf)
 {
 
@@ -1547,8 +1462,8 @@ startblob_2224_0600 (CANON_Handle * chndl, unsigned char *buf)
   fd = chndl->fd;
   size_t count;
 
-  unsigned int top_value = 0x7f80;
-  unsigned char value_62 = 0x55;
+  unsigned int top_value = 0x2580;
+  unsigned char value_62 = 0x19;
 
 /* original:
   unsigned int top_value = 0x7f80;
@@ -1610,7 +1525,7 @@ startblob_2224_0600 (CANON_Handle * chndl, unsigned char *buf)
   cp2155_set (fd, 0x80, 0x12);
   cp2155_set (fd, 0xb0, 0x08);
 
-  big_write (fd, 0x5694, buf);
+  big_write_2224 (fd, 0x5694, buf);
 
   cp2155_set (fd, 0x10, 0x05);
   cp2155_set (fd, 0x10, 0x05);
@@ -1653,167 +1568,11 @@ startblob_2224_0600 (CANON_Handle * chndl, unsigned char *buf)
 }
 
 void
-startblob_2224_1199 (CANON_Handle * chndl, unsigned char *buf)
-{
-
-  int fd;
-  fd = chndl->fd;
-  size_t count;
-
-  cp2155_set (fd, 0x90, 0xe8);
-  usleep (10.0 * MSEC);
-  cp2155_set (fd, 0x9b, 0x06);
-  usleep (10.0 * MSEC);
-  cp2155_set (fd, 0x9b, 0x04);
-  usleep (10.0 * MSEC);
-  cp2155_set (fd, 0x9b, 0x06);
-  usleep (10.0 * MSEC);
-  cp2155_set (fd, 0x9b, 0x04);
-  usleep (10.0 * MSEC);
-  cp2155_set (fd, 0x90, 0xf8);
-  cp2155_set (fd, 0xb0, 0x00);
-  cp2155_set (fd, 0x07, 0x00);
-  cp2155_set (fd, 0x07, 0x00);
-  cp2155_set (fd, 0x08, chndl->value_08);
-  cp2155_set (fd, 0x09, chndl->value_09);
-  cp2155_set (fd, 0x0a, chndl->value_0a);
-  cp2155_set (fd, 0x0b, chndl->value_0b);
-  cp2155_set (fd, 0xa0, 0x1d);
-  cp2155_set (fd, 0xa1, 0x00);
-  cp2155_set (fd, 0xa2, 0x63);
-  cp2155_set (fd, 0xa3, 0xd0);
-  cp2155_set (fd, 0x64, 0x00);
-  cp2155_set (fd, 0x65, 0x00);
-  cp2155_set (fd, 0x61, 0x00);
-  cp2155_set (fd, 0x62, 0x29);
-  cp2155_set (fd, 0x63, 0x00);
-  cp2155_set (fd, 0x50, 0x04);
-  cp2155_set (fd, 0x50, 0x04);
-  cp2155_set (fd, 0x90, 0xf8);
-  cp2155_set (fd, 0x51, chndl->value_51);
-  cp2155_set (fd, 0x5a, 0xff);
-  cp2155_set (fd, 0x5b, 0xff);
-  cp2155_set (fd, 0x5c, 0xff);
-  cp2155_set (fd, 0x5d, 0xff);
-  cp2155_set (fd, 0x52, 0x19);
-  cp2155_set (fd, 0x53, 0x5a);
-  cp2155_set (fd, 0x54, 0x17);
-  cp2155_set (fd, 0x55, 0x98);
-  cp2155_set (fd, 0x56, 0x11);
-  cp2155_set (fd, 0x57, 0xae);
-  cp2155_set (fd, 0x58, 0xa9);
-  cp2155_set (fd, 0x59, 0x01);
-  cp2155_set (fd, 0x5e, 0x02);
-  cp2155_set (fd, 0x5f, 0x00);
-  cp2155_set (fd, 0x5f, 0x03);
-  cp2155_set (fd, 0x60, 0x01);
-  cp2155_set (fd, 0x60, 0x01);
-  cp2155_set (fd, 0x60, 0x01);
-  cp2155_set (fd, 0x60, 0x01);
-  cp2155_set (fd, 0x50, 0x04);
-  cp2155_set (fd, 0x51, chndl->value_51);
-  cp2155_set (fd, 0x81, 0x31);
-  cp2155_set (fd, 0x81, 0x31);
-  cp2155_set (fd, 0x82, 0x11);
-  cp2155_set (fd, 0x82, 0x11);
-  cp2155_set (fd, 0x83, 0x01);
-  cp2155_set (fd, 0x84, 0x05);
-  cp2155_set (fd, 0x80, 0x12);
-  cp2155_set (fd, 0x80, 0x12);
-  cp2155_set (fd, 0xb0, 0x08);
-
-  big_write (fd, 0xa714, buf);
-
-  cp2155_set (fd, 0x10, 0x05);
-  cp2155_set (fd, 0x10, 0x05);
-  cp2155_set (fd, 0x10, 0x05);
-  cp2155_set (fd, 0x10, 0x05);
-  cp2155_set (fd, 0x11, 0x83);
-  cp2155_set (fd, 0x11, 0x83);
-  cp2155_set (fd, 0x11, 0x83);
-  cp2155_set (fd, 0x11, 0x83);
-  cp2155_set (fd, 0x11, 0x83);
-  cp2155_set (fd, 0x11, 0x81);
-  cp2155_set (fd, 0x11, 0x81);
-  cp2155_set (fd, 0x12, 0x50);
-  cp2155_set (fd, 0x13, 0x50);
-  cp2155_set (fd, 0x16, 0x50);
-  cp2155_set (fd, 0x21, 0x06);
-  cp2155_set (fd, 0x22, 0x50);
-  cp2155_set (fd, 0x20, 0x06);
-  cp2155_set (fd, 0x1d, 0x00);
-  cp2155_set (fd, 0x1e, 0x00);
-  cp2155_set (fd, 0x1f, 0x04);
-  cp2155_set (fd, 0x66, 0x00);
-  cp2155_set (fd, 0x67, chndl->value_67);
-  cp2155_set (fd, 0x68, chndl->value_68);
-  cp2155_set (fd, 0x1a, 0x00);
-  cp2155_set (fd, 0x1b, 0x00);
-  cp2155_set (fd, 0x1c, 0x02);
-  cp2155_set (fd, 0x15, 0x80);
-  cp2155_set (fd, 0x14, 0x7a);
-  cp2155_set (fd, 0x17, 0x02);
-  cp2155_set (fd, 0x43, 0x1c);
-  cp2155_set (fd, 0x44, 0x9c);
-  cp2155_set (fd, 0x45, 0x38);
-  cp2155_set (fd, 0x23, 0x01);
-  cp2155_set (fd, 0x33, 0x01);
-  cp2155_set (fd, 0x24, 0x03);
-  cp2155_set (fd, 0x34, 0x03);
-  cp2155_set (fd, 0x25, 0x05);
-  cp2155_set (fd, 0x35, 0x05);
-  cp2155_set (fd, 0x26, 0x07);
-  cp2155_set (fd, 0x36, 0x07);
-  cp2155_set (fd, 0x27, 0x09);
-  cp2155_set (fd, 0x37, 0x09);
-  cp2155_set (fd, 0x28, 0x0a);
-  cp2155_set (fd, 0x38, 0x0a);
-  cp2155_set (fd, 0x29, 0x0b);
-  cp2155_set (fd, 0x39, 0x0b);
-  cp2155_set (fd, 0x2a, 0x0c);
-  cp2155_set (fd, 0x3a, 0x0c);
-  cp2155_set (fd, 0x2b, 0x0c);
-  cp2155_set (fd, 0x3b, 0x0c);
-  cp2155_set (fd, 0x2c, 0x0b);
-  cp2155_set (fd, 0x3c, 0x0b);
-  cp2155_set (fd, 0x2d, 0x0a);
-  cp2155_set (fd, 0x3d, 0x0a);
-  cp2155_set (fd, 0x2e, 0x09);
-  cp2155_set (fd, 0x3e, 0x09);
-  cp2155_set (fd, 0x2f, 0x07);
-  cp2155_set (fd, 0x3f, 0x07);
-  cp2155_set (fd, 0x30, 0x05);
-  cp2155_set (fd, 0x40, 0x05);
-  cp2155_set (fd, 0x31, 0x03);
-  cp2155_set (fd, 0x41, 0x03);
-  cp2155_set (fd, 0x32, 0x01);
-  cp2155_set (fd, 0x42, 0x01);
-  cp2155_set (fd, 0xca, 0x00);
-  cp2155_set (fd, 0xca, 0x00);
-  cp2155_set (fd, 0xca, 0x00);
-  cp2155_set (fd, 0x18, 0x00);
-
-  count = 324;
-  make_slope_table (count, 0x7033, 0x06, 0.0, buf);
-
-  write_buf (fd, count, buf, 0x03, 0x00);
-  write_buf (fd, count, buf, 0x03, 0x02);
-  write_buf (fd, count, buf, 0x03, 0x06);
-
-  count = 36;
-  make_slope_table (count, 0x7033, 0x06, 0.0, buf);
-
-  write_buf (fd, count, buf, 0x03, 0x04);
-  write_buf (fd, count, buf, 0x03, 0x08);
-
-  general_motor_2224 (fd);
-
-}
-
-void
 startblob_2224_1200 (CANON_Handle * chndl, unsigned char *buf)
 {
-
+/*
+  chndl->value_51 = 0x0f;
+*/
   int fd;
   fd = chndl->fd;
   size_t count;
@@ -1827,17 +1586,20 @@ startblob_2224_1200 (CANON_Handle * chndl, unsigned char *buf)
   ratio 777 decimal
 */
 
-  cp2155_set (fd, 0x90, 0xe8);
-  usleep (10.0 * MSEC);
-  cp2155_set (fd, 0x9b, 0x06);
-  usleep (10.0 * MSEC);
-  cp2155_set (fd, 0x9b, 0x04);
-  usleep (10.0 * MSEC);
-  cp2155_set (fd, 0x9b, 0x06);
-  usleep (10.0 * MSEC);
-  cp2155_set (fd, 0x9b, 0x04);
-  usleep (10.0 * MSEC);
-  cp2155_set (fd, 0x90, 0xf8);
+  cp2155_set (fd, 0x90, 0xe0);	/* e8 */
+
+  double n_msec = 10.0;
+  int n_9b = 10;		/* 2 */
+  while (n_9b > 0)
+    {
+      cp2155_set (fd, 0x9b, 0x06);
+      usleep (n_msec * MSEC);
+      cp2155_set (fd, 0x9b, 0x04);
+      usleep (n_msec * MSEC);
+      n_9b--;
+    }
+
+  cp2155_set (fd, 0x90, 0xf0);	/* f8 */
   cp2155_set (fd, 0xb0, 0x00);
   cp2155_set (fd, 0x07, 0x00);
   cp2155_set (fd, 0x07, 0x00);
@@ -1889,8 +1651,8 @@ startblob_2224_1200 (CANON_Handle * chndl, unsigned char *buf)
   cp2155_set (fd, 0x80, 0x12);
   cp2155_set (fd, 0xb0, 0x08);
 
-  big_write (fd, 0xa714, buf);
-  usleep (10.0 * MSEC);
+  big_write (fd, 0xa1a4, buf);
+/*  big_write_film (fd, 0xf004, buf); */
 
   cp2155_set (fd, 0x10, 0x05);
   cp2155_set (fd, 0x10, 0x05);
@@ -1915,51 +1677,424 @@ startblob_2224_1200 (CANON_Handle * chndl, unsigned char *buf)
   cp2155_set (fd, 0x66, 0x00);
   cp2155_set (fd, 0x67, chndl->value_67);
   cp2155_set (fd, 0x68, chndl->value_68);
-  cp2155_set (fd, 0x1a, 0x00);
-  cp2155_set (fd, 0x1b, 0x00);
-  cp2155_set (fd, 0x1c, 0x02);
-  cp2155_set (fd, 0x15, 0x80);
-  cp2155_set (fd, 0x14, 0x7a);
-  cp2155_set (fd, 0x17, 0x02);
-  cp2155_set (fd, 0x43, 0x1c);
-  cp2155_set (fd, 0x44, 0x9c);
-  cp2155_set (fd, 0x45, 0x38);
-  cp2155_set (fd, 0x23, 0x01);
-  cp2155_set (fd, 0x33, 0x01);
-  cp2155_set (fd, 0x24, 0x03);
-  cp2155_set (fd, 0x34, 0x03);
-  cp2155_set (fd, 0x25, 0x05);
-  cp2155_set (fd, 0x35, 0x05);
-  cp2155_set (fd, 0x26, 0x07);
-  cp2155_set (fd, 0x36, 0x07);
-  cp2155_set (fd, 0x27, 0x09);
-  cp2155_set (fd, 0x37, 0x09);
-  cp2155_set (fd, 0x28, 0x0a);
-  cp2155_set (fd, 0x38, 0x0a);
-  cp2155_set (fd, 0x29, 0x0b);
-  cp2155_set (fd, 0x39, 0x0b);
-  cp2155_set (fd, 0x2a, 0x0c);
-  cp2155_set (fd, 0x3a, 0x0c);
-  cp2155_set (fd, 0x2b, 0x0c);
-  cp2155_set (fd, 0x3b, 0x0c);
-  cp2155_set (fd, 0x2c, 0x0b);
-  cp2155_set (fd, 0x3c, 0x0b);
-  cp2155_set (fd, 0x2d, 0x0a);
-  cp2155_set (fd, 0x3d, 0x0a);
-  cp2155_set (fd, 0x2e, 0x09);
-  cp2155_set (fd, 0x3e, 0x09);
-  cp2155_set (fd, 0x2f, 0x07);
-  cp2155_set (fd, 0x3f, 0x07);
-  cp2155_set (fd, 0x30, 0x05);
-  cp2155_set (fd, 0x40, 0x05);
-  cp2155_set (fd, 0x31, 0x03);
-  cp2155_set (fd, 0x41, 0x03);
-  cp2155_set (fd, 0x32, 0x01);
-  cp2155_set (fd, 0x42, 0x01);
-  cp2155_set (fd, 0xca, 0x00);
-  cp2155_set (fd, 0xca, 0x00);
-  cp2155_set (fd, 0xca, 0x00);
+
+  memcpy (buf, "\x01\x03\x05\x07\x09\x0a\x0b\x0c\x0c", 9);
+  register_table (fd, 0, buf);
   cp2155_set (fd, 0x18, 0x00);
+
+  count = 324;
+  make_slope_table (count, top_value, 0x06, 0.0, buf);
+
+  write_buf (fd, count, buf, 0x03, 0x00);
+  write_buf (fd, count, buf, 0x03, 0x02);
+  write_buf (fd, count, buf, 0x03, 0x06);
+
+  count = 36;
+  make_slope_table (count, top_value, 0x06, 0.0, buf);
+
+  write_buf (fd, count, buf, 0x03, 0x04);
+  write_buf (fd, count, buf, 0x03, 0x08);
+
+  general_motor_2224 (fd);
+
+}
+
+void
+startblob_2224_2400 (CANON_Handle * chndl, unsigned char *buf)
+{
+
+  int fd;
+  fd = chndl->fd;
+  size_t count;
+
+  unsigned int top_value = 0x5555;	/* was 0x7c71 */
+  unsigned char value_62 = 0x0e;	/* at 0x15 ratio 1517 decimal, value_62 was 0x29 */
+
+  cp2155_set (fd, 0x80, 0x12);
+  cp2155_set (fd, 0x11, 0x83);
+  cp2155_set (fd, 0x80, 0x12);
+  cp2155_set (fd, 0x11, 0x83);
+/*
+  unsigned int top_value = 0x3fc7;
+  unsigned char value_62 = 0x15;
+  ratio 777 decimal
+
+  cp2155_set (fd, 0x01, 0x2b);
+  cp2155_set (fd, 0x04, 0x08);
+  cp2155_set (fd, 0x05, 0x00);
+  cp2155_set (fd, 0x06, 0x00);
+*/
+  cp2155_set (fd, 0x90, 0xe0);
+
+  double n_msec = 10.0;
+  int n_9b = 11;
+  while (n_9b > 0)
+    {
+      cp2155_set (fd, 0x9b, 0x06);
+      usleep (n_msec * MSEC);
+      cp2155_set (fd, 0x9b, 0x04);
+      usleep (n_msec * MSEC);
+      n_9b--;
+    }
+
+  cp2155_set (fd, 0x90, 0xf0);
+  cp2155_set (fd, 0xb0, 0x00);
+  cp2155_set (fd, 0x07, 0x00);
+  cp2155_set (fd, 0x07, 0x00);
+  cp2155_set (fd, 0x08, chndl->value_08);
+  cp2155_set (fd, 0x09, chndl->value_09);
+  cp2155_set (fd, 0x0a, chndl->value_0a);
+  cp2155_set (fd, 0x0b, chndl->value_0b);
+  cp2155_set (fd, 0xa0, 0x25);
+  cp2155_set (fd, 0xa1, 0x00);
+  cp2155_set (fd, 0xa2, 0x92);
+  cp2155_set (fd, 0xa3, 0x10);
+  cp2155_set (fd, 0x64, 0x00);
+  cp2155_set (fd, 0x65, 0x00);
+  cp2155_set (fd, 0x61, 0x00);
+  cp2155_set (fd, 0x62, value_62);
+  cp2155_set (fd, 0x63, 0x00);
+  cp2155_set (fd, 0x50, 0x04);
+  cp2155_set (fd, 0x50, 0x04);
+  cp2155_set (fd, 0x90, 0xf1);
+  cp2155_set (fd, 0x51, chndl->value_51);
+  cp2155_set (fd, 0x5a, 0xff);
+  cp2155_set (fd, 0x5b, 0xff);
+  cp2155_set (fd, 0x5c, 0xff);
+  cp2155_set (fd, 0x5d, 0xff);
+  cp2155_set (fd, 0x52, 0x47);
+  cp2155_set (fd, 0x53, 0x3d);
+  cp2155_set (fd, 0x54, 0x2b);
+  cp2155_set (fd, 0x55, 0xd1);
+  cp2155_set (fd, 0x56, 0x20);
+  cp2155_set (fd, 0x57, 0x3d);
+  cp2155_set (fd, 0x58, 0x13);
+  cp2155_set (fd, 0x59, 0x25);
+  cp2155_set (fd, 0x5e, 0x02);
+  cp2155_set (fd, 0x5f, 0x00);
+  cp2155_set (fd, 0x5f, 0x03);
+  cp2155_set (fd, 0x60, 0x01);
+  cp2155_set (fd, 0x60, 0x01);
+  cp2155_set (fd, 0x60, 0x01);
+  cp2155_set (fd, 0x60, 0x01);
+  cp2155_set (fd, 0x50, 0x04);
+  cp2155_set (fd, 0x51, chndl->value_51);
+  cp2155_set (fd, 0x81, 0x31);	/* 0x29); = darker */
+  cp2155_set (fd, 0x81, 0x31);	/* 0x29); */
+  cp2155_set (fd, 0x82, 0x11);
+  cp2155_set (fd, 0x82, 0x11);
+  cp2155_set (fd, 0x83, 0x01);
+  cp2155_set (fd, 0x84, 0x05);
+  cp2155_set (fd, 0x80, 0x12);
+  cp2155_set (fd, 0x80, 0x12);
+  cp2155_set (fd, 0xb0, 0x08);
+
+  big_write (fd, 0xa1a4, buf);
+  big_write_film (fd, 0xf004, buf);
+
+  cp2155_set (fd, 0x10, 0x05);
+  cp2155_set (fd, 0x10, 0x05);
+  cp2155_set (fd, 0x10, 0x05);
+  cp2155_set (fd, 0x10, 0x05);
+  cp2155_set (fd, 0x11, 0x83);
+  cp2155_set (fd, 0x11, 0x83);
+  cp2155_set (fd, 0x11, 0x83);
+  cp2155_set (fd, 0x11, 0x83);
+  cp2155_set (fd, 0x11, 0x83);
+  cp2155_set (fd, 0x11, 0x81);
+  cp2155_set (fd, 0x11, 0x81);
+  cp2155_set (fd, 0x12, 0x50);
+  cp2155_set (fd, 0x13, 0x50);
+  cp2155_set (fd, 0x16, 0x50);
+  cp2155_set (fd, 0x21, 0x06);
+  cp2155_set (fd, 0x22, 0x50);
+  cp2155_set (fd, 0x20, 0x06);
+  cp2155_set (fd, 0x1d, 0x00);
+  cp2155_set (fd, 0x1e, 0x00);
+  cp2155_set (fd, 0x1f, 0x04);
+  cp2155_set (fd, 0x66, chndl->value_66);
+  cp2155_set (fd, 0x67, chndl->value_67);
+  cp2155_set (fd, 0x68, chndl->value_68);
+
+  memcpy (buf, "\x02\x04\x04\x06\x06\x08\x08\x0a\x0a", 9);
+  register_table (fd, 0, buf);
+  cp2155_set (fd, 0x18, 0x00);
+
+  count = 324;
+  make_slope_table (count, top_value, 0x06, 0.0, buf);
+
+  write_buf (fd, count, buf, 0x03, 0x00);
+  write_buf (fd, count, buf, 0x03, 0x02);
+  write_buf (fd, count, buf, 0x03, 0x06);
+
+  count = 36;
+  make_slope_table (count, top_value, 0x06, 0.0, buf);
+
+  write_buf (fd, count, buf, 0x03, 0x04);
+  write_buf (fd, count, buf, 0x03, 0x08);
+
+  general_motor_2224 (fd);
+
+}
+
+void
+startblob_2224_4800 (CANON_Handle * chndl, unsigned char *buf)
+{
+
+  int fd;
+  fd = chndl->fd;
+  size_t count;
+
+  unsigned int top_value = 0x3fc7;	/* was 0x7c71 */
+  unsigned char value_62 = 0x15;	/* at 0x15 ratio 1517 decimal, value_62 was 0x29 */
+
+  cp2155_set (fd, 0x80, 0x12);
+  cp2155_set (fd, 0x11, 0x83);
+  cp2155_set (fd, 0x80, 0x12);
+  cp2155_set (fd, 0x11, 0x83);
+/*
+  unsigned int top_value = 0x3fc7;
+  unsigned char value_62 = 0x15;
+  ratio 777 decimal
+
+  cp2155_set (fd, 0x01, 0x2b);
+  cp2155_set (fd, 0x04, 0x08);
+  cp2155_set (fd, 0x05, 0x00);
+  cp2155_set (fd, 0x06, 0x00);
+*/
+  cp2155_set (fd, 0x90, 0xe0);
+
+  double n_msec = 10.0;
+  int n_9b = 12;
+  while (n_9b > 0)
+    {
+      cp2155_set (fd, 0x9b, 0x06);
+      usleep (n_msec * MSEC);
+      cp2155_set (fd, 0x9b, 0x04);
+      usleep (n_msec * MSEC);
+      n_9b--;
+    }
+
+  cp2155_set (fd, 0x90, 0xf0);
+  cp2155_set (fd, 0xb0, 0x00);
+  cp2155_set (fd, 0x07, 0x00);
+  cp2155_set (fd, 0x07, 0x00);
+  cp2155_set (fd, 0x08, chndl->value_08);
+  cp2155_set (fd, 0x09, chndl->value_09);
+  cp2155_set (fd, 0x0a, chndl->value_0a);
+  cp2155_set (fd, 0x0b, chndl->value_0b);
+  cp2155_set (fd, 0xa0, 0x25);
+  cp2155_set (fd, 0xa1, 0x00);
+  cp2155_set (fd, 0xa2, 0x92);
+  cp2155_set (fd, 0xa3, 0x10);
+  cp2155_set (fd, 0x64, 0x00);
+  cp2155_set (fd, 0x65, 0x00);
+  cp2155_set (fd, 0x61, 0x00);
+  cp2155_set (fd, 0x62, value_62);
+  cp2155_set (fd, 0x63, 0x00);
+  cp2155_set (fd, 0x50, 0x04);
+  cp2155_set (fd, 0x50, 0x04);
+  cp2155_set (fd, 0x90, 0xf1);
+  cp2155_set (fd, 0x51, chndl->value_51);
+  cp2155_set (fd, 0x5a, 0xff);
+  cp2155_set (fd, 0x5b, 0xff);
+  cp2155_set (fd, 0x5c, 0xff);
+  cp2155_set (fd, 0x5d, 0xff);
+  cp2155_set (fd, 0x52, 0x47);
+  cp2155_set (fd, 0x53, 0x3d);
+  cp2155_set (fd, 0x54, 0x2b);
+  cp2155_set (fd, 0x55, 0xd1);
+  cp2155_set (fd, 0x56, 0x20);
+  cp2155_set (fd, 0x57, 0x3d);
+  cp2155_set (fd, 0x58, 0x13);
+  cp2155_set (fd, 0x59, 0x25);
+  cp2155_set (fd, 0x5e, 0x02);
+  cp2155_set (fd, 0x5f, 0x00);
+  cp2155_set (fd, 0x5f, 0x03);
+  cp2155_set (fd, 0x60, 0x01);
+  cp2155_set (fd, 0x60, 0x01);
+  cp2155_set (fd, 0x60, 0x01);
+  cp2155_set (fd, 0x60, 0x01);
+  cp2155_set (fd, 0x50, 0x04);
+  cp2155_set (fd, 0x51, chndl->value_51);
+  cp2155_set (fd, 0x81, 0x31);	/* 0x29); = darker */
+  cp2155_set (fd, 0x81, 0x31);	/* 0x29); */
+  cp2155_set (fd, 0x82, 0x11);
+  cp2155_set (fd, 0x82, 0x11);
+  cp2155_set (fd, 0x83, 0x01);
+  cp2155_set (fd, 0x84, 0x05);
+  cp2155_set (fd, 0x80, 0x12);
+  cp2155_set (fd, 0x80, 0x12);
+  cp2155_set (fd, 0xb0, 0x08);
+
+  big_write (fd, 0xa1a4, buf);
+  big_write_film (fd, 0xf004, buf);
+
+  cp2155_set (fd, 0x10, 0x05);
+  cp2155_set (fd, 0x10, 0x05);
+  cp2155_set (fd, 0x10, 0x05);
+  cp2155_set (fd, 0x10, 0x05);
+  cp2155_set (fd, 0x11, 0x83);
+  cp2155_set (fd, 0x11, 0x83);
+  cp2155_set (fd, 0x11, 0x83);
+  cp2155_set (fd, 0x11, 0x83);
+  cp2155_set (fd, 0x11, 0x83);
+  cp2155_set (fd, 0x11, 0x81);
+  cp2155_set (fd, 0x11, 0x81);
+  cp2155_set (fd, 0x12, 0x50);
+  cp2155_set (fd, 0x13, 0x50);
+  cp2155_set (fd, 0x16, 0x50);
+  cp2155_set (fd, 0x21, 0x06);
+  cp2155_set (fd, 0x22, 0x50);
+  cp2155_set (fd, 0x20, 0x06);
+  cp2155_set (fd, 0x1d, 0x00);
+  cp2155_set (fd, 0x1e, 0x00);
+  cp2155_set (fd, 0x1f, 0x04);
+  cp2155_set (fd, 0x66, chndl->value_66);
+  cp2155_set (fd, 0x67, chndl->value_67);
+  cp2155_set (fd, 0x68, chndl->value_68);
+
+  memcpy (buf, "\x02\x04\x04\x06\x06\x08\x08\x0a\x0a", 9);
+  register_table (fd, 0, buf);
+  cp2155_set (fd, 0x18, 0x00);
+
+  count = 324;
+  make_slope_table (count, top_value, 0x06, 0.0, buf);
+
+  write_buf (fd, count, buf, 0x03, 0x00);
+  write_buf (fd, count, buf, 0x03, 0x02);
+  write_buf (fd, count, buf, 0x03, 0x06);
+
+  count = 36;
+  make_slope_table (count, top_value, 0x06, 0.0, buf);
+
+  write_buf (fd, count, buf, 0x03, 0x04);
+  write_buf (fd, count, buf, 0x03, 0x08);
+
+  general_motor_2224 (fd);
+
+}
+
+void
+startblob_2224_4799 (CANON_Handle * chndl, unsigned char *buf)
+{
+
+  int fd;
+  fd = chndl->fd;
+  size_t count;
+
+  unsigned int top_value = 0x1400;	/* was 0x7c71 */
+  unsigned char value_62 = 0x14;	/* at 0x15 ratio 1517 decimal, value_62 was 0x29 */
+
+  cp2155_set (fd, 0x80, 0x12);
+  cp2155_set (fd, 0x11, 0x83);
+  cp2155_set (fd, 0x80, 0x12);
+  cp2155_set (fd, 0x11, 0x83);
+
+/*
+  unsigned int top_value = 0x3fc7;
+  unsigned char value_62 = 0x15;
+  ratio 777 decimal
+
+  cp2155_set (fd, 0x01, 0x2b);
+  cp2155_set (fd, 0x04, 0x08);
+  cp2155_set (fd, 0x05, 0x00);
+  cp2155_set (fd, 0x06, 0x00);
+*/
+  cp2155_set (fd, 0x90, 0xe0);
+
+  double n_msec = 10.0;
+  int n_9b = 12;
+  while (n_9b > 0)
+    {
+      cp2155_set (fd, 0x9b, 0x06);
+      usleep (n_msec * MSEC);
+      cp2155_set (fd, 0x9b, 0x04);
+      usleep (n_msec * MSEC);
+      n_9b--;
+    }
+
+  cp2155_set (fd, 0x90, 0xf0);
+  cp2155_set (fd, 0xb0, 0x00);
+  cp2155_set (fd, 0x07, 0x00);
+  cp2155_set (fd, 0x07, 0x00);
+  cp2155_set (fd, 0x08, chndl->value_08);
+  cp2155_set (fd, 0x09, chndl->value_09);
+  cp2155_set (fd, 0x0a, chndl->value_0a);
+  cp2155_set (fd, 0x0b, chndl->value_0b);
+  cp2155_set (fd, 0xa0, 0x25);
+  cp2155_set (fd, 0xa1, 0x01);
+  cp2155_set (fd, 0xa2, 0x23);
+  cp2155_set (fd, 0xa3, 0x10);
+  cp2155_set (fd, 0x64, 0x00);
+  cp2155_set (fd, 0x65, 0x00);
+  cp2155_set (fd, 0x61, 0x00);
+  cp2155_set (fd, 0x62, value_62);
+  cp2155_set (fd, 0x63, 0x00);
+  cp2155_set (fd, 0x50, 0x04);
+  cp2155_set (fd, 0x50, 0x04);
+  cp2155_set (fd, 0x90, 0xf1);
+  cp2155_set (fd, 0x51, chndl->value_51);
+  cp2155_set (fd, 0x5a, 0xff);
+  cp2155_set (fd, 0x5b, 0xff);
+  cp2155_set (fd, 0x5c, 0xff);
+  cp2155_set (fd, 0x5d, 0xff);
+  cp2155_set (fd, 0x52, 0x92);
+  cp2155_set (fd, 0x53, 0xa0);
+  cp2155_set (fd, 0x54, 0x58);
+  cp2155_set (fd, 0x55, 0x29);
+  cp2155_set (fd, 0x56, 0x40);
+  cp2155_set (fd, 0x57, 0x08);
+  cp2155_set (fd, 0x58, 0x27);
+  cp2155_set (fd, 0x59, 0xc7);
+  cp2155_set (fd, 0x5e, 0x02);
+  cp2155_set (fd, 0x5f, 0x00);
+  cp2155_set (fd, 0x5f, 0x03);
+  cp2155_set (fd, 0x60, 0x01);
+  cp2155_set (fd, 0x60, 0x01);
+  cp2155_set (fd, 0x60, 0x01);
+  cp2155_set (fd, 0x60, 0x01);
+  cp2155_set (fd, 0x50, 0x04);
+  cp2155_set (fd, 0x51, chndl->value_51);
+  cp2155_set (fd, 0x81, 0x29);
+  cp2155_set (fd, 0x81, 0x29);
+  cp2155_set (fd, 0x82, 0x11);
+  cp2155_set (fd, 0x82, 0x11);
+  cp2155_set (fd, 0x83, 0x01);
+  cp2155_set (fd, 0x84, 0x05);
+  cp2155_set (fd, 0x80, 0x12);
+  cp2155_set (fd, 0x80, 0x12);
+  cp2155_set (fd, 0xb0, 0x08);
+
+  big_write (fd, 0xa1a4, buf);
+  big_write_film (fd, 0xf004, buf);
+
+  cp2155_set (fd, 0x10, 0x05);
+  cp2155_set (fd, 0x10, 0x05);
+  cp2155_set (fd, 0x10, 0x05);
+  cp2155_set (fd, 0x10, 0x05);
+  cp2155_set (fd, 0x11, 0x83);
+  cp2155_set (fd, 0x11, 0x83);
+  cp2155_set (fd, 0x11, 0x83);
+  cp2155_set (fd, 0x11, 0x83);
+  cp2155_set (fd, 0x11, 0x83);
+  cp2155_set (fd, 0x11, 0x81);
+  cp2155_set (fd, 0x11, 0x81);
+  cp2155_set (fd, 0x12, 0x50);
+  cp2155_set (fd, 0x13, 0x50);
+  cp2155_set (fd, 0x16, 0x50);
+  cp2155_set (fd, 0x21, 0x06);
+  cp2155_set (fd, 0x22, 0x50);
+  cp2155_set (fd, 0x20, 0x06);
+  cp2155_set (fd, 0x1d, 0x00);
+  cp2155_set (fd, 0x1e, 0x00);
+  cp2155_set (fd, 0x1f, 0x04);
+  cp2155_set (fd, 0x66, chndl->value_66);
+  cp2155_set (fd, 0x67, chndl->value_67);
+  cp2155_set (fd, 0x68, chndl->value_68);
+
+  register_table_4800 (fd, 0x05, buf);
+  cp2155_set (fd, 0x18, 0x02);
 
   count = 324;
   make_slope_table (count, top_value, 0x06, 0.0, buf);
@@ -1981,7 +2116,7 @@ startblob_2224_1200 (CANON_Handle * chndl, unsigned char *buf)
 void
 send_start_blob (CANON_Handle * chndl)
 {
-  unsigned char buf[0xf000];
+  unsigned char buf[0xfff0];
 
   int fd;
   fd = chndl->fd;
@@ -1992,6 +2127,7 @@ send_start_blob (CANON_Handle * chndl)
    all bits off: no scan is made
 */
   chndl->value_51 = 0x07;
+  chndl->value_66 = 0x00;
 
   switch (chndl->val[opt_resolution].w)
     {
@@ -2014,6 +2150,16 @@ send_start_blob (CANON_Handle * chndl)
     case 1200:
       chndl->value_67 = 0xab;	/* 6*7300 */
       chndl->value_68 = 0x18;
+      break;
+    case 2400:
+      chndl->value_66 = 0x01;
+      chndl->value_67 = 0x56;	/* 12*7300 */
+      chndl->value_68 = 0x30;
+      break;
+    case 4800:
+      chndl->value_66 = 0x02;
+      chndl->value_67 = 0xac;	/* 24*7300 */
+      chndl->value_68 = 0x60;
     }
 
   unsigned char value_11 = 0xc1;	/* 0x00; */
@@ -2087,6 +2233,26 @@ send_start_blob (CANON_Handle * chndl)
       else
 	{
 	  startblob_2224_1200 (chndl, buf);
+	}
+      break;
+    case 2400:
+      if (chndl->productcode == 0x2225)
+	{
+	  startblob_2225_1200 (chndl, buf);
+	}
+      else
+	{
+	  startblob_2224_2400 (chndl, buf);
+	}
+      break;
+    case 4800:
+      if (chndl->productcode == 0x2225)
+	{
+	  startblob_2225_1200 (chndl, buf);
+	}
+      else
+	{
+	  startblob_2224_4800 (chndl, buf);
 	}
       break;
     }
@@ -2778,7 +2944,27 @@ do_scan (CANON_Handle * chndl)
     case 1200:
       if (chndl->productcode == 0x2224)
 	{
-	  left_edge = 0x1e3;
+	  left_edge = 0x1b2;
+	}
+      else
+	{
+	  left_edge = 0x87;
+	}
+      break;
+    case 2400:
+      if (chndl->productcode == 0x2224)
+	{
+	  left_edge = 0x287;	/* 0x2eb; */
+	}
+      else
+	{
+	  left_edge = 0x87;
+	}
+      break;
+    case 4800:
+      if (chndl->productcode == 0x2224)
+	{
+	  left_edge = 0x2e3;	/* should be adjusted; 0x23e; 0x2eb; */
 	}
       else
 	{
@@ -2824,14 +3010,14 @@ do_scan (CANON_Handle * chndl)
 }
 
 /* Scan sequence */
-/* resolution is 75,150,300,600,1200
+/* resolution is 75,150,300,600,1200,2400,4800
    scan coordinates in 600-dpi pixels */
 
 static SANE_Status
 scan (CANON_Handle * chndl)
 {
   SANE_Status status = SANE_STATUS_GOOD;
-  /* Resolution: dpi 75, 150, 300, 600, 1200 */
+  /* Resolution: dpi 75, 150, 300, 600, 1200, 2400, 4800 */
   switch (chndl->val[opt_resolution].w)
     {
     case 75:
@@ -2839,6 +3025,8 @@ scan (CANON_Handle * chndl)
     case 300:
     case 600:
     case 1200:
+    case 2400:
+    case 4800:
       break;
     default:
       chndl->val[opt_resolution].w = 600;
@@ -2928,7 +3116,9 @@ CANON_set_scan_parameters (CANON_Handle * chndl)
       (chndl->val[opt_resolution].w != 150) &&
       (chndl->val[opt_resolution].w != 300) &&
       (chndl->val[opt_resolution].w != 600) &&
-      (chndl->val[opt_resolution].w != 1200))
+      (chndl->val[opt_resolution].w != 1200) &&
+      (chndl->val[opt_resolution].w != 2400) &&
+      (chndl->val[opt_resolution].w != 4800))
     {
       return SANE_STATUS_INVAL;
     }
