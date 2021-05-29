@@ -42,10 +42,7 @@ use warnings;
 		next unless $m->{'usbid'} =~ /"0x04b8"\s+"(0x[[:xdigit:]]+)"/;
 
 		my $id = $1;
-
 #		print $id, "\n";
-
-		$id =~ s/0x0/0x/;
 
 		$m->{'model'} =~ s/;.+$//;
 		$m->{'model'} =~ s/\"//g;
