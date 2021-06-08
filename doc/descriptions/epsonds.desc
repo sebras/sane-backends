@@ -7,7 +7,6 @@
 
 :backend "epsonds"
 :version "1.0.18 (unmaintained)"
-:new :no
 :manpage "sane-epsonds"
 
 :devicetype :scanner
