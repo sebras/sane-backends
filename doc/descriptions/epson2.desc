@@ -8,8 +8,6 @@
 ; distributed with "Image Scan!" and released under GPL.
 
 :backend "epson2"
-:version "1.0.124 (unmaintained)"
-:new :no
 :manpage "sane-epson2"
 
 :devicetype :scanner
@@ -22,7 +20,6 @@
 :usbid      "0x04b8" "0x08ac"
 :status     :complete
 :comment    "network interface supported via DFSG non-free iscan-network-nt package<br>all-in-one"
-:url        "http://www.epson.com/"
 
 :model      "AL-MX300DNF Series"
 :interface  "USB"

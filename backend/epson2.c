@@ -15,10 +15,6 @@
  * published by the Free Software Foundation, version 2.
  */
 
-#define EPSON2_VERSION	1
-#define EPSON2_REVISION	0
-#define EPSON2_BUILD	124
-
 /* debugging levels:
  *
  *     127	e2_recv buffer
@@ -900,14 +896,11 @@ SANE_Status
 sane_init(SANE_Int *version_code, SANE_Auth_Callback __sane_unused__ authorize)
 {
 	DBG_INIT();
-	DBG(2, "%s: " PACKAGE " " VERSION "\n", __func__);
+	DBG(1, "%s: version " VERSION "\n", __func__);
 
-	DBG(1, "epson2 backend, version %i.%i.%i\n",
-		EPSON2_VERSION, EPSON2_REVISION, EPSON2_BUILD);
-
-	if (version_code != NULL)
-		*version_code = SANE_VERSION_CODE(SANE_CURRENT_MAJOR, V_MINOR,
-					  EPSON2_BUILD);
+	/* Keep '124' as our build version. The arg is obsolete by now */
+	if (version_code)
+		*version_code = SANE_VERSION_CODE(SANE_CURRENT_MAJOR, V_MINOR, 124);
 
 	sanei_usb_init();
 	sanei_usb_set_timeout(60 * 1000);
