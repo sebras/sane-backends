@@ -1042,7 +1042,7 @@ sane_init(SANE_Int *version_code, SANE_Auth_Callback cb)
         (version_code) ? "!=" : "==", (cb) ? "!=" : "==");
 
     if (version_code)
-        *version_code = SANE_VERSION_CODE(V_MAJOR, V_MINOR, BACKEND_BUILD);
+        *version_code = SANE_VERSION_CODE(SANE_CURRENT_MAJOR, SANE_CURRENT_MINOR, BACKEND_BUILD);
 
     sanei_usb_init();
     return SANE_STATUS_GOOD;

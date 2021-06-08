@@ -438,10 +438,10 @@ sane_init (SANE_Int * version_code, SANE_Auth_Callback authorize)
   DBG_INIT ();
 
   DBG (2, "SANE v4l backend version %d.%d build %d from %s\n", SANE_CURRENT_MAJOR,
-       V_MINOR, BUILD, PACKAGE_STRING);
+       SANE_CURRENT_MINOR, BUILD, PACKAGE_STRING);
 
   if (version_code)
-    *version_code = SANE_VERSION_CODE (SANE_CURRENT_MAJOR, V_MINOR, BUILD);
+    *version_code = SANE_VERSION_CODE (SANE_CURRENT_MAJOR, SANE_CURRENT_MINOR, BUILD);
 
   fp = sanei_config_open (V4L_CONFIG_FILE);
   if (!fp)

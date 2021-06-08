@@ -816,7 +816,7 @@ sane_init (SANE_Int *version_code, SANE_Auth_Callback __sane_unused__ authorize)
   hp_destroy();
 
   if (version_code)
-    *version_code = SANE_VERSION_CODE (SANE_CURRENT_MAJOR, V_MINOR, VERSIO);
+    *version_code = SANE_VERSION_CODE (SANE_CURRENT_MAJOR, SANE_CURRENT_MINOR, VERSIO);
 
   status = hp_init();
   DBG(3, "sane_init will finish with %s\n", sane_strstatus (status));

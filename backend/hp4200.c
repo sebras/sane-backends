@@ -2375,12 +2375,12 @@ sane_init (SANE_Int * version_code, SANE_Auth_Callback authorize)
 
   DBG (DBG_proc, "%s\n", me);
   DBG (DBG_error, "SANE hp4200 backend version %d.%d build %d from %s\n",
-       SANE_CURRENT_MAJOR, V_MINOR, BUILD, PACKAGE_STRING);
+       SANE_CURRENT_MAJOR, SANE_CURRENT_MINOR, BUILD, PACKAGE_STRING);
   /* put some version_code checks here */
 
   if (NULL != version_code)
     {
-      *version_code = SANE_VERSION_CODE (SANE_CURRENT_MAJOR, V_MINOR, 0);
+      *version_code = SANE_VERSION_CODE (SANE_CURRENT_MAJOR, SANE_CURRENT_MINOR, 0);
     }
 
   sanei_usb_init ();

@@ -526,12 +526,12 @@ sane_init (SANE_Int * version_code,
   DBG_INIT ();
 
   DBG (1, "SANE Lexmark backend version %d.%d.%d-devel\n", SANE_CURRENT_MAJOR,
-       V_MINOR, BUILD);
+       SANE_CURRENT_MINOR, BUILD);
 
   DBG (2, "sane_init: version_code=%p\n", (void *) version_code);
 
   if (version_code)
-    *version_code = SANE_VERSION_CODE (SANE_CURRENT_MAJOR, V_MINOR, BUILD);
+    *version_code = SANE_VERSION_CODE (SANE_CURRENT_MAJOR, SANE_CURRENT_MINOR, BUILD);
 
 #ifndef FAKE_USB
   sanei_usb_init ();

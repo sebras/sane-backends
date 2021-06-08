@@ -293,7 +293,7 @@ sane_init (SANE_Int *vc, SANE_Auth_Callback __sane_unused__ cb)
     }
 
   if (vc)
-    *vc = SANE_VERSION_CODE (SANE_CURRENT_MAJOR, V_MINOR, 0);
+    *vc = SANE_VERSION_CODE (SANE_CURRENT_MAJOR, SANE_CURRENT_MINOR, 0);
   DBG(8, "<sane_init\n");
 
   initialized = SANE_TRUE;

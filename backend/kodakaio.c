@@ -2629,7 +2629,7 @@ sane_init(SANE_Int *version_code, SANE_Auth_Callback __sane_unused__ authorize)
 	    KODAKAIO_VERSION, KODAKAIO_REVISION, KODAKAIO_BUILD);
 	DBG(2, "%s: called\n", __func__);
 	if (version_code != NULL)
-		*version_code = SANE_VERSION_CODE(SANE_CURRENT_MAJOR, V_MINOR,
+		*version_code = SANE_VERSION_CODE(SANE_CURRENT_MAJOR, SANE_CURRENT_MINOR,
 						  KODAKAIO_BUILD);
 	sanei_usb_init();
 

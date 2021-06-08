@@ -165,7 +165,6 @@ sane_init (SANE_Int * version_code, SANE_Auth_Callback __sane_unused__ authorize
     DBG (DBG_info_sane, "sane_init() build %d\n", BUILD);
 
     /* Set version code to current major, minor and build number */
-    /* TODO: use V_MINOR instead or SANE_CURRENT_MINOR? If so, why?  */
     if (version_code)
         *version_code = SANE_VERSION_CODE (SANE_CURRENT_MAJOR, SANE_CURRENT_MINOR, BUILD);
 
