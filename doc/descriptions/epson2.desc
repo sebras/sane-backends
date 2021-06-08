@@ -528,10 +528,20 @@
 :status     :good
 :comment    "network interface supported via DFSG non-free iscan-network-nt package"
 
-:model      "ET-2600"
+:model      "ET-2500 Series"
+:interface  "USB"
+:usbid      "0x04b8" "0x1105"
+:status     :complete
+
+:model      "ET-2600 Series"
 :interface  "USB"
 :usbid      "0x04b8" "0x1122"
-:status     :good
+:status     :complete
+
+:model      "ET-2610 Series"
+:interface  "USB"
+:usbid      "0x04b8" "0x1122"
+:status     :complete
 
 :model      "ET-2650"
 :interface  "USB Ethernet"
@@ -1048,10 +1058,35 @@
 :status     :complete
 :comment    "network interface supported via DFSG non-free iscan-network-nt package<br>all-in-one"
 
+:model      "L365 Series"
+:interface  "USB"
+:usbid      "0x04b8" "0x08d2"
+:status     :complete
+
+:model      "L366 Series"
+:interface  "USB"
+:usbid      "0x04b8" "0x08d2"
+:status     :complete
+
+:model      "L375 Series"
+:interface  "USB"
+:usbid      "0x04b8" "0x1105"
+:status     :complete
+
 :model      "L380"
 :interface  "USB"
 :usbid      "0x04b8" "0x1120"
 :status     :good
+
+:model      "L395 Series"
+:interface  "USB"
+:usbid      "0x04b8" "0x1122"
+:status     :complete
+
+:model      "L396 Series"
+:interface  "USB"
+:usbid      "0x04b8" "0x1122"
+:status     :complete
 
 :model      "L495"
 :interface  "USB Ethernet"
@@ -1069,6 +1104,26 @@
 :usbid      "0x04b8" "0x08ca"
 :status     :complete
 :comment    "all-in-one"
+
+:model      "L3050 Series"
+:interface  "USB"
+:usbid      "0x04b8" "0x1122"
+:status     :complete
+
+:model      "L3060 Series"
+:interface  "USB"
+:usbid      "0x04b8" "0x1122"
+:status     :complete
+
+:model      "L3100 Series"
+:interface  "USB"
+:usbid      "0x04b8" "0x1141"
+:status     :complete
+
+:model      "L3110 Series"
+:interface  "USB"
+:usbid      "0x04b8" "0x1142"
+:status     :complete
 
 :model      "LP-7900CS"
 :status     :untested
@@ -1410,6 +1465,16 @@
 :status     :complete
 :comment    "network interface supported via DFSG non-free iscan-network-nt package<br>all-in-one"
 
+:model      "PX-048A Series"
+:interface  "USB"
+:usbid      "0x04b8" "0x1102"
+:status     :complete
+
+:model      "PX-049A Series"
+:interface  "USB"
+:usbid      "0x04b8" "0x1116"
+:status     :complete
+
 :model      "PX-1600F"
 :interface  "USB"
 :usbid      "0x04b8" "0x0869"
@@ -1595,6 +1660,11 @@
 :usbid      "0x04b8" "0x083a"
 :status     :good
 :comment    "all-in-one"
+
+:model      "PX-M160T Series"
+:interface  "USB"
+:usbid      "0x04b8" "0x110f"
+:status     :complete
 
 :model      "PX-M350F"
 :interface  "USB"
@@ -3331,10 +3401,20 @@
 :status     :complete
 :comment    "network interface supported via DFSG non-free iscan-network-nt package<br>all-in-one<br>overseas version of the PX-047A"
 
-:model      "XP-243 245 247 Series"
+:model      "XP-230 Series"
+:interface  "USB"
+:usbid      "0x04b8" "0x1102"
+:status     :complete
+
+:model      "XP-235 Series"
+:interface  "USB"
+:usbid      "0x04b8" "0x1102"
+:status     :complete
+
+:model      "XP-240 243 245 247 Series"
 :interface  "USB"
 :usbid      "0x04b8" "0x1116"
-:status     :good
+:status     :complete
 :comment    "network interface supported via DFSG non-free iscan-network-nt package<br>all-in-one"
 
 :model      "XP-255"
