@@ -44,10 +44,10 @@ write_callback(void __sane_unused__*str,
  *        This function is called in the 'sane_cancel' function.
  */
 void
-escl_scanner(const ESCL_Device *device, char *result)
+escl_scanner(const ESCL_Device *device, char *scanJob, char *result)
 {
     CURL *curl_handle = NULL;
-    const char *scan_jobs = "/eSCL/ScanJobs";
+    const char *scan_jobs = "/eSCL/";
     const char *scanner_start = "/NextDocument";
     char scan_cmd[PATH_MAX] = { 0 };
     int i = 0;
@@ -58,8 +58,8 @@ escl_scanner(const ESCL_Device *device, char *result)
 CURL_CALL:
     curl_handle = curl_easy_init();
     if (curl_handle != NULL) {
-        snprintf(scan_cmd, sizeof(scan_cmd), "%s%s%s",
-                 scan_jobs, result, scanner_start);
+        snprintf(scan_cmd, sizeof(scan_cmd), "%s%s%s%s",
+                 scan_jobs, scanJob, result, scanner_start);
         escl_curl_url(curl_handle, device, scan_cmd);
         curl_easy_setopt(curl_handle, CURLOPT_WRITEFUNCTION, write_callback);
         if (curl_easy_perform(curl_handle) == CURLE_OK) {

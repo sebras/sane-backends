@@ -57,10 +57,10 @@ write_callback(void *str, size_t size, size_t nmemb, void *userp)
  * \return status (if everything is OK, status = SANE_STATUS_GOOD, otherwise, SANE_STATUS_NO_MEM/SANE_STATUS_INVAL)
  */
 SANE_Status
-escl_scan(capabilities_t *scanner, const ESCL_Device *device, char *result)
+escl_scan(capabilities_t *scanner, const ESCL_Device *device, char *scanJob, char *result)
 {
     CURL *curl_handle = NULL;
-    const char *scan_jobs = "/eSCL/ScanJobs";
+    const char *scan_jobs = "/eSCL/";
     const char *scanner_start = "/NextDocument";
     char scan_cmd[PATH_MAX] = { 0 };
     SANE_Status status = SANE_STATUS_GOOD;
@@ -70,8 +70,8 @@ escl_scan(capabilities_t *scanner, const ESCL_Device *device, char *result)
     scanner->real_read = 0;
     curl_handle = curl_easy_init();
     if (curl_handle != NULL) {
-        snprintf(scan_cmd, sizeof(scan_cmd), "%s%s%s",
-                 scan_jobs, result, scanner_start);
+        snprintf(scan_cmd, sizeof(scan_cmd), "%s%s%s%s",
+                 scan_jobs, scanJob, result, scanner_start);
         escl_curl_url(curl_handle, device, scan_cmd);
         curl_easy_setopt(curl_handle, CURLOPT_WRITEFUNCTION, write_callback);
         if (scanner->tmp)

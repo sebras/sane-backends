@@ -1222,9 +1222,11 @@ sane_cancel(SANE_Handle h)
     }
     handler->scanner->work = SANE_FALSE;
     handler->cancel = SANE_TRUE;
-    escl_scanner(handler->device, handler->result);
+    escl_scanner(handler->device, handler->scanner->scanJob, handler->result);
     free(handler->result);
     handler->result = NULL;
+    free(handler->scanner->scanJob);
+    handler->scanner->scanJob = NULL;
 }
 
 /**
@@ -1592,7 +1594,7 @@ sane_start(SANE_Handle h)
          return SANE_STATUS_NO_DOCS;
        }
     }
-    status = escl_scan(handler->scanner, handler->device, handler->result);
+    status = escl_scan(handler->scanner, handler->device, handler->scanner->scanJob, handler->result);
     if (status != SANE_STATUS_GOOD)
        return (status);
     if (!strcmp(handler->scanner->caps[handler->scanner->source].default_format, "image/jpeg"))
