@@ -156,6 +156,7 @@ typedef struct capabilities
     SANE_String_Const *Sources;
     int SourcesSize;
     FILE *tmp;
+    char *scanJob;
     unsigned char *img_data;
     long img_size;
     long img_read;
@@ -238,9 +239,11 @@ char *escl_newjob(capabilities_t *scanner,
 
 SANE_Status escl_scan(capabilities_t *scanner,
                       const ESCL_Device *device,
+                      char *scanJob,
                       char *result);
 
 void escl_scanner(const ESCL_Device *device,
+                  char *scanJob,
                   char *result);
 
 typedef void CURL;

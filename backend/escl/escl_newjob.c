@@ -296,7 +296,17 @@ wake_up_device:
                           result = strdup(location);
                           DBG( 1, "Create NewJob : %s\n", result);
                           *temporary = '\n';
+                          *location = '\0';
+                          location = strrchr(tmp_location,'/');
                           wakup_count = 0;
+                          if (location) {
+                             location++;
+                             scanner->scanJob = strdup(location);
+                             DBG( 1, "Full location header [%s]\n", scanner->scanJob);
+                          }
+                          else
+                             scanner->scanJob = strdup("ScanJobs");
+                          *location = '/';
                        }
                     }
                     if (result == NULL) {
