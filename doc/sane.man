@@ -102,7 +102,7 @@ unsubscribe:
 .TP
 .B SANE IRC channel
 The IRC (Internet Relay Chat) channel #sane can be found on the Freenode
-network (irc.freenode.net). It's for discussing
+network (irc.libera.chat). It's for discussing
 .B SANE
 problems, talking about development and general
 .B SANE
