@@ -900,7 +900,7 @@ sane_init(SANE_Int *version_code, SANE_Auth_Callback __sane_unused__ authorize)
 
 	/* Keep '124' as our build version. The arg is obsolete by now */
 	if (version_code)
-		*version_code = SANE_VERSION_CODE(SANE_CURRENT_MAJOR, V_MINOR, 124);
+		*version_code = SANE_VERSION_CODE(SANE_CURRENT_MAJOR, SANE_CURRENT_MINOR, 124);
 
 	sanei_usb_init();
 	sanei_usb_set_timeout(60 * 1000);

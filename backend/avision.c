@@ -8451,13 +8451,13 @@ sane_init (SANE_Int* version_code, SANE_Auth_Callback authorize)
 #endif
 
   DBG (3, "sane_init:(Version: %i.%i Build: %i)\n",
-       SANE_CURRENT_MAJOR, V_MINOR, BACKEND_BUILD);
+       SANE_CURRENT_MAJOR, SANE_CURRENT_MINOR, BACKEND_BUILD);
 
   /* must come first */
   sanei_thread_init ();
 
   if (version_code)
-    *version_code = SANE_VERSION_CODE (SANE_CURRENT_MAJOR, V_MINOR, BACKEND_BUILD);
+    *version_code = SANE_VERSION_CODE (SANE_CURRENT_MAJOR, SANE_CURRENT_MINOR, BACKEND_BUILD);
 
   sane_reload_devices ();
 

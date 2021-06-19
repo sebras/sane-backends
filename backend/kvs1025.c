@@ -51,11 +51,11 @@ sane_init (SANE_Int * version_code,
 
   DBG (DBG_error,
        "This is panasonic KV-S1020C / KV-S1025C version %d.%d build %d\n",
-       V_MAJOR, V_MINOR, V_BUILD);
+       SANE_CURRENT_MAJOR, SANE_CURRENT_MINOR, V_BUILD);
 
   if (version_code)
     {
-      *version_code = SANE_VERSION_CODE (V_MAJOR, V_MINOR, V_BUILD);
+      *version_code = SANE_VERSION_CODE (SANE_CURRENT_MAJOR, SANE_CURRENT_MINOR, V_BUILD);
     }
 
   /* Initialize USB */

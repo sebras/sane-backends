@@ -827,7 +827,7 @@ sane_init (SANE_Int * piVersion, SANE_Auth_Callback __sane_unused__ pfnAuth)
 
   if (piVersion != NULL)
     {
-      *piVersion = SANE_VERSION_CODE (SANE_CURRENT_MAJOR, V_MINOR, BUILD);
+      *piVersion = SANE_VERSION_CODE (SANE_CURRENT_MAJOR, SANE_CURRENT_MINOR, BUILD);
     }
 
   /* initialise transfer methods */

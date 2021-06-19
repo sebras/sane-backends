@@ -64,7 +64,7 @@ sane_init (SANE_Int __sane_unused__ * version_code,
   DBG_INIT ();
   DBG (DBG_INFO, "This is panasonic kvs20xx driver\n");
 
-  *version_code = SANE_VERSION_CODE (V_MAJOR, V_MINOR, BUILD);
+  *version_code = SANE_VERSION_CODE (SANE_CURRENT_MAJOR, SANE_CURRENT_MINOR, BUILD);
 
   /* Initialize USB */
   sanei_usb_init ();

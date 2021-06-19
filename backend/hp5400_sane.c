@@ -623,7 +623,7 @@ sane_init (SANE_Int * piVersion, SANE_Auth_Callback pfnAuth)
   DBG_INIT ();
 
   HP5400_DBG (DBG_MSG, "sane_init: SANE hp5400 backend version %d.%d-%d (from %s)\n",
-       SANE_CURRENT_MAJOR, V_MINOR, BUILD, PACKAGE_STRING);
+       SANE_CURRENT_MAJOR, SANE_CURRENT_MINOR, BUILD, PACKAGE_STRING);
 
   sanei_usb_init ();
 
@@ -671,7 +671,7 @@ sane_init (SANE_Int * piVersion, SANE_Auth_Callback pfnAuth)
 
   if (piVersion != NULL)
     {
-      *piVersion = SANE_VERSION_CODE (SANE_CURRENT_MAJOR, V_MINOR, BUILD);
+      *piVersion = SANE_VERSION_CODE (SANE_CURRENT_MAJOR, SANE_CURRENT_MINOR, BUILD);
     }
 
   return SANE_STATUS_GOOD;

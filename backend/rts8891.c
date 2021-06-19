@@ -315,11 +315,11 @@ sane_init (SANE_Int * version_code, SANE_Auth_Callback authorize)
   /* init backend debug */
   DBG_INIT ();
   DBG (DBG_info, "SANE Rts8891 backend version %d.%d-%d\n",
-       SANE_CURRENT_MAJOR, V_MINOR, BUILD);
+       SANE_CURRENT_MAJOR, SANE_CURRENT_MINOR, BUILD);
   DBG (DBG_proc, "sane_init: start\n");
 
   if (version_code)
-    *version_code = SANE_VERSION_CODE (SANE_CURRENT_MAJOR, V_MINOR, BUILD);
+    *version_code = SANE_VERSION_CODE (SANE_CURRENT_MAJOR, SANE_CURRENT_MINOR, BUILD);
 
   /* cold-plugging case : probe for already plugged devices */
   status = probe_rts8891_devices ();
