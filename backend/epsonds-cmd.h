@@ -20,7 +20,7 @@ SANE_Status esci2_can(epsonds_scanner *s);
 SANE_Status esci2_capa(epsonds_scanner *s);
 SANE_Status esci2_resa(epsonds_scanner *s);
 SANE_Status esci2_stat(epsonds_scanner *s);
-SANE_Status esci2_para(epsonds_scanner *s, char *parameters);
+SANE_Status esci2_para(epsonds_scanner *s, char *parameters, int len);
 SANE_Status esci2_mech(epsonds_scanner *s, char *parameters);
 SANE_Status esci2_trdt(epsonds_scanner *s);
 SANE_Status esci2_img(struct epsonds_scanner *s, SANE_Int *length) ;

@@ -32,10 +32,19 @@
 
 #include "sane/sanei_debug.h"
 
+
 static ssize_t
 epsonds_net_read_raw(epsonds_scanner *s, unsigned char *buf, ssize_t wanted,
 		       SANE_Status *status)
 {
+	DBG(15, "%s: wanted: %d\n", __func__, wanted);
+
+	if (wanted == 0)
+	{
+	    *status = SANE_STATUS_GOOD;
+		return 0;
+	}
+
 	int ready;
 	ssize_t read = -1;
 	fd_set readable;
@@ -284,3 +293,218 @@ epsonds_net_unlock(struct epsonds_scanner *s)
 /*	epsonds_net_read(s, buf, 1, &status); */
 	return status;
 }
+#if WITH_AVAHI
+
+#include <assert.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <avahi-client/lookup.h>
+#include <avahi-common/error.h>
+#include <avahi-common/simple-watch.h>
+#include <sys/time.h>
+#include <errno.h>
+
+static AvahiSimplePoll *simple_poll = NULL;
+
+static struct timeval borowseEndTime;
+
+static int resolvedCount = 0;
+static int browsedCount = 0;
+static int waitResolver = 0;
+
+typedef struct {
+    AvahiClient* client;
+    Device_Found_CallBack callBack;
+}EDSAvahiUserData;
+
+static int my_avahi_simple_poll_loop(AvahiSimplePoll *s) {
+    struct timeval currentTime;
+
+    for (;;)
+    {
+         int r = avahi_simple_poll_iterate(s, 1);
+		if (r != 0)
+		{
+			if (r >= 0 || errno != EINTR)
+			{
+					DBG(10, "my_avahi_simple_poll_loop end\n");
+					return r;
+			}
+		}
+
+		if (waitResolver) {
+			gettimeofday(&currentTime, NULL);
+
+			if ((currentTime.tv_sec - borowseEndTime.tv_sec) >= 3)
+			{
+				avahi_simple_poll_quit(simple_poll);
+				DBG(10, "resolve timeout\n");
+				return 0;
+			}
+		}
+    }
+}
+
+static void
+epsonds_resolve_callback(AvahiServiceResolver *r, AVAHI_GCC_UNUSED AvahiIfIndex interface,
+                            AVAHI_GCC_UNUSED AvahiProtocol protocol,
+                            AvahiResolverEvent event, const char *name,
+                            const char  *type,
+                            const char  *domain,
+                            const char  *host_name,
+                            const AvahiAddress *address, uint16_t port, AvahiStringList *txt,
+                            AvahiLookupResultFlags  flags,
+                            void  *userdata)
+{
+    EDSAvahiUserData* data = userdata;
+    char ipAddr[AVAHI_ADDRESS_STR_MAX], *t;
+
+	DBG(10, "epsonds_searchDevices resolve_callback\n");
+
+
+    resolvedCount++;
+
+    switch (event) {
+    case AVAHI_RESOLVER_FAILURE:
+        break;
+    case AVAHI_RESOLVER_FOUND:
+        avahi_address_snprint(ipAddr, sizeof(ipAddr), address);
+	   DBG(10, "epsonds_searchDevices name = %s \n", name);
+        if (strlen(name) > 7)
+        {
+            if (strncmp(name, "EPSON", 5) == 0)
+            {				
+				while(txt != NULL)
+				{
+					char* text = avahi_string_list_get_text(txt);
+					DBG(10, "avahi string = %s\n", text);
+
+					if (strlen(text) > 4 && strncmp(text, "mdl=", 4) == 0)
+					{
+						if (data->callBack)
+                		{
+							data->callBack(&text[4], ipAddr);
+							break;
+                		}	
+					}
+					txt = avahi_string_list_get_next(txt);
+				}
+				
+            }
+        }
+		break;
+    }
+}
+
+static void
+browse_callback(AvahiServiceBrowser *b, AvahiIfIndex interface,
+                            AvahiProtocol protocol, AvahiBrowserEvent event,
+                            const char *name, const char *type,
+                            const char *domain,
+                            AvahiLookupResultFlags flags,
+                            void* userdata)
+{
+    DBG(10, "browse_callback event = %d\n", event);
+
+
+    EDSAvahiUserData *data = userdata;
+    switch (event) {
+    case AVAHI_BROWSER_FAILURE:
+        avahi_simple_poll_quit(simple_poll);
+        return;
+    case AVAHI_BROWSER_NEW:
+	    DBG(10, "browse_callback name = %s\n", name);
+		browsedCount++;
+        if (!(avahi_service_resolver_new(data->client, interface, protocol, name,
+                                                               type, domain,
+                                                               AVAHI_PROTO_UNSPEC, 0,
+                                                               epsonds_resolve_callback, data)))
+		{
+			DBG(10, "avahi_service_resolver_new fails\n");
+		    break;
+		}
+    case AVAHI_BROWSER_REMOVE:
+        break;
+    case AVAHI_BROWSER_ALL_FOR_NOW:
+		DBG(10, "AVAHI_BROWSER_ALL_FOR_NOW\n");
+        gettimeofday(&borowseEndTime, NULL);
+
+        if (browsedCount > resolvedCount)
+        {
+			  DBG(10, "WAIT RESOLVER\n");
+               waitResolver = 1;
+         }else{
+			 DBG(10, "QUIT POLL\n");
+             avahi_simple_poll_quit(simple_poll);
+         }
+		break;
+    case AVAHI_BROWSER_CACHE_EXHAUSTED:
+		 DBG(10, "AVAHI_BROWSER_CACHE_EXHAUSTED\n");
+        break;
+    }
+}
+
+static void
+client_callback(AvahiClient *c, AvahiClientState state,
+                         AVAHI_GCC_UNUSED void *userdata)
+{
+    assert(c);
+    if (state == AVAHI_CLIENT_FAILURE)
+        avahi_simple_poll_quit(simple_poll);
+}
+
+SANE_Status epsonds_searchDevices(Device_Found_CallBack deviceFoundCallBack)
+{
+	int result = SANE_STATUS_GOOD;
+
+    AvahiClient *client = NULL;
+    AvahiServiceBrowser *sb = NULL;
+
+    EDSAvahiUserData data;
+
+    resolvedCount = 0;
+	browsedCount = 0;
+	waitResolver = 0;
+
+
+	int error = 0;
+    DBG(10, "epsonds_searchDevices\n");
+
+    if (!(simple_poll = avahi_simple_poll_new())) {
+        DBG(10, "avahi_simple_poll_new failed\n");
+		result = SANE_STATUS_INVAL;
+        goto fail;
+    }
+    client = avahi_client_new(avahi_simple_poll_get(simple_poll), 0,
+                                               client_callback, NULL, &error);
+    if (!client) {
+        DBG(10, "avahi_client_new failed %s\n", avahi_strerror(error));		
+		result = SANE_STATUS_INVAL;
+        goto fail;
+    }
+    data.client = client;
+    data.callBack = deviceFoundCallBack;
+
+    if (!(sb = avahi_service_browser_new(client, AVAHI_IF_UNSPEC,
+                                                                   AVAHI_PROTO_UNSPEC, "_scanner._tcp",
+                                                                   NULL, 0, browse_callback, &data))) {
+        DBG(10, "avahi_service_browser_new failed: %s\n",
+                              avahi_strerror(avahi_client_errno(client)));
+		result = SANE_STATUS_INVAL;
+        goto fail;
+    }
+    my_avahi_simple_poll_loop(simple_poll);
+fail:
+    if (sb)
+        avahi_service_browser_free(sb);
+    if (client)
+        avahi_client_free(client);
+    if (simple_poll)
+        avahi_simple_poll_free(simple_poll);
+	
+	DBG(10, "epsonds_searchDevices fin\n");
+
+    return result;
+}
+#endif

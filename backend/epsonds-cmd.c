@@ -134,6 +134,7 @@ static SANE_Status esci2_cmd(epsonds_scanner* s,
 	SANE_Status status;
 	unsigned int more;
 	char header[13], rbuf[64]; /* add one more byte for header buffer to correct buffer overflow issue,*/
+	char *buf;
 
 	DBG(8, "%s: %4s len %lu, payload len: %lu\n", __func__, cmd, len, plen);
 
@@ -151,6 +152,21 @@ static SANE_Status esci2_cmd(epsonds_scanner* s,
 
 	// send RequestBlock, request immediate response if there's no payload
 	status = eds_txrx(s, header, len, rbuf, (plen > 0) ? 0 : 64);
+
+	/* pointer to the token's value */
+	buf = rbuf + 12;
+	/* nrd / nrdBUSY */
+	DBG(8, "buf = %s\n",buf);
+	if (strncmp("#nrd", buf, 4) == 0) {
+		buf += 4;
+			DBG(8, "buf = %s\n",buf);
+		if (strncmp("BUSY", buf, 4) == 0) {
+			DBG(8, "device busy\n");
+			DBG(8, "SANE_STATUS:%d\n", SANE_STATUS_DEVICE_BUSY);
+			return SANE_STATUS_DEVICE_BUSY;
+		}
+	}
+
 	if (status != SANE_STATUS_GOOD) {
 		return status;
 	}
@@ -227,6 +243,21 @@ SANE_Status esci2_fin(epsonds_scanner *s)
 	DBG(5, "%s\n", __func__);
 
 	status = esci2_cmd_simple(s, "FIN x0000000", NULL);
+
+	for(int i = 0; i < 10; i++) {
+
+		if(status == SANE_STATUS_DEVICE_BUSY || status == SANE_STATUS_IO_ERROR) {
+			status = esci2_cmd_simple(s, "FIN x0000000", NULL);
+		}
+		else {
+			DBG(1, "break\n");
+			break;
+		}
+		DBG(1, "sleep(5)\n");
+		sleep(5);
+		
+	}
+
 	s->locked = 0;
 	return status;
 }
@@ -264,13 +295,11 @@ static char *decode_binary(char *buf, int len)
 
 	memcpy(tmp, buf, 4);
 	tmp[4] = '\0';
-	len -= 4;
 
 	if (buf[0] != 'h')
 		return NULL;
 
 	hl = strtol(tmp + 1, NULL, 16);
-	if (hl > len) hl = len;
 	if (hl) {
 
 		char *v = malloc(hl + 1);
@@ -313,9 +342,6 @@ static SANE_Status info_cb(void *userdata, char *token, int len)
 	epsonds_scanner *s = (epsonds_scanner *)userdata;
 	char *value;
 
-	if (DBG_LEVEL >= 11) {
-		debug_token(DBG_LEVEL, __func__, token, len);
-	}
 
 	/* pointer to the token's value */
 	value = token + 3;
@@ -328,12 +354,11 @@ static SANE_Status info_cb(void *userdata, char *token, int len)
 		}
 	}
 
-	if (strncmp("PRD", token, 3) == 0) {
+	if (strncmp("PRD", token, 3) == 0) {	
 		free(s->hw->model);
 		s->hw->model = decode_string(value, len);
 		s->hw->sane.model = s->hw->model;
-		DBG(1, " product: %s\n", s->hw->model);
-		/* we will free the string later */
+		DBG(1, " product: %s\n", s->hw->model);	
 	}
 
 	if (strncmp("VER", token, 3) == 0) {
@@ -421,6 +446,7 @@ static SANE_Status info_cb(void *userdata, char *token, int len)
 				int max = decode_value(value + 4 + 8, 8);
 
 				DBG(1, "     ADF: area %dx%d @ 100dpi\n", min, max);
+				eds_set_adf_area(s->hw,	min, max, 100);
 			}
 
 			if (strncmp("AMIN", value, 4) == 0) {
@@ -437,10 +463,39 @@ static SANE_Status info_cb(void *userdata, char *token, int len)
 				int max = decode_value(value + 4 + 8, 8);
 
 				DBG(1, "     ADF: max %dx%d @ 100dpi\n", min, max);
+			}
+		}
+
+
+
+
+
+
+		if (len == 16) {
+
+			if (strncmp("AREA", value, 4) == 0) {
+
+				int min = decode_value(value + 4, 4);
+				int max = decode_value(value + 4 + 4, 8);
+
+				DBG(1, "     ADF: area %dx%d @ 100dpi\n", min, max);
 
 				eds_set_adf_area(s->hw,	min, max, 100);
 			}
+
+			if (strncmp("AMAX", value, 4) == 0) {
+
+				// d
+				int min = decode_value(value + 4, 4);
+				// i
+				int max = decode_value(value + 4 + 4, 8);
+
+				DBG(1, "     ADF: max %dx%d @ 100dpi\n", min, max);
+			}
 		}
+
+
+
 
 		if (len == 12) {
 
@@ -476,6 +531,22 @@ static SANE_Status info_cb(void *userdata, char *token, int len)
 
 				int min = decode_value(value + 4, 8);
 				int max = decode_value(value + 4 + 8, 8);
+
+				DBG(1, "      FB: area %dx%d @ 100dpi\n", min, max);
+
+				eds_set_fbf_area(s->hw,	min, max, 100);
+			}
+		}
+
+		
+		if (len == 16) {
+
+			/* AREAi0000850i0001400 */
+			if (strncmp("AREA", value, 4) == 0) {
+				//d
+				int min = decode_value(value + 4, 4);
+				//i
+				int max = decode_value(value + 4 + 4, 8);
 
 				DBG(1, "      FB: area %dx%d @ 100dpi\n", min, max);
 
@@ -602,6 +673,7 @@ static SANE_Status capa_cb(void *userdata, char *token, int len)
 
 		if (strncmp("ADFCRP ", token, 3 + 4) == 0) {
 			DBG(1, "     ADF: image cropping\n");
+			s->hw->adf_has_crp = 1;
 		}
 
 		if (strncmp("ADFFAST", token, 3 + 4) == 0) {
@@ -636,6 +708,24 @@ static SANE_Status capa_cb(void *userdata, char *token, int len)
 		}
 	}
 
+
+	if (strncmp("COLLIST", token, 3 + 4) == 0) 
+	{
+		char *p = token + 3 + 4;
+		int i;
+		int count = (len - 4);
+		int readBytes = 0;
+		s->hw->has_mono = 0;
+		while (readBytes < count) {
+			if (strncmp(p, "M001", 4) == 0)
+			{
+				s->hw->has_mono = 1;
+			}
+			readBytes+=4;
+			p+=4;
+		}	
+	}
+
 	/* RSMRANGi0000050i0000600 */
 
 	if (strncmp("RSMRANG", token, 3 + 4) == 0) {
@@ -659,17 +749,25 @@ static SANE_Status capa_cb(void *userdata, char *token, int len)
 
 		char *p = token + 3 + 4;
 
-		if (p[0] == 'i') {
 
 			int i;
-			int count = (len - 4) / 8;
+			int count = (len - 4);
+			int readBytes = 0;
 
-			for (i = 0; i < count; i++) {
-
+			while (readBytes < count) {
+			      if(*p == 'i')
+		             {
 				eds_add_resolution(s->hw, decode_value(p, 8));
 				p += 8;
+				readBytes += 8;
+			     }else if(*p == 'd')
+			    {
+				eds_add_resolution(s->hw, decode_value(p, 4));
+				p += 4;
+				readBytes +=4;
+			     }
 			}
-		}
+		
 	}
 
 	return SANE_STATUS_GOOD;
@@ -684,14 +782,26 @@ SANE_Status esci2_capa(epsonds_scanner *s)
 
 static SANE_Status stat_cb(void *userdata, char *token, int len)
 {
-/*
+
 	epsonds_scanner *s = (epsonds_scanner *)userdata;
 	char *value = token + 3;
-*/
+
 	userdata = userdata;
 
 	if (DBG_LEVEL >= 11) {
 		debug_token(DBG_LEVEL, __func__, token, len);
+	}
+
+	if (strncmp("ERR", token, 3) == 0) {
+		if (strncmp("ADF PE ", value, len) == 0) {
+			DBG(1, "     PE : paper empty\n");
+			return SANE_STATUS_NO_DOCS;
+		}
+
+		if (strncmp("ADF OPN", value, len) == 0) {
+			DBG(1, "     conver open\n");
+			return SANE_STATUS_COVER_OPEN;
+		}
 	}
 
 	return SANE_STATUS_GOOD;
@@ -742,10 +852,10 @@ static SANE_Status para_cb(void *userdata, char *token, int len)
 	return SANE_STATUS_GOOD;
 }
 
-SANE_Status esci2_para(epsonds_scanner *s, char *parameters)
+SANE_Status esci2_para(epsonds_scanner *s, char *parameters, int len)
 {
 	DBG(8, "%s: %s\n", __func__, parameters);
-	return esci2_cmd(s, "PARAx0000000", 12, parameters, strlen(parameters), NULL, &para_cb);
+	return esci2_cmd(s, "PARAx0000000", 12, parameters, len, NULL, &para_cb);
 }
 
 SANE_Status esci2_mech(epsonds_scanner *s, char *parameters)
@@ -784,16 +894,109 @@ static SANE_Status img_cb(void *userdata, char *token, int len)
 		return SANE_STATUS_GOOD;
 	}
 
+	if (len == 12 && strncmp("pst", token, 3) == 0) {
+
+		s->dummy = decode_value(token + 3 + 4, 4);
+
+		DBG(10, "%s: pst width: %d, height: %d, dummy: %d\n",
+			__func__,
+			decode_value(token + 3, 4),
+			decode_value(token + 3 + 4 + 4, 4),
+			s->dummy);
+
+		return SANE_STATUS_GOOD;
+	}
+
+	if (len == 16 && strncmp("pst", token, 3) == 0) {
+
+		s->dummy = decode_value(token + 3 + 4, 4);
+
+		DBG(10, "%s: pst width: %d, height: %d, dummy: %d\n",
+			__func__,
+			decode_value(token + 3, 4),
+			decode_value(token + 3 + 4 + 4, 8),
+			s->dummy);
+
+		return SANE_STATUS_GOOD;
+	}
+
+	if (len == 20 && strncmp("pst", token, 3) == 0) {
+
+		s->dummy = decode_value(token + 3 + 8, 4);
+
+		DBG(10, "%s: pst width: %d, height: %d, dummy: %d\n",
+			__func__,
+			decode_value(token + 3, 8),
+			decode_value(token + 3 + 8 + 4, 8),
+			s->dummy);
+
+		return SANE_STATUS_GOOD;
+	}
+
+
+	// i0001696i0002347
 	if (len == 16 && strncmp("pen", token, 3) == 0) {
 		DBG(10, "%s: page end\n", __func__);
 		s->eof = 1;
+		if (s->isflatbedScan)
+		{
+			s->scanning = 0;
+		}
+		DBG(10, "%s: pen width: %d, height: %d, dummy: %d\n",
+			__func__,
+			decode_value(token + 3, 8),
+			decode_value(token + 3 + 8, 8),
+		s->dummy);
+		s->width_temp = decode_value(token + 3, 8);
+		s->height_temp = decode_value(token + 3 + 8, 8);
 		return SANE_STATUS_EOF;
 	}
+
+	// d696i0002347
+	if (len == 12 && strncmp("pen", token, 3) == 0) {
+		DBG(10, "%s: page end\n", __func__);
+		s->eof = 1;
+		if (s->isflatbedScan)
+		{
+			s->scanning = 0;
+		}
+
+		DBG(10, "%s: pen width: %d, height: %d, dummy: %d\n",
+			__func__,
+			decode_value(token + 3, 4),
+			decode_value(token + 3 + 4, 8),
+			s->dummy);
+
+		s->width_temp = decode_value(token + 3, 4);
+		s->height_temp = decode_value(token + 3 + 4, 8);
+		return SANE_STATUS_EOF;
+	}
+
+	// d696d2347
+	if (len == 8 && strncmp("pen", token, 3) == 0) {
+		DBG(10, "%s: page end\n", __func__);
+		s->eof = 1;
+		if (s->isflatbedScan)
+		{
+			s->scanning = 0;
+		}
+		DBG(10, "%s: pen width: %d, height: %d, dummy: %d\n",
+			__func__,
+			decode_value(token + 3, 4),
+			decode_value(token + 3 + 4, 4),
+			s->dummy);
+		
+		s->width_temp = decode_value(token + 3, 4);
+		s->height_temp = decode_value(token + 3 + 4, 4);
+
+		return SANE_STATUS_EOF;
+	}
+
 
 	/* typIMGA or typIMGB */
 	if (len == 4 && strncmp("typ", token, 3) == 0) {
 
-		if (token[6] == 'B')
+		if (token[6] == 'B')		
 			s->backside = 1;
 		else
 			s->backside = 0;
@@ -807,6 +1010,7 @@ static SANE_Status img_cb(void *userdata, char *token, int len)
 		char *cause = token + 3 + 4;	/* OPN, PJ, PE, ERR, LTF, LOCK, DFED, DTCL, AUT, PERM */
 
 		s->scanning = 0;
+		s->scanEnd = 1;
 
 		DBG(1, "%s: error on option %3.3s, cause %4.4s\n",
 			__func__, option, cause);
@@ -831,6 +1035,8 @@ static SANE_Status img_cb(void *userdata, char *token, int len)
 	}
 
 	if (len == 4 && strncmp("lftd000", token, 3 + 4) == 0) {
+		DBG(1, "%s:lft ok\n", __func__);
+		s->scanEnd = 1;
 		s->scanning = 0;
 	}
 
@@ -846,6 +1052,8 @@ esci2_img(struct epsonds_scanner *s, SANE_Int *length)
 	unsigned int more;
 	ssize_t read;
 
+	DBG(15, "esci2_img start\n");
+
 	*length = 0;
 
 	if (s->canceling)
@@ -856,6 +1064,7 @@ esci2_img(struct epsonds_scanner *s, SANE_Int *length)
 	if (status != SANE_STATUS_GOOD) {
 		return status;
 	}
+	DBG(15, "request img OK\n");
 
 	/* receive DataHeaderBlock */
 	memset(s->buf, 0x00, 64);
@@ -863,6 +1072,7 @@ esci2_img(struct epsonds_scanner *s, SANE_Int *length)
 	if (status != SANE_STATUS_GOOD) {
 		return status;
 	}
+	DBG(15, "receive img OK\n");
 
 	/* check if we need to read any image data */
 	more = 0;
@@ -872,6 +1082,17 @@ esci2_img(struct epsonds_scanner *s, SANE_Int *length)
 
 	/* this handles eof and errors */
 	parse_status = esci2_parse_block((char *)s->buf + 12, 64 - 12, s, &img_cb);
+
+	if (s->backside)
+	{
+		s->width_back = s->width_temp;
+		s->height_back = s->height_temp;
+	}else{
+		s->width_front = s->width_temp;
+		s->height_front = s->height_temp;
+
+	}
+
 
 	/* no more data? return using the status of the esci2_parse_block
 	 * call, which might hold other error conditions.
@@ -884,7 +1105,6 @@ esci2_img(struct epsonds_scanner *s, SANE_Int *length)
 	if (more > s->bsz) {
 		return SANE_STATUS_IO_ERROR;
 	}
-
 	/* ALWAYS read image data */
 	if (s->hw->connection == SANE_EPSONDS_NET) {
 		epsonds_net_request_read(s, more);

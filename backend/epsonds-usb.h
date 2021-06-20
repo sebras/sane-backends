@@ -18,7 +18,4 @@
 
 #define SANE_EPSONDS_VENDOR_ID	(0x4b8)
 
-extern SANE_Word epsonds_usb_product_ids[];
-extern int epsonds_get_number_of_ids(void);
-
 #endif

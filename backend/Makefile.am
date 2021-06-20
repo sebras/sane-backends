@@ -511,11 +511,20 @@ libepsonds_la_CPPFLAGS = $(AM_CPPFLAGS) -DBACKEND_NAME=epsonds
 nodist_libsane_epsonds_la_SOURCES = epsonds-s.c
 libsane_epsonds_la_CPPFLAGS = $(AM_CPPFLAGS) -DBACKEND_NAME=epsonds
 libsane_epsonds_la_LDFLAGS = $(DIST_SANELIBS_LDFLAGS)
+
+if have_libavahi
+libsane_epsonds_la_LIBADD = $(COMMON_LIBS) libepsonds.la ../sanei/sanei_init_debug.lo ../sanei/sanei_constrain_value.lo \
+				../sanei/sanei_config.lo ../sanei/sanei_config2.lo sane_strstatus.lo \
+				../sanei/sanei_usb.lo ../sanei/sanei_scsi.lo \
+				../sanei/sanei_tcp.lo ../sanei/sanei_udp.lo \
+				$(SANEI_SANEI_JPEG_LO) $(JPEG_LIBS) $(USB_LIBS) $(MATH_LIB) $(RESMGR_LIBS) $(SOCKET_LIBS) $(AVAHI_LIBS)
+else
 libsane_epsonds_la_LIBADD = $(COMMON_LIBS) libepsonds.la ../sanei/sanei_init_debug.lo ../sanei/sanei_constrain_value.lo \
 				../sanei/sanei_config.lo ../sanei/sanei_config2.lo sane_strstatus.lo \
 				../sanei/sanei_usb.lo ../sanei/sanei_scsi.lo \
 				../sanei/sanei_tcp.lo ../sanei/sanei_udp.lo \
 				$(SANEI_SANEI_JPEG_LO) $(JPEG_LIBS) $(USB_LIBS) $(MATH_LIB) $(RESMGR_LIBS) $(SOCKET_LIBS)
+endif			
 EXTRA_DIST += epsonds.conf.in
 
 libfujitsu_la_SOURCES = fujitsu.c fujitsu.h fujitsu-scsi.h

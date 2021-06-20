@@ -38,3 +38,4 @@ extern SANE_Int eds_ring_read(ring_buffer *ring, SANE_Byte *buf, SANE_Int size);
 extern SANE_Int eds_ring_skip(ring_buffer *ring, SANE_Int size);
 extern SANE_Int eds_ring_avail(ring_buffer *ring);
 extern void eds_ring_flush(ring_buffer *ring)    ;
+extern void eds_ring_destory(ring_buffer *ring)    ;
