@@ -255,7 +255,7 @@ SANE_Status esci2_fin(epsonds_scanner *s)
 		}
 		DBG(1, "sleep(5)\n");
 		sleep(5);
-		
+
 	}
 
 	s->locked = 0;
@@ -354,11 +354,11 @@ static SANE_Status info_cb(void *userdata, char *token, int len)
 		}
 	}
 
-	if (strncmp("PRD", token, 3) == 0) {	
+	if (strncmp("PRD", token, 3) == 0) {
 		free(s->hw->model);
 		s->hw->model = decode_string(value, len);
 		s->hw->sane.model = s->hw->model;
-		DBG(1, " product: %s\n", s->hw->model);	
+		DBG(1, " product: %s\n", s->hw->model);
 	}
 
 	if (strncmp("VER", token, 3) == 0) {
@@ -538,7 +538,7 @@ static SANE_Status info_cb(void *userdata, char *token, int len)
 			}
 		}
 
-		
+
 		if (len == 16) {
 
 			/* AREAi0000850i0001400 */
@@ -709,7 +709,7 @@ static SANE_Status capa_cb(void *userdata, char *token, int len)
 	}
 
 
-	if (strncmp("COLLIST", token, 3 + 4) == 0) 
+	if (strncmp("COLLIST", token, 3 + 4) == 0)
 	{
 		char *p = token + 3 + 4;
 		int i;
@@ -723,7 +723,7 @@ static SANE_Status capa_cb(void *userdata, char *token, int len)
 			}
 			readBytes+=4;
 			p+=4;
-		}	
+		}
 	}
 
 	/* RSMRANGi0000050i0000600 */
@@ -767,7 +767,7 @@ static SANE_Status capa_cb(void *userdata, char *token, int len)
 				readBytes +=4;
 			     }
 			}
-		
+
 	}
 
 	return SANE_STATUS_GOOD;
@@ -985,7 +985,7 @@ static SANE_Status img_cb(void *userdata, char *token, int len)
 			decode_value(token + 3, 4),
 			decode_value(token + 3 + 4, 4),
 			s->dummy);
-		
+
 		s->width_temp = decode_value(token + 3, 4);
 		s->height_temp = decode_value(token + 3 + 4, 4);
 
@@ -996,7 +996,7 @@ static SANE_Status img_cb(void *userdata, char *token, int len)
 	/* typIMGA or typIMGB */
 	if (len == 4 && strncmp("typ", token, 3) == 0) {
 
-		if (token[6] == 'B')		
+		if (token[6] == 'B')
 			s->backside = 1;
 		else
 			s->backside = 0;

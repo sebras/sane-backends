@@ -524,7 +524,7 @@ libsane_epsonds_la_LIBADD = $(COMMON_LIBS) libepsonds.la ../sanei/sanei_init_deb
 				../sanei/sanei_usb.lo ../sanei/sanei_scsi.lo \
 				../sanei/sanei_tcp.lo ../sanei/sanei_udp.lo \
 				$(SANEI_SANEI_JPEG_LO) $(JPEG_LIBS) $(USB_LIBS) $(MATH_LIB) $(RESMGR_LIBS) $(SOCKET_LIBS)
-endif			
+endif
 EXTRA_DIST += epsonds.conf.in
 
 libfujitsu_la_SOURCES = fujitsu.c fujitsu.h fujitsu-scsi.h

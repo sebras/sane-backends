@@ -76,7 +76,7 @@ setvalue(SANE_Handle handle, SANE_Int option, void *value, SANE_Int *info);
 
 static unsigned char LUT[][256] =
 {
-    {// 0  
+    {// 0
         0x00,0x01,0x02,0x03,0x04,0x05,0x06,0x07,
         0x08,0x09,0x0A,0x0B,0x0C,0x0D,0x0E,0x0F,
         0x10,0x11,0x12,0x13,0x14,0x15,0x16,0x17,
@@ -454,7 +454,7 @@ static unsigned char LUT_R[][256] =
 		0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,
 		0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,
     },
-    {	
+    {
 		0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
 		0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
 		0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
@@ -522,7 +522,7 @@ static unsigned char LUT_R[][256] =
 		0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,
 		0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,
     },
-    {   
+    {
         0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
         0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
         0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
@@ -556,7 +556,7 @@ static unsigned char LUT_R[][256] =
         0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,
         0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,
     },
-    {  
+    {
         0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
         0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
         0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x01,
@@ -590,7 +590,7 @@ static unsigned char LUT_R[][256] =
         0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,
         0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,
     },
-    {  
+    {
 		0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
 		0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
 		0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
@@ -628,7 +628,7 @@ static unsigned char LUT_R[][256] =
 
 static unsigned char LUT_G[][256] =
 {
-    {	
+    {
         0x00,0x01,0x02,0x03,0x04,0x05,0x06,0x07,
         0x08,0x09,0x0A,0x0B,0x0C,0x0D,0x0E,0x0F,
         0x10,0x11,0x12,0x13,0x14,0x15,0x16,0x17,
@@ -662,7 +662,7 @@ static unsigned char LUT_G[][256] =
         0xF0,0xF1,0xF2,0xF3,0xF4,0xF5,0xF6,0xF7,
         0xF8,0xF9,0xFA,0xFB,0xFC,0xFD,0xFE,0xFF
     },
-    {	
+    {
         0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
         0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
         0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
@@ -696,7 +696,7 @@ static unsigned char LUT_G[][256] =
         0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,
         0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF
     },
-    {	
+    {
 		0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
 		0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
 		0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
@@ -730,7 +730,7 @@ static unsigned char LUT_G[][256] =
 		0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,
 		0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,
     },
-    {	
+    {
 		0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
 		0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
 		0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
@@ -764,7 +764,7 @@ static unsigned char LUT_G[][256] =
 		0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,
 		0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,
 	},
-	{	
+	{
 		0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
 		0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
 		0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
@@ -798,7 +798,7 @@ static unsigned char LUT_G[][256] =
 		0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,
 		0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,
     },
-    {   
+    {
         0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
         0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
         0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
@@ -832,7 +832,7 @@ static unsigned char LUT_G[][256] =
         0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,
         0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,
     },
-    {  
+    {
         0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
         0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
         0x00,0x00,0x00,0x00,0x00,0x00,0x01,0x02,
@@ -904,7 +904,7 @@ static unsigned char LUT_G[][256] =
 
 static unsigned char LUT_B[][256] =
 {
-    {	
+    {
         0x00,0x01,0x02,0x03,0x04,0x05,0x06,0x07,
         0x08,0x09,0x0A,0x0B,0x0C,0x0D,0x0E,0x0F,
         0x10,0x11,0x12,0x13,0x14,0x15,0x16,0x17,
@@ -938,7 +938,7 @@ static unsigned char LUT_B[][256] =
         0xF0,0xF1,0xF2,0xF3,0xF4,0xF5,0xF6,0xF7,
         0xF8,0xF9,0xFA,0xFB,0xFC,0xFD,0xFE,0xFF
     },
-    {	
+    {
         0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
         0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
         0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
@@ -972,7 +972,7 @@ static unsigned char LUT_B[][256] =
         0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,
         0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF
     },
-    {	
+    {
 		0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
 		0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
 		0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
@@ -1074,7 +1074,7 @@ static unsigned char LUT_B[][256] =
 		0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,
 		0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,
     },
-    {  
+    {
         0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
         0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
         0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
@@ -1108,7 +1108,7 @@ static unsigned char LUT_B[][256] =
         0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,
         0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,
     },
-    {  
+    {
         0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
         0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
         0x00,0x00,0x00,0x00,0x00,0x01,0x02,0x03,
@@ -1142,7 +1142,7 @@ static unsigned char LUT_B[][256] =
         0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,
         0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,
     },
-    {  
+    {
         0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
         0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
         0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
@@ -1179,7 +1179,7 @@ static unsigned char LUT_B[][256] =
 };
 //// profile array ////
 
-typedef struct 
+typedef struct
 {
 	int  productID; // USB PID
     char		productName[50]; // ESCI/2 procduct name
@@ -1254,10 +1254,10 @@ const  epsonds_profile_map epsonds_models_predefined[] = {
   {0x114F, "PID 114F","M3140 Series", 7},
   {0x1143, "PID 1143","L3150 Series", 7},
   {0x1143, "PID 1143","ET-2710 Series", 7},
-  {0x00, "","", 0x00 } 
+  {0x00, "","", 0x00 }
 };
 
-typedef struct 
+typedef struct
 {
   epsonds_profile_map *array;
   int used;
@@ -1273,11 +1273,11 @@ static void init_profile_maps(epsonds_profile_map_array *a, size_t initialSize) 
   a->array = malloc(initialSize * sizeof(epsonds_profile_map));
   a->used = 0;
   a->size = initialSize;
-  
+
    for (int i = 0; epsonds_models_predefined[i].productID != 0; i++) {
 
 		//DBG(6, "epsonds_models_predefined[i].productID         = %x\n", epsonds_models_predefined[i].productID );
-	   
+
 	   insert_profile_map(a, epsonds_models_predefined[i]);
    }
 }
@@ -1517,7 +1517,7 @@ device_detect(const char *name, int type, SANE_Status *status)
 
 	/* try to find the device in our list */
 	for (dev = first_dev; dev; dev = dev->next) {
-		
+
 		if (strcmp(dev->sane.name, name) == 0) {
 
 			DBG(1, " found cached device\n");
@@ -1612,7 +1612,7 @@ device_detect(const char *name, int type, SANE_Status *status)
 
 	DBG(1, "scanner model: %s\n", dev->model);
 
-	
+
 	s->hw->lut_id = 0;
 
 	for (int i = 0; i < stProfileMapArray.used; i++) {
@@ -1621,7 +1621,7 @@ device_detect(const char *name, int type, SANE_Status *status)
 
 
 		if (strcmp(map->productName, dev->model) == 0) {
-			
+
 			{//Convert to user friendly model name
 				free(s->hw->model);
 
@@ -1629,11 +1629,11 @@ device_detect(const char *name, int type, SANE_Status *status)
 				memset(deviceName, 0, strlen(map->deviceID) + 1);
 				strncpy(deviceName,  map->deviceID, strlen(map->deviceID));
 				s->hw->model = deviceName;
-				s->hw->sane.model = s->hw->model;				
+				s->hw->sane.model = s->hw->model;
 			}
 			{// set lutid
 				s->hw->lut_id = map->lutID;
-			}	
+			}
 			break;
 		}
 	}
@@ -1711,7 +1711,7 @@ static void found_net_device(const char* device_name, const char* ip)
 		strncat(name, ip, 39);
 
 		int foundCache = 0;
-		// search cache and prents duplicated model	
+		// search cache and prents duplicated model
 		for (epsonds_device* dev = first_dev; dev; dev = dev->next) {
 			if (strcmp(dev->sane.name, name) == 0) {
 				foundCache = 1;
@@ -1777,7 +1777,7 @@ attach_one_config(SANEI_Config __sane_unused__ *config, const char *line)
 		sanei_usb_attach_matching_devices(line, attach_one_usb);
 
 	} else if (strncmp(line, "usb", 3) == 0 && len == 3) {
-		
+
 		DBG(7, " probing usb devices\n");
 
 		for (int i = 0; i < stProfileMapArray.used; i++) {
@@ -1795,9 +1795,9 @@ attach_one_config(SANEI_Config __sane_unused__ *config, const char *line)
 			{
 				#if WITH_AVAHI
 				epsonds_searchDevices(found_net_device);
-				#else			
-				// currently does not support 
-				//e2_network_discovery();							
+				#else
+				// currently does not support
+				//e2_network_discovery();
 				#endif
 			}
 			else
@@ -2052,7 +2052,7 @@ init_options(epsonds_scanner *s)
 		SANE_I18N("Enables ADF skew correction");
 	s->opt[OPT_ADF_SKEW].type = SANE_TYPE_BOOL;
 	s->val[OPT_ADF_SKEW].w = 0;
-	
+
 
 	s->opt[OPT_ADF_CRP].name = "adf-crp";
 	s->opt[OPT_ADF_CRP].title = SANE_I18N("ADF CRP Correction");
@@ -2060,8 +2060,8 @@ init_options(epsonds_scanner *s)
 		SANE_I18N("Enables ADF auto cropping"); //
 	s->opt[OPT_ADF_CRP].type = SANE_TYPE_BOOL;
 	s->val[OPT_ADF_CRP].w = 0;
-	
-	
+
+
 	if (!s->hw->adf_has_skew)
 	{
 		s->val[OPT_ADF_SKEW].w = 0;
@@ -2073,7 +2073,7 @@ init_options(epsonds_scanner *s)
 		s->val[OPT_ADF_CRP].w = 0;
 		s->opt[OPT_ADF_CRP].cap |= SANE_CAP_INACTIVE;
 	}
-	
+
 	return SANE_STATUS_GOOD;
 }
 
@@ -2083,7 +2083,7 @@ sane_open(SANE_String_Const name, SANE_Handle *handle)
 	SANE_Status status;
 	epsonds_scanner *s = NULL;
 
-	
+
 
 	DBG(7, "** %s: name = '%s'\n", __func__, name);
 
@@ -2338,7 +2338,7 @@ setvalue(SANE_Handle handle, SANE_Int option, void *value, SANE_Int *info)
 		if (option == OPT_BR_Y)
 		{
 			DBG(17, "OPT_BR_Y = %d\n", sval->w);
-		}		
+		}
 		if (option == OPT_TL_X)
 		{
 			DBG(17, "OPT_TL_X = %d\n", sval->w);
@@ -2441,7 +2441,7 @@ static void setBit (SANE_Byte* bytes, SANE_Unit bitIndex, SANE_Bool isTrue)
 {
     SANE_Unit octet = bitIndex / 8;
     SANE_Byte  bit   = 7 - (bitIndex % 8);
-    
+
     if (isTrue) {
         bytes[octet] |=  (1 << bit);
     } else {
@@ -2453,11 +2453,11 @@ static SANE_Bool getBit (SANE_Byte* bytes, SANE_Unit bitIndex)
 {
     SANE_Unit octet = bitIndex / 8;
     SANE_Byte mask = 1 << (7 - (bitIndex % 8));
-    
+
     if( bytes[octet] & mask ){
         return SANE_TRUE;
     }
-    
+
     return SANE_FALSE;
 }
 
@@ -2472,7 +2472,7 @@ static void swapPixel1(SANE_Unit  x1,
 {
     SANE_Unit pixelBits =  bitsPerSample * samplesPerPixel;
     SANE_Unit widthBits =  bytesPerRow * 8;
-    
+
     SANE_Byte temp = getBit(bytes, widthBits * y1 + x1 * pixelBits);
     {
         SANE_Byte right =  getBit(bytes, widthBits * y2 + x2 * pixelBits);
@@ -2491,7 +2491,7 @@ static void swapPixel8(SANE_Unit  x1,
                        SANE_Unit  bytesPerRow)
 {
     SANE_Unit pixelBytes =  samplesPerPixel * bitsPerSample / 8;
-    
+
     for (SANE_Byte i = 0; i < pixelBytes; i++) {
         SANE_Byte temp = bytes[y1 * bytesPerRow +  (pixelBytes *  x1 + i)];
         bytes[y1 * bytesPerRow + (pixelBytes * x1 + i)] =  bytes[y2 * bytesPerRow +  (pixelBytes * x2 + i)];
@@ -2518,12 +2518,12 @@ static void swapPixel(SANE_Unit  x1,
 }
 
 
-void 
+void
 upside_down_backside_image(epsonds_scanner *s)
 {
 	// get all data from ring_buffer
-	if (eds_ring_avail(&s->back)  && 
-	    (strcmp(s->hw->sane.model, (char*)"DS-1630") == 0  
+	if (eds_ring_avail(&s->back)  &&
+	    (strcmp(s->hw->sane.model, (char*)"DS-1630") == 0
 		 || strcmp(s->hw->sane.model, (char*)"DS-1610") == 0
 		 || strcmp(s->hw->sane.model, (char*)"DS-1660W") == 0))
 	{
@@ -2545,18 +2545,18 @@ upside_down_backside_image(epsonds_scanner *s)
 				samplesPerPxel = 1;
 			}
 
-			SANE_Int half = (s->height_back / 2) - 1;		
+			SANE_Int half = (s->height_back / 2) - 1;
 			if (half < 0) {
 				half = 0;
 			}
-			
+
 			if((s->height_back % 2) == 1) {
 				uint32_t ymid = ( (s->height_back - 1 ) / 2 );
 				for(uint32_t x = 0;x < (s->width_back / 2); x++) {
 					swapPixel(x, ymid, s->width_back - x - 1, ymid, workBuffer, s->params.depth, samplesPerPxel, s->params.bytes_per_line);
 				}
 			}
-			
+
 			if (s->height_back != 1) {
 				for(uint32_t x = 0; x < s->width_back; x++) {
 					for(uint32_t y = 0;y <= half; y++) {
@@ -2713,7 +2713,7 @@ static int get_roundup_index(double frac[], int n)
 {
     int        i, index = -1;
     double    max_val = 0.0;
-    
+
     for (i=0; i<n; i++) {
         if (frac[i]<0) continue;
         if (max_val<frac[i]) {
@@ -2728,7 +2728,7 @@ static int get_rounddown_index(double frac[], int n)
 {
     int        i, index = -1;
     double    min_val  = 1.0;
-    
+
     for (i=0; i<n; i++) {
         if (frac[i]>0) continue;
         if (min_val>frac[i]) {
@@ -2746,16 +2746,16 @@ void ESCIRoundColorCorrectionMatrix(int mult, double org_cct[], int rnd_cct[])
     double    mult_cct[CCT_TABLE_SIZE], frac[CCT_TABLE_SIZE];
     int        sum[3];
     int        loop;
-    
+
     for (i=0; i<CCT_TABLE_SIZE; i++) {
         mult_cct[i] = org_cct[i] * mult;
     }
-    
+
     // round value multiplied by 'mult' off to integer.
     for (i=0; i<CCT_TABLE_SIZE; i++) {
         rnd_cct[i] = (int)floor(org_cct[i] * mult + 0.5);
     }
-    
+
     loop=0;
     do {
         // If all element equal to 11, diagonal element is set to 10.
@@ -2778,7 +2778,7 @@ void ESCIRoundColorCorrectionMatrix(int mult, double org_cct[], int rnd_cct[])
         for (i=0; i<CCT_TABLE_SIZE; i++) {
             frac[i] = mult_cct[i] - rnd_cct[i];
         }
-        
+
         // if summation does not equal to 'mult', adjust rounded up or down value.
         for (i=0; i<3; i++) {
             if (sum[i]<mult) {
@@ -2797,7 +2797,7 @@ void ESCIRoundColorCorrectionMatrix(int mult, double org_cct[], int rnd_cct[])
                 }
             }
         }
-        
+
     } while ((++loop<2)&&((sum[0]!=mult)||(sum[1]!=mult)||(sum[2]!=mult)));
 }
 
@@ -2891,13 +2891,13 @@ sane_start(SANE_Handle handle)
 		s->val[OPT_ADF_SKEW].w ? "SKEW" : "",
 		s->val[OPT_ADF_CRP].w ? "CRP " : ""
 		);
-		
+
 		if (duplexMode)
 		{
 			s->isDuplexScan = 1;
 		}
 		s->isflatbedScan = 0;
-	} 
+	}
 	else if (strcmp(source_list[s->val[OPT_SOURCE].w], STRING_FLATBED) == 0) {
 
 		strcpy(buf, "#FB ");
@@ -2963,7 +2963,7 @@ sane_start(SANE_Handle handle)
 	} else {
 		sprintf(buf, "#RSMd%03d#RSSd%03d", s->val[OPT_RESOLUTION].w, s->val[OPT_RESOLUTION].w);
 	}
-	
+
 	strcat(cmd, buf);
 
 	if (strcmp(s->hw->sane.model, (char*)"DS-70") == 0 || strcmp(s->hw->sane.model, (char*)"ES-65WR") == 0 || strcmp(s->hw->sane.model, (char*)"ES-60W") == 0
@@ -2978,7 +2978,7 @@ sane_start(SANE_Handle handle)
 
 
 	/* scanning area */
-	
+
 	sprintf(buf, "#ACQi%07di%07di%07di%07d",
 		s->left, s->top, s->params.pixels_per_line, s->params.lines);
 
@@ -2992,21 +2992,21 @@ sane_start(SANE_Handle handle)
 
 	strcat(cmd, buf);
 
-	
+
 	int pos = 0;
 
 	{
 		for (int i = 0; i < CMD_BUF_SIZE; i++)
 		{
-			// find end of string		
+			// find end of string
 			if(cmd[i] == 0)
 			{
 				pos = i;
 				break;
 			}
 		}
-		
-		
+
+
 		if (s->params.format == SANE_FRAME_GRAY && s->params.depth == 8) {
 			DBG(10, "SANE_FRAME_GRAY\n");
 			cmd[pos++] = '#';
@@ -3021,7 +3021,7 @@ sane_start(SANE_Handle handle)
 			cmd[pos++] = '1';
 			cmd[pos++] = '0';
 			cmd[pos++] = '0';
-			
+
 			for(int count = 0; count < 256; count++) {
 				cmd[pos++] =  LUT[s->hw->lut_id][count];
 			}
@@ -3040,7 +3040,7 @@ sane_start(SANE_Handle handle)
 			cmd[pos++] = '1';
 			cmd[pos++] = '0';
 			cmd[pos++] = '0';
-			
+
 			for(int count = 0; count < 256; count++) {
 				cmd[pos++] =  LUT[0][count];
 			}
@@ -3058,7 +3058,7 @@ sane_start(SANE_Handle handle)
 			cmd[pos++] = 'h';
 			cmd[pos++] = '1';
 			cmd[pos++] = '0';
-			cmd[pos++] = '0';		
+			cmd[pos++] = '0';
 
 			for(int count = 0; count < 256; count++) {
 				cmd[pos++] =  LUT_R[s->hw->lut_id][count];
@@ -3075,7 +3075,7 @@ sane_start(SANE_Handle handle)
 			cmd[pos++] = 'h';
 			cmd[pos++] = '1';
 			cmd[pos++] = '0';
-			cmd[pos++] = '0';		
+			cmd[pos++] = '0';
 
 			for(int count = 0; count < 256; count++) {
 				cmd[pos++] =  LUT_G[s->hw->lut_id][count];
@@ -3092,21 +3092,21 @@ sane_start(SANE_Handle handle)
 			cmd[pos++] = 'h';
 			cmd[pos++] = '1';
 			cmd[pos++] = '0';
-			cmd[pos++] = '0';		
+			cmd[pos++] = '0';
 
 			for(int count = 0; count < 256; count++) {
 				cmd[pos++] =  LUT_B[s->hw->lut_id][count];
 			}
 		}
-		cmd[pos] = 0;		
+		cmd[pos] = 0;
 
-	}	
+	}
 	{// Set Color Matrix
 		if (s->params.format == SANE_FRAME_RGB && s->hw->lut_id != 0 )/*Color Matrix Target devide and color Scan*/
-		{			    
+		{
 			ColorMatrix matrix;
 
-			// DS-530 
+			// DS-530
 
 			if (s->hw->lut_id == 2)
 			{
@@ -3114,12 +3114,12 @@ sane_start(SANE_Handle handle)
 				matrix[0][0] = 1.0229;
 				matrix[0][1] = 0.0009;
 				matrix[0][2] = -0.0238;
-				
+
 				// G
 				matrix[1][0] = 0.0031;
 				matrix[1][1] = 1.0287;
 				matrix[1][2] = -0.0318;
-				
+
 				//B
 				matrix[2][0] = 0.0044;
 				matrix[2][1] = -0.1150;
@@ -3127,19 +3127,19 @@ sane_start(SANE_Handle handle)
 			}
 
 			// DS-1660W Flatbed
-			
+
 			if (s->hw->lut_id == 4)
 			{
 				// R
 				matrix[0][0] = 1.0229;
 				matrix[0][1] = 0.0009;
 				matrix[0][2] = -0.0238;
-				
+
 				// G
 				matrix[1][0] = 0.0031;
 				matrix[1][1] = 1.0287;
 				matrix[1][2] = -0.0318;
-				
+
 				//B
 				matrix[2][0] = 0.0044;
 				matrix[2][1] = -0.1150;
@@ -3148,19 +3148,19 @@ sane_start(SANE_Handle handle)
 
 
 			// DS-320
-			
+
 			if (s->hw->lut_id == 5)
 			{
 				// R
 				matrix[0][0] = 1.0250;
 				matrix[0][1] = 0.0004;
 				matrix[0][2] = -0.0254;
-				
+
 				// G
 				matrix[1][0] = 0.0003;
 				matrix[1][1] = 1.0022;
 				matrix[1][2] = -0.0025;
-				
+
 				//B
 				matrix[2][0] = 0.0049;
 				matrix[2][1] = -0.0949;
@@ -3169,36 +3169,36 @@ sane_start(SANE_Handle handle)
 
 
 			// ES-50
-			
+
 			if (s->hw->lut_id == 6)
 			{
 				// R
 				matrix[0][0] = 1.0383;
 				matrix[0][1] = -0.0021;
 				matrix[0][2] = -0.0362;
-				
+
 				// G
 				matrix[1][0] = 0.0046;
 				matrix[1][1] = 1.0576;
 				matrix[1][2] = -0.0622;
-				
+
 				//B
 				matrix[2][0] = 0.0235;
 				matrix[2][1] = -0.2396;
 				matrix[2][2] = 1.2161;
 			}
-			
+
 
 			// R
 			matrix[0][0] = 0.9864;
 			matrix[0][1] = 0.0248;
 			matrix[0][2] = -0.0112;
-			
+
 			// G
 			matrix[1][0] = 0.0021;
 			matrix[1][1] = 1.0100;
 			matrix[1][2] = -0.0112;
-			
+
 			//B
 			matrix[2][0] = 0.0139;
 			matrix[2][1] = -0.1249;
@@ -3218,7 +3218,7 @@ sane_start(SANE_Handle handle)
 				cmd[pos++] = 'h';
 				cmd[pos++] = '0';
 				cmd[pos++] = '0';
-				cmd[pos++] = '9';		
+				cmd[pos++] = '9';
 			}
 
 
@@ -3231,18 +3231,18 @@ sane_start(SANE_Handle handle)
 			//
 			// So, we will convert it with index table.
 			char index[9] = {4, 1, 7, 3, 0, 6, 5, 2, 8};
-			
+
 			double flatten[9] = {0};
 			for (int row = 0; row < 3; row++) {
 				for (int col = 0; col < 3; col++) {
 					flatten[row * 3 + col] = matrix[row][col];
 				}
 			}
-			
+
 			int rounded[9] = {0};
 			ESCIRoundColorCorrectionMatrix(32, flatten, rounded);
-			
-			
+
+
 			char ordered[9] = {0};
 			for (int row = 0; row < 3; row++) {
 				for (int col = 0; col < 3; col++) {
@@ -3252,7 +3252,7 @@ sane_start(SANE_Handle handle)
 					ordered[index[row * 3 + col]] = oct;
 				}
 			}
-			{		
+			{
 				cmd[pos++] = ordered[0];
 				cmd[pos++] = ordered[1];
 				cmd[pos++] = ordered[2];
@@ -3266,15 +3266,15 @@ sane_start(SANE_Handle handle)
  				cmd[pos++] = 0; //padding
 				cmd[pos++] = 0; //padding
 
-				
+
 				DBG(1, "color matrix\n");
 				for (int i = 0; i < 9; i++)
 				{
 					DBG(1, "%d\n", ordered[i]);
 				}
-	
+
 			}
-			cmd[pos] = 0;		
+			cmd[pos] = 0;
 		}
 
 	}
@@ -3326,9 +3326,9 @@ static SANE_Status acquire_jpeg_data(epsonds_scanner* s)
 
 		// load all images, decode and fill buffer
 	SANE_Int status = SANE_STATUS_GOOD;
-		
+
 	int eofFront = 0;
-	int eofBack = 0;	
+	int eofBack = 0;
 
 
 	status = eds_ring_init(&s->front, (s->params.bytes_per_line) * s->params.lines);
@@ -3344,7 +3344,7 @@ static SANE_Status acquire_jpeg_data(epsonds_scanner* s)
 	while (1)
 	{
 		status = esci2_img(s, &read);
-		DBG(20, "acquire_jpeg_data read: %d, eof: %d, backside: %d, status: %d\n", read, s->eof, s->backside, status);		
+		DBG(20, "acquire_jpeg_data read: %d, eof: %d, backside: %d, status: %d\n", read, s->eof, s->backside, status);
 		if (read)
 		{
 			if (s->backside)
@@ -3361,19 +3361,19 @@ static SANE_Status acquire_jpeg_data(epsonds_scanner* s)
 		if (status == SANE_STATUS_GOOD)
 		{
 
-			DBG(20, "continue acquire image\n");		
+			DBG(20, "continue acquire image\n");
 			continue;
 		}
 		else if (status == SANE_STATUS_EOF)
 		{
 			if (s->backside)
 			{
-				DBG(20, "eofBack\n");		
+				DBG(20, "eofBack\n");
 				eofBack = 1;
 			}else{
-				DBG(20, "eofFront\n");		
+				DBG(20, "eofFront\n");
 				eofFront = 1;
-			} 
+			}
 		}else if (status == SANE_STATUS_CANCELLED)
 		{
 				// cancel cleanup
@@ -3396,17 +3396,17 @@ static SANE_Status acquire_jpeg_data(epsonds_scanner* s)
 
 		if (s->isDuplexScan)
 		{
-			DBG(20, "eofFront  = %d eofBack  = %d\n", eofFront, eofBack);					
+			DBG(20, "eofFront  = %d eofBack  = %d\n", eofFront, eofBack);
 				// acquire finish
 			if (eofFront && eofBack)
 			{
-				DBG(20, "eofFront && eofBack end\n");		
+				DBG(20, "eofFront && eofBack end\n");
 				break;
 			}
 		}else{
 			if (eofFront)
 			{
-				DBG(20, "eofFront end\n");		
+				DBG(20, "eofFront end\n");
 				break;
 			}
 		 }
@@ -3415,24 +3415,24 @@ static SANE_Status acquire_jpeg_data(epsonds_scanner* s)
 	return SANE_STATUS_GOOD;
 }
 
-static SANE_Status 
+static SANE_Status
 acquire_raw_data(epsonds_scanner* s)
 {
 	SANE_Int read = 0;
 
 		// load all images, decode and fill buffer
 	SANE_Int status = SANE_STATUS_GOOD;
-		
+
 	int eofFront = 0;
-	int eofBack = 0;	
+	int eofBack = 0;
 	int firstWrite = 1;
 
 	while (1)
 	{
-		DBG(20, "acquire_raw_data loop start\n");	
+		DBG(20, "acquire_raw_data loop start\n");
 		status = esci2_img(s, &read);
-		DBG(20, "acquire_raw_data read: %d, eof: %d, backside: %d, status: %d\n", read, s->eof, s->backside, status);	
-		
+		DBG(20, "acquire_raw_data read: %d, eof: %d, backside: %d, status: %d\n", read, s->eof, s->backside, status);
+
 		if (read)
 		{
 			if (firstWrite)
@@ -3449,15 +3449,15 @@ acquire_raw_data(epsonds_scanner* s)
 				firstWrite = 0;
 			}
 
-			DBG(20, "eds_ring_write  start\n");	
+			DBG(20, "eds_ring_write  start\n");
 			status = eds_ring_write(s->backside ? &s->back : &s->front, s->buf, read);
-			DBG(20, "eds_ring_write  end\n");	
+			DBG(20, "eds_ring_write  end\n");
 		}
-		DBG(20, "acquire_raw_data3\n");	
+		DBG(20, "acquire_raw_data3\n");
 
 		if (status == SANE_STATUS_GOOD)
 		{
-			DBG(20, "contiune acquire image\n");	
+			DBG(20, "contiune acquire image\n");
 			continue;
 		}
 		else if (status == SANE_STATUS_EOF)
@@ -3493,7 +3493,7 @@ acquire_raw_data(epsonds_scanner* s)
 		}
 	}
 
-	
+
 	int needBytes =  (s->params.bytes_per_line + s->dummy) * s->params.lines;
 	{
 		int available = eds_ring_avail(&s->front);
@@ -3504,9 +3504,9 @@ acquire_raw_data(epsonds_scanner* s)
 		   memset(padding, 255, required);
 	 	   eds_ring_write(&s->front, padding, required);
 		   free(padding);
-		
+
 		}
-		
+
 	}
 	{
 		int available = eds_ring_avail(&s->back);
@@ -3526,22 +3526,22 @@ acquire_raw_data(epsonds_scanner* s)
 		upside_down_backside_image(s);
 	}
 
-	DBG(20, "acquire_raw_data  finish");	
+	DBG(20, "acquire_raw_data  finish");
 	return SANE_STATUS_GOOD;
 
 }
 
-static SANE_Status 
+static SANE_Status
 acquire_and_decode_jpeg_data(epsonds_scanner* s)
 {
 		SANE_Int status = acquire_jpeg_data(s);
 		if (status == SANE_STATUS_GOOD)
 		{
 			DBG(20, "** %s:  sane status = %d needToConvertBW = %d \n", __func__, status, s->needToConvertBW);
-			
+
 			// process front page
 			if (s->frontJpegBufLen > 0)
-			{				
+			{
 				eds_decode_jpeg(s, s->frontJpegBuf, s->frontJpegBufLen,  &s->front,0, s->needToConvertBW);
 				free(s->frontJpegBuf);
 				s->frontJpegBuf = NULL;
@@ -3557,7 +3557,7 @@ acquire_and_decode_jpeg_data(epsonds_scanner* s)
 			if (s->isDuplexScan)
 			{
 				upside_down_backside_image(s);
-			}	
+			}
 		}else{
 			DBG(20, "** %s:  sane finish status = %d\n", __func__, status);
 			return status;
@@ -3601,7 +3601,7 @@ sane_read(SANE_Handle handle, SANE_Byte *data, SANE_Int max_length, SANE_Int *le
 		return SANE_STATUS_GOOD;
 	}else{
 		*length = 0;
-		eds_ring_flush(s->current);			
+		eds_ring_flush(s->current);
 		eds_ring_destory(s->current);
 		DBG(18, "returns EOF 1\n");
 		return SANE_STATUS_EOF;

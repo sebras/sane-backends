@@ -173,12 +173,12 @@ void eds_decode_jpeg(epsonds_scanner*s, SANE_Byte *data, SANE_Int size, ring_buf
 						 imgPos += 1;
                   	 }
 						//DBG(10,"outByte = %d\n", outByte);
-					eds_ring_write(ringBuffer, &outByte, 1);	
+					eds_ring_write(ringBuffer, &outByte, 1);
 				}
 			}
 			else
 			{
-				eds_ring_write(ringBuffer, scanlines[0], bufSize);	
+				eds_ring_write(ringBuffer, scanlines[0], bufSize);
 			}
 
 			// decode until valida data
@@ -187,14 +187,14 @@ void eds_decode_jpeg(epsonds_scanner*s, SANE_Byte *data, SANE_Int size, ring_buf
 				if (sum >= s->height_back)
 				{
 					break;
-				}	
+				}
 			}else
 			{
 				if (sum >= s->height_front)
 				{
 					break;
-				}	
-			}	
+				}
+			}
         }
 		DBG(10,"decodded lines = %d\n", sum);
 
@@ -221,7 +221,7 @@ void eds_decode_jpeg(epsonds_scanner*s, SANE_Byte *data, SANE_Int size, ring_buf
 
 			while(sum < s->params.lines)
 			{
-				eds_ring_write(ringBuffer, padding, bufSize);	
+				eds_ring_write(ringBuffer, padding, bufSize);
 				sum++;
 			}
 

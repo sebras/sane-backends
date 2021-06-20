@@ -374,7 +374,7 @@ epsonds_resolve_callback(AvahiServiceResolver *r, AVAHI_GCC_UNUSED AvahiIfIndex 
         if (strlen(name) > 7)
         {
             if (strncmp(name, "EPSON", 5) == 0)
-            {				
+            {
 				while(txt != NULL)
 				{
 					char* text = avahi_string_list_get_text(txt);
@@ -386,11 +386,11 @@ epsonds_resolve_callback(AvahiServiceResolver *r, AVAHI_GCC_UNUSED AvahiIfIndex 
                 		{
 							data->callBack(&text[4], ipAddr);
 							break;
-                		}	
+                		}
 					}
 					txt = avahi_string_list_get_next(txt);
 				}
-				
+
             }
         }
 		break;
@@ -479,7 +479,7 @@ SANE_Status epsonds_searchDevices(Device_Found_CallBack deviceFoundCallBack)
     client = avahi_client_new(avahi_simple_poll_get(simple_poll), 0,
                                                client_callback, NULL, &error);
     if (!client) {
-        DBG(10, "avahi_client_new failed %s\n", avahi_strerror(error));		
+        DBG(10, "avahi_client_new failed %s\n", avahi_strerror(error));
 		result = SANE_STATUS_INVAL;
         goto fail;
     }
@@ -502,7 +502,7 @@ fail:
         avahi_client_free(client);
     if (simple_poll)
         avahi_simple_poll_free(simple_poll);
-	
+
 	DBG(10, "epsonds_searchDevices fin\n");
 
     return result;

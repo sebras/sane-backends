@@ -54,7 +54,7 @@ eds_dev_post_init(struct epsonds_device *dev)
 	if (dev->has_fb)
 		*source_list_add++ = STRING_FLATBED;
 
-	if (dev->has_adf) 
+	if (dev->has_adf)
 		*source_list_add++ = STRING_ADFFRONT;
 
 	if (dev->adf_is_duplex)
