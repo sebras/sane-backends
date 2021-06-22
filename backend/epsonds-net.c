@@ -37,7 +37,7 @@ static ssize_t
 epsonds_net_read_raw(epsonds_scanner *s, unsigned char *buf, ssize_t wanted,
 		       SANE_Status *status)
 {
-	DBG(15, "%s: wanted: %d\n", __func__, wanted);
+	DBG(15, "%s: wanted: %ld\n", __func__, wanted);
 
 	if (wanted == 0)
 	{
@@ -357,8 +357,15 @@ epsonds_resolve_callback(AvahiServiceResolver *r, AVAHI_GCC_UNUSED AvahiIfIndex 
                             AvahiLookupResultFlags  flags,
                             void  *userdata)
 {
+	// unused parameter
+	(void)r;
+	(void)type;
+	(void)domain;
+	(void)host_name;
+	(void)port;
+	(void)flags;
     EDSAvahiUserData* data = userdata;
-    char ipAddr[AVAHI_ADDRESS_STR_MAX], *t;
+    char ipAddr[AVAHI_ADDRESS_STR_MAX];
 
 	DBG(10, "epsonds_searchDevices resolve_callback\n");
 
@@ -377,7 +384,7 @@ epsonds_resolve_callback(AvahiServiceResolver *r, AVAHI_GCC_UNUSED AvahiIfIndex 
             {
 				while(txt != NULL)
 				{
-					char* text = avahi_string_list_get_text(txt);
+					char* text = (char*)avahi_string_list_get_text(txt);
 					DBG(10, "avahi string = %s\n", text);
 
 					if (strlen(text) > 4 && strncmp(text, "mdl=", 4) == 0)
@@ -407,6 +414,9 @@ browse_callback(AvahiServiceBrowser *b, AvahiIfIndex interface,
 {
     DBG(10, "browse_callback event = %d\n", event);
 
+	//unused parameter
+	(void)b;
+	(void)flags;
 
     EDSAvahiUserData *data = userdata;
     switch (event) {

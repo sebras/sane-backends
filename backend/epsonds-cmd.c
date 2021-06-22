@@ -288,7 +288,7 @@ static int decode_value(char *buf, int len)
 }
 
 /* h000 */
-static char *decode_binary(char *buf, int len)
+static char *decode_binary(char *buf)
 {
 	char tmp[6];
 	int hl;
@@ -314,7 +314,7 @@ static char *decode_binary(char *buf, int len)
 
 static char *decode_string(char *buf, int len)
 {
-	char *p, *s = decode_binary(buf, len);
+	char *p, *s = decode_binary(buf);
 	if (s == NULL)
 		return NULL;
 
@@ -712,7 +712,6 @@ static SANE_Status capa_cb(void *userdata, char *token, int len)
 	if (strncmp("COLLIST", token, 3 + 4) == 0)
 	{
 		char *p = token + 3 + 4;
-		int i;
 		int count = (len - 4);
 		int readBytes = 0;
 		s->hw->has_mono = 0;
@@ -750,7 +749,6 @@ static SANE_Status capa_cb(void *userdata, char *token, int len)
 		char *p = token + 3 + 4;
 
 
-			int i;
 			int count = (len - 4);
 			int readBytes = 0;
 
@@ -782,8 +780,6 @@ SANE_Status esci2_capa(epsonds_scanner *s)
 
 static SANE_Status stat_cb(void *userdata, char *token, int len)
 {
-
-	epsonds_scanner *s = (epsonds_scanner *)userdata;
 	char *value = token + 3;
 
 	userdata = userdata;

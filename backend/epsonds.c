@@ -50,6 +50,7 @@
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <unistd.h>
+#include <math.h>
 
 #include "sane/saneopts.h"
 #include "sane/sanei_config.h"
@@ -2437,9 +2438,9 @@ sane_control_option(SANE_Handle handle, SANE_Int option, SANE_Action action,
 }
 
 
-static void setBit (SANE_Byte* bytes, SANE_Unit bitIndex, SANE_Bool isTrue)
+static void setBit (SANE_Byte* bytes, SANE_Int bitIndex, SANE_Bool isTrue)
 {
-    SANE_Unit octet = bitIndex / 8;
+    SANE_Int octet = bitIndex / 8;
     SANE_Byte  bit   = 7 - (bitIndex % 8);
 
     if (isTrue) {
@@ -2449,9 +2450,9 @@ static void setBit (SANE_Byte* bytes, SANE_Unit bitIndex, SANE_Bool isTrue)
     }
 }
 
-static SANE_Bool getBit (SANE_Byte* bytes, SANE_Unit bitIndex)
+static SANE_Bool getBit (SANE_Byte* bytes, SANE_Int bitIndex)
 {
-    SANE_Unit octet = bitIndex / 8;
+    SANE_Int octet = bitIndex / 8;
     SANE_Byte mask = 1 << (7 - (bitIndex % 8));
 
     if( bytes[octet] & mask ){
@@ -2461,17 +2462,17 @@ static SANE_Bool getBit (SANE_Byte* bytes, SANE_Unit bitIndex)
     return SANE_FALSE;
 }
 
-static void swapPixel1(SANE_Unit  x1,
-                       SANE_Unit  y1,
-                       SANE_Unit  x2,
-                       SANE_Unit  y2,
+static void swapPixel1(SANE_Int  x1,
+                       SANE_Int  y1,
+                       SANE_Int  x2,
+                       SANE_Int  y2,
                        SANE_Byte*  bytes,
                        SANE_Byte   bitsPerSample,
-                       SANE_Unit  samplesPerPixel,
-                       SANE_Unit  bytesPerRow)
+                       SANE_Int  samplesPerPixel,
+                       SANE_Int  bytesPerRow)
 {
-    SANE_Unit pixelBits =  bitsPerSample * samplesPerPixel;
-    SANE_Unit widthBits =  bytesPerRow * 8;
+    SANE_Int pixelBits =  bitsPerSample * samplesPerPixel;
+    SANE_Int widthBits =  bytesPerRow * 8;
 
     SANE_Byte temp = getBit(bytes, widthBits * y1 + x1 * pixelBits);
     {
@@ -2481,16 +2482,16 @@ static void swapPixel1(SANE_Unit  x1,
     setBit(bytes, widthBits * y2 + x2 * pixelBits, temp);
 }
 
-static void swapPixel8(SANE_Unit  x1,
-                       SANE_Unit  y1,
-                       SANE_Unit  x2,
-                       SANE_Unit  y2,
+static void swapPixel8(SANE_Int  x1,
+                       SANE_Int  y1,
+                       SANE_Int  x2,
+                       SANE_Int  y2,
                        SANE_Byte*  bytes,
                        SANE_Byte   bitsPerSample,
-                       SANE_Unit  samplesPerPixel,
-                       SANE_Unit  bytesPerRow)
+                       SANE_Int  samplesPerPixel,
+                       SANE_Int  bytesPerRow)
 {
-    SANE_Unit pixelBytes =  samplesPerPixel * bitsPerSample / 8;
+    SANE_Int pixelBytes =  samplesPerPixel * bitsPerSample / 8;
 
     for (SANE_Byte i = 0; i < pixelBytes; i++) {
         SANE_Byte temp = bytes[y1 * bytesPerRow +  (pixelBytes *  x1 + i)];
@@ -2501,14 +2502,14 @@ static void swapPixel8(SANE_Unit  x1,
 
 
 
-static void swapPixel(SANE_Unit  x1,
-                      SANE_Unit  y1,
-                      SANE_Unit  x2,
-                      SANE_Unit  y2,
+static void swapPixel(SANE_Int  x1,
+                      SANE_Int  y1,
+                      SANE_Int  x2,
+                      SANE_Int  y2,
                       SANE_Byte*  bytes,
                       SANE_Byte   bitsPerSample,
-                      SANE_Unit  samplesPerPixel,
-                      SANE_Unit  bytesPerRow)
+                      SANE_Int  samplesPerPixel,
+                      SANE_Int  bytesPerRow)
 {
     if (bitsPerSample == 1) {
         swapPixel1(x1, y1, x2, y2, bytes, bitsPerSample, samplesPerPixel, bytesPerRow);
@@ -2551,15 +2552,15 @@ upside_down_backside_image(epsonds_scanner *s)
 			}
 
 			if((s->height_back % 2) == 1) {
-				uint32_t ymid = ( (s->height_back - 1 ) / 2 );
-				for(uint32_t x = 0;x < (s->width_back / 2); x++) {
+				SANE_Int ymid = ( (s->height_back - 1 ) / 2 );
+				for(SANE_Int x = 0;x < (s->width_back / 2); x++) {
 					swapPixel(x, ymid, s->width_back - x - 1, ymid, workBuffer, s->params.depth, samplesPerPxel, s->params.bytes_per_line);
 				}
 			}
 
 			if (s->height_back != 1) {
-				for(uint32_t x = 0; x < s->width_back; x++) {
-					for(uint32_t y = 0;y <= half; y++) {
+				for(SANE_Int x = 0; x < s->width_back; x++) {
+					for(SANE_Int y = 0;y <= half; y++) {
 						swapPixel(x, y, s->width_back - x - 1, s->height_back - y -1, workBuffer, s->params.depth, samplesPerPxel, s->params.bytes_per_line);
 					}
 				}
@@ -3249,7 +3250,7 @@ sane_start(SANE_Handle handle)
 					int val = rounded[row * 3 + col];
 					unsigned char oct = (unsigned char)abs(val);
 					oct |= ((val < 0) ? (1 << 7) : 0);
-					ordered[index[row * 3 + col]] = oct;
+					ordered[(signed char)index[row * 3 + col]] = oct;
 				}
 			}
 			{

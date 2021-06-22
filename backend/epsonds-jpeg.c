@@ -33,8 +33,6 @@ typedef struct my_error_mgr * my_error_ptr;
 METHODDEF(void) my_error_exit (j_common_ptr cinfo)
 {
 
-	my_error_ptr myerr = (my_error_ptr) cinfo->err;
-
 	char buffer[JMSG_LENGTH_MAX];
 	(*cinfo->err->format_message) (cinfo, buffer);
 
@@ -199,7 +197,7 @@ void eds_decode_jpeg(epsonds_scanner*s, SANE_Byte *data, SANE_Int size, ring_buf
 		DBG(10,"decodded lines = %d\n", sum);
 
 		// abandon unncessary data
-		if (sum < jpeg_cinfo.output_height)
+		if ((JDIMENSION)sum < jpeg_cinfo.output_height)
 		{
 			// unncessary data
 			while(1)

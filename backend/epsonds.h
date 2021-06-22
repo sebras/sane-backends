@@ -180,7 +180,7 @@ struct epsonds_scanner
 
 	SANE_Int width_front, height_front;
 	SANE_Int width_back , height_back;
-	SANE_Int width_temp, height_temp;;
+	SANE_Int width_temp, height_temp;
 
 	/* jpeg stuff */
 
