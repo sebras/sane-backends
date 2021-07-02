@@ -288,7 +288,7 @@ static int decode_value(char *buf, int len)
 }
 
 /* h000 */
-static char *decode_binary(char *buf)
+static char *decode_binary(char *buf, int len)
 {
 	char tmp[6];
 	int hl;
@@ -300,6 +300,8 @@ static char *decode_binary(char *buf)
 		return NULL;
 
 	hl = strtol(tmp + 1, NULL, 16);
+	if (hl > len)
+		hl = len;
 	if (hl) {
 
 		char *v = malloc(hl + 1);
@@ -314,7 +316,7 @@ static char *decode_binary(char *buf)
 
 static char *decode_string(char *buf, int len)
 {
-	char *p, *s = decode_binary(buf);
+	char *p, *s = decode_binary(buf, len);
 	if (s == NULL)
 		return NULL;
 
