@@ -66,9 +66,14 @@
 #define TPU_STR SANE_I18N("Transparency Unit")
 #define ADF_STR SANE_I18N("Automatic Document Feeder")
 
+#define STRING_FLATBED SANE_I18N("Flatbed")
+#define STRING_ADFFRONT SANE_I18N("ADF Front")
+#define STRING_ADFDUPLEX SANE_I18N("ADF Duplex")
+
 enum {
 	OPT_NUM_OPTS = 0,
-	OPT_MODE_GROUP,
+	OPT_STANDARD_GROUP,
+	OPT_SOURCE,
 	OPT_MODE,
 	OPT_DEPTH,
 	OPT_RESOLUTION,
@@ -78,11 +83,10 @@ enum {
 	OPT_BR_X,
 	OPT_BR_Y,
 	OPT_EQU_GROUP,
-	OPT_SOURCE,
 	OPT_EJECT,
 	OPT_LOAD,
-	OPT_ADF_MODE,
 	OPT_ADF_SKEW,
+	OPT_ADF_CRP,
 	NUM_OPTIONS
 };
 
@@ -119,6 +123,8 @@ struct epsonds_device
 
 	SANE_Bool has_raw;		/* supports RAW format */
 
+	SANE_Bool has_mono;  /*supprt M001*/
+
 	SANE_Bool has_fb;		/* flatbed */
 	SANE_Range fbf_x_range;	        /* x range */
 	SANE_Range fbf_y_range;	        /* y range */
@@ -136,9 +142,13 @@ struct epsonds_device
 	SANE_Byte adf_alignment;	/* left, center, right */
 	SANE_Byte adf_has_dfd;		/* supports double feed detection */
 
+	SANE_Byte adf_has_crp;		/* supports crp */
+
 	SANE_Bool has_tpu;		/* tpu */
 	SANE_Range tpu_x_range;	        /* transparency unit x range */
 	SANE_Range tpu_y_range;	        /* transparency unit y range */
+
+	SANE_Int lut_id;
 };
 
 typedef struct epsonds_device epsonds_device;
@@ -171,6 +181,10 @@ struct epsonds_scanner
 
 	SANE_Int left, top, pages, dummy;
 
+	SANE_Int width_front, height_front;
+	SANE_Int width_back , height_back;
+	SANE_Int width_temp, height_temp;
+
 	/* jpeg stuff */
 
 	djpeg_dest_ptr jdst;
@@ -181,7 +195,18 @@ struct epsonds_scanner
 	/* network buffers */
 	unsigned char *netbuf, *netptr;
 	size_t netlen;
-};
+
+	SANE_Byte *frontJpegBuf, *backJpegBuf;
+	SANE_Int   frontJpegBufLen, backJpegBufLen;
+	SANE_Int   acquirePage;
+
+	SANE_Int   isflatbedScan;
+	SANE_Int   isDuplexScan;
+
+	SANE_Int   needToConvertBW;
+
+	SANE_Int   scanEnd;
+ };
 
 typedef struct epsonds_scanner epsonds_scanner;
 

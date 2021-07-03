@@ -20,19 +20,39 @@
 #include "epsonds.h"
 #include "epsonds-jpeg.h"
 #include "epsonds-ops.h"
+#include <setjmp.h>
 
-#define min(A,B) (((A)<(B)) ? (A) : (B))
+struct my_error_mgr {
+  struct jpeg_error_mgr pub;
+  jmp_buf setjmp_buffer;
+};
+
+typedef struct my_error_mgr * my_error_ptr;
+
+
+METHODDEF(void) my_error_exit (j_common_ptr cinfo)
+{
+
+	char buffer[JMSG_LENGTH_MAX];
+	(*cinfo->err->format_message) (cinfo, buffer);
+
+	DBG(10,"Jpeg decode error [%s]", buffer);
+}
+
+LOCAL(struct jpeg_error_mgr *) jpeg_custom_error (struct my_error_mgr * err)
+{
+
+	struct jpeg_error_mgr* pRet  = jpeg_std_error(&(err->pub));
+	err->pub.error_exit = my_error_exit;
+
+	return pRet;
+}
 
 typedef struct
 {
 	struct jpeg_source_mgr pub;
-
-	epsonds_scanner *s;
 	JOCTET *buffer;
-
-	SANE_Byte *linebuffer;
-	SANE_Int linebuffer_size;
-	SANE_Int linebuffer_index;
+	int length;
 }
 epsonds_src_mgr;
 
@@ -50,22 +70,11 @@ METHODDEF(boolean)
 jpeg_fill_input_buffer(j_decompress_ptr cinfo)
 {
 	epsonds_src_mgr *src = (epsonds_src_mgr *)cinfo->src;
-	int avail, size;
-
-	/* read from the scanner or the ring buffer */
-
-	avail = eds_ring_avail(src->s->current);
-	if (avail == 0) {
-		return FALSE;
-	}
-
 	/* read from scanner if no data? */
-	size = min(1024, avail);
-
-	eds_ring_read(src->s->current, src->buffer, size);
 
 	src->pub.next_input_byte = src->buffer;
-	src->pub.bytes_in_buffer = size;
+	src->pub.bytes_in_buffer = src->length;
+	DBG(18, "reading from ring buffer, %d left\n",  src->length);
 
 	return TRUE;
 }
@@ -87,140 +96,140 @@ jpeg_skip_input_data(j_decompress_ptr cinfo, long num_bytes)
 	}
 }
 
-SANE_Status
-eds_jpeg_start(epsonds_scanner *s)
+
+void eds_decode_jpeg(epsonds_scanner*s, SANE_Byte *data, SANE_Int size, ring_buffer* ringBuffer, SANE_Int isBackSide, SANE_Int needToConvertBW)
 {
-	epsonds_src_mgr *src;
+    struct jpeg_decompress_struct jpeg_cinfo;
+   	struct my_error_mgr jpeg_err;
 
-	s->jpeg_cinfo.err = jpeg_std_error(&s->jpeg_err);
+    {
+        epsonds_src_mgr *src;
 
-	jpeg_create_decompress(&s->jpeg_cinfo);
+        jpeg_cinfo.err = jpeg_custom_error(&jpeg_err);
 
-	s->jpeg_cinfo.src = (struct jpeg_source_mgr *)(*s->jpeg_cinfo.mem->alloc_small)((j_common_ptr)&s->jpeg_cinfo,
-						JPOOL_PERMANENT, sizeof(epsonds_src_mgr));
+        jpeg_create_decompress(&jpeg_cinfo);
 
-	memset(s->jpeg_cinfo.src, 0x00, sizeof(epsonds_src_mgr));
+        jpeg_cinfo.src = (struct jpeg_source_mgr *)(*jpeg_cinfo.mem->alloc_small)((j_common_ptr)&jpeg_cinfo,
+                            JPOOL_PERMANENT, sizeof(epsonds_src_mgr));
 
-	src = (epsonds_src_mgr *)s->jpeg_cinfo.src;
-	src->s = s;
+        memset(jpeg_cinfo.src, 0x00, sizeof(epsonds_src_mgr));
+;
+    	src = (epsonds_src_mgr *)jpeg_cinfo.src;
+        src->pub.init_source = jpeg_init_source;
+        src->pub.fill_input_buffer = jpeg_fill_input_buffer;
+        src->pub.skip_input_data = jpeg_skip_input_data;
+        src->pub.resync_to_restart = jpeg_resync_to_restart;
+        src->pub.term_source = jpeg_term_source;
+        src->pub.bytes_in_buffer = 0;
+        src->pub.next_input_byte = NULL;
+		src->buffer = (JOCTET*)data;
+		src->length = size;
+    }
+    {
+	    if (jpeg_read_header(&jpeg_cinfo, TRUE)) {
 
-	src->buffer = (JOCTET *)(*s->jpeg_cinfo.mem->alloc_small)((j_common_ptr)&s->jpeg_cinfo,
-							JPOOL_PERMANENT,
-							1024 * sizeof(JOCTET));
+		if (jpeg_start_decompress(&jpeg_cinfo)) {
 
-	src->pub.init_source = jpeg_init_source;
-	src->pub.fill_input_buffer = jpeg_fill_input_buffer;
-	src->pub.skip_input_data = jpeg_skip_input_data;
-	src->pub.resync_to_restart = jpeg_resync_to_restart;
-	src->pub.term_source = jpeg_term_source;
-	src->pub.bytes_in_buffer = 0;
-	src->pub.next_input_byte = NULL;
-
-	s->jpeg_header_seen = 0;
-
-	return SANE_STATUS_GOOD;
-}
-
-SANE_Status
-eds_jpeg_read_header(epsonds_scanner *s)
-{
-	epsonds_src_mgr *src = (epsonds_src_mgr *)s->jpeg_cinfo.src;
-
-	if (jpeg_read_header(&s->jpeg_cinfo, TRUE)) {
-
-		s->jdst = sanei_jpeg_jinit_write_ppm(&s->jpeg_cinfo);
-
-		if (jpeg_start_decompress(&s->jpeg_cinfo)) {
-
-			int size;
-
-			DBG(3, "%s: w: %d, h: %d, components: %d\n",
+			DBG(10,"%s: w: %d, h: %d, components: %d\n",
 				__func__,
-				s->jpeg_cinfo.output_width, s->jpeg_cinfo.output_height,
-				s->jpeg_cinfo.output_components);
-
-			size = s->jpeg_cinfo.output_width * s->jpeg_cinfo.output_components * 1;
-
-			src->linebuffer = (*s->jpeg_cinfo.mem->alloc_large)((j_common_ptr)&s->jpeg_cinfo,
-				JPOOL_PERMANENT, size);
-
-			src->linebuffer_size = 0;
-			src->linebuffer_index = 0;
-
-			s->jpeg_header_seen = 1;
-
-			return SANE_STATUS_GOOD;
-
-		} else {
-			DBG(0, "%s: decompression failed\n", __func__);
-			return SANE_STATUS_IO_ERROR;
+				jpeg_cinfo.output_width, jpeg_cinfo.output_height,
+				jpeg_cinfo.output_components);
 		}
-	} else {
-		DBG(0, "%s: cannot read JPEG header\n", __func__);
-		return SANE_STATUS_IO_ERROR;
-	}
-}
+        }
+    }
+    {
+		int sum = 0;
+        int bufSize = jpeg_cinfo.output_width * jpeg_cinfo.output_components;
 
-void
-eds_jpeg_finish(epsonds_scanner *s)
-{
-	jpeg_destroy_decompress(&s->jpeg_cinfo);
-}
+		int monoBufSize = (jpeg_cinfo.output_width + 7)/8;
 
-void
-eds_jpeg_read(SANE_Handle handle, SANE_Byte *data,
-	   SANE_Int max_length, SANE_Int *length)
-{
-	epsonds_scanner *s = handle;
+        JSAMPARRAY scanlines = (jpeg_cinfo.mem->alloc_sarray)((j_common_ptr)&jpeg_cinfo, JPOOL_IMAGE, bufSize, 1);
+        while (jpeg_cinfo.output_scanline < jpeg_cinfo.output_height) {
+            int l = jpeg_read_scanlines(&jpeg_cinfo, scanlines, 1);
+            if (l == 0) {
+                break;
+            }
+			sum += l;
 
-	struct jpeg_decompress_struct cinfo = s->jpeg_cinfo;
-	epsonds_src_mgr *src = (epsonds_src_mgr *)s->jpeg_cinfo.src;
+			if (needToConvertBW)
+			{
+				SANE_Byte* bytes = scanlines[0];
 
-	int l;
+				SANE_Int imgPos = 0;
 
-	*length = 0;
+				for (int i = 0; i < monoBufSize; i++)
+				{
+					SANE_Byte outByte = 0;
 
-	/* copy from line buffer if available */
-	if (src->linebuffer_size && src->linebuffer_index < src->linebuffer_size) {
+                    for(SANE_Int bitIndex = 0; bitIndex < 8 && imgPos < bufSize; bitIndex++) {
+						//DBG(10,"bytes[imgPos] = %d\n", bytes[imgPos]);
 
-		*length = src->linebuffer_size - src->linebuffer_index;
+                         if(bytes[imgPos] >= 110) {
+                               SANE_Byte bit = 7 - (bitIndex % 8);
+                               outByte     |= (1<< bit);
+                         }
+						 imgPos += 1;
+                  	 }
+						//DBG(10,"outByte = %d\n", outByte);
+					eds_ring_write(ringBuffer, &outByte, 1);
+				}
+			}
+			else
+			{
+				eds_ring_write(ringBuffer, scanlines[0], bufSize);
+			}
 
-		if (*length > max_length)
-			*length = max_length;
+			// decode until valida data
+			if (isBackSide)
+			{
+				if (sum >= s->height_back)
+				{
+					break;
+				}
+			}else
+			{
+				if (sum >= s->height_front)
+				{
+					break;
+				}
+			}
+        }
+		DBG(10,"decodded lines = %d\n", sum);
 
-		memcpy(data, src->linebuffer + src->linebuffer_index, *length);
-		src->linebuffer_index += *length;
+		// abandon unncessary data
+		if ((JDIMENSION)sum < jpeg_cinfo.output_height)
+		{
+			// unncessary data
+			while(1)
+			{
+				int l = jpeg_read_scanlines(&jpeg_cinfo, scanlines, 1);
+				if (l == 0)
+				{
+					break;
+				}
+			}
+		}
 
-		return;
-	}
+		// if not auto crop mode padding to lines
+		if (s->val[OPT_ADF_CRP].w == 0)
+		{
+			unsigned char* padding = malloc(s->params.bytes_per_line);
+			memset(padding, 255, s->params.bytes_per_line);
+			DBG(10,"padding data lines = %d to %d pa \n", sum,  s->params.lines);
 
-	if (cinfo.output_scanline >= cinfo.output_height) {
-		*length = 0;
-		return;
-	}
+			while(sum < s->params.lines)
+			{
+				eds_ring_write(ringBuffer, padding, bufSize);
+				sum++;
+			}
 
-	/* scanlines of decompressed data will be in s->jdst->buffer
-	 * only one line at time is supported
-	 */
-
-	l = jpeg_read_scanlines(&cinfo, s->jdst->buffer, 1);
-	if (l == 0) {
-		return;
-	}
-
-	/* from s->jdst->buffer to linebuffer
-	 * linebuffer holds width * bytesperpixel
-	 */
-
-	(*s->jdst->put_pixel_rows)(&cinfo, s->jdst, 1, (char *)src->linebuffer);
-
-	*length = cinfo.output_width * cinfo.output_components * 1;
-	src->linebuffer_size = *length;
-	src->linebuffer_index = 0;
-
-	if (*length > max_length)
-		*length = max_length;
-
-	memcpy(data, src->linebuffer + src->linebuffer_index, *length);
-	src->linebuffer_index += *length;
+			free(padding);
+			padding = NULL;
+		}
+    }
+    {
+        jpeg_finish_decompress(&jpeg_cinfo);
+        jpeg_destroy_decompress(&jpeg_cinfo);
+    }
+    return;
 }

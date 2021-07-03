@@ -28,10 +28,9 @@
 extern struct mode_param mode_params[];
 
 /* Define the different scan sources */
-
-#define FBF_STR	SANE_I18N("Flatbed")
-#define TPU_STR	SANE_I18N("Transparency Unit")
-#define ADF_STR	SANE_I18N("Automatic Document Feeder")
+#define STRING_FLATBED SANE_I18N("Flatbed")
+#define STRING_ADFFRONT SANE_I18N("ADF Front")
+#define STRING_ADFDUPLEX SANE_I18N("ADF Duplex")
 
 extern SANE_String_Const source_list[];
 
@@ -53,10 +52,13 @@ eds_dev_post_init(struct epsonds_device *dev)
 	DBG(10, "%s\n", __func__);
 
 	if (dev->has_fb)
-		*source_list_add++ = FBF_STR;
+		*source_list_add++ = STRING_FLATBED;
 
 	if (dev->has_adf)
-		*source_list_add++ = ADF_STR;
+		*source_list_add++ = STRING_ADFFRONT;
+
+	if (dev->adf_is_duplex)
+		*source_list_add++ = STRING_ADFDUPLEX;
 
 	if (source_list[0] == 0
 		|| (dev->res_list[0] == 0 && dev->dpi_range.min == 0)
@@ -209,8 +211,6 @@ eds_init_parameters(epsonds_scanner *s)
 
 	memset(&s->params, 0, sizeof(SANE_Parameters));
 
-	s->dummy = 0;
-
 	/* setup depth according to our mode table */
 	if (mode_params[s->val[OPT_MODE].w].depth == 1)
 		s->params.depth = 1;
@@ -314,6 +314,7 @@ eds_init_parameters(epsonds_scanner *s)
 
 	return SANE_STATUS_GOOD;
 }
+#define min(A,B) (((A)<(B)) ? (A) : (B))
 
 void
 eds_copy_image_from_ring(epsonds_scanner *s, SANE_Byte *data, SANE_Int max_length,
@@ -322,17 +323,13 @@ eds_copy_image_from_ring(epsonds_scanner *s, SANE_Byte *data, SANE_Int max_lengt
 	int lines, available;
 	int hw_line_size = (s->params.bytes_per_line + s->dummy);
 
-	/* trim max_length to a multiple of hw_line_size */
-	max_length -= (max_length % hw_line_size);
-
-	/* check available data */
 	available = eds_ring_avail(s->current);
 	if (max_length > available)
 		max_length = available;
 
-	lines = max_length / hw_line_size;
+	lines = min(max_length / s->params.bytes_per_line, available / hw_line_size);
 
-	DBG(18, "copying %d lines (%d, %d)\n", lines, s->params.bytes_per_line, s->dummy);
+	DBG(18, "copying %d lines (%d, %d, %d)\n", lines, s->params.bytes_per_line, s->dummy, s->params.depth);
 
 	/* need more data? */
 	if (lines == 0) {
@@ -489,4 +486,13 @@ SANE_Int eds_ring_avail(ring_buffer *ring)
 void eds_ring_flush(ring_buffer *ring)
 {
 	eds_ring_skip(ring, ring->fill);
+}
+
+void eds_ring_destory(ring_buffer *ring)
+{
+	if (ring->ring)
+	{
+		free(ring->ring);
+		ring->ring = NULL;
+	}
 }

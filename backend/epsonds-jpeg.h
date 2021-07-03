@@ -10,8 +10,4 @@
  * modify it under the terms of the GNU General Public License as
  * published by the Free Software Foundation, version 2.
  */
-
-SANE_Status eds_jpeg_start(epsonds_scanner *s);
-void eds_jpeg_finish(epsonds_scanner *s);
-SANE_Status eds_jpeg_read_header(epsonds_scanner *s);
-void eds_jpeg_read(SANE_Handle handle, SANE_Byte *data, SANE_Int max_length, SANE_Int *length);
+void eds_decode_jpeg(epsonds_scanner*s, SANE_Byte *data, SANE_Int size, ring_buffer* ringBuffer, SANE_Int isBackSide, SANE_Int needToConvertBW);
