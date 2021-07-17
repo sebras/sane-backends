@@ -472,7 +472,7 @@ void genesys_init_motor_tables()
     motor.base_ydpi = 4800;
     motor.profiles.push_back({MotorSlope::create_from_steps(62496, 864, 127),
                               StepType::FULL, 4608});
-    motor.profiles.push_back({MotorSlope::create_from_steps(62496, 2010, 63),
+    motor.profiles.push_back({MotorSlope::create_from_steps(62496, 1338, 63),
                               StepType::HALF, 5360});
     motor.profiles.push_back({MotorSlope::create_from_steps(62464, 2632, 3),
                               StepType::QUARTER, 10528});
