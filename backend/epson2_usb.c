@@ -181,6 +181,7 @@ SANE_Word sanei_epson_usb_product_ids[] = {
   0x1121, /* ET-2650, L495 */
   0x1122, /* ET-2600 Series, ET-2610 Series, L3050 Series, L3060 Series, L395 Series, L396 Series */
   0x113d, /* XP-255 */
+  0x113e, /* XP-452 455 Series */
   0x1141, /* L3100 Series */
   0x1142, /* L3110 Series */
   0	/* last entry - this is used for devices that are specified
