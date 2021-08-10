@@ -11,7 +11,7 @@
 
 :backend "canon_pixma"                 ; name of backend
 ;:version "(external)"             ; version of backend
-:url "https://github.com/Ordissimo/scangearmp2/blob/master/README.md"     ; backend's web page
+:url "https://github.com/Ordissimo/libmfp2-canon/blob/master/README.md"     ; backend's web page
 :comment "External binary-only backend for Linux i386 and x86_64?. See the website for the latest release."
 
 
@@ -27,6 +27,22 @@
 ;
 ; Canon MFP2 conf file
 ;
+
+; ---- V420 --------------------------
+:model "GX6000 series"
+:interface "USB WiFi"
+:usbid "0x04a9" "0x0153"
+:status :good
+
+:model "GX7000 series"
+:interface "USB WiFi"
+:usbid "0x04a9" "0x0157"
+:status :good
+
+:model "TS5400 series"
+:interface "USB WiFi"
+:usbid "0x04a9" "0x0151"
+:status :good
 
 ; ---- V410 --------------------------
 :model "TS3400 series"
@@ -466,6 +482,11 @@
 
 
 ; ---- V310 --------------------------
+:model "MX455 series"
+:interface "USB WiFi"
+:usbid "0x04a9" "0x1768"
+:status :good
+
 :model "MX490 series"
 :interface "USB WiFi"
 :usbid "0x04a9" "0x1787"
