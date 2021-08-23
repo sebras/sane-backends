@@ -74,6 +74,7 @@ resolve_callback(AvahiServiceResolver *r, AVAHI_GCC_UNUSED AvahiIfIndex interfac
         avahi_address_snprint(a, sizeof(a), address);
         t = avahi_string_list_to_string(txt);
         if (strstr(t, "\"rs=eSCL\"") || strstr(t, "\"rs=/eSCL\"")) {
+	    char ip_add[PATH_MAX] = {0};
 	    s = avahi_string_list_find(txt, "is");
 	    if (s && s->size > 3)
 	       is = (const char*)s->text + 3;
@@ -84,7 +85,14 @@ resolve_callback(AvahiServiceResolver *r, AVAHI_GCC_UNUSED AvahiIfIndex interfac
 	       uuid = (const char*)s->text + 5;
 	    else
 	       uuid = (const char*)NULL;
-            escl_device_add(port, name, a, is, uuid, (char*)type);
+            DBG (10, "resolve_callback [%s]\n", a);
+            if (strstr(a, "127.0.0.1") == 0) {
+               snprintf(ip_add, sizeof(ip_add), "%s", "localhost");
+               DBG (10,"resolve_callback fix redirect [localhost]\n");
+            }
+            else
+               snprintf(ip_add, sizeof(ip_add), "%s", a);
+            escl_device_add(port, name, ip_add, is, uuid, (char*)type);
         }
     }
 }
