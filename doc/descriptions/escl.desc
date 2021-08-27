@@ -13,13 +13,18 @@
 :status :good
 :comment "All resolutions supported."
 
-:model "HL-L258DW"
+:model "HL-L2590DW"
 :interface "WiFi"
 :status :good
 :comment "All resolutions supported."
 
 :mfg "Canon"
 :url "https://www.canon-europe.com/support/"
+
+:model "IR C3520"
+:interface "WiFi"
+:status :good
+:comment "All resolutions supported, Flatted and ADF supported."
 
 :model "PIXMA MG5765"
 :interface "WiFi"
@@ -28,41 +33,6 @@
 
 :model "PIXMA G7050"
 :interface "Ethernet WiFi"
-:status :untested
-:comment "Testers needed!"
-
-:model "IR C3520"
-:interface "WiFi"
-:status :good
-:comment "All resolutions supported, Flatted and ADF supported."
-
-:model "PIXMA TS3100 Series"
-:interface "WiFi"
-:status :good
-:comment "All resolutions supported."
-
-:model "PIXMA TS3300 Series"
-:interface "WiFi"
-:status :good
-:comment "All resolutions supported."
-
-:model "PIXMA TS5351"
-:interface "WiFi"
-:status :good
-:comment "All resolutions supported."
-
-:model "PIXMA TS6150"
-:interface "Wifi"
-:status :untested
-:comment "Testers needed!"
-
-:model "PIXMA TS8050"
-:interface "Wifi"
-:status :untested
-:comment "Testers needed!"
-
-:model "PIXMA TS9100 Series"
-:interface "Wifi"
 :status :untested
 :comment "Testers needed!"
 
@@ -81,7 +51,7 @@
 :status :good
 :comment "All resolutions supported, Flatted and ADF supported."
 
-:model "PIXMA TR4551 Series"
+:model "PIXMA TR4551"
 :interface "Wifi"
 :status :good
 :comment "All resolutions supported, Flatted and ADF supported."
@@ -100,6 +70,71 @@
 :interface "Ethernet WiFi"
 :status :good
 :comment "All resolutions supported, Flatted and ADF supported."
+
+:model "PIXMA TS3100 Series"
+:interface "WiFi"
+:status :good
+:comment "All resolutions supported."
+
+:model "PIXMA TS3150 Series"
+:interface "WiFi"
+:status :good
+:comment "All resolutions supported."
+
+:model "PIXMA TS3151"
+:interface "WiFi"
+:status :good
+:comment "All resolutions supported."
+
+:model "PIXMA TS3152"
+:interface "WiFi"
+:status :good
+:comment "All resolutions supported."
+
+:model "PIXMA TS3300 Series"
+:interface "WiFi"
+:status :good
+:comment "All resolutions supported."
+
+:model "PIXMA TS3350 Series"
+:interface "WiFi"
+:status :good
+:comment "All resolutions supported."
+
+:model "PIXMA TS3351"
+:interface "WiFi"
+:status :good
+:comment "All resolutions supported."
+
+:model "PIXMA TS3352"
+:interface "WiFi"
+:status :good
+:comment "All resolutions supported."
+
+:model "PIXMA TS5350 Series"
+:interface "WiFi"
+:status :good
+:comment "All resolutions supported."
+
+:model "PIXMA TS5351"
+:interface "WiFi"
+:status :good
+:comment "All resolutions supported."
+
+:model "PIXMA TS6150 Series"
+:interface "Wifi"
+:status :untested
+:comment "Testers needed!"
+
+:model "PIXMA TS8050 Series"
+:interface "Wifi"
+:status :untested
+:comment "Testers needed!"
+
+:model "PIXMA TS9100 Series"
+:interface "Wifi"
+:status :untested
+:comment "Testers needed!"
 
 :mfg "Epson"
 :url "http://download.ebz.epson.net/dsc/search/01/search/?OSC=LX"
@@ -132,10 +167,15 @@
 :status :good
 :comment "All resolutions supported."
 
+:model "LaserJet Entreprise Flow MFP M578"
+:interface "WiFi"
+:status :basic
+:comment "All resolutions supported."
+
 :model "LaserJet MFP M28w"
 :interface "WiFi"
-:status :untested
-:comment "Testers needed!"
+:status :basic
+:comment "All resolutions supported."
 
 :model "LaserJet FlowMFP M578"
 :interface "WiFi"
