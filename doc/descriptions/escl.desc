@@ -8,6 +8,11 @@
 :mfg "Brother"
 :url "https://www.brother.ee/support/drivers"
 
+:model "DCP-J772DW"
+:interface "WiFi"
+:status :good
+:comment "All resolutions supported."
+
 :model "DCP-L2530DW"
 :interface "WiFi"
 :status :good
@@ -29,6 +34,11 @@
 :model "PIXMA MG5765"
 :interface "WiFi"
 :status :good
+:comment "All resolutions supported."
+
+:model "PIXMA G4511"
+:interface "Ethernet WiFi"
+:status :basic
 :comment "All resolutions supported."
 
 :model "PIXMA G7050"
@@ -138,6 +148,11 @@
 
 :mfg "Epson"
 :url "http://download.ebz.epson.net/dsc/search/01/search/?OSC=LX"
+
+:model "ET-2750"
+:interface "WiFi"
+:status :good
+:comment "All resolutions supported, Flatted only supported."
 
 :model "ET-3750"
 :interface "WiFi"
