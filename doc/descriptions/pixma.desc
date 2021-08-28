@@ -176,7 +176,7 @@
 :interface "USB WiFi"
 :usbid "0x04a9" "0x183d"
 :status :complete
-:comment "Flatbed and ADF scan.  All resolutions supported (up to 600DPI). USB not supported"
+:comment "Flatbed and ADF scan.  All resolutions supported (up to 600DPI). WIFI not supported"
 
 :model "PIXMA G6000"
 :interface "USB WiFi"
