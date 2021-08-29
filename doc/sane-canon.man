@@ -74,7 +74,7 @@ image data are exported without corrections as 16-bit intensities; this
 mode can be recommended if extensive adjustments have to be made to a
 picture (and if the frontend can handle 16-bit intensities).
 .PP
-Negatives are handled by simple color inversion and may require manual
+Negatives are handled by simple color inversion and will require manual
 removal of blue discoloration.
 .PP
 .SH FILES

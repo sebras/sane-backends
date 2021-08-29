@@ -6,9 +6,9 @@ sane\-umax \- SANE backend for UMAX scanners
 
 .SH ABOUT THIS FILE
 
-This file only is a short description of the
+This file is only a brief description of the
 .B sane\-umax
-backend for sane! For detailed information take a look at
+backend for SANE! For detailed information take a look at
 sane\-umax\-doc.html (it is included in the sane source directory and in the
 .BR xsane (1)
 online help)!
@@ -17,7 +17,7 @@ online help)!
 
 The
 .B sane\-umax
-library implements a SANE backend that provides access to several UMAX-SCSI-scanners and some Linotye Hell SCSI-scanners,
+library implements a SANE backend that provides access to several UMAX-SCSI-scanners and some Linotype Hell SCSI-scanners,
 parallel- and USB-scanners are not (and probably will never be) supported!
 
 .B I suggest you hold one hand on the power-button of the scanner while you try the first scans!
@@ -69,9 +69,11 @@ values: 0 = disabled, 1 = enabled
 .br
 default = 0
 .br
-If set to 1 umax_do_request_sense is called in
-umax_do_calibration. This can hang the system
-(but has been enabled until this version)
+If set to 1,
+.BR umax_do_request_sense ()
+is called in
+.BR umax_do_calibration ().
+This can hang the system, but has been enabled until this version.
 .TP
 scsi\-buffer\-size\-min, scsi\-buffer\-size\-max:
 values: 4096-1048576
@@ -113,10 +115,11 @@ values:
 .br
 default = \-1
 .br
-dangerous options, needed for some scanners
-do not changed these options until you really know
-what you do, you may destroy your scanner when you
-define wrong values for this options
+Dangerous options, needed for some scanners.
+.br
+Do not change these options unless you really know
+what you are doing otherwise you may destroy your scanner
+with invalid values.
 .TP
 calibration\-full\-ccd:
 values:
@@ -132,8 +135,7 @@ selected image
 calibration\-width\-offset:
 values: \-99999 = auto, > \-99999 set value
 .br
-add an offset width to the calculated with for
-image/ccd
+add an offset to the calculated width for image/ccd
 .TP
 calibration\-bytes\-pixel:
 values:
@@ -191,7 +193,7 @@ values:
 default = 2
 .br
 most SCSI drivers allow internal command queueing with a depth
-of 2 commands. In most cases it does not mprove anything when you
+of 2 commands. In most cases it does not improve anything when you
 increase this value. When your SCSI driver does not support any
 command queueing you can try to set this value to 1.
 
@@ -203,9 +205,9 @@ permissions of that device, have a look at
 
 .SH SCSI ADAPTER TIPS
 
-The ISA-SCSI-adapters that are shipped with some Umax-scanners are not supported very
+The ISA-SCSI-adapters that are shipped with some UMAX-scanners are not supported very
 well by Linux (I suggest not to use it), the PCI-SCSI-adapters that come with some
-Umax-scanners are not supported at all (as far as I know). On other platforms these
+UMAX-scanners are not supported at all (as far as I know). On other platforms these
 SCSI-adapters are not supported. So you typically need to purchase another SCSI-adapter
 that is supported by your platform. See the relevant hardware FAQs and HOWTOs for your
 platform for more information.
@@ -215,7 +217,7 @@ necessary to connect the scanner to its own SCSI-adapter. But if you need short
 response time for your SCSI-harddisk (e.g. if your computer is a file-server) or
 other SCSI devices, I suggest you use an own SCSI-adapter for your UMAX-scanner.
 
-If you have any problems with your Umax scanner, check your SCSI chain
+If you have any problems with your UMAX scanner, check your SCSI chain
 (cable length, termination, ...).
 
 See also:
@@ -240,9 +242,9 @@ The shared library implementing this backend:
 .B SANE_DEBUG_UMAX
 If the library was compiled with debug support enabled, this environment
 variable controls the debug level for this backend. E.g., a value of 128
-requests all debug output to be printed. Smaller levels reduce verbosity:
+requests all debug output to be printed. Smaller levels reduce verbosity.
 .B SANE_DEBUG_UMAX
-values.
+values:
 
 .ft CR
 .nf

@@ -30,13 +30,13 @@ line causes some information about the camera to
 be printed.
 .PP
 .B cmdrespause
-specifies how many usec (1,000,000ths of a) between
-writing the command and reading the result should be used. 125000
-seems to be the lowest I could go reliably.
+specifies how many usec (1,000,000ths of a second) to wait between
+writing the command and reading the result. 125000 seems to be the
+lowest I could go reliably.
 .PP
 .B breakpause
-is the time in 1,000,000ths of a usec between sending the
-"back to default" break sending commands.
+specifies how many usec (1,000,000ths of a second) between sending the
+"back to default" break and sending commands.
 .PP
 Empty lines and lines starting with a hash mark (#) are
 ignored.  A sample configuration file is shown below:
@@ -73,7 +73,7 @@ support dynamic loading).
 .TP
 .B SANE_CONFIG_DIR
 This environment variable specifies the list of directories that may
-contain the configuration file.  Under UNIX, the directories are
+contain the configuration file.  On *NIX systems, the directories are
 separated by a colon (`:'), under OS/2, they are separated by a
 semi-colon (`;').  If this variable is not set, the configuration file
 is searched in two default directories: first, the current working

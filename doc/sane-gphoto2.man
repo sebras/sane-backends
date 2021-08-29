@@ -91,7 +91,7 @@ support dynamic loading).
 .TP
 .B SANE_CONFIG_DIR
 This environment variable specifies the list of directories that may
-contain the configuration file.  Under UNIX, the directories are
+contain the configuration file.  On *NIX systems, the directories are
 separated by a colon (`:'), under OS/2, they are separated by a
 semi-colon (`;').  If this variable is not set, the configuration file
 is searched in two default directories: first, the current working
@@ -122,15 +122,18 @@ Set to 1, 2, or 3, to enable various levels of debugging within the
 gphoto2 libraries.
 
 .SH "SEE ALSO"
-.BR sane (7)
-.BR scanimage (1)
-.BR xscanimage (1)
+.BR sane (7) ,
+.BR scanimage (1) ,
+.BR xscanimage (1) ,
+.BR libgphoto2 (3)
 
 .SH AUTHOR
 Peter S. Fales
 
 .PP
-The manpage was largely copied from the dc210 manpage.
+The manpage was largely copied from the
+.BR sane\-dc210 (5)
+manpage.
 
 .SH BUGS
 Many, no doubt.

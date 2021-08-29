@@ -41,8 +41,8 @@ to set scanning region,
 resolution, bit-depth (and color), and enable the automatic document feeder.
 
 .SH "SEE ALSO"
-.BR sane (7) ,
-.BR sane\-scsi (5) ,
+.BR sane (7),
+.BR sane\-scsi (5),
 .BR sane\-fujitsu (5),
 .BR xscanimage (1)
 .br

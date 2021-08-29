@@ -31,7 +31,7 @@ following web page:
 Please use libusb-0.1.8 or later. Without libusb or with older libusb versions
 all kinds of trouble can be expected. The scanner should be found by
 .BR sane\-find\-scanner (1)
-without further actions. For setting permissions and general USB information looks at
+without further actions. For setting permissions and general USB information, look at
 .BR sane\-usb (5).
 .PP
 
@@ -44,7 +44,8 @@ It comes on the installation CD that was provided by the manufacturer, but it
 may be packaged together with the installation program in an .exe file. For
 Mustek scanners, the file can be downloaded from the gt68xx backend homepage. For
 other scanners, check the CD for .usb files. If you only find *.cab files, try
-cabextract to unpack. If everything else fails, you must install the Windows
+.BR cabextract (1)
+to unpack. If everything else fails, you must install the Windows
 driver and get the firmware from there (usually in the
 .I windows/system
 or
@@ -159,7 +160,7 @@ support dynamic loading).
 .TP
 .B SANE_CONFIG_DIR
 This environment variable specifies the list of directories that may
-contain the configuration file.  Under UNIX, the directories are
+contain the configuration file.  On *NIX systems, the directories are
 separated by a colon (`:'), under OS/2, they are separated by a
 semi-colon (`;').  If this variable is not set, the configuration file
 is searched in two default directories: first, the current working
@@ -195,7 +196,8 @@ export SANE_DEBUG_GT68XX=4
 .BR sane\-ma1509 (5),
 .BR sane\-mustek_usb (5),
 .BR sane\-mustek (5),
-.BR sane\-mustek_pp (5)
+.BR sane\-mustek_pp (5),
+.BR cabextract (1)
 .br
 .I @DOCDIR@/gt68xx/gt68xx.CHANGES
 .br

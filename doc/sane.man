@@ -49,7 +49,7 @@ The frontends
 and
 .BR scanadf (1)
 are included in the package
-.BR sane\-frontends.
+.BR sane\-frontends .
 Both packages can be downloaded from the
 .B SANE
 homepage
@@ -90,7 +90,8 @@ supported or unsupported), please contact us. See section HOW CAN YOU HELP
 SANE for details. There are lists for specific releases of SANE, for the
 current development version and a search engine:
 .IR http://www.sane\-project.org/sane\-supported\-devices.html .
-The lists are also installed on your system at \fI@DOCDIR@/\fR.
+The lists are also installed on your system at
+.IR @DOCDIR@/ .
 .TP
 .B SANE mailing list
 There is a mailing list for the purpose of discussing the SANE standard and its
@@ -267,16 +268,20 @@ for details.
 .TP
 .B genesys
 Supports several scanners based on the Genesys Logic
-GL646, GL841, GL843, GL847 and GL124 chips like the Medion 6471 and Hewlett-Packard 2300c.
- See
+GL646, GL841, GL843, GL847 and GL124 chips like the
+Medion 6471 and Hewlett-Packard 2300c.
+See
 .BR sane\-genesys (5)
 for details.
 .TP
 .B gt68xx
 Supports scanners based on the Grandtech
-GT-6801 and GT-6816 chips like the Artec Ultima 2000 and several Mustek
-BearPaw CU and TA models. Some Genius, Lexmark, Medion, Packard Bell, Plustek,
-and Trust scanners are also supported. See
+GT-6801 and GT-6816 chips like the Artec Ultima 2000
+and several Mustek BearPaw CU and TA models.
+.br
+Some Genius,
+Lexmark, Medion, Packard Bell, Plustek, and Trust scanners
+are also supported. See
 .BR sane\-gt68xx (5)
 for details.
 .TP
@@ -313,7 +318,7 @@ for details.
 .TP
 .B hpljm1005
 Supports the Hewlett-Packard LaserJet M1005 scanner. See
-.BR sane\-hpljm1005(5)
+.BR sane\-hpljm1005 (5)
 for details.
 .TP
 .B hs2p
@@ -601,9 +606,9 @@ The
 network daemon
 .BR saned (8)
 provides access to scanners located on different
-computers in connection with the net backend. See
+computers in connection with the
 .BR sane\-net (5)
-and
+backend. See
 .BR saned (8).
 .TP
 .B pnm
@@ -761,9 +766,16 @@ information when testing a Mustek SCSI scanner, set environment variables
 .BR SANE_DEBUG_DLL ", " SANE_DEBUG_MUSTEK ", and " SANE_DEBUG_SANEI_SCSI
 to 128 and then invoke
 .IR scanimage\ \-L .
-The debug messages for the dll backend tell if the mustek backend was found
-and loaded at all. The mustek messages explain what the mustek backend is
-doing while the SCSI debugging shows the low level handling. If you can't find
+The
+.B SANE_DEBUG_DLL
+messages tell if the
+.BR sane\-mustek (5)
+backend was found and loaded at all. The
+.B SANE_DEBUG_MUSTEK
+messages explain what the backend is
+doing while the
+.B SANE_DEBUG_SCSI
+debugging shows the low level handling. If you can't find
 out what's going on by checking the messages carefully, contact the sane\-devel
 mailing list for help (see REPORTING BUGS below).
 .PP
@@ -792,11 +804,11 @@ You should get a list of PASSed tests. You can do the same with your backend
 by changing "test" to your backend's name.
 .PP
 So now scanning with
-.B scanimage(1)
+.B scanimage (1)
 works and you want to use one of the graphical frontends like
-.BR xsane(1) ,
-.BR xscanimage(1) ", or"
-.B quiteinsane(1)
+.BR xsane (1) ,
+.BR xscanimage (1) ", or"
+.B quiteinsane (1)
 but those frontends don't detect your scanner? One reason may be that you
 installed two versions of
 .BR SANE .

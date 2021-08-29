@@ -51,7 +51,7 @@ correctly.  This option also enables a fixed width of 11 cm.
 Setting option
 .B three\-pass
 simulates a three-pass scanner.  Older color scanners needed to scan the image
-once per color (reg/green/blue) to get the full image.  Therefore, in this mode
+once per color (red/green/blue) to get the full image.  Therefore, in this mode
 three single frames are transmitted in color mode.
 .PP
 Option
@@ -303,7 +303,7 @@ support dynamic loading).
 .TP
 .B SANE_CONFIG_DIR
 This environment variable specifies the list of directories that may
-contain the configuration file.  Under UNIX, the directories are
+contain the configuration file.  On *NIX systems, the directories are
 separated by a colon (`:'), under OS/2, they are separated by a
 semi-colon (`;').  If this variable is not set, the configuration file
 is searched in two default directories: first, the current working

@@ -321,10 +321,10 @@ prints the program and package name, the version number of
 the
 .B SANE
 distribution that it came with and the version of the backend that it
-loads. Usually that's the dll backend. If more information about the version
+loads. If more information about the version
 numbers of the backends are necessary, the
 .B DEBUG
-variable for the dll backend can be used. Example:
+variable for the dll layer can be used. Example:
 .I "SANE_DEBUG_DLL=3 scanimage \-L" .
 .PP
 As you might imagine, much of the power of
@@ -348,24 +348,26 @@ The documentation for the device-specific options printed by
 is best explained with a few examples:
 
 .B \-l 0..218mm [0]
-.br
-    Top-left x position of scan area.
-.PP
 .RS
+Top-left x position of scan area.
+.PP
 The description above shows that option
 .B \-l
 expects an option value in the range from 0 to 218 mm.  The
 value in square brackets indicates that the current option value is 0
-mm. Most backends provide similar geometry options for top-left y position (\-t),
-width (\-x) and height of scan-area (\-y).
+mm. Most backends provide similar geometry options for top-left y position
+.RB ( \-t ),
+width
+.RB ( \-x )
+and height of scan-area
+.RB (\-y ).
 .RE
 
 
 .B \-\-brightness \-100..100% [0]
-.br
-    Controls the brightness of the acquired image.
-.PP
 .RS
+Controls the brightness of the acquired image.
+.PP
 The description above shows that option
 .B \-\-brightness
 expects an option value in the range from \-100 to 100 percent.  The
@@ -374,10 +376,9 @@ percent.
 .RE
 
 .B \-\-default\-enhancements
-.br
-    Set default values for enhancement controls.
-.PP
 .RS
+Set default values for enhancement controls.
+.PP
 The description above shows that option
 .B \-\-default\-enhancements
 has no option value.  It should be thought of as having an immediate
@@ -390,10 +391,9 @@ would effectively be a no-op.
 .RE
 
 .B \-\-mode Lineart|Gray|Color [Gray]
-.br
-    Selects the scan mode (e.g., lineart or color).
-.PP
 .RS
+Selects the scan mode (e.g., lineart or color).
+.PP
 The description above shows that option
 .B \-\-mode
 accepts an argument that must be one of the strings
@@ -413,10 +413,9 @@ is identical to
 .RE
 
 .B \-\-custom\-gamma[=(yes|no)] [inactive]
-.br
-    Determines whether a builtin or a custom gamma-table should be used.
-.PP
 .RS
+Determines whether a builtin or a custom gamma-table should be used.
+.PP
 The description above shows that option
 .B \-\-custom\-gamma
 expects either no option value, a "yes" string, or a "no" string.
@@ -446,14 +445,11 @@ is selected.
 .RE
 
 .B \-\-gamma\-table 0..255,...
-.br
-    Gamma-correction table.  In color mode this option
-.br
-    equally affects the red, green, and blue channels
-.br
-    simultaneously (i.e., it is an intensity gamma table).
-.PP
 .RS
+Gamma-correction table.  In color mode this option
+equally affects the red, green, and blue channels
+simultaneously (i.e., it is an intensity gamma table).
+.PP
 The description above shows that option
 .B \-\-gamma\-table
 expects zero or more values in the range 0 to 255.  For example, a
@@ -471,12 +467,10 @@ can be used to generate such gamma tables (see
 for details).
 .RE
 
-.br
 .B \-\-filename <string> [/tmp/input.ppm]
-.br
-    The filename of the image to be loaded.
-.PP
 .RS
+The filename of the image to be loaded.
+.PP
 The description above is an example of an option that takes an
 arbitrary string value (which happens to be a filename).  Again,
 the value in brackets show that the option is current set to the
@@ -513,8 +507,8 @@ to 127 characters.
 .BR sane (7),
 .BR gamma4scanimage (1),
 .BR xscanimage (1),
-.BR xcam(1) ,
-.BR xsane(1) ,
+.BR xcam (1) ,
+.BR xsane (1) ,
 .BR scanadf (1),
 .BR sane\-dll (5),
 .BR sane\-net (5),

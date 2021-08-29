@@ -55,7 +55,8 @@ by some frontends.
 .TP
 .B \-\-page\-width, \-\-page\-height
 Sets paper size. Used by scanner to determine centering of scan
-coordinates when using ADF and to detect double feed errors.
+coordinates when using the ADF (Automatic Document Feeder) and
+to detect double feed errors.
 
 .PP
 Other options will be available based on the capabilities of the scanner:

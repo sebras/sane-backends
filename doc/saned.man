@@ -309,14 +309,15 @@ service sane\-port
 .SH SYSTEMD CONFIGURATION
 .B saned
 can be compiled with explicit
-.BR systemd (1) support. This
+.BR systemd (1)
+support. This
 will allow logging debugging information to be forwarded
 to the
 .BR systemd (1)
 journal. The
 .BR systemd (1)
 support requires compilation with the systemd-devel package
-installed on the system. this is the preferred option.
+installed on the system. This is the preferred option.
 
 .B saned
 can be used with
@@ -333,7 +334,7 @@ configuration is different for the 2 options, so both are described below.
 For
 .BR systemd (1)
 configuration we need to add 2 configuration files in
-.I /etc/systemd/system.
+.IR /etc/systemd/system .
 .PP
 The first file we need to add here is called
 .I saned.socket.
@@ -391,7 +392,7 @@ You need to set an environment variable for
 pointing to the directory where
 .B saned
 can find its configuration files.
-you will have to remove the # on the last line and set the variables
+You will have to remove the # on the last line and set the variables
 for the desired debugging information if required.  Multiple variables
 can be set by separating the assignments by spaces as shown in the
 example above.
@@ -412,15 +413,15 @@ forwarded to the system log.
 This configuration will also work when
 .B saned
 is compiled WITH
-.BR systemd (1) integration support, but it does not allow debugging
-information to be logged.
+.BR systemd (1)
+integration support, but it does not allow debugging information to be logged.
 .PP
 For
 .BR systemd (1)
 configuration for
 .BR saned ,
 we need to add 2 configuration files in
-.I /etc/systemd/system.
+.IR /etc/systemd/system .
 .PP
 The first file we need to add here is called
 .I saned.socket.
@@ -447,7 +448,7 @@ WantedBy=sockets.target
 .RE
 .PP
 The second file to be added is
-.I saned@.service
+.IR saned@.service .
 This one differs from the version with
 .BR systemd (1)
 integration compiled in:
@@ -499,7 +500,7 @@ if supported by the client.
 .TP
 .B SANE_CONFIG_DIR
 This environment variable specifies the list of directories that may
-contain the configuration file.  Under UNIX, the directories are
+contain the configuration file.  On *NIX systems, the directories are
 separated by a colon (`:'), under OS/2, they are separated by a
 semi-colon (`;').  If this variable is not set, the configuration file
 is searched in two default directories: first, the current working
@@ -527,7 +528,7 @@ being searched (in this order).
 .BR sane\-"backendname" (5),
 .BR inetd (8),
 .BR xinetd (8),
-.BR systemd (1),
+.BR systemd (1)
 .br
 .I http://www.penguin-breeder.org/?page=sane\-net
 .SH AUTHOR

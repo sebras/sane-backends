@@ -50,15 +50,17 @@ This backend expects device names of the form:
 .I special
 .RE
 .PP
-Where
+where
 .I special
-is either the path-name for the special device that corresponds to a
+is the path-name for the special device that corresponds to a
 SCSI scanner. The special device name must be a generic SCSI device or a
 symlink to such a device.  Under Linux, such a device name could be
 .I /dev/sga
 or
 .IR /dev/sge ,
-for example.  See sane\-scsi(5) for details.
+for example.  See
+.BR sane\-scsi (5)
+for details.
 
 .SH SCAN OPTIONS
 .TP
