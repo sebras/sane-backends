@@ -9,7 +9,9 @@ library implements a SANE (Scanner Access Now Easy) backend that provides
 access to USB flatbed scanners based on the Service & Quality SQ113 chipset. At
 the moment, only the Mustek BearPaw 2448 TA Pro is supported. It's planned to add
 support for other scanners that are based on the SQ113 and maybe SQ11 chip. For
-more details, see the mustek_usb2 backend homepage:
+more details, see the
+.B sane\-mustek_usb2
+backend homepage:
 .IR http://www.meier\-geinitz.de/sane/mustek_usb2\-backend/ .
 .PP
 This is BETA software. Especially if you test new or untested scanners, keep
@@ -28,7 +30,7 @@ Please use libusb-0.1.8 or later. Without libusb or with older libusb versions
 all kinds of trouble can be expected. The scanner should be found by
 .BR sane\-find\-scanner (1)
 without further actions. For setting permissions and general
-USB information looks at
+USB information, look at
 .BR sane\-usb (5).
 .PP
 

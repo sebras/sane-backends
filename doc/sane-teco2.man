@@ -96,7 +96,9 @@ a restricted set of resolutions are available.
 .B Note:
 All values with ydpi > 300 (300 x 600) or 600 (600 x 1200) result in
 a wrong proportion for the scan. The proportion can be adjusted with
-the following imagemagick command:
+the following
+.BR convert (1)
+command from imagemagick:
 .br
 .I convert \-geometry (dpi/max_xdpi * 100%)x100%
 .br
@@ -164,7 +166,7 @@ value loaded into the scanner. Scale 0..64 in steps of 1.
 .TP
 .B \-\-white\-level\-g 0..64
 Selects what green radiance level should be
-considered "white", when scanning some sheets by changing the calibration i
+considered "white", when scanning some sheets by changing the calibration
 value loaded into the scanner. Scale 0..64 in steps of 1.
 
 .TP
@@ -252,4 +254,4 @@ Dave Parker for testing the support for the VM6575.
 .TP
 Michael Hoeller for testing the support for the VM356A.
 .TP
-Christoph.Hoeffner for testing the support for the VM3564 (Relisys AVEC II S3 firmware 1.09).
+Christoph Hoeffner for testing the support for the VM3564 (Relisys AVEC II S3 firmware 1.09).

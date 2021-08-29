@@ -77,14 +77,19 @@ scanimage \-\-help \-d teco1
 
 .TP
 .B \-\-mode Black & White|Grayscale|Color
-Selects the basic mode of operation of the scanner valid choices are
+Selects the basic mode of operation of the scanner. Valid choices are
+.IR "Black & White" ,
+.I "Grayscale"
+and
+.IR Color .
+
 The
 .I Black & White
-mode is black and white only (1 bit).
+mode is for black and white only (1 bit).
 .I Grayscale
 will produce 256 levels of gray (8 bits).
 .I Color
-will produce a 24 bits color image.
+will produce a 24 bit color image.
 
 .TP
 .B \-\-resolution 1..600

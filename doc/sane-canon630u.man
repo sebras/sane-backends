@@ -40,7 +40,7 @@ for details.
 .PP
 This product-specific scanner driver uses the lower-level kernel USB driver
 "scanner".  Check for "Driver=usbscanner" under
-.IR /proc/bus/usb/devices.
+.IR /proc/bus/usb/devices .
 If "Driver=(none)", try forcing it with
 .I "insmod scanner vendor=0x04a9 product=0x2204"
 .SH NOTES
@@ -56,12 +56,12 @@ kernel 2.4.12 or later.
 Some users have reported that this driver doesn't work at all.  This seems
 to be a hardware specific issue, although I dsane\-uson't know what exactly the
 problem is.  If you are having problems, please send me the info in
-.IR /proc/bus/usb/devices,
-.IR /proc/pci,
+.IR /proc/bus/usb/devices ,
+.IR /proc/pci ,
 the kernel
 .I scanner.c
 driver version from
-.IR /var/log/messages,
+.IR /var/log/messages ,
 and the output from
 .I "SANE_DEBUG_CANON630U=12 scanimage > /dev/null"
 .PP
@@ -87,7 +87,7 @@ Deleting this file will force recalibration.
 .TP
 .B SANE_CONFIG_DIR
 This environment variable specifies the list of directories that may
-contain the configuration file.  Under UNIX, the directories are
+contain the configuration file. On *NIX systems, the directories are
 separated by a colon (`:'), under OS/2, they are separated by a
 semi-colon (`;').  If this variable is not set, the configuration file
 is searched in two default directories: first, the current working

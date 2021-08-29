@@ -85,7 +85,7 @@ with no options altered. The backend must not be restarted between the scans.
 If you use
 .BR scanimage (1),
 perform a batch scan with
-.B batch\-count=2
+.B \-\-batch\-count=2
 to obtain the IR information.
 .TP
 .B \-\-depth <n>
@@ -115,15 +115,17 @@ Multiply all exposure times with this value. This allows exposure
 correction without modifying white balance.
 .TP
 .B \-\-load
-Load the next slide when using the slide loader.
+Load the next slide when using the slide loader
+(applies only to the SF\-200 bulk feeder).
 .TP
 .B \-\-eject
 Eject the film strip or mounted slide when using the slide loader.
 .TP
 .B \-\-reset
 Reset scanner. The scanner will perform the same action as when power is
-turned on: it will eject the film strip and calibrate itself. Use this
-whenever the scanner refuses to load a film strip properly, as a result of
+turned on: it will eject the film strip (with the SF\-200 bulk feeder)
+and calibrate itself. Use this whenever the scanner refuses to load
+a film strip properly, as a result of
 which
 .B \-\-eject
 does not work.
@@ -186,8 +188,9 @@ whenever the hardware changes. Thus the number of choices for the
 .B \-\-frame
 option will be fixed when the backend is initialized (usually when the user
 runs the frontend). In particular, if there is no film strip in the
-automatic film strip feeder when the backend is initialized, the frame option
-will not appear at all. Also, restarting the frontend after swapping film
+automatic film strip feeder when the backend is initialized, the
+.B \-\-frame
+option will not appear at all. Also, restarting the frontend after swapping film
 adapters is strongly recommended.
 
 Linux kernels prior to 2.4.19 had a patch that truncated INQUIRY data

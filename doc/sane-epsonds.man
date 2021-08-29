@@ -111,4 +111,4 @@ a bug report.
 
 .SH AUTHOR
 
-The package is written by Alessandro Zummo
+The backend is written by Alessandro Zummo.

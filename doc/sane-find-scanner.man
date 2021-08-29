@@ -35,7 +35,7 @@ isn't supported by any SANE backend.
 For
 .B USB
 scanners, first the USB kernel scanner device files (e.g.
-.IR /dev/usb/scanner0 ),
+.IR /dev/usb/scanner0 ,
 .IR /dev/usb/scanner ,
 and
 .IR /dev/usbscanner )
@@ -59,7 +59,7 @@ won't find most
 parallel port scanners, or scanners connected to proprietary ports. Some
 .B parallel port
 scanners may be detected by
-.I sane\-find\-scanner -p.
+.I "sane\-find\-scanner -p" .
 At the time of writing this will only detect Mustek parallel port scanners.
 
 .SH OPTIONS

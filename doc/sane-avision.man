@@ -2,7 +2,7 @@
 .IX sane\-avision
 
 .SH NAME
-sane\-avision \- SANE backend for original Avision and Avision OEM scanners
+sane\-avision \- SANE backend for Avision branded and Avision OEM
 (HP, Minolta, Mitsubishi, UMAX and possibly more) flatbed and film scanners.
 
 .SH DESCRIPTION
@@ -16,7 +16,7 @@ It is fully big-endian aware and in everyday use on PowerPC and SPARC
 systems.
 
 .B I suggest you hold one hand on the power-button of the scanner while
-you try the first scans \- especially with film-scanners!
+.B you try the first scans \- especially with film-scanners!
 
 .SH CONFIGURATION
 
@@ -69,19 +69,19 @@ respond.
 .TP
 disable\-gamma\-table:
 Disables the usage of the scanner's gamma-table. You
-might try this if your scans hang or only produces
+might try this if your scans hang or only produce
 random garbage.
 .TP
 disable\-calibration:
 Disables the scanner's color calibration. You
-might try this if your scans hang or only produces
+might try this if your scans hang or only produce
 random garbage.
 .TP
 Note:
 Any option above modifies the default code-flow
 for your scanner. The options should only be used
-when you encounter problems with the default be-
-haviour of the backend. Please report the need of
+when you encounter problems with the default behavior
+of the backend. Please report the need of
 options to the backend-author so the backend can
 be fixed as soon as possible.
 
@@ -146,7 +146,7 @@ support dynamic loading).
 .TP
 .B SANE_CONFIG_DIR
 This environment variable specifies the list of directories that may
-contain the configuration file.  Under UNIX, the directories are
+contain the configuration file.  On *NIX systems, the directories are
 separated by a colon (`:'), under OS/2, they are separated by a
 semi-colon (`;').  If this variable is not set, the configuration file
 is searched in two default directories: first, the current working

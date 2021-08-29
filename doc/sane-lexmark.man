@@ -55,14 +55,21 @@ scanimage \-\-help \-d lexmark:usb:<usb port>
 
 .TP
 .B \-\-mode
-selects the basic mode of operation of the scanner valid choices are
+selects the basic mode of operation of the scanner. Valid choices are
 .IR Color ,
 .I Gray
 and
+.IR Lineart .
+The default mode is
+.IR Color .
+The
 .I Lineart
-The default mode is Color. The Lineart mode is black and white only (1 bit).
-Grayscale will produce 256 levels of gray (8 bits). Color mode allows for over
-16 million different colors produced from 24 bits of color information.
+mode is black and white only (1 bit).
+.I Gray
+mode will produce 256 levels of gray (8 bits).
+.I Color
+mode allows for over 16 million different colors produced from 24
+bits of color information.
 
 .TP
 .B \-\-resolution

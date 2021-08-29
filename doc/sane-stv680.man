@@ -160,7 +160,7 @@ Plenty. Parts of this backend are still under development.
 
 
 .SH "SEE ALSO"
-.BR sane(7),
+.BR sane (7),
 .BR sane\-usb (5),
 .BR scanimage (1),
 .BR xcam (1)

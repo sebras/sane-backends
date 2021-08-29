@@ -79,7 +79,7 @@ model AT3
 .SH SCSI ADAPTER TIPS
 
 Some Artec scanners come with an included SCSI adapter.  If your scanner came
-with a DTC ISA scsi cards, you can probably use it with recent (>= 2.2.0)
+with a DTC ISA SCSI cards, you can probably use it with recent (>= 2.2.0)
 kernels using the generic NCR5380 support.  You must pass the following
 boot argument to the kernel: "dtc3181e=0x2c0,0"
 .br
@@ -104,11 +104,11 @@ support dynamic loading).
 .TP
 .B SANE_CONFIG_DIR
 This environment variable specifies the list of directories that may
-contain the configuration file.  Under UNIX, the directories are
-separated by a colon (`:'), under OS/2, they are separated by a semi-
-colon (`;').  If this variable is not set, the configuration file is
-searched in two default directories: first, the current working direc-
-tory (".") and then in
+contain the configuration file.  On *NIX systems, the directories are
+separated by a colon (`:'), under OS/2, they are separated by a
+semi-colon (`;').  If this variable is not set, the configuration file is
+searched in two default directories: first, the current working
+directory (".") and then in
 .IR @CONFIGDIR@ .
 If the value of the
 environment variable ends with the directory separator character, then

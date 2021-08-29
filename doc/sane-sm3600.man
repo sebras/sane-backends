@@ -39,7 +39,9 @@ This backend dynamically enables the options for the frontend,
 that are supported by the scanner dependent on the scanning-mode
 and other options. Unsupported options are disabled.
 .PP
-The following options are supported by the Microtek2-driver:
+The following options are supported by the
+.B sane\-sm3600
+backend:
 Color, grayscale, halftone and lineart scans.
 Also contrast, brightness, and gamma correction.
 

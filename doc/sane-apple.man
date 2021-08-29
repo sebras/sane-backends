@@ -35,9 +35,9 @@ This backend expects device names of the form:
 .I special
 .RE
 .PP
-Where
+where
 .I special
-is either the path-name for the special device that corresponds to a
+is the path-name for the special device that corresponds to a
 SCSI scanner. For SCSI
 scanners, the special device name must be a generic SCSI device or a
 symlink to such a device.  Under Linux, such a device name could be
@@ -85,7 +85,7 @@ support dynamic loading).
 .TP
 .B SANE_CONFIG_DIR
 This environment variable is list of directories where SANE looks
-for the configuration file.  Under UNIX directory names are
+for the configuration file.  On *NIX systems, directory names are
 separated by a colon (`:'), under OS/2 by a semi-colon (`;').
 If SANE_CONFIG_DIR is not set, SANE defaults to
 searching the current working directory (".") and then

@@ -59,7 +59,8 @@ by some frontends.
 .BR --page\-width ", " --page\-height
 .RS
 Sets paper size. Used by scanner to determine centering of scan
-coordinates when using ADF and to detect double feed errors.
+coordinates when using the ADF (Automatic Document Feeder) and to
+detect double feed errors.
 .RE
 .PP
 Other options will be available based on the capabilities of the scanner.
@@ -133,7 +134,7 @@ which enables debugging output to stderr. Valid values are:
 .SH KNOWN ISSUES
 Most hardware options are either not supported or not exposed for control by
 the user, including: multifeed detection, image compression, autocropping,
-endorser, iThresholding, multi\-stream, etc.
+endorser, thresholding, multi\-stream, etc.
 .PP
 
 .SH CREDITS

@@ -13,16 +13,17 @@ also work.
 This backend is ALPHA software.  Be careful and remove the power plug
 immediately if your hear unusual noises.
 .PP
-More details can be found on the ma1509 backend homepage
+More details can be found on the
+.B sane\-ma1509
+backend homepage
 .IR http://www.meier\-geinitz.de/sane/ma1509\-backend/ .
 .PP
-Other Mustek USB scanners are supported by the gt68xx, mustek_usb and the
-plustek backends. See
+Other Mustek USB scanners are supported by the
 .BR sane\-mustek_usb (5),
 .BR sane\-gt68xx (5)
 and
 .BR sane\-plustek (5)
-for details.
+backends.
 .PP
 This backend can only work with scanners that are already detected by the
 operating system. See
@@ -92,7 +93,7 @@ support dynamic loading).
 .TP
 .B SANE_CONFIG_DIR
 This environment variable specifies the list of directories that may
-contain the configuration file.  Under UNIX, the directories are
+contain the configuration file.  On *NIX systems, the directories are
 separated by a colon (`:'), under OS/2, they are separated by a
 semi-colon (`;').  If this variable is not set, the configuration file
 is searched in two default directories: first, the current working
