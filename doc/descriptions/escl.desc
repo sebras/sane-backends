@@ -164,6 +164,11 @@
 :status :good
 :comment "All resolutions supported, Flatted and ADF supported."
 
+:model "XP-6100"
+:interface "WiFi"
+:status :good
+:comment "All resolutions supported, Flatted only supported."
+
 :mfg "HP"
 :url "https://support.hp.com/us-en/drivers/printers"
 
