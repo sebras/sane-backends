@@ -86,7 +86,7 @@ resolve_callback(AvahiServiceResolver *r, AVAHI_GCC_UNUSED AvahiIfIndex interfac
 	    else
 	       uuid = (const char*)NULL;
             DBG (10, "resolve_callback [%s]\n", a);
-            if (strstr(a, "127.0.0.1") == 0) {
+            if (strstr(a, "127.0.0.1") != NULL) {
                snprintf(ip_add, sizeof(ip_add), "%s", "localhost");
                DBG (10,"resolve_callback fix redirect [localhost]\n");
             }
