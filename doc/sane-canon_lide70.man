@@ -90,12 +90,6 @@ where such precision matters. Note that
 .BR xsane (1)
 uses the 75 dpi mode for prescans. The problem is worse on the LiDE 600(F),
 where the offset is five millimeters.
-.PP
-It is recommended that in
-.BR xsane (1)
-the gamma value be set to approximately 1.7
-to get more realistic colors. This also wipes out some artifacts caused by
-the lack of real calibration.
 
 .SH "SEE ALSO"
 .BR sane (7),
