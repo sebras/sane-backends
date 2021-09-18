@@ -77,7 +77,8 @@ e2_send(Epson_Scanner * s, void *buf, size_t buf_size, size_t reply_len,
 		if (reply_len == 0) {
 			DBG(0,
 			    "Cannot send this command to a networked scanner\n");
-			return SANE_STATUS_INVAL;
+			*status = SANE_STATUS_INVAL;
+			return 0; /* nothing actually sent */
 		}
 		return sanei_epson_net_write(s, 0x2000, buf, buf_size,
 					     reply_len, status);
