@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: sane-backends 1.0.31\n"
 "Report-Msgid-Bugs-To: sane-devel@alioth-lists.debian.net\n"
 "POT-Creation-Date: 2021-09-20 20:08-0700\n"
-"PO-Revision-Date: 2021-01-24 09:57-0800\n"
+"PO-Revision-Date: 2021-09-20 20:30-0700\n"
 "Last-Translator: Ralph Little <littlesincanada@yahoo.co.uk>\n"
 "Language-Team: British English <kde-i18n-doc@kde.org>\n"
 "Language: en_GB\n"
@@ -2173,14 +2173,14 @@ msgid "Enables ADF skew correction"
 msgstr "Enables ADF skew correction"
 
 #: backend/epsonds.c:2063
-#, fuzzy, no-c-format
+#, no-c-format
 msgid "ADF CRP Correction"
-msgstr "ADF Skew Correction"
+msgstr "ADF CRP Correction"
 
 #: backend/epsonds.c:2065
-#, fuzzy, no-c-format
+#, no-c-format
 msgid "Enables ADF auto cropping"
-msgstr "Enables ADF skew correction"
+msgstr "Enables ADF auto cropping"
 
 #: backend/fujitsu.c:697 backend/hp-option.c:3325 backend/hp-option.c:3338
 #, no-c-format
