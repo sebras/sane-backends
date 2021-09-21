@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sane-backends 1.0.32\n"
 "Report-Msgid-Bugs-To: sane-devel@alioth-lists.debian.net\n"
-"POT-Creation-Date: 2021-09-20 19:39+0300\n"
+"POT-Creation-Date: 2021-09-20 20:08-0700\n"
 "PO-Revision-Date: 2021-09-20 19:45+0300\n"
 "Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
 "Language-Team: Ukrainian <trans-uk@lists.fedoraproject.org>\n"
@@ -5689,11 +5689,11 @@ msgstr ""
 "автоматичної подачі документів, протягом вказаної кількості секунд."
 
 #: backend/pixma/pixma_sane_options.c:407
-#, no-c-format
+#, fuzzy, no-c-format
 msgid ""
 "When to perform scanner calibration. If you choose \"Once\" it will be "
 "performed a single time per driver init for single page scans, and for "
-"the first page for each ADF scans."
+"the first page for each ADF scan."
 msgstr ""
 "Визначає, коли слід виконувати калібрування сканера. Якщо ви виберете "
 "«Лише раз», його буде виконано один раз під час ініціалізації сканера "
