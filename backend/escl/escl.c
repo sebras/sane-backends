@@ -432,7 +432,7 @@ attach_one_config(SANEI_Config __sane_unused__ *config, const char *line,
     int port = 0;
     SANE_Status status;
     static ESCL_Device *escl_device = NULL;
-
+    if (*line == '#') return SANE_STATUS_GOOD;
     if (strncmp(line, "device", 6) == 0) {
         char *name_str = NULL;
         char *opt_model = NULL;
@@ -1135,6 +1135,37 @@ finish_hack:
   fclose(fp);
 }
 
+static char*
+_get_blacklist_pdf(void)
+{
+  FILE *fp;
+  char *blacklist = NULL;
+  SANE_Char line[PATH_MAX];
+
+  /* open configuration file */
+  fp = sanei_config_open (ESCL_CONFIG_FILE);
+  if (!fp)
+    {
+      DBG (2, "_get_blacklit: couldn't access %s\n", ESCL_CONFIG_FILE);
+      DBG (3, "_get_blacklist: exit\n");
+    }
+
+  /* loop reading the configuration file, all line beginning by "option " are
+   * parsed for value to store in configuration structure, other line are
+   * used are device to try to attach
+   */
+  while (sanei_config_read (line, PATH_MAX, fp))
+    {
+       if (!strncmp(line, "pdfblacklist", 12)) {
+          blacklist = strdup(line);
+	  goto finish_;
+       }
+    }
+finish_:
+  DBG (3, "_get_blacklist_pdf: finish\n");
+  fclose(fp);
+  return blacklist;
+}
 
 
 /**
@@ -1149,6 +1180,7 @@ finish_hack:
 SANE_Status
 sane_open(SANE_String_Const name, SANE_Handle *h)
 {
+    char *blacklist = NULL;
     DBG (10, "escl sane_open\n");
     SANE_Status status;
     escl_sane_t *handler = NULL;
@@ -1173,7 +1205,8 @@ sane_open(SANE_String_Const name, SANE_Handle *h)
         return (SANE_STATUS_NO_MEM);
     }
     handler->device = device;  // Handler owns device now.
-    handler->scanner = escl_capabilities(device, &status);
+    blacklist = _get_blacklist_pdf();
+    handler->scanner = escl_capabilities(device, blacklist, &status);
     if (status != SANE_STATUS_GOOD) {
         escl_free_handler(handler);
         return (status);

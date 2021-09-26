@@ -201,10 +201,10 @@ find_valor_of_array_variables(xmlNode *node, capabilities_t *scanner, int type)
 {
     const char *name = (const char *)node->name;
     if (strcmp(name, "ColorMode") == 0) {
-		const char *color = (SANE_String_Const)xmlNodeGetContent(node);
-		if (type == PLATEN || strcmp(color, "BlackAndWhite1"))
+	const char *color = (SANE_String_Const)xmlNodeGetContent(node);
+        if (type == PLATEN || strcmp(color, "BlackAndWhite1"))
           scanner->caps[type].ColorModes = char_to_array(scanner->caps[type].ColorModes, &scanner->caps[type].ColorModesSize, (SANE_String_Const)xmlNodeGetContent(node), 1);
-	}
+    }
     else if (strcmp(name, "ContentType") == 0)
         scanner->caps[type].ContentTypes = char_to_array(scanner->caps[type].ContentTypes, &scanner->caps[type].ContentTypesSize, (SANE_String_Const)xmlNodeGetContent(node), 0);
     else if (strcmp(name, "DocumentFormat") == 0)
@@ -404,6 +404,16 @@ find_true_variables(xmlNode *node, capabilities_t *scanner, int type)
     return (0);
 }
 
+static char*
+replace_char(char* str, char find, char replace){
+    char *current_pos = strchr(str,find);
+    while (current_pos) {
+        *current_pos = replace;
+        current_pos = strchr(current_pos,find);
+    }
+    return str;
+}
+
 /**
  * \fn static int print_xml_c(xmlNode *node, capabilities_t *scanner)
  * \brief Function that browses the xml file, node by node.
@@ -473,6 +483,37 @@ _reduce_color_modes(capabilities_t *scanner)
     }
 }
 
+static void
+_delete_pdf(capabilities_t *scanner)
+{
+    int type = 0;
+    for (type = 0; type < 3; type++) {
+         if (scanner->caps[type].ColorModesSize) {
+	     if (scanner->caps[type].default_format) {
+		 scanner->caps[type].have_pdf = -1;
+		 if (!strcmp(scanner->caps[type].default_format, "application/pdf")) {
+	             free(scanner->caps[type].default_format);
+		     if (scanner->caps[type].have_tiff > -1)
+	                scanner->caps[type].default_format = strdup("image/tiff");
+		     else if (scanner->caps[type].have_png > -1)
+	                scanner->caps[type].default_format = strdup("image/png");
+		     else if (scanner->caps[type].have_jpeg > -1)
+	                scanner->caps[type].default_format = strdup("image/jpeg");
+		 }
+	         free(scanner->caps[type].ColorModes);
+		 scanner->caps[type].ColorModes = NULL;
+	         scanner->caps[type].ColorModesSize = 0;
+                 scanner->caps[type].ColorModes = char_to_array(scanner->caps[type].ColorModes,
+		             &scanner->caps[type].ColorModesSize,
+		    	     (SANE_String_Const)SANE_VALUE_SCAN_MODE_GRAY, 0);
+                 scanner->caps[type].ColorModes = char_to_array(scanner->caps[type].ColorModes,
+		             &scanner->caps[type].ColorModesSize,
+			     (SANE_String_Const)SANE_VALUE_SCAN_MODE_COLOR, 0);
+	     }
+         }
+    }
+}
+
 /**
  * \fn capabilities_t *escl_capabilities(const ESCL_Device *device, SANE_Status *status)
  * \brief Function that finally recovers all the capabilities of the scanner, using curl.
@@ -482,7 +523,7 @@ _reduce_color_modes(capabilities_t *scanner)
  * \return scanner (the structure that stocks all the capabilities elements)
  */
 capabilities_t *
-escl_capabilities(ESCL_Device *device, SANE_Status *status)
+escl_capabilities(ESCL_Device *device, char *blacklist, SANE_Status *status)
 {
     capabilities_t *scanner = (capabilities_t*)calloc(1, sizeof(capabilities_t));
     CURL *curl_handle = NULL;
@@ -492,6 +533,7 @@ escl_capabilities(ESCL_Device *device, SANE_Status *status)
     xmlNode *node = NULL;
     int i = 0;
     const char *scanner_capabilities = "/eSCL/ScannerCapabilities";
+    SANE_Bool use_pdf = SANE_TRUE;
 
     *status = SANE_STATUS_GOOD;
     if (device == NULL)
@@ -543,7 +585,26 @@ escl_capabilities(ESCL_Device *device, SANE_Status *status)
     for (i = 0; i < 4; i++)
        scanner->Sources[i] = NULL;
     print_xml_c(node, device, scanner, -1);
-    _reduce_color_modes(scanner);
+    DBG (3, "1-blacklist_pdf: %s\n", (use_pdf ? "TRUE" : "FALSE") );
+    if (device->model_name != NULL) {
+        if (strcasestr(device->model_name, "MFC-J985DW")) {
+           DBG (3, "blacklist_pdf: device not support PDF\n");
+           use_pdf = SANE_FALSE;
+        }
+	else if (blacklist) {
+           char *model = strdup(device->model_name);
+           replace_char(model, ' ', '_');
+	   if (strcasestr(blacklist, model)) {
+               use_pdf = SANE_FALSE;
+	   }
+	   free(model);
+	}
+    }
+    DBG (3, "1-blacklist_pdf: %s\n", (use_pdf ? "TRUE" : "FALSE") );
+    if (use_pdf)
+       _reduce_color_modes(scanner);
+    else
+       _delete_pdf(scanner);
 clean:
     xmlFreeDoc(data);
 clean_data:

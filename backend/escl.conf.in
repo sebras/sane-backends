@@ -11,6 +11,11 @@
 # You can also configure a device on a single line starting with 'device'
 # by writing a complete URL and an optional model name.
 
+
+# Name of the device not using the PDF format. Spaces are replaced by _. Please report the devices having this problem on sane-devel
+# Uncomment the line to add your device
+#pdfblacklist Brother_DCP-L2530DW_series
+
 #device http://123.456.789.10:8080 OptionalModel1
 #device https://123.456.789.10:443 "Optional Model 2"
 #device https://123.456.789.10:443 "HP Color LaserJet FlowMFP M578" "hack=localhost"

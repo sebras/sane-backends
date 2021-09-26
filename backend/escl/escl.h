@@ -231,6 +231,7 @@ SANE_Status escl_status(const ESCL_Device *device,
                         SANE_Status *job);
 
 capabilities_t *escl_capabilities(ESCL_Device *device,
+                                  char *blacklist,
                                   SANE_Status *status);
 
 char *escl_newjob(capabilities_t *scanner,
