@@ -208,35 +208,41 @@ backend.
 .PP
 
 .SH INT TEST OPTIONS
-There are 6 int test options in total.
+There are 7 int test options in total.
 .PP
 Option
 .B int
-(1/6) is an int test option with no unit and no constraint set.
+(1/7) is an int test option with no unit and no constraint set.
 .PP
 Option
 .B int\-constraint\-range
-(2/6) is an int test option with unit pixel and constraint range set.  Minimum
+(2/7) is an int test option with unit pixel and constraint range set.  Minimum
 is 4, maximum 192, and quant is 2.
 .PP
 Option
 .B int\-constraint\-word\-list
-(3/6) is an int test option with unit bits and constraint word list set.
+(3/7) is an int test option with unit bits and constraint word list set.
 .PP
 Option
 .B int\-constraint\-array
-(4/6) is an int test option with unit mm and using an array without
+(4/7) is an int test option with unit mm and using an array without
 constraints.
 .PP
 Option
 .B int\-constraint\-array\-constraint\-range
-(5/6) is an int test option with unit mm and using an array with a range
+(5/7) is an int test option with unit mm and using an array with a range
 constraint.  Minimum is 4, maximum 192, and quant is 2.
 .PP
 Option
 .B int\-constraint\-array\-constraint\-word\-list
-(6/6) is an int test option with unit percent and using an array a word list
+(6/7) is an int test option with unit percent and using an array a word list
 constraint.
+.PP
+Option
+.B int\-inexact
+(7/7) is an int test option that increments the requested value and returns
+flag SANE_INFO_INEXACT.
+
 
 .SH FIXED TEST OPTIONS
 There are 3 fixed test options in total.
