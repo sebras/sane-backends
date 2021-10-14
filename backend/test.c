@@ -914,8 +914,8 @@ init_options (Test_Device * test_device)
   /* opt_int */
   od = &test_device->opt[opt_int];
   od->name = "int";
-  od->title = SANE_I18N ("(1/6) Int");
-  od->desc = SANE_I18N ("(1/6) Int test option with no unit and no "
+  od->title = SANE_I18N ("(1/7) Int");
+  od->desc = SANE_I18N ("(1/7) Int test option with no unit and no "
 			"constraint set.");
   od->type = SANE_TYPE_INT;
   od->unit = SANE_UNIT_NONE;
@@ -930,8 +930,8 @@ init_options (Test_Device * test_device)
   /* opt_int_constraint_range */
   od = &test_device->opt[opt_int_constraint_range];
   od->name = "int-constraint-range";
-  od->title = SANE_I18N ("(2/6) Int constraint range");
-  od->desc = SANE_I18N ("(2/6) Int test option with unit pixel and "
+  od->title = SANE_I18N ("(2/7) Int constraint range");
+  od->desc = SANE_I18N ("(2/7) Int test option with unit pixel and "
 			"constraint range set. Minimum is 4, maximum 192, and "
 			"quant is 2.");
   od->type = SANE_TYPE_INT;
@@ -947,8 +947,8 @@ init_options (Test_Device * test_device)
   /* opt_int_constraint_word_list */
   od = &test_device->opt[opt_int_constraint_word_list];
   od->name = "int-constraint-word-list";
-  od->title = SANE_I18N ("(3/6) Int constraint word list");
-  od->desc = SANE_I18N ("(3/6) Int test option with unit bits and "
+  od->title = SANE_I18N ("(3/7) Int constraint word list");
+  od->desc = SANE_I18N ("(3/7) Int test option with unit bits and "
 			"constraint word list set.");
   od->type = SANE_TYPE_INT;
   od->unit = SANE_UNIT_BIT;
@@ -963,8 +963,8 @@ init_options (Test_Device * test_device)
   /* opt_int_array */
   od = &test_device->opt[opt_int_array];
   od->name = "int-constraint-array";
-  od->title = SANE_I18N ("(4/6) Int array");
-  od->desc = SANE_I18N ("(4/6) Int test option with unit mm and using "
+  od->title = SANE_I18N ("(4/7) Int array");
+  od->desc = SANE_I18N ("(4/7) Int test option with unit mm and using "
 			"an array without constraints.");
   od->type = SANE_TYPE_INT;
   od->unit = SANE_UNIT_MM;
@@ -979,8 +979,8 @@ init_options (Test_Device * test_device)
   /* opt_int_array_constraint_range */
   od = &test_device->opt[opt_int_array_constraint_range];
   od->name = "int-constraint-array-constraint-range";
-  od->title = SANE_I18N ("(5/6) Int array constraint range");
-  od->desc = SANE_I18N ("(5/6) Int test option with unit dpi and using "
+  od->title = SANE_I18N ("(5/7) Int array constraint range");
+  od->desc = SANE_I18N ("(5/7) Int test option with unit dpi and using "
 			"an array with a range constraint. Minimum is 4, "
 			"maximum 192, and quant is 2.");
   od->type = SANE_TYPE_INT;
@@ -993,6 +993,40 @@ init_options (Test_Device * test_device)
   od->constraint.range = &int_constraint_range;
   test_device->val[opt_int_array_constraint_range].wa =
     &int_array_constraint_range[0];
+
+ /* opt_int_array_constraint_word_list */
+  od = &test_device->opt[opt_int_array_constraint_word_list];
+  od->name = "int-constraint-array-constraint-word-list";
+  od->title = SANE_I18N ("(6/7) Int array constraint word list");
+  od->desc = SANE_I18N ("(6/7) Int test option with unit percent and using "
+			"an array with a word list constraint.");
+  od->type = SANE_TYPE_INT;
+  od->unit = SANE_UNIT_PERCENT;
+  od->size = 6 * sizeof (SANE_Word);
+  od->cap = SANE_CAP_SOFT_DETECT | SANE_CAP_SOFT_SELECT | SANE_CAP_ADVANCED;
+  if (init_enable_test_options == SANE_FALSE)
+    od->cap |= SANE_CAP_INACTIVE;
+  od->constraint_type = SANE_CONSTRAINT_WORD_LIST;
+  od->constraint.word_list = int_constraint_word_list;
+  test_device->val[opt_int_array_constraint_word_list].wa =
+    &int_array_constraint_word_list[0];
+
+  /* opt_int_inexact */
+  od = &test_device->opt[opt_int_inexact];
+  od->name = "int-inexact";
+  od->title = SANE_I18N ("(7/7) Int inexact");
+  od->desc = SANE_I18N ("(7/7) Int test option that modifies the value "
+			"and returns SANE_INFO_INEXACT.");
+  od->type = SANE_TYPE_INT;
+  od->unit = SANE_UNIT_NONE;
+  od->size = sizeof (SANE_Word);
+  od->cap = SANE_CAP_SOFT_DETECT | SANE_CAP_SOFT_SELECT | SANE_CAP_ADVANCED;
+  if (init_enable_test_options == SANE_FALSE)
+    od->cap |= SANE_CAP_INACTIVE;
+  od->constraint_type = SANE_CONSTRAINT_NONE;
+  od->constraint.range = 0;
+  test_device->val[opt_int_inexact].w = 67;
+
 
   /* opt_gamma_red */
   init_gamma_table(gamma_red, GAMMA_RED_SIZE, gamma_range.max);
@@ -1050,23 +1084,6 @@ init_options (Test_Device * test_device)
   od->constraint_type = SANE_CONSTRAINT_RANGE;
   od->constraint.range = &gamma_range;
   test_device->val[opt_gamma_all].wa = &gamma_all[0];
-
-  /* opt_int_array_constraint_word_list */
-  od = &test_device->opt[opt_int_array_constraint_word_list];
-  od->name = "int-constraint-array-constraint-word-list";
-  od->title = SANE_I18N ("(6/6) Int array constraint word list");
-  od->desc = SANE_I18N ("(6/6) Int test option with unit percent and using "
-			"an array with a word list constraint.");
-  od->type = SANE_TYPE_INT;
-  od->unit = SANE_UNIT_PERCENT;
-  od->size = 6 * sizeof (SANE_Word);
-  od->cap = SANE_CAP_SOFT_DETECT | SANE_CAP_SOFT_SELECT | SANE_CAP_ADVANCED;
-  if (init_enable_test_options == SANE_FALSE)
-    od->cap |= SANE_CAP_INACTIVE;
-  od->constraint_type = SANE_CONSTRAINT_WORD_LIST;
-  od->constraint.word_list = int_constraint_word_list;
-  test_device->val[opt_int_array_constraint_word_list].wa =
-    &int_array_constraint_word_list[0];
 
   /* opt_fixed_group */
   od = &test_device->opt[opt_fixed_group];
@@ -2216,6 +2233,19 @@ sane_control_option (SANE_Handle handle, SANE_Int option, SANE_Action action,
 	  DBG (4, "sane_control_option: set option %d (%s) to %d\n",
 	       option, test_device->opt[option].name, *(SANE_Int *) value);
 	  break;
+	case opt_int_inexact:
+	  if (test_device->val[option].w == *(SANE_Int *) value)
+	    {
+	      DBG (4, "sane_control_option: option %d (%s) not changed\n",
+		   option, test_device->opt[option].name);
+	      break;
+	    }
+          *(SANE_Int *) value += 1;
+	  test_device->val[option].w = *(SANE_Int *) value;
+          myinfo |= SANE_INFO_INEXACT;
+	  DBG (4, "sane_control_option: set option %d (%s) to %d\n",
+	       option, test_device->opt[option].name, *(SANE_Int *) value);
+	  break;
 	case opt_fuzzy_parameters:	/* Bool with parameter reloading */
 	  if (test_device->val[option].w == *(SANE_Bool *) value)
 	    {
@@ -2535,6 +2565,7 @@ sane_control_option (SANE_Handle handle, SANE_Int option, SANE_Action action,
 	case opt_ppl_loss:
 	case opt_read_delay_duration:
 	case opt_int:
+        case opt_int_inexact:
 	case opt_int_constraint_range:
 	case opt_int_constraint_word_list:
 	  *(SANE_Int *) value = test_device->val[option].w;
