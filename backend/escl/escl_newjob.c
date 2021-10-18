@@ -277,6 +277,8 @@ wake_up_device:
         curl_easy_setopt(curl_handle, CURLOPT_POSTFIELDSIZE, upload->size);
         curl_easy_setopt(curl_handle, CURLOPT_HEADERFUNCTION, download_callback);
         curl_easy_setopt(curl_handle, CURLOPT_HEADERDATA, (void *)download);
+        curl_easy_setopt(curl_handle, CURLOPT_FOLLOWLOCATION, 1L);
+        curl_easy_setopt(curl_handle, CURLOPT_MAXREDIRS, 3L);
         CURLcode res = curl_easy_perform(curl_handle);
         if (res != CURLE_OK) {
             DBG( 1, "Create NewJob : the scanner responded incorrectly: %s\n", curl_easy_strerror(res));
