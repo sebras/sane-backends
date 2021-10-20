@@ -433,6 +433,7 @@ attach_one_config(SANEI_Config __sane_unused__ *config, const char *line,
     SANE_Status status;
     static ESCL_Device *escl_device = NULL;
     if (*line == '#') return SANE_STATUS_GOOD;
+    if (!strncmp(line, "pdfblacklist", 12)) return SANE_STATUS_GOOD;
     if (strncmp(line, "device", 6) == 0) {
         char *name_str = NULL;
         char *opt_model = NULL;
