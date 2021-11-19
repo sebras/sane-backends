@@ -688,6 +688,15 @@ static Avision_HWEntry Avision_Device_List [] =
     /* comment="1 pass, 600 dpi, zero-edge" ASIC 7 */
     /* status="basic" */
 
+    { NULL, NULL,
+      0x0638, 0x2a1f,
+      "Avision", "FB2280E",
+      0,
+      { 0, {0, 0}, {{0, 0}, {0, 0}} }
+    },
+    /* comment="1 pass, 600 dpi, zero-edge" ASIC 7 */
+    /* status="basic" */
+
     { "AVISION", "AV8000S",
       0, 0,
       "Avision", "AV8000S",
