@@ -252,8 +252,18 @@ Supports Epson-based Fujitsu USB scanners. See
 for details.
 .TP
 .B epson
-Supports Epson SCSI, parallel port and USB flatbed scanners. See
+Old driver for Epson SCSI, parallel port and USB flatbed scanners. See
 .BR sane\-epson (5)
+for details but try
+.BR epson2
+first.
+.TP
+.B epson2
+Newer driver for Epson SCSI, parallel port, network and USB flatbed
+scanners (try this before
+.BR epson
+which is outdated). See
+.BR sane\-epson2 (5)
 for details.
 .TP
 .B escl
@@ -878,6 +888,7 @@ for details).
 .BR sane\-dll (5),
 .BR sane\-dmc (5),
 .BR sane\-epson (5),
+.BR sane\-epson2 (5),
 .BR sane\-escl (5),
 .BR sane\-fujitsu (5),
 .BR sane\-genesys (5),
