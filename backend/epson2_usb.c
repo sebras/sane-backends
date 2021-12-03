@@ -184,6 +184,8 @@ SANE_Word sanei_epson_usb_product_ids[] = {
   0x113e, /* XP-452 455 Series */
   0x1141, /* L3100 Series */
   0x1142, /* L3110 Series */
+  0x1188, /* L3210 Series */
+  0x1189, /* L3200 Series */
   0	/* last entry - this is used for devices that are specified
 	   in the config file as "usb <vendor> <product>" */
 };
