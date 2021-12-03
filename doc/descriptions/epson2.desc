@@ -1122,6 +1122,16 @@
 :usbid      "0x04b8" "0x1142"
 :status     :complete
 
+:model      "L3200 Series"
+:interface  "USB"
+:usbid      "0x04b8" "0x1189"
+:status     :complete
+
+:model      "L3210 Series"
+:interface  "USB"
+:usbid      "0x04b8" "0x1188"
+:status     :complete
+
 :model      "LP-7900CS"
 :status     :untested
 :comment    "business all-in-one; scanner is a ES-7000H"
