@@ -1108,7 +1108,7 @@
 :interface "USB WiFi"
 :usbid "0x04a9" "0x1800"
 :status :good
-:comment "All resolutions supported (up to 2400DPI). WiFi not working."
+:comment "All resolutions supported (up to 2400DPI). WiFi not supported by Pixma."
 
 :model "PIXMA TS8430 Series"
 :interface "USB"
