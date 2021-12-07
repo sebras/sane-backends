@@ -230,7 +230,7 @@
 #define G3000_PID 0x1794
 #define G2000_PID 0x1795
 #define TS9000_PID 0x179f
-#define TS8000_PID 0x1800
+#define TS8000_PID 0x1800       /* tested: TS8030 */
 #define TS6000_PID 0x1801
 #define TS5000_PID 0x1802
 #define MG3000_PID 0x180b
@@ -308,7 +308,7 @@
 #define G2060_PID 0x18C1
 #define G3020_PID 0x18BF
 #define TS7430_PID 0x18B2
-#define XK90_PID 0x18B6
+#define XK90_PID 0x18B6 /* tested */
 #define TS8430_PID 0x18B5
 #define TR7600_PID 0x18AA
 #define TR8600_PID 0x18AD
@@ -1147,7 +1147,7 @@ post_process_image_data (pixma_t * s, pixma_imagebuf_t * ib)
     n = s->param->xdpi / 600;
   else
     n = s->param->xdpi / 2400;
-  if (s->cfg->pid == MP600_PID || s->cfg->pid == MP600R_PID)
+  if (s->cfg->pid == MP600_PID || s->cfg->pid == MP600R_PID || s->cfg->pid == XK90_PID)
     n = s->param->xdpi / 1200;
   m = (n > 0) ? s->param->wx / n : 1;
 
@@ -1188,6 +1188,7 @@ post_process_image_data (pixma_t * s, pixma_imagebuf_t * ib)
                   || s->cfg->pid == MP230_PID
                   || s->cfg->pid == MX470_PID
                   || s->cfg->pid == MX510_PID
+                  || s->cfg->pid == XK90_PID
                   || s->cfg->pid == MX520_PID))
               reorder_pixels (mp->linebuf, sptr, c, n, m, s->param->wx, line_size);
 
