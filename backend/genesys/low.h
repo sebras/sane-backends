@@ -116,6 +116,7 @@
 #define GENESYS_HAS_POWER_SW         (1 << 6)       /**< scanner has power button */
 #define GENESYS_HAS_CALIBRATE        (1 << 7)       /**< scanner has 'calibrate' software button to start calibration */
 #define GENESYS_HAS_EXTRA_SW         (1 << 8)       /**< scanner has extra function button */
+#define GENESYS_HAS_TRANSP_SW        (1 << 9)       /**< scanner has TRANSPARCY/SCAN_FILM button */
 
 /* USB control message values */
 #define REQUEST_TYPE_IN		(USB_TYPE_VENDOR | USB_DIR_IN)
