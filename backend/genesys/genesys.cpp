@@ -5003,6 +5003,18 @@ static void init_options(Genesys_Scanner* s)
   else
     s->opt[OPT_EXTRA_SW].cap = SANE_CAP_INACTIVE;
 
+    // transparency/scan_film button
+    s->opt[OPT_TRANSP_SW].name = "transparency";
+    s->opt[OPT_TRANSP_SW].title = SANE_I18N ("Transparency button");
+    s->opt[OPT_TRANSP_SW].desc = SANE_I18N ("Transparency button");
+    s->opt[OPT_TRANSP_SW].type = SANE_TYPE_BOOL;
+    s->opt[OPT_TRANSP_SW].unit = SANE_UNIT_NONE;
+    if (model->buttons & GENESYS_HAS_TRANSP_SW) {
+        s->opt[OPT_TRANSP_SW].cap = SANE_CAP_SOFT_DETECT | SANE_CAP_HARD_SELECT | SANE_CAP_ADVANCED;
+    } else {
+        s->opt[OPT_TRANSP_SW].cap = SANE_CAP_INACTIVE;
+    }
+
   /* calibration needed */
   s->opt[OPT_NEED_CALIBRATION_SW].name = "need-calibration";
   s->opt[OPT_NEED_CALIBRATION_SW].title = SANE_I18N ("Needs calibration");
@@ -5821,6 +5833,7 @@ static void get_option_value(Genesys_Scanner* s, int option, void* val)
     case OPT_OCR_SW:
     case OPT_POWER_SW:
     case OPT_EXTRA_SW:
+    case OPT_TRANSP_SW:
         s->dev->cmd_set->update_hardware_sensors(s);
         *reinterpret_cast<SANE_Bool*>(val) = s->buttons[genesys_option_to_button(option)].read();
         break;
@@ -6456,6 +6469,7 @@ GenesysButtonName genesys_option_to_button(int option)
     case OPT_OCR_SW: return BUTTON_OCR_SW;
     case OPT_POWER_SW: return BUTTON_POWER_SW;
     case OPT_EXTRA_SW: return BUTTON_EXTRA_SW;
+    case OPT_TRANSP_SW: return BUTTON_TRANSP_SW;
     default: throw std::runtime_error("Unknown option to convert to button index");
     }
 }

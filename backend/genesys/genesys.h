@@ -124,6 +124,7 @@ enum Genesys_Option
   OPT_OCR_SW,
   OPT_POWER_SW,
   OPT_EXTRA_SW,
+  OPT_TRANSP_SW,
   OPT_NEED_CALIBRATION_SW,
   OPT_BUTTON_GROUP,
   OPT_CALIBRATE,
@@ -144,6 +145,7 @@ enum GenesysButtonName : unsigned {
     BUTTON_OCR_SW,
     BUTTON_POWER_SW,
     BUTTON_EXTRA_SW,
+    BUTTON_TRANSP_SW,
     NUM_BUTTONS
 };
 
