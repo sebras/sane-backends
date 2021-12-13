@@ -61,6 +61,26 @@ static const SANE_Device **devlist = NULL;
 static ESCL_Device *list_devices_primary = NULL;
 static int num_devices = 0;
 
+#ifdef CURL_SSLVERSION_MAX_DEFAULT
+static int proto_tls[] = {
+        CURL_SSLVERSION_MAX_DEFAULT,
+   #ifdef CURL_SSLVERSION_MAX_TLSv1_3
+        CURL_SSLVERSION_MAX_TLSv1_3,
+   #endif
+   #ifdef CURL_SSLVERSION_MAX_TLSv1_2
+        CURL_SSLVERSION_MAX_TLSv1_2,
+   #endif
+   #ifdef CURL_SSLVERSION_MAX_TLSv1_1
+        CURL_SSLVERSION_MAX_TLSv1_1,
+   #endif
+   #ifdef CURL_SSLVERSION_MAX_TLSv1_0
+        CURL_SSLVERSION_MAX_TLSv1_0,
+   #endif
+        -1
+};
+#endif
+
+
 typedef struct Handled {
     struct Handled *next;
     ESCL_Device *device;
@@ -98,6 +118,60 @@ escl_free_device(ESCL_Device *current)
     free(current);
     return NULL;
 }
+
+
+#ifdef CURL_SSLVERSION_MAX_DEFAULT
+static int
+escl_tls_protocol_supported(char *url, int proto)
+{
+   CURLcode res = CURLE_UNSUPPORTED_PROTOCOL;
+   CURL *curl = curl_easy_init();
+   if(curl) {
+      curl_easy_setopt(curl, CURLOPT_URL, url);
+
+      /* ask libcurl to use TLS version 1.0 or later */
+      curl_easy_setopt(curl, CURLOPT_SSLVERSION, proto);
+      curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0L);
+      curl_easy_setopt(curl, CURLOPT_SSL_VERIFYHOST, 0L);
+      curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
+      curl_easy_setopt(curl, CURLOPT_MAXREDIRS, 3L);
+      /* Perform the request */
+      res = curl_easy_perform(curl);
+      curl_easy_cleanup(curl);
+   }
+   return res;
+}
+
+static int
+escl_is_tls(char * url, char *type)
+{
+    int tls_version = 0;
+    if(!strcmp(type, "_uscans._tcp") ||
+       !strcmp(type, "https"))
+      {
+         while(proto_tls[tls_version] != -1)
+          {
+                if (escl_tls_protocol_supported(url, proto_tls[tls_version]) == CURLE_OK)
+                {
+                        DBG(10, "curl tls compatible (%d)\n", proto_tls[tls_version]);
+                        break;
+                }
+                tls_version++;
+          }
+         if (proto_tls[tls_version] < 1)
+            return 0;
+      }
+      return proto_tls[tls_version];
+}
+#else
+static int
+escl_is_tls(char * url, char *type)
+{
+    (void)url;
+    (void)type;
+    return 0;
+}
+#endif
 
 void
 escl_free_handler(escl_sane_t *handler)
@@ -187,8 +261,13 @@ escl_device_add(int port_nb,
 {
     char tmp[PATH_MAX] = { 0 };
     char *model = NULL;
+    char url_port[512] = { 0 };
+    int tls_version = 0;
     ESCL_Device *current = NULL;
     DBG (10, "escl_device_add\n");
+    snprintf(url_port, sizeof(url_port), "https://%s:%d", ip_address, port_nb);
+    tls_version = escl_is_tls(url_port, type);
+
     for (current = list_devices_primary; current; current = current->next) {
 	if ((strcmp(current->ip_address, ip_address) == 0) ||
             (uuid && current->uuid && !strcmp(current->uuid, uuid)))
@@ -206,6 +285,7 @@ escl_device_add(int port_nb,
                        }
                        current->port_nb = port_nb;
                        current->https = SANE_TRUE;
+                       current->tls = tls_version;
                     }
 	          return (SANE_STATUS_GOOD);
                 }
@@ -226,6 +306,7 @@ escl_device_add(int port_nb,
     } else {
         current->https = SANE_FALSE;
     }
+    current->tls = tls_version;
     model = (char*)(tmp[0] != 0 ? tmp : model_name);
     current->model_name = strdup(model);
     current->ip_address = strdup(ip_address);
@@ -470,7 +551,6 @@ attach_one_config(SANEI_Config __sane_unused__ *config, const char *line,
         }
         escl_device->model_name = opt_model ? opt_model : strdup("Unknown model");
         escl_device->is = strdup("flatbed or ADF scanner");
-        escl_device->type = strdup("In url");
         escl_device->uuid = NULL;
     }
 
@@ -515,6 +595,9 @@ attach_one_config(SANEI_Config __sane_unused__ *config, const char *line,
     }
     escl_device->is = strdup("flatbed or ADF scanner");
     escl_device->uuid = NULL;
+    char url_port[512] = { 0 };
+    snprintf(url_port, sizeof(url_port), "https://%s:%d", escl_device->ip_address, escl_device->port_nb);
+    escl_device->tls = escl_is_tls(url_port, escl_device->type);
     status = escl_check_and_add_device(escl_device);
     if (status == SANE_STATUS_GOOD)
        escl_device = NULL;
@@ -1069,9 +1152,11 @@ escl_parse_name(SANE_String_Const name, ESCL_Device *device)
 
     if (strncmp(name, "https://", 8) == 0) {
         device->https = SANE_TRUE;
+        device->type = strdup("https");
         host = name + 8;
     } else if (strncmp(name, "http://", 7) == 0) {
         device->https = SANE_FALSE;
+        device->type = strdup("http");
         host = name + 7;
     } else {
         DBG(1, "Unknown URL scheme in %s", name);
@@ -1811,6 +1896,8 @@ escl_curl_url(CURL *handle, const ESCL_Device *device, SANE_String_Const path)
         DBG( 1, "Ignoring safety certificates, use https\n");
         curl_easy_setopt(handle, CURLOPT_SSL_VERIFYPEER, 0L);
         curl_easy_setopt(handle, CURLOPT_SSL_VERIFYHOST, 0L);
+        if (device->tls > 0)
+           curl_easy_setopt(handle, CURLOPT_SSLVERSION, device->tls);
     }
     if (device->unix_socket != NULL) {
         DBG( 1, "Using local socket %s\n", device->unix_socket );

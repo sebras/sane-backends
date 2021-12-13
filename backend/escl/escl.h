@@ -96,6 +96,7 @@ typedef struct ESCL_Device {
     int       port_nb;
     char     *ip_address;
     char     *is;
+    int       tls;
     char     *uuid;
     char     *type;
     SANE_Bool https;
