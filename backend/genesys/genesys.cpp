@@ -4992,16 +4992,16 @@ static void init_options(Genesys_Scanner* s)
     s->opt[OPT_POWER_SW].cap = SANE_CAP_INACTIVE;
 
   /* extra button */
-  s->opt[OPT_EXTRA_SW].name = "extra";
-  s->opt[OPT_EXTRA_SW].title = SANE_I18N ("Extra button");
-  s->opt[OPT_EXTRA_SW].desc = SANE_I18N ("Extra button");
-  s->opt[OPT_EXTRA_SW].type = SANE_TYPE_BOOL;
-  s->opt[OPT_EXTRA_SW].unit = SANE_UNIT_NONE;
-  if (model->buttons & GENESYS_HAS_EXTRA_SW)
-    s->opt[OPT_EXTRA_SW].cap =
-      SANE_CAP_SOFT_DETECT | SANE_CAP_HARD_SELECT | SANE_CAP_ADVANCED;
-  else
-    s->opt[OPT_EXTRA_SW].cap = SANE_CAP_INACTIVE;
+    s->opt[OPT_EXTRA_SW].name = "extra";
+    s->opt[OPT_EXTRA_SW].title = SANE_I18N("Extra button");
+    s->opt[OPT_EXTRA_SW].desc = SANE_I18N("Extra button");
+    s->opt[OPT_EXTRA_SW].type = SANE_TYPE_BOOL;
+    s->opt[OPT_EXTRA_SW].unit = SANE_UNIT_NONE;
+    if (model->buttons & GENESYS_HAS_EXTRA_SW) {
+        s->opt[OPT_EXTRA_SW].cap = SANE_CAP_SOFT_DETECT | SANE_CAP_HARD_SELECT | SANE_CAP_ADVANCED;
+    } else {
+        s->opt[OPT_EXTRA_SW].cap = SANE_CAP_INACTIVE;
+    }
 
     // transparency/scan_film button
     s->opt[OPT_TRANSP_SW].name = "transparency";
