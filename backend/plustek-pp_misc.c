@@ -320,7 +320,7 @@ static int miscSetFastMode( pScanData ps )
 
 		_OUTB_DATA(ps,0x55);
 		_DO_UDELAY(1);
-		if ((inb(ps->IO.portBase)) != 0x55)	/* read data */
+		if ((sanei_inb(ps->IO.portBase)) != 0x55)	/* read data */
 			a++;
 
 		_OUTB_DATA(ps,0xAA);

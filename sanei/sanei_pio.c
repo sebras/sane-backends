@@ -48,6 +48,8 @@
  */
 
 #include "../include/sane/config.h"
+#include "../include/sane/sanei_directio.h"
+/* pick up compatibility defs */
 
 #define BACKEND_NAME sanei_pio
 #include "../include/sane/sanei_backend.h"		/* pick up compatibility defs */
@@ -57,41 +59,9 @@
 #endif
 #include <sys/types.h>
 
-#ifdef HAVE_SYS_IO_H
-# include <sys/io.h>	/* use where available (glibc 2.x, for example) */
-# ifndef SANE_HAVE_SYS_IO_H_WITH_INB_OUTB
-#  define IO_SUPPORT_MISSING
-# endif
-#elif HAVE_ASM_IO_H
-# include <asm/io.h>		/* ugly, but backwards compatible */
-#elif HAVE_SYS_HW_H
-# include <sys/hw.h>
-#elif defined(__i386__)  && defined (__GNUC__)
-
-static __inline__ void
-outb (u_char value, u_long port)
-{
-  __asm__ __volatile__ ("outb %0,%1"::"a" (value), "d" ((u_short) port));
-}
-
-static __inline__ u_char
-inb (u_long port)
-{
-  u_char value;
-
-  __asm__ __volatile__ ("inb %1,%0":"=a" (value):"d" ((u_short) port));
-  return value;
-}
-
-#else
-# define IO_SUPPORT_MISSING
-#endif
-
 #include "../include/sane/sane.h"
 #include "../include/sane/sanei.h"
 #include "../include/sane/sanei_pio.h"
-
-#if defined (HAVE_IOPERM) && !defined (IO_SUPPORT_MISSING)
 
 #include <errno.h>
 #include <fcntl.h>
@@ -177,7 +147,7 @@ pio_outb (const Port port, u_char val, u_long addr)
 {
 
   if (-1 == port->fd)
-    outb (val, addr);
+    sanei_outb (addr, val);
   else
     {
       if (addr != (u_long)lseek (port->fd, addr, SEEK_SET))
@@ -193,7 +163,7 @@ pio_inb (const Port port, u_char * val, u_long addr)
 {
 
   if (-1 == port->fd)
-    *val = inb (addr);
+    *val = sanei_inb (addr);
   else
     {
       if (addr != (u_long)lseek (port->fd, addr, SEEK_SET))
@@ -221,7 +191,7 @@ pio_wait (const Port port, u_char val, u_char mask)
   for (;;)
     {
       ++poll_count;
-      stat = inb (port->base + PIO_STAT);
+      stat = sanei_inb (port->base + PIO_STAT);
       if ((stat & mask) == (val & mask))
 	{
 	  DBG (DL60, "got %02x after %ld tries\n", stat, poll_count);
@@ -261,7 +231,7 @@ pio_ctrl (const Port port, u_char val)
   DBG (DL61, "   FDXT    %s\n", val & PIO_CTRL_FDXT ? "on" : "off");
   DBG (DL61, "   NSTROBE %s\n", val & PIO_CTRL_NSTROBE ? "on" : "off");
 
-  outb (val, port->base + PIO_CTRL);
+  sanei_outb (port->base + PIO_CTRL, val);
 
   return;
 }
@@ -269,7 +239,7 @@ pio_ctrl (const Port port, u_char val)
 static inline void
 pio_delay (const Port port)
 {
-  inb (port->base + PIO_STAT);	/* delay */
+  sanei_inb (port->base + PIO_STAT);	/* delay */
 
   return;
 }
@@ -290,8 +260,8 @@ pio_reset (const Port port)
 
   for (n = PIO_APPLYRESET; --n >= 0;)
     {
-      outb ((PIO_CTRL_IE | PIO_CTRL_NINIT) ^ PIO_CTRL_NINIT,
-	    port->base + PIO_CTRL);
+      sanei_outb (port->base + PIO_CTRL,
+		 (PIO_CTRL_IE | PIO_CTRL_NINIT) ^ PIO_CTRL_NINIT);
     }
   pio_init (port);
 
@@ -323,7 +293,7 @@ pio_write (const Port port, const u_char * buf, int n)
 #endif
       DBG (DL60, "out  %02x\n", (int) *buf);
 
-      outb (*buf, port->base + PIO_IOPORT);
+      sanei_outb (port->base + PIO_IOPORT, *buf);
 
       pio_delay (port);
       pio_delay (port);
@@ -387,7 +357,7 @@ pio_read (const Port port, u_char * buf, int n)
       /* busynack */
 #endif
 
-      *buf = inb (port->base + PIO_IOPORT);
+      *buf = sanei_inb (port->base + PIO_IOPORT);
       DBG (DL60, "in   %02x\n", (int) *buf);
       DBG (DL40, "end read byte\n");
     }
@@ -465,7 +435,7 @@ pio_open (const char *dev, SANE_Status * status)
   port[n].max_time_seconds = 10;
   port[n].in_use = 1;
 
-  if (ioperm (port[n].base, 3, 1))
+  if (sanei_ioperm (port[n].base, 3, 1))
     {
       DBG (1, "sanei_pio_open: cannot get io privilege for port 0x%03lx\n",
 	   port[n].base);
@@ -533,73 +503,3 @@ sanei_pio_write (int fd, const u_char * buf, int n)
 
   return pio_write (&port[fd], buf, n);
 }
-
-#else /* !HAVE_IOPERM */
-
-#ifdef __BEOS__
-
-#include <fcntl.h>
-
-SANE_Status
-sanei_pio_open (const char *dev, int *fdp)
-{
-	int fp;
-
-	/* open internal parallel port */
-	fp=open("/dev/parallel/parallel1",O_RDWR);
-
-  	*fdp=fp;
-  	if(fp<0) return SANE_STATUS_INVAL;
-  	return(SANE_STATUS_GOOD);
-}
-
-
-void
-sanei_pio_close (int fd)
-{
-	close(fd);
-	return;
-}
-
-int
-sanei_pio_read (int fd, u_char * buf, int n)
-{
-	return(read(fd,buf,n));
-}
-
-int
-sanei_pio_write (int fd, const u_char * buf, int n)
-{
-  	return(write(fd,buf,n));
-}
-
-#else /* !__BEOS__ */
-
-SANE_Status
-sanei_pio_open (const char *dev, int *fdp)
-{
-  *fdp = -1;
-  return SANE_STATUS_INVAL;
-}
-
-
-void
-sanei_pio_close (int fd)
-{
-  return;
-}
-
-int
-sanei_pio_read (int fd, u_char * buf, int n)
-{
-  return -1;
-}
-
-int
-sanei_pio_write (int fd, const u_char * buf, int n)
-{
-  return -1;
-}
-#endif /* __BEOS__ */
-
-#endif /* !HAVE_IOPERM */

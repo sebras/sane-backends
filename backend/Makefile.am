@@ -678,6 +678,7 @@ libsane_epson_la_LIBADD = $(COMMON_LIBS) \
     ../sanei/sanei_usb.lo \
     ../sanei/sanei_scsi.lo \
     ../sanei/sanei_pio.lo \
+    ../sanei/sanei_directio.lo \
     $(SCSI_LIBS) $(USB_LIBS) $(RESMGR_LIBS)
 EXTRA_DIST += epson.conf.in
 
@@ -699,6 +700,7 @@ libsane_epson2_la_LIBADD = $(COMMON_LIBS) \
     ../sanei/sanei_pio.lo \
     ../sanei/sanei_tcp.lo \
     ../sanei/sanei_udp.lo \
+    ../sanei/sanei_directio.lo \
     $(SCSI_LIBS) $(USB_LIBS) $(SOCKET_LIBS) $(MATH_LIB) $(RESMGR_LIBS)
 EXTRA_DIST += epson2.conf.in
 
@@ -853,6 +855,7 @@ libsane_hp_la_LIBADD = $(COMMON_LIBS) \
     ../sanei/sanei_scsi.lo \
     ../sanei/sanei_pio.lo \
     ../sanei/sanei_thread.lo \
+    ../sanei/sanei_directio.lo \
     $(SCSI_LIBS) $(USB_LIBS) $(SANEI_THREAD_LIBS) $(RESMGR_LIBS)
 EXTRA_DIST += hp.conf.in
 # TODO: These should be moved to ../docs/hp; don't belong here.
@@ -1243,6 +1246,7 @@ libsane_mustek_la_LIBADD = $(COMMON_LIBS) \
     ../sanei/sanei_thread.lo \
     ../sanei/sanei_ab306.lo \
     ../sanei/sanei_pa4s2.lo \
+    ../sanei/sanei_directio.lo \
     $(IEEE1284_LIBS) $(SCSI_LIBS) $(SANEI_THREAD_LIBS) $(RESMGR_LIBS)
 EXTRA_DIST += mustek.conf.in
 # TODO: Why are these distributed but not compiled?
@@ -1261,6 +1265,7 @@ libsane_mustek_pp_la_LIBADD = $(COMMON_LIBS) \
     ../sanei/sanei_config.lo \
     sane_strstatus.lo \
     ../sanei/sanei_pa4s2.lo \
+    ../sanei/sanei_directio.lo \
     $(MATH_LIB) $(IEEE1284_LIBS)
 EXTRA_DIST += mustek_pp.conf.in
 # TODO: Why are these distributed but not compiled?
@@ -1498,7 +1503,16 @@ libplustek_pp_la_CPPFLAGS = $(AM_CPPFLAGS) -DBACKEND_NAME=plustek_pp
 nodist_libsane_plustek_pp_la_SOURCES = plustek_pp-s.c
 libsane_plustek_pp_la_CPPFLAGS = $(AM_CPPFLAGS) -DBACKEND_NAME=plustek_pp
 libsane_plustek_pp_la_LDFLAGS = $(DIST_SANELIBS_LDFLAGS)
-libsane_plustek_pp_la_LIBADD = $(COMMON_LIBS) libplustek_pp.la ../sanei/sanei_init_debug.lo ../sanei/sanei_constrain_value.lo ../sanei/sanei_config.lo  sane_strstatus.lo ../sanei/sanei_pp.lo ../sanei/sanei_thread.lo $(MATH_LIB) $(IEEE1284_LIBS) $(SANEI_THREAD_LIBS)
+libsane_plustek_pp_la_LIBADD = $(COMMON_LIBS) \
+    libplustek_pp.la \
+    ../sanei/sanei_init_debug.lo \
+    ../sanei/sanei_constrain_value.lo \
+    ../sanei/sanei_config.lo \
+    sane_strstatus.lo \
+    ../sanei/sanei_pp.lo \
+    ../sanei/sanei_thread.lo \
+    ../sanei/sanei_directio.lo \
+    $(MATH_LIB) $(IEEE1284_LIBS) $(SANEI_THREAD_LIBS)
 EXTRA_DIST += plustek_pp.conf.in
 # TODO: Why are these distributed but not compiled?
 EXTRA_DIST += plustek-pp_dac.c plustek-pp_dbg.h plustek-pp_detect.c plustek-pp_genericio.c plustek-pp_hwdefs.h plustek-pp_image.c plustek-pp_io.c plustek-pp_map.c plustek-pp_misc.c plustek-pp_models.c plustek-pp_motor.c plustek-pp_p12.c plustek-pp_p12ccd.c plustek-pp_p48xx.c plustek-pp_p9636.c plustek-pp_procfs.c plustek-pp_procs.h plustek-pp_ptdrv.c plustek-pp_scale.c plustek-pp_scan.h plustek-pp_scandata.h plustek-pp_sysdep.h plustek-pp_tpa.c plustek-pp_types.h plustek-pp_wrapper.c
@@ -1528,7 +1542,8 @@ libsane_qcam_la_LIBADD = $(COMMON_LIBS) \
     ../sanei/sanei_constrain_value.lo \
     ../sanei/sanei_config.lo \
     sane_strstatus.lo \
-    ../sanei/sanei_pio.lo
+    ../sanei/sanei_pio.lo \
+    ../sanei/sanei_directio.lo
 
 EXTRA_DIST += qcam.conf.in
 
@@ -1903,6 +1918,7 @@ libsane_umax_pp_la_LIBADD = $(COMMON_LIBS) \
     ../sanei/sanei_init_debug.lo \
     ../sanei/sanei_constrain_value.lo \
     ../sanei/sanei_config.lo \
+    ../sanei/sanei_directio.lo \
     sane_strstatus.lo \
     $(MATH_LIB)
 EXTRA_DIST += umax_pp.conf.in
@@ -2001,6 +2017,7 @@ PRELOADABLE_BACKENDS_LIBS = \
     ../sanei/sanei_tcp.lo \
     ../sanei/sanei_udp.lo \
     ../sanei/sanei_magic.lo \
+    ../sanei/sanei_directio.lo \
     $(LIBV4L_LIBS) $(MATH_LIB) \
     $(IEEE1284_LIBS) \
     $(TIFF_LIBS) \
@@ -2035,6 +2052,7 @@ PRELOADABLE_BACKENDS_DEPS = ../sanei/sanei_config2.lo \
     ../sanei/sanei_tcp.lo \
     ../sanei/sanei_udp.lo \
     ../sanei/sanei_magic.lo \
+    ../sanei/sanei_directio.lo \
     $(SANEI_SANEI_JPEG_LO)
 endif
 nodist_libsane_la_SOURCES =  dll-s.c

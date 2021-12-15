@@ -26,6 +26,7 @@
 
 #include "../include/sane/config.h"
 #include "../include/sane/sanei.h"
+#include "../include/sane/sanei_directio.h"
 
 #define MUSTEK_CONF	STRINGIFY(PATH_SANE_CONFIG_DIR) "/mustek.conf"
 #define PORT_DEV	"/dev/port"
@@ -38,28 +39,6 @@
 
 #include <sys/types.h>
 #include <sys/stat.h>
-
-#ifdef HAVE_SYS_IO_H
-# include <sys/io.h>	/* use where available (glibc 2.x, for example) */
-#elif HAVE_ASM_IO_H
-# include <asm/io.h>	/* ugly, but backwards compatible */
-#elif defined(__i386__)  && defined (__GNUC__)
-
-static __inline__ void
-outb (u_char value, u_long port)
-{
-  __asm__ __volatile__ ("outb %0,%1"::"a" (value), "d" ((u_short) port));
-}
-
-static __inline__ u_char
-inb (u_long port)
-{
-  u_char value;
-
-  __asm__ __volatile__ ("inb %1,%0":"=a" (value):"d" ((u_short) port));
-  return value;
-}
-#endif
 
 char *Mustek_Conf = MUSTEK_CONF;
 
@@ -165,9 +144,9 @@ main (int argc, char **argv)
 
   fprintf (stderr, "using control port address 0x%03x\n", portaddr);
   /* try to get I/O permission from the kernel */
-  if (ioperm (portaddr, 1, 1) == 0)
+  if (sanei_ioperm (portaddr, 1, 1) == 0)
     {
-      outb (0x00, portaddr);
+      sanei_outb (portaddr, 0x00);
     }
   /* else try to open /dev/port to access the I/O port */
   else if ((pfd = open (PORT_DEV, O_RDWR, 0666)) >= 0)

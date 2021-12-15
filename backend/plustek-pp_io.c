@@ -959,37 +959,37 @@ _LOC void IOReadScannerImageData( pScanData ps, pUChar pBuf, ULong size )
  */
 _LOC void IOOut( Byte data, UShort port )
 {
-	DBG( DBG_IOF, "outb(0x%04x, 0x%02x)\n", port, data );
-	outb( data, port );
+	DBG( DBG_IOF, "sanei_outb(0x%04x, 0x%02x)\n", port, data );
+	sanei_outb( port, data );
 }
 
 _LOC void IOOutDelayed( Byte data, UShort port )
 {
-	DBG( DBG_IOF, "outb_p(0x%04x, 0x%02x)\n", port, data );
-	outb_p( data, port );
+	DBG( DBG_IOF, "sanei_outb_p(0x%04x, 0x%02x)\n", port, data );
+	sanei_outb_p( port, data );
 }
 
 _LOC Byte IOIn( UShort port )
 {
 #ifdef DEBUG
-	Byte data = inb( port );
+	Byte data = sani_inb( port );
 
-	DBG( DBG_IOF, "inb(0x%04x) = 0x%02x\n", port, data );
+	DBG( DBG_IOF, "sanei_inb(0x%04x) = 0x%02x\n", port, data );
 	return data;
 #else
-	return inb( port );
+	return sanei_inb( port );
 #endif
 }
 
 _LOC Byte IOInDelayed( UShort port )
 {
 #ifdef DEBUG
-	Byte data = inb_p( port );
+	Byte data = sanei_inb_p( port );
 
-	DBG( DBG_IOF, "inb_p(0x%04x) = 0x%02x\n", port, data );
+	DBG( DBG_IOF, "sanei_inb_p(0x%04x) = 0x%02x\n", port, data );
 	return data;
 #else
-	return inb_p( port );
+	return sanei_inb_p( port );
 #endif
 }
 #endif /* guard __KERNEL__ */
