@@ -55,7 +55,7 @@ addr_name (uint16_t addr)
  */
 
 static uint8_t
-inb (int fd, uint16_t addr)
+p5_inb (int fd, uint16_t addr)
 {
 #ifdef HAVE_LINUX_PPDEV_H
   uint8_t val = 0xff;
@@ -84,7 +84,7 @@ inb (int fd, uint16_t addr)
       rc = read (fd, &val, 1);
       break;
     default:
-      DBG (DBG_error, "inb(%s) escaped ppdev\n", addr_name (addr));
+      DBG (DBG_error, "p5_inb(%s) escaped ppdev\n", addr_name (addr));
       return 0xFF;
     }
   if (rc < 0)
@@ -100,7 +100,7 @@ inb (int fd, uint16_t addr)
 }
 
 static void
-outb (int fd, uint16_t addr, uint8_t value)
+p5_outb (int fd, uint16_t addr, uint8_t value)
 {
 #ifdef HAVE_LINUX_PPDEV_H
   int rc = 0, mode = 0xff;
@@ -134,7 +134,7 @@ outb (int fd, uint16_t addr, uint8_t value)
       rc = write (fd, &value, 1);
       break;
     default:
-      DBG (DBG_error, "outb(%s,0x%02x) escaped ppdev\n", addr_name (addr),
+      DBG (DBG_error, "p5_outb(%s,0x%02x) escaped ppdev\n", addr_name (addr),
 	   value);
       break;
     }
@@ -157,8 +157,8 @@ write_reg (int fd, uint8_t index, uint8_t value)
   idx = index & 0x0F;
   DBG (DBG_io2, "write_reg(REG%X,0x%x)\n", idx, value);
   idx = idx << 4 | idx;
-  outb (fd, EPPADR, idx);
-  outb (fd, EPPDATA, value);
+  p5_outb (fd, EPPADR, idx);
+  p5_outb (fd, EPPDATA, value);
 }
 
 static uint8_t
@@ -169,8 +169,8 @@ read_reg (int fd, uint8_t index)
   /* both nibbles hold the same value */
   idx = index & 0x0F;
   idx = idx << 4 | idx;
-  outb (fd, EPPADR, idx);
-  return inb (fd, EPPDATA);
+  p5_outb (fd, EPPADR, idx);
+  return p5_inb (fd, EPPDATA);
 }
 
 #ifdef HAVE_LINUX_PPDEV_H
@@ -311,7 +311,7 @@ memtest (int fd, uint16_t addr)
 }
 
 
-#define INB(k,y,z) val=inb(k,y); if(val!=z) { DBG(DBG_error,"expected 0x%02x, got 0x%02x\n",z, val); return SANE_FALSE; }
+#define P5_INB(k,y,z) val=p5_inb(k,y); if(val!=z) { DBG(DBG_error,"expected 0x%02x, got 0x%02x\n",z, val); return SANE_FALSE; }
 
 /** @brief connect to scanner
  * This function sends the connect sequence for the scanner.
@@ -323,66 +323,66 @@ connect (int fd)
 {
   uint8_t val;
 
-  inb (fd, CONTROL);
-  outb (fd, CONTROL, 0x04);
-  outb (fd, DATA, 0x02);
-  INB (fd, DATA, 0x02);
-  outb (fd, DATA, 0x03);
-  INB (fd, DATA, 0x03);
-  outb (fd, DATA, 0x03);
-  outb (fd, DATA, 0x83);
-  outb (fd, DATA, 0x03);
-  outb (fd, DATA, 0x83);
-  INB (fd, DATA, 0x83);
-  outb (fd, DATA, 0x82);
-  INB (fd, DATA, 0x82);
-  outb (fd, DATA, 0x02);
-  outb (fd, DATA, 0x82);
-  outb (fd, DATA, 0x02);
-  outb (fd, DATA, 0x82);
-  INB (fd, DATA, 0x82);
-  outb (fd, DATA, 0x82);
-  INB (fd, DATA, 0x82);
-  outb (fd, DATA, 0x02);
-  outb (fd, DATA, 0x82);
-  outb (fd, DATA, 0x02);
-  outb (fd, DATA, 0x82);
-  INB (fd, DATA, 0x82);
-  outb (fd, DATA, 0x83);
-  INB (fd, DATA, 0x83);
-  outb (fd, DATA, 0x03);
-  outb (fd, DATA, 0x83);
-  outb (fd, DATA, 0x03);
-  outb (fd, DATA, 0x83);
-  INB (fd, DATA, 0x83);
-  outb (fd, DATA, 0x82);
-  INB (fd, DATA, 0x82);
-  outb (fd, DATA, 0x02);
-  outb (fd, DATA, 0x82);
-  outb (fd, DATA, 0x02);
-  outb (fd, DATA, 0x82);
-  INB (fd, DATA, 0x82);
-  outb (fd, DATA, 0x83);
-  INB (fd, DATA, 0x83);
-  outb (fd, DATA, 0x03);
-  outb (fd, DATA, 0x83);
-  outb (fd, DATA, 0x03);
-  outb (fd, DATA, 0x83);
-  INB (fd, DATA, 0x83);
-  outb (fd, DATA, 0x83);
-  INB (fd, DATA, 0x83);
-  outb (fd, DATA, 0x03);
-  outb (fd, DATA, 0x83);
-  outb (fd, DATA, 0x03);
-  outb (fd, DATA, 0x83);
-  INB (fd, DATA, 0x83);
-  outb (fd, DATA, 0x82);
-  INB (fd, DATA, 0x82);
-  outb (fd, DATA, 0x02);
-  outb (fd, DATA, 0x82);
-  outb (fd, DATA, 0x02);
-  outb (fd, DATA, 0x82);
-  outb (fd, DATA, 0xFF);
+  p5_inb (fd, CONTROL);
+  p5_outb (fd, CONTROL, 0x04);
+  p5_outb (fd, DATA, 0x02);
+  P5_INB (fd, DATA, 0x02);
+  p5_outb (fd, DATA, 0x03);
+  P5_INB (fd, DATA, 0x03);
+  p5_outb (fd, DATA, 0x03);
+  p5_outb (fd, DATA, 0x83);
+  p5_outb (fd, DATA, 0x03);
+  p5_outb (fd, DATA, 0x83);
+  P5_INB (fd, DATA, 0x83);
+  p5_outb (fd, DATA, 0x82);
+  P5_INB (fd, DATA, 0x82);
+  p5_outb (fd, DATA, 0x02);
+  p5_outb (fd, DATA, 0x82);
+  p5_outb (fd, DATA, 0x02);
+  p5_outb (fd, DATA, 0x82);
+  P5_INB (fd, DATA, 0x82);
+  p5_outb (fd, DATA, 0x82);
+  P5_INB (fd, DATA, 0x82);
+  p5_outb (fd, DATA, 0x02);
+  p5_outb (fd, DATA, 0x82);
+  p5_outb (fd, DATA, 0x02);
+  p5_outb (fd, DATA, 0x82);
+  P5_INB (fd, DATA, 0x82);
+  p5_outb (fd, DATA, 0x83);
+  P5_INB (fd, DATA, 0x83);
+  p5_outb (fd, DATA, 0x03);
+  p5_outb (fd, DATA, 0x83);
+  p5_outb (fd, DATA, 0x03);
+  p5_outb (fd, DATA, 0x83);
+  P5_INB (fd, DATA, 0x83);
+  p5_outb (fd, DATA, 0x82);
+  P5_INB (fd, DATA, 0x82);
+  p5_outb (fd, DATA, 0x02);
+  p5_outb (fd, DATA, 0x82);
+  p5_outb (fd, DATA, 0x02);
+  p5_outb (fd, DATA, 0x82);
+  P5_INB (fd, DATA, 0x82);
+  p5_outb (fd, DATA, 0x83);
+  P5_INB (fd, DATA, 0x83);
+  p5_outb (fd, DATA, 0x03);
+  p5_outb (fd, DATA, 0x83);
+  p5_outb (fd, DATA, 0x03);
+  p5_outb (fd, DATA, 0x83);
+  P5_INB (fd, DATA, 0x83);
+  p5_outb (fd, DATA, 0x83);
+  P5_INB (fd, DATA, 0x83);
+  p5_outb (fd, DATA, 0x03);
+  p5_outb (fd, DATA, 0x83);
+  p5_outb (fd, DATA, 0x03);
+  p5_outb (fd, DATA, 0x83);
+  P5_INB (fd, DATA, 0x83);
+  p5_outb (fd, DATA, 0x82);
+  P5_INB (fd, DATA, 0x82);
+  p5_outb (fd, DATA, 0x02);
+  p5_outb (fd, DATA, 0x82);
+  p5_outb (fd, DATA, 0x02);
+  p5_outb (fd, DATA, 0x82);
+  p5_outb (fd, DATA, 0xFF);
   DBG (DBG_info, "connect() OK...\n");
   return SANE_TRUE;
 }
@@ -392,60 +392,60 @@ disconnect (int fd)
 {
   uint8_t val;
 
-  outb (fd, CONTROL, 0x04);
-  outb (fd, DATA, 0x00);
-  INB (fd, DATA, 0x00);
-  outb (fd, DATA, 0x01);
-  INB (fd, DATA, 0x01);
-  outb (fd, DATA, 0x01);
-  outb (fd, DATA, 0x81);
-  outb (fd, DATA, 0x01);
-  outb (fd, DATA, 0x81);
-  INB (fd, DATA, 0x81);
-  outb (fd, DATA, 0x80);
-  INB (fd, DATA, 0x80);
-  outb (fd, DATA, 0x00);
-  outb (fd, DATA, 0x80);
-  outb (fd, DATA, 0x00);
-  outb (fd, DATA, 0x80);
-  INB (fd, DATA, 0x80);
-  outb (fd, DATA, 0x80);
-  INB (fd, DATA, 0x80);
-  outb (fd, DATA, 0x00);
-  outb (fd, DATA, 0x80);
-  outb (fd, DATA, 0x00);
-  outb (fd, DATA, 0x80);
-  INB (fd, DATA, 0x80);
-  outb (fd, DATA, 0x81);
-  INB (fd, DATA, 0x81);
-  outb (fd, DATA, 0x01);
-  outb (fd, DATA, 0x81);
-  outb (fd, DATA, 0x01);
-  outb (fd, DATA, 0x81);
-  INB (fd, DATA, 0x81);
-  outb (fd, DATA, 0x80);
-  INB (fd, DATA, 0x80);
-  outb (fd, DATA, 0x00);
-  outb (fd, DATA, 0x80);
-  outb (fd, DATA, 0x00);
-  outb (fd, DATA, 0x80);
-  INB (fd, DATA, 0x80);
-  outb (fd, DATA, 0x00);
-  outb (fd, DATA, 0x80);
-  outb (fd, DATA, 0x00);
-  outb (fd, DATA, 0x80);
-  INB (fd, DATA, 0x80);
-  outb (fd, DATA, 0x00);
-  outb (fd, DATA, 0x80);
-  outb (fd, DATA, 0x00);
-  outb (fd, DATA, 0x80);
-  INB (fd, DATA, 0x80);
-  outb (fd, DATA, 0x00);
-  outb (fd, DATA, 0x80);
-  outb (fd, DATA, 0x00);
-  outb (fd, DATA, 0x80);
-  inb (fd, CONTROL);
-  outb (fd, CONTROL, 0x0C);
+  p5_outb (fd, CONTROL, 0x04);
+  p5_outb (fd, DATA, 0x00);
+  P5_INB (fd, DATA, 0x00);
+  p5_outb (fd, DATA, 0x01);
+  P5_INB (fd, DATA, 0x01);
+  p5_outb (fd, DATA, 0x01);
+  p5_outb (fd, DATA, 0x81);
+  p5_outb (fd, DATA, 0x01);
+  p5_outb (fd, DATA, 0x81);
+  P5_INB (fd, DATA, 0x81);
+  p5_outb (fd, DATA, 0x80);
+  P5_INB (fd, DATA, 0x80);
+  p5_outb (fd, DATA, 0x00);
+  p5_outb (fd, DATA, 0x80);
+  p5_outb (fd, DATA, 0x00);
+  p5_outb (fd, DATA, 0x80);
+  P5_INB (fd, DATA, 0x80);
+  p5_outb (fd, DATA, 0x80);
+  P5_INB (fd, DATA, 0x80);
+  p5_outb (fd, DATA, 0x00);
+  p5_outb (fd, DATA, 0x80);
+  p5_outb (fd, DATA, 0x00);
+  p5_outb (fd, DATA, 0x80);
+  P5_INB (fd, DATA, 0x80);
+  p5_outb (fd, DATA, 0x81);
+  P5_INB (fd, DATA, 0x81);
+  p5_outb (fd, DATA, 0x01);
+  p5_outb (fd, DATA, 0x81);
+  p5_outb (fd, DATA, 0x01);
+  p5_outb (fd, DATA, 0x81);
+  P5_INB (fd, DATA, 0x81);
+  p5_outb (fd, DATA, 0x80);
+  P5_INB (fd, DATA, 0x80);
+  p5_outb (fd, DATA, 0x00);
+  p5_outb (fd, DATA, 0x80);
+  p5_outb (fd, DATA, 0x00);
+  p5_outb (fd, DATA, 0x80);
+  P5_INB (fd, DATA, 0x80);
+  p5_outb (fd, DATA, 0x00);
+  p5_outb (fd, DATA, 0x80);
+  p5_outb (fd, DATA, 0x00);
+  p5_outb (fd, DATA, 0x80);
+  P5_INB (fd, DATA, 0x80);
+  p5_outb (fd, DATA, 0x00);
+  p5_outb (fd, DATA, 0x80);
+  p5_outb (fd, DATA, 0x00);
+  p5_outb (fd, DATA, 0x80);
+  P5_INB (fd, DATA, 0x80);
+  p5_outb (fd, DATA, 0x00);
+  p5_outb (fd, DATA, 0x80);
+  p5_outb (fd, DATA, 0x00);
+  p5_outb (fd, DATA, 0x80);
+  p5_inb (fd, CONTROL);
+  p5_outb (fd, CONTROL, 0x0C);
 
   return SANE_STATUS_GOOD;
 }
@@ -1018,7 +1018,7 @@ wait_document (int fd, uint8_t detector)
   write_reg (fd, REG2, 0x90);
   write_reg (fd, REGF, 0x82);
   write_reg (fd, REG0, 0x00);
-  val = inb (fd, STATUS) & 0xf8;
+  val = p5_inb (fd, STATUS) & 0xf8;
   if (val != 0xf8)
     {
       DBG (DBG_error, "wait_document: unexpected STATUS value 0x%02x instead of 0xf8", val);
