@@ -1262,6 +1262,7 @@ libsane_mustek_pp_la_LIBADD = $(COMMON_LIBS) \
     ../sanei/sanei_config.lo \
     sane_strstatus.lo \
     ../sanei/sanei_pa4s2.lo \
+    ../sanei/sanei_directio.lo \
     $(MATH_LIB) $(IEEE1284_LIBS)
 EXTRA_DIST += mustek_pp.conf.in
 # TODO: Why are these distributed but not compiled?

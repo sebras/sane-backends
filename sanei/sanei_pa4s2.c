@@ -66,43 +66,7 @@
 
 #elif defined(ENABLE_PARPORT_DIRECTIO)
 
-# if defined(HAVE_SYS_IO_H)
-#  if defined (__ICC) && __ICC >= 700
-#   define __GNUC__ 2
-#  endif
-#  include <sys/io.h>
-#  ifndef SANE_HAVE_SYS_IO_H_WITH_INB_OUTB
-#   define IO_SUPPORT_MISSING
-#  endif
-#  if defined (__ICC) && __ICC >= 700
-#   undef __GNUC__
-#  elif defined(__ICC) && defined(HAVE_ASM_IO_H)
-#   include <asm/io.h>
-#  endif
-# elif defined(HAVE_ASM_IO_H)
-#  include <asm/io.h>		/* ugly, but backwards compatible */
-# elif defined(HAVE_SYS_HW_H)
-#  include <sys/hw.h>
-# elif defined(__i386__)  && ( defined (__GNUC__) || defined (__ICC) )
-
-static __inline__ void
-outb (u_char value, u_long port)
-{
-  __asm__ __volatile__ ("outb %0,%1"::"a" (value), "d" ((u_short) port));
-}
-
-static __inline__ u_char
-inb (u_long port)
-{
-  u_char value;
-
-  __asm__ __volatile__ ("inb %1,%0":"=a" (value):"d" ((u_short) port));
-  return value;
-}
-
-# else
-#  define IO_SUPPORT_MISSING
-# endif
+#include "../include/sane/sanei_directio.h"
 
 #else
 
@@ -519,7 +483,7 @@ pa4s2_open (const char *dev, SANE_Status * status)
 
   /* TODO: insert FreeBSD compatible code here */
 
-  if (ioperm (port[n].base, 5, 1))
+  if (sanei_ioperm (port[n].base, 5, 1))
     {
 
       DBG (1, "pa4s2_open: cannot get io privilege for port 0x%03lx\n",
@@ -571,15 +535,15 @@ static void outbyte3(int fd, u_char val)
 
 #else
 
-#define inbyte0(fd)	inb(port[fd].base)
-#define inbyte1(fd)	inb(port[fd].base + 1)
-#define inbyte2(fd)	inb(port[fd].base + 2)
-#define inbyte4(fd)	inb(port[fd].base + 4)
+#define inbyte0(fd)	sanei_inb(port[fd].base)
+#define inbyte1(fd)	sanei_inb(port[fd].base + 1)
+#define inbyte2(fd)	sanei_inb(port[fd].base + 2)
+#define inbyte4(fd)	sanei_inb(port[fd].base + 4)
 
-#define outbyte0(fd,val)	outb(val, port[fd].base)
-#define outbyte1(fd,val)	outb(val, port[fd].base + 1)
-#define outbyte2(fd,val)	outb(val, port[fd].base + 2)
-#define outbyte3(fd,val)	outb(val, port[fd].base + 3)
+#define outbyte0(fd,val)	sanei_outb(port[fd].base, val)
+#define outbyte1(fd,val)	sanei_outb(port[fd].base + 1, val)
+#define outbyte2(fd,val)	sanei_outb(port[fd].base + 2, val)
+#define outbyte3(fd,val)	sanei_outb(port[fd].base + 3, val)
 
 #endif
 
@@ -882,7 +846,7 @@ pa4s2_close (int fd, SANE_Status * status)
 #if defined(HAVE_LIBIEEE1284)
   if ((result = ieee1284_close(pplist.portv[fd])) < 0)
 #else
-  if (ioperm (port[fd].base, 5, 0))
+  if (sanei_ioperm (port[fd].base, 5, 0))
 #endif
     {
 
@@ -1427,7 +1391,7 @@ sanei_pa4s2_enable (int fd, int enable)
          linux 2.2, although they seem to be inherited on linux 2.4),
          so we should make sure we get the permission */
 
-      if (ioperm (port[fd].base, 5, 1))
+      if (sanei_ioperm (port[fd].base, 5, 1))
       {
           DBG (1, "sanei_pa4s2_enable: cannot get io privilege for port"
 	       " 0x%03lx\n", port[fd].base);
@@ -1917,7 +1881,7 @@ sanei_pa4s2_open (const char *dev, int *fd)
   DBG (3, "sanei_pa4s2_open: A4S2 support not compiled\n");
   DBG (6, "sanei_pa4s2_open: basically, this backend does only compile\n");
   DBG (6, "sanei_pa4s2_open: on x86 architectures. Furthermore it\n");
-  DBG (6, "sanei_pa4s2_open: needs ioperm() and inb()/outb() calls.\n");
+  DBG (6, "sanei_pa4s2_open: needs sanei_ioperm() and sanei_inb()/sanei_outb() calls.\n");
   DBG (6, "sanei_pa4s2_open: alternatively it makes use of libieee1284\n");
   DBG (6, "sanei_pa4s2_open: (which isn't present either)\n");
   DBG (5, "sanei_pa4s2_open: returning SANE_STATUS_INVAL\n");
