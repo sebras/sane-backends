@@ -1243,6 +1243,7 @@ libsane_mustek_la_LIBADD = $(COMMON_LIBS) \
     ../sanei/sanei_thread.lo \
     ../sanei/sanei_ab306.lo \
     ../sanei/sanei_pa4s2.lo \
+    ../sanei/sanei_directio.lo \
     $(IEEE1284_LIBS) $(SCSI_LIBS) $(SANEI_THREAD_LIBS) $(RESMGR_LIBS)
 EXTRA_DIST += mustek.conf.in
 # TODO: Why are these distributed but not compiled?
