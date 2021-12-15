@@ -678,6 +678,7 @@ libsane_epson_la_LIBADD = $(COMMON_LIBS) \
     ../sanei/sanei_usb.lo \
     ../sanei/sanei_scsi.lo \
     ../sanei/sanei_pio.lo \
+    ../sanei/sanei_directio.lo \
     $(SCSI_LIBS) $(USB_LIBS) $(RESMGR_LIBS)
 EXTRA_DIST += epson.conf.in
 
@@ -699,6 +700,7 @@ libsane_epson2_la_LIBADD = $(COMMON_LIBS) \
     ../sanei/sanei_pio.lo \
     ../sanei/sanei_tcp.lo \
     ../sanei/sanei_udp.lo \
+    ../sanei/sanei_directio.lo \
     $(SCSI_LIBS) $(USB_LIBS) $(SOCKET_LIBS) $(MATH_LIB) $(RESMGR_LIBS)
 EXTRA_DIST += epson2.conf.in
 
@@ -853,6 +855,7 @@ libsane_hp_la_LIBADD = $(COMMON_LIBS) \
     ../sanei/sanei_scsi.lo \
     ../sanei/sanei_pio.lo \
     ../sanei/sanei_thread.lo \
+    ../sanei/sanei_directio.lo \
     $(SCSI_LIBS) $(USB_LIBS) $(SANEI_THREAD_LIBS) $(RESMGR_LIBS)
 EXTRA_DIST += hp.conf.in
 # TODO: These should be moved to ../docs/hp; don't belong here.
