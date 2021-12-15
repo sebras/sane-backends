@@ -87,40 +87,7 @@
 #endif
 #if defined (ENABLE_PARPORT_DIRECTIO)
 # undef HAVE_LIBIEEE1284
-# if defined(HAVE_SYS_IO_H)
-#  if defined (__ICC) && __ICC >= 700
-#   define __GNUC__ 2
-#  endif
-#  include <sys/io.h>
-#  ifndef SANE_HAVE_SYS_IO_H_WITH_INB_OUTB
-#   define IO_SUPPORT_MISSING
-#  endif
-#  if defined (__ICC) && __ICC >= 700
-#   undef __GNUC__
-#  elif defined(__ICC) && defined(HAVE_ASM_IO_H)
-#   include <asm/io.h>
-#  endif
-# elif defined(HAVE_ASM_IO_H)
-#  include <asm/io.h>
-# elif defined(HAVE_SYS_HW_H)
-#  include <sys/hw.h>
-# elif defined(__i386__)  && ( defined (__GNUC__) || defined (__ICC) )
-
-static __inline__ void
-outb( u_char value, u_long port )
-{
-  __asm__ __volatile__ ("outb %0,%1"::"a" (value), "d" ((u_short) port));
-}
-
-static __inline__ u_char
-inb( u_long port )
-{
-  u_char value;
-
-  __asm__ __volatile__ ("inb %1,%0":"=a" (value):"d" ((u_short) port));
-  return value;
-}
-# endif
+# include "../include/sane/sanei_directio.h"
 #elif defined(HAVE_LIBIEEE1284)
 # include <ieee1284.h>
 #else
@@ -228,30 +195,26 @@ static inline void outb_addr(int fd, u_char val)
 
 #else
 
-#define inb_data(fd)    inb(port[fd].base)
-#define inb_stat(fd)    inb(port[fd].base + 1)
-#define inb_ctrl(fd)    inb(port[fd].base + 2)
-#define inb_eppdata(fd) inb(port[fd].base + 4)
+#define inb_data(fd)    sanei_inb(port[fd].base)
+#define inb_stat(fd)    sanei_inb(port[fd].base + 1)
+#define inb_ctrl(fd)    sanei_inb(port[fd].base + 2)
+#define inb_eppdata(fd) sanei_inb(port[fd].base + 4)
 
-#define outb_data(fd,val)    outb(val, port[fd].base)
-#define outb_stat(fd,val)    outb(val, port[fd].base + 1)
-#define outb_ctrl(fd,val)    outb(val, port[fd].base + 2)
-#define outb_addr(fd,val)    outb(val, port[fd].base + 3)
-#define outb_eppdata(fd,val) outb(val, port[fd].base + 4)
+#define outb_data(fd,val)    sanei_outb(port[fd].base, val)
+#define outb_stat(fd,val)    sanei_outb(port[fd].base + 1, val)
+#define outb_ctrl(fd,val)    sanei_outb(port[fd].base + 2, val)
+#define outb_addr(fd,val)    sanei_outb(port[fd].base + 3, val)
+#define outb_eppdata(fd,val) sanei_outb(port[fd].base + 4, val)
 
 #ifdef HAVE_IOPL
 # define _SET_IOPL()        iopl(3)
-# define inbyte400(fd)      inb(port[fd].base + 0x400)
-# define inbyte402(fd)      inb(port[fd].base + 0x402)
-# define outbyte400(fd,val) outb(val, port[fd].base + 0x400)
-# define outbyte402(fd,val) outb(val, port[fd].base + 0x402)
 #else
 # define _SET_IOPL()
-# define inbyte400(fd)
-# define inbyte402(fd,val)
-# define outbyte400(fd,val)
-# define outbyte402(fd,val)
 #endif
+#define inbyte400(fd)      sanei_inb(port[fd].base + 0x400)
+#define inbyte402(fd)      sanei_inb(port[fd].base + 0x402)
+#define outbyte400(fd,val) sanei_outb(port[fd].base + 0x400, val)
+#define outbyte402(fd,val) sanei_outb(port[fd].base + 0x402, val)
 #endif
 
 /* should also be in unistd.h */
@@ -848,7 +811,7 @@ pp_open( const char *dev, SANE_Status * status )
 
 	/* TODO: insert FreeBSD compatible code here */
 
-	if( ioperm( port[i].base, 5, 1 )) {
+	if( sanei_ioperm( port[i].base, 5, 1 )) {
 		DBG( 1, "pp_open: cannot get io privilege for port 0x%03lx\n",
 				port[i].base);
 
@@ -901,7 +864,7 @@ pp_close( int fd, SANE_Status *status )
 #if defined(HAVE_LIBIEEE1284)
 	if((result = ieee1284_close(pplist.portv[fd])) < 0) {
 #else
-	if( ioperm( port[fd].base, 5, 0 )) {
+	if( sanei_ioperm( port[fd].base, 5, 0 )) {
 #endif
 #if defined(HAVE_LIBIEEE1284)
 		DBG( 1, "pp_close: can't free port '%s' (%s)\n",
@@ -1328,7 +1291,7 @@ sanei_pp_open( const char *dev, int *fd )
 	DBG( 3, "sanei_pp_open: support not compiled\n" );
 	DBG( 6, "sanei_pp_open: basically, this backend does only compile\n" );
 	DBG( 6, "sanei_pp_open: on x86 architectures. Furthermore it\n" );
-	DBG( 6, "sanei_pp_open: needs ioperm() and inb()/outb() calls.\n" );
+	DBG( 6, "sanei_pp_open: needs ioperm() and sanei_inb()/sanei_outb() calls.\n" );
 	DBG( 6, "sanei_pp_open: alternatively it makes use of libieee1284\n" );
 	DBG( 6, "sanei_pp_open: (which isn't present either)\n");
 	return SANE_STATUS_INVAL;
