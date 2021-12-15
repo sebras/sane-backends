@@ -24,14 +24,6 @@
 # define __func__ "(unknown)"
 #endif
 
-#ifdef HAVE_SYS_HW_H
-  /* OS/2 i/o-port access compatibility macros: */
-# define inb(p)         _inp8 (p)
-# define outb(v,p)      _outp8 ((p),(v))
-# define ioperm(b,l,o)  _portaccess ((b),(b)+(l)-1)
-# define HAVE_IOPERM    1
-#endif
-
 #ifndef HAVE_OS2_H
 #include <fcntl.h>
 #ifndef O_NONBLOCK
