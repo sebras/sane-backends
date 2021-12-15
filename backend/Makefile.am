@@ -1903,6 +1903,7 @@ libsane_umax_pp_la_LIBADD = $(COMMON_LIBS) \
     ../sanei/sanei_init_debug.lo \
     ../sanei/sanei_constrain_value.lo \
     ../sanei/sanei_config.lo \
+    ../sanei/sanei_directio.lo \
     sane_strstatus.lo \
     $(MATH_LIB)
 EXTRA_DIST += umax_pp.conf.in
@@ -2001,6 +2002,7 @@ PRELOADABLE_BACKENDS_LIBS = \
     ../sanei/sanei_tcp.lo \
     ../sanei/sanei_udp.lo \
     ../sanei/sanei_magic.lo \
+    ../sanei/sanei_directio.lo \
     $(LIBV4L_LIBS) $(MATH_LIB) \
     $(IEEE1284_LIBS) \
     $(TIFF_LIBS) \
@@ -2035,6 +2037,7 @@ PRELOADABLE_BACKENDS_DEPS = ../sanei/sanei_config2.lo \
     ../sanei/sanei_tcp.lo \
     ../sanei/sanei_udp.lo \
     ../sanei/sanei_magic.lo \
+    ../sanei/sanei_directio.lo \
     $(SANEI_SANEI_JPEG_LO)
 endif
 nodist_libsane_la_SOURCES =  dll-s.c
