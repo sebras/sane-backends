@@ -191,23 +191,13 @@ static const SANE_Range odd_bw_x_range = { 1, 335, 2 };
 static const SANE_Range bw_y_range = { 0, 241, 1 };
 static const SANE_Range odd_bw_y_range = { 1, 242, 1 };
 
-#if defined(HAVE_SYS_IO_H) || defined(HAVE_ASM_IO_H) || defined (HAVE_SYS_HW_H)
+#include "../include/sane/sanei_directio.h"
 
-#ifdef HAVE_SYS_IO_H
-# include <sys/io.h>		/* GNU libc based OS */
-#elif HAVE_ASM_IO_H
-# include <asm/io.h>		/* older Linux */
-#elif HAVE_SYS_HW_H
-# include <sys/hw.h>		/* OS/2 */
-#endif
-
-#endif /* <sys/io.h> || <asm/io.h> || <sys/hw.h> */
-
-#define read_lpdata(d)		inb ((d)->port)
-#define read_lpstatus(d)	inb ((d)->port + 1)
-#define read_lpcontrol(d)	inb ((d)->port + 2)
-#define write_lpdata(d,v)	outb ((v), (d)->port)
-#define write_lpcontrol(d,v)	outb ((v), (d)->port + 2)
+#define read_lpdata(d)		sanei_inb ((d)->port)
+#define read_lpstatus(d)	sanei_inb ((d)->port + 1)
+#define read_lpcontrol(d)	sanei_inb ((d)->port + 2)
+#define write_lpdata(d,v)	sanei_outb ((d)->port, (v))
+#define write_lpcontrol(d,v)	sanei_outb ((d)->port + 2, (v))
 
 
 static SANE_Status
@@ -217,7 +207,7 @@ enable_ports (QC_Device * q)
   if (q->port < 0x278 || q->port > 0x3bc)
     return SANE_STATUS_INVAL;
 
-  if (ioperm (q->port, 3, 1) < 0)
+  if (sanei_ioperm (q->port, 3, 1) < 0)
     return SANE_STATUS_INVAL;
 
   return SANE_STATUS_GOOD;
@@ -226,7 +216,7 @@ enable_ports (QC_Device * q)
 static SANE_Status
 disable_ports (QC_Device * q)
 {
-  if (ioperm (q->port, 3, 0) < 0)
+  if (sanei_ioperm (q->port, 3, 0) < 0)
     return SANE_STATUS_INVAL;
 
   return SANE_STATUS_GOOD;

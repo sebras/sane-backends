@@ -1538,7 +1538,8 @@ libsane_qcam_la_LIBADD = $(COMMON_LIBS) \
     ../sanei/sanei_constrain_value.lo \
     ../sanei/sanei_config.lo \
     sane_strstatus.lo \
-    ../sanei/sanei_pio.lo
+    ../sanei/sanei_pio.lo \
+    ../sanei/sanei_directio.lo
 
 EXTRA_DIST += qcam.conf.in
 
