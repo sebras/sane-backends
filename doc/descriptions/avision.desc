@@ -348,6 +348,12 @@
 :comment "1 pass, 600 dpi, zero-edge" ASIC 7
 :status :basic
 
+:model "FB2280E"
+:interface "USB"
+:usbid "0x0638" "0x2a1f"
+:comment "1 pass, 600 dpi, zero-edge" ASIC 7
+:status :basic
+
 :model "AV8000S"
 :interface "SCSI"
 :comment "1 pass, 1200 dpi, A3"
