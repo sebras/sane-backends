@@ -1161,7 +1161,7 @@ sane_get_parameters(SANE_Handle h, SANE_Parameters *para)
 static int dev_acquire(struct device *dev)
 {
     if (!dev_cmd_wait(dev, CMD_READ))
-        return dev->state;
+        return 0;
 
     dev->state = SANE_STATUS_GOOD;
     dev->vertical = dev->res[0x08] << 8 | dev->res[0x09];
@@ -1188,7 +1188,8 @@ static int dev_acquire(struct device *dev)
     if (dev->bytes_per_line > DATASIZE) {
         DBG(1, "%s: unsupported line size: %d bytes > %d\n",
             __func__, dev->bytes_per_line, DATASIZE);
-        return ret_cancel(dev, SANE_STATUS_NO_MEM);
+        ret_cancel(dev, SANE_STATUS_NO_MEM);
+        return 0;
     }
 
     dev->reading = 0; /* need to issue READ_IMAGE */
