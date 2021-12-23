@@ -23,6 +23,17 @@
 :status :good
 :comment "All resolutions supported."
 
+:model "MFC-J985DW"
+:interface "Ethernet WiFi"
+:status :good
+:comment "All resolutions supported, Flatted and ADF supported."
+
+:model "MFC-J1300DW"
+:interface "Ethernet WiFi"
+:interface "WiFi"
+:status :good
+:comment "All resolutions supported, Flatted and ADF supported."
+
 :mfg "Canon"
 :url "https://www.canon-europe.com/support/"
 
@@ -140,6 +151,11 @@
 :interface "Wifi"
 :status :untested
 :comment "Testers needed!"
+
+:model "PIXMA TS8350 Series"
+:interface "WiFi"
+:status :good
+:comment "All resolutions supported."
 
 :model "PIXMA TS9100 Series"
 :interface "Wifi"
