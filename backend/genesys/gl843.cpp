@@ -1240,6 +1240,7 @@ void CommandSetGl843::begin_scan(Genesys_Device* dev, const Genesys_Sensor& sens
             dev->interface->write_register(0x7e, 0x04);
             break;
         case GpioId::G4050:
+        case GpioId::G4010:
             dev->interface->write_register(REG_0xA7, 0xfe);
             dev->interface->write_register(REG_0xA8, 0x3e);
             dev->interface->write_register(REG_0xA9, 0x06);
@@ -1680,6 +1681,7 @@ void CommandSetGl843::update_hardware_sensors(Genesys_Scanner* s) const
    */
 
     uint8_t val = s->dev->interface->read_register(REG_0x6D);
+    DBG(DBG_io, "%s: read buttons_gpio value=0x%x\n", __func__, (int)val);
 
   switch (s->dev->model->gpio_id)
     {
@@ -1691,6 +1693,12 @@ void CommandSetGl843::update_hardware_sensors(Genesys_Scanner* s) const
             s->buttons[BUTTON_FILE_SW].write((val & 0x02) == 0);
             s->buttons[BUTTON_EMAIL_SW].write((val & 0x04) == 0);
             s->buttons[BUTTON_COPY_SW].write((val & 0x08) == 0);
+            break;
+        case GpioId::G4010:
+            s->buttons[BUTTON_FILE_SW].write((val & 0x01) == 0);
+            s->buttons[BUTTON_COPY_SW].write((val & 0x04) == 0);
+            s->buttons[BUTTON_TRANSP_SW].write((val & 0x40) == 0);
+            s->buttons[BUTTON_SCAN_SW].write((val & 0x08) == 0);
             break;
         case GpioId::CANON_4400F:
         case GpioId::CANON_8400F:

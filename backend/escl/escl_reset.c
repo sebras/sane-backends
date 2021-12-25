@@ -62,6 +62,8 @@ CURL_CALL:
                  scan_jobs, scanJob, result, scanner_start);
         escl_curl_url(curl_handle, device, scan_cmd);
         curl_easy_setopt(curl_handle, CURLOPT_WRITEFUNCTION, write_callback);
+        curl_easy_setopt(curl_handle, CURLOPT_FOLLOWLOCATION, 1L);
+        curl_easy_setopt(curl_handle, CURLOPT_MAXREDIRS, 3L);
         if (curl_easy_perform(curl_handle) == CURLE_OK) {
             curl_easy_getinfo(curl_handle, CURLINFO_RESPONSE_CODE, &answer);
             i++;

@@ -712,7 +712,7 @@ ImagePipelineNodeCalibrate::ImagePipelineNodeCalibrate(ImagePipelineNode& source
                                                        const std::vector<std::uint16_t>& bottom,
                                                        const std::vector<std::uint16_t>& top,
                                                        std::size_t x_start) :
-    source_{source}
+    source_(source)
 {
     std::size_t size = 0;
     if (bottom.size() >= x_start && top.size() >= x_start) {

@@ -279,6 +279,7 @@ std::ostream& operator<<(std::ostream& out, GpioId id)
         case GpioId::CANON_8600F: out << "CANON_8600F"; break;
         case GpioId::DP665: out << "DP665"; break;
         case GpioId::DP685: out << "DP685"; break;
+        case GpioId::G4010: out << "G4010"; break;
         case GpioId::G4050: out << "G4050"; break;
         case GpioId::HP2300: out << "HP2300"; break;
         case GpioId::HP2400: out << "HP2400"; break;

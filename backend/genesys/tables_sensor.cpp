@@ -2635,6 +2635,13 @@ void genesys_init_sensor_tables()
             sensor.shading_factor = setting.shading_factor;
             sensor.segment_order = setting.segment_order;
             sensor.custom_regs = setting.custom_regs;
+
+            sensor.channels = { 1 };
+            sensor.custom_regs.set_value(0x0c, 0x10);
+            s_sensors->push_back(sensor);
+
+            sensor.channels = { 3 };
+            sensor.custom_regs.set_value(0x0c, 0x12);
             s_sensors->push_back(sensor);
         }
     }
@@ -2805,6 +2812,13 @@ void genesys_init_sensor_tables()
             sensor.shading_factor = setting.shading_factor;
             sensor.segment_order = setting.segment_order;
             sensor.custom_regs = setting.custom_regs;
+
+            sensor.channels = { 1 };
+            sensor.custom_regs.set_value(0x0c, 0x10);
+            s_sensors->push_back(sensor);
+
+            sensor.channels = { 3 };
+            sensor.custom_regs.set_value(0x0c, 0x12);
             s_sensors->push_back(sensor);
         }
     }
@@ -3000,6 +3014,13 @@ void genesys_init_sensor_tables()
             sensor.shading_factor = setting.shading_factor;
             sensor.segment_order = setting.segment_order;
             sensor.custom_regs = setting.custom_regs;
+
+            sensor.channels = { 1 };
+            sensor.custom_regs.set_value(0x0c, 0x10);
+            s_sensors->push_back(sensor);
+
+            sensor.channels = { 3 };
+            sensor.custom_regs.set_value(0x0c, 0x12);
             s_sensors->push_back(sensor);
         }
     }
@@ -3196,6 +3217,13 @@ void genesys_init_sensor_tables()
             sensor.shading_factor = setting.shading_factor;
             sensor.segment_order = setting.segment_order;
             sensor.custom_regs = setting.custom_regs;
+
+            sensor.channels = { 1 };
+            sensor.custom_regs.set_value(0x0c, 0x10);
+            s_sensors->push_back(sensor);
+
+            sensor.channels = { 3 };
+            sensor.custom_regs.set_value(0x0c, 0x12);
             s_sensors->push_back(sensor);
         }
     }
