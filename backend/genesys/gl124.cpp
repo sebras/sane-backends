@@ -113,7 +113,7 @@ gl124_init_registers (Genesys_Device * dev)
     dev->reg.init_reg(0x09, 0x00);
     dev->reg.init_reg(0x0a, 0xc0);
     dev->reg.init_reg(0x0b, 0x2a);
-    dev->reg.init_reg(0x0c, 0x12);
+    dev->reg.init_reg(0x0c, 0x12); // SENSOR_DEF
     dev->reg.init_reg(0x11, 0x00);
     dev->reg.init_reg(0x12, 0x00);
     dev->reg.init_reg(0x13, 0x0f);
