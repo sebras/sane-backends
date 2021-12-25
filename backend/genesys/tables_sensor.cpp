@@ -2674,7 +2674,6 @@ void genesys_init_sensor_tables()
         CustomSensorSettings custom_settings[] = {
             {   { 75 }, 1200, 600, 150, 300, 4608, { 1244, 1294, 1144 }, Ratio{1, 4}, 4,
                 std::vector<unsigned>{}, {
-                    { 0x0c, 0x12 },
                     { 0x16, 0x15 }, { 0x17, 0x04 }, { 0x18, 0x00 }, { 0x19, 0x01 },
                     { 0x1a, 0x30 }, { 0x1b, 0x00 }, { 0x1c, 0x02 }, { 0x1d, 0x00 }, { 0x20, 0x02 },
                     { 0x52, 0x04 }, { 0x53, 0x06 }, { 0x54, 0x00 }, { 0x55, 0x02 },
@@ -2693,7 +2692,6 @@ void genesys_init_sensor_tables()
             },
             {   { 100 }, 1200, 600, 200, 300, 4608, { 1244, 1294, 1144 }, Ratio{1, 4}, 3,
                 std::vector<unsigned>{}, {
-                    { 0x0c, 0x12 },
                     { 0x16, 0x15 }, { 0x17, 0x04 }, { 0x18, 0x00 }, { 0x19, 0x01 },
                     { 0x1a, 0x30 }, { 0x1b, 0x00 }, { 0x1c, 0x02 }, { 0x1d, 0x00 }, { 0x20, 0x02 },
                     { 0x52, 0x04 }, { 0x53, 0x06 }, { 0x54, 0x00 }, { 0x55, 0x02 },
@@ -2712,7 +2710,6 @@ void genesys_init_sensor_tables()
             },
             {   { 150 }, 1200, 600, 300, 300, 4608, { 1244, 1294, 1144 }, Ratio{1, 4}, 2,
                 std::vector<unsigned>{}, {
-                    { 0x0c, 0x12 },
                     { 0x16, 0x15 }, { 0x17, 0x04 }, { 0x18, 0x00 }, { 0x19, 0x01 },
                     { 0x1a, 0x30 }, { 0x1b, 0x00 }, { 0x1c, 0x02 }, { 0x1d, 0x00 }, { 0x20, 0x02 },
                     { 0x52, 0x04 }, { 0x53, 0x06 }, { 0x54, 0x00 }, { 0x55, 0x02 },
@@ -2731,7 +2728,6 @@ void genesys_init_sensor_tables()
             },
             {   { 300 }, 1200, 600, 600, 300, 4608, { 1244, 1294, 1144 }, Ratio{1, 4}, 1,
                 std::vector<unsigned>{}, {
-                    { 0x0c, 0x12 },
                     { 0x16, 0x15 }, { 0x17, 0x04 }, { 0x18, 0x00 }, { 0x19, 0x01 },
                     { 0x1a, 0x30 }, { 0x1b, 0x00 }, { 0x1c, 0x02 }, { 0x1d, 0x00 }, { 0x20, 0x02 },
                     { 0x52, 0x04 }, { 0x53, 0x06 }, { 0x54, 0x00 }, { 0x55, 0x02 },
@@ -2750,7 +2746,6 @@ void genesys_init_sensor_tables()
             },
             {   { 600 }, 2400, 600, 600, 600, 5360, { 2394, 2444, 2144 }, Ratio{1, 4}, 1,
                 std::vector<unsigned>{}, {
-                    { 0x0c, 0x12 },
                     { 0x16, 0x11 }, { 0x17, 0x04 }, { 0x18, 0x00 }, { 0x19, 0x01 },
                     { 0x1a, 0x30 }, { 0x1b, 0x00 }, { 0x1c, 0x02 }, { 0x1d, 0x00 }, { 0x20, 0x02 },
                     { 0x52, 0x04 }, { 0x53, 0x06 }, { 0x54, 0x00 }, { 0x55, 0x02 },
@@ -2769,7 +2764,6 @@ void genesys_init_sensor_tables()
             },
             {   { 1200 }, 2400, 1200, 1200, 1200, 10528, { 4694, 4644, 4094 }, Ratio{1, 2}, 1,
                 std::vector<unsigned>{}, {
-                    { 0x0c, 0x12 },
                     { 0x16, 0x15 }, { 0x17, 0x04 }, { 0x18, 0x00 }, { 0x19, 0x01 },
                     { 0x1a, 0x30 }, { 0x1b, 0x00 }, { 0x1c, 0x02 }, { 0x1d, 0x00 }, { 0x20, 0x02 },
                     { 0x52, 0x04 }, { 0x53, 0x06 }, { 0x54, 0x00 }, { 0x55, 0x02 },
@@ -2788,7 +2782,6 @@ void genesys_init_sensor_tables()
             },
             {   { 2400 }, 2400, 2400, 2400, 2400, 20864, { 8944, 8144, 7994 }, Ratio{1, 1}, 1,
                 std::vector<unsigned>{}, {
-                    { 0x0c, 0x12 },
                     { 0x16, 0x11 }, { 0x17, 0x04 }, { 0x18, 0x00 }, { 0x19, 0x01 },
                     { 0x1a, 0x30 }, { 0x1b, 0x00 }, { 0x1c, 0x02 }, { 0x1d, 0x00 }, { 0x20, 0x02 },
                     { 0x52, 0x04 }, { 0x53, 0x06 }, { 0x54, 0x00 }, { 0x55, 0x02 },
@@ -2819,6 +2812,13 @@ void genesys_init_sensor_tables()
             sensor.shading_factor = setting.shading_factor;
             sensor.segment_order = setting.segment_order;
             sensor.custom_regs = setting.custom_regs;
+
+            sensor.channels = { 1 };
+            sensor.custom_regs.set_value(0x0c, 0x10);
+            s_sensors->push_back(sensor);
+
+            sensor.channels = { 3 };
+            sensor.custom_regs.set_value(0x0c, 0x12);
             s_sensors->push_back(sensor);
         }
     }
