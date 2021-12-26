@@ -1707,6 +1707,8 @@ void CommandSetGl646::move_back_home(Genesys_Device* dev, bool wait_until_home) 
     session.params.scan_method = dev->model->default_method;
     session.params.scan_mode = ScanColorMode::COLOR_SINGLE_PASS;
     session.params.color_filter = ColorFilter::RED;
+    session.params.contrast_adjustment = dev->settings.contrast;
+    session.params.brightness_adjustment = dev->settings.brightness;
     session.params.flags = ScanFlag::REVERSE |
                            ScanFlag::AUTO_GO_HOME |
                            ScanFlag::DISABLE_GAMMA;
@@ -1823,6 +1825,8 @@ void CommandSetGl646::init_regs_for_shading(Genesys_Device* dev, const Genesys_S
     session.params.scan_method = dev->settings.scan_method;
     session.params.scan_mode = ScanColorMode::COLOR_SINGLE_PASS;
     session.params.color_filter = dev->settings.color_filter;
+    session.params.contrast_adjustment = dev->settings.contrast;
+    session.params.brightness_adjustment = dev->settings.brightness;
     session.params.flags = ScanFlag::DISABLE_SHADING |
                            ScanFlag::DISABLE_GAMMA |
                            ScanFlag::IGNORE_COLOR_OFFSET |
@@ -1931,6 +1935,8 @@ SensorExposure CommandSetGl646::led_calibration(Genesys_Device* dev, const Genes
     session.params.scan_method = dev->settings.scan_method;
     session.params.scan_mode = scan_mode;
     session.params.color_filter = ColorFilter::RED;
+    session.params.contrast_adjustment = dev->settings.contrast;
+    session.params.brightness_adjustment = dev->settings.brightness;
     session.params.flags = ScanFlag::DISABLE_SHADING;
     if (dev->settings.scan_method == ScanMethod::TRANSPARENCY) {
         session.params.flags |= ScanFlag::USE_XPA;
@@ -2110,6 +2116,8 @@ static void ad_fe_offset_calibration(Genesys_Device* dev, const Genesys_Sensor& 
     session.params.scan_method = dev->settings.scan_method;
     session.params.scan_mode = ScanColorMode::COLOR_SINGLE_PASS;
     session.params.color_filter = ColorFilter::RED;
+    session.params.contrast_adjustment = dev->settings.contrast;
+    session.params.brightness_adjustment = dev->settings.brightness;
     session.params.flags = ScanFlag::DISABLE_SHADING;
     if (dev->settings.scan_method == ScanMethod::TRANSPARENCY) {
         session.params.flags |= ScanFlag::USE_XPA;
@@ -2222,6 +2230,8 @@ void CommandSetGl646::offset_calibration(Genesys_Device* dev, const Genesys_Sens
     session.params.scan_method = dev->settings.scan_method;
     session.params.scan_mode = ScanColorMode::COLOR_SINGLE_PASS;
     session.params.color_filter = ColorFilter::RED;
+    session.params.contrast_adjustment = dev->settings.contrast;
+    session.params.brightness_adjustment = dev->settings.brightness;
     session.params.flags = ScanFlag::DISABLE_SHADING;
     if (dev->settings.scan_method == ScanMethod::TRANSPARENCY) {
         session.params.flags |= ScanFlag::USE_XPA;
@@ -2373,6 +2383,8 @@ void CommandSetGl646::coarse_gain_calibration(Genesys_Device* dev, const Genesys
     session.params.scan_method = dev->settings.scan_method;
     session.params.scan_mode = ScanColorMode::COLOR_SINGLE_PASS;
     session.params.color_filter = ColorFilter::RED;
+    session.params.contrast_adjustment = dev->settings.contrast;
+    session.params.brightness_adjustment = dev->settings.brightness;
     session.params.flags = ScanFlag::DISABLE_SHADING;
     if (dev->settings.scan_method == ScanMethod::TRANSPARENCY) {
         session.params.flags |= ScanFlag::USE_XPA;
@@ -2485,6 +2497,8 @@ void CommandSetGl646::init_regs_for_warmup(Genesys_Device* dev, const Genesys_Se
     session.params.scan_method = dev->settings.scan_method;
     session.params.scan_mode = ScanColorMode::GRAY;
     session.params.color_filter =  ColorFilter::RED;
+    session.params.contrast_adjustment = 0;
+    session.params.brightness_adjustment = 0;
     session.params.flags = ScanFlag::DISABLE_SHADING |
                            ScanFlag::DISABLE_GAMMA;
     if (dev->settings.scan_method == ScanMethod::TRANSPARENCY) {
@@ -2966,6 +2980,8 @@ ScanSession CommandSetGl646::calculate_scan_session(const Genesys_Device* dev,
     session.params.scan_method = dev->settings.scan_method;
     session.params.scan_mode = settings.scan_mode;
     session.params.color_filter = settings.color_filter;
+    session.params.contrast_adjustment = settings.contrast;
+    session.params.brightness_adjustment = settings.brightness;
     session.params.flags = ScanFlag::AUTO_GO_HOME;
     if (settings.scan_method == ScanMethod::TRANSPARENCY) {
         session.params.flags |= ScanFlag::USE_XPA;

@@ -86,6 +86,8 @@ std::ostream& operator<<(std::ostream& out, const SetupParams& params)
         << "    channels: " << params.channels << '\n'
         << "    scan_mode: " << params.scan_mode << '\n'
         << "    color_filter: " << params.color_filter << '\n'
+        << "    contrast_adjustment: " << params.contrast_adjustment << '\n'
+        << "    brightness_adjustment: " << params.brightness_adjustment << '\n'
         << "    flags: " << params.flags << '\n'
         << "}";
     return out;
