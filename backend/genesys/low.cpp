@@ -638,11 +638,16 @@ bool should_enable_gamma(const ScanSession& session, const Genesys_Sensor& senso
     if ((session.params.flags & ScanFlag::DISABLE_GAMMA) != ScanFlag::NONE) {
         return false;
     }
+    if (session.params.depth == 16) {
+        return false;
+    }
+    if (session.params.brightness_adjustment != 0 || session.params.contrast_adjustment != 0) {
+        return true;
+    }
+
     if (sensor.gamma[0] == 1.0f || sensor.gamma[1] == 1.0f || sensor.gamma[2] == 1.0f) {
         return false;
     }
-    if (session.params.depth == 16)
-        return false;
 
     return true;
 }
