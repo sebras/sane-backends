@@ -72,7 +72,7 @@ gl847_init_registers (Genesys_Device * dev)
 {
     DBG_HELPER(dbg);
   int lide700=0;
-  uint8_t val;
+    std::uint8_t val;
 
   /* 700F class needs some different initial settings */
     if (dev->model->model_id == ModelId::CANON_LIDE_700F) {
@@ -254,7 +254,8 @@ gl847_init_registers (Genesys_Device * dev)
 }
 
 // Set values of analog frontend
-void CommandSetGl847::set_fe(Genesys_Device* dev, const Genesys_Sensor& sensor, uint8_t set) const
+void CommandSetGl847::set_fe(Genesys_Device* dev, const Genesys_Sensor& sensor,
+                             std::uint8_t set) const
 {
     DBG_HELPER_ARGS(dbg, "%s", set == AFE_INIT ? "init" :
                                set == AFE_SET ? "set" :
@@ -430,7 +431,7 @@ static void gl847_init_motor_regs_scan(Genesys_Device* dev,
     unsigned tgtime = 1 << (reg->get8(REG_0x1C) & REG_0x1C_TGTIME);
 
     // hi res motor speed GPIO
-    uint8_t effective = dev->interface->read_register(REG_0x6C);
+    std::uint8_t effective = dev->interface->read_register(REG_0x6C);
 
     // if quarter step, bipolar Vref2
 
@@ -763,7 +764,7 @@ void CommandSetGl847::begin_scan(Genesys_Device* dev, const Genesys_Sensor& sens
 {
     DBG_HELPER(dbg);
     (void) sensor;
-  uint8_t val;
+    std::uint8_t val;
 
     if (reg->state.is_xpa_on && reg->state.is_lamp_on) {
         dev->cmd_set->set_xpa_lamp_power(*dev, true);
@@ -920,11 +921,10 @@ void CommandSetGl847::init_regs_for_shading(Genesys_Device* dev, const Genesys_S
  * for all the channels.
  */
 void CommandSetGl847::send_shading_data(Genesys_Device* dev, const Genesys_Sensor& sensor,
-                                        uint8_t* data, int size) const
+                                        std::uint8_t* data, int size) const
 {
     DBG_HELPER_ARGS(dbg, "writing %d bytes of shading data", size);
     std::uint32_t addr, i;
-  uint8_t val,*ptr,*src;
 
     unsigned length = static_cast<unsigned>(size / 3);
 
@@ -942,7 +942,7 @@ void CommandSetGl847::send_shading_data(Genesys_Device* dev, const Genesys_Senso
     dev->interface->record_key_value("shading_length", std::to_string(length));
     dev->interface->record_key_value("shading_factor", std::to_string(sensor.shading_factor));
 
-  std::vector<uint8_t> buffer(pixels, 0);
+    std::vector<std::uint8_t> buffer(pixels, 0);
 
   DBG(DBG_io2, "%s: using chunks of %d (0x%04x) bytes\n", __func__, pixels, pixels);
 
@@ -958,12 +958,12 @@ void CommandSetGl847::send_shading_data(Genesys_Device* dev, const Genesys_Senso
     {
       /* build up actual shading data by copying the part from the full width one
        * to the one corresponding to SHDAREA */
-      ptr = buffer.data();
+        std::uint8_t* ptr = buffer.data();
 
         // iterate on both sensor segment
         for (unsigned x = 0; x < pixels; x += 4 * sensor.shading_factor) {
-          /* coefficient source */
-            src = (data + offset + i * length) + x;
+            // coefficient source
+            std::uint8_t* src = (data + offset + i * length) + x;
 
           /* coefficient copy */
           ptr[0]=src[0];
@@ -975,7 +975,7 @@ void CommandSetGl847::send_shading_data(Genesys_Device* dev, const Genesys_Senso
           ptr+=4;
         }
 
-        val = dev->interface->read_register(0xd0+i);
+        std::uint8_t val = dev->interface->read_register(0xd0+i);
         addr = val * 8192 + 0x10000000;
         dev->interface->write_ahb(addr, pixels, buffer.data());
     }
@@ -1071,7 +1071,7 @@ void CommandSetGl847::asic_boot(Genesys_Device* dev, bool cold) const
     }
 
     // test CHKVER
-    uint8_t val = dev->interface->read_register(REG_0x40);
+    std::uint8_t val = dev->interface->read_register(REG_0x40);
     if (val & REG_0x40_CHKVER) {
         val = dev->interface->read_register(0x00);
         DBG(DBG_info, "%s: reported version for genesys chip is 0x%02x\n", __func__, val);
@@ -1130,8 +1130,7 @@ void CommandSetGl847::update_hardware_sensors(Genesys_Scanner* s) const
   /* do what is needed to get a new set of events, but try to not lose
      any of them.
    */
-  uint8_t val;
-  uint8_t scan, file, email, copy;
+    std::uint8_t scan, file, email, copy;
     switch(s->dev->model->gpio_id) {
     case GpioId::CANON_LIDE_700F:
         scan=0x04;
@@ -1145,7 +1144,7 @@ void CommandSetGl847::update_hardware_sensors(Genesys_Scanner* s) const
         email=0x04;
         copy=0x08;
     }
-    val = s->dev->interface->read_register(REG_0x6D);
+    std::uint8_t val = s->dev->interface->read_register(REG_0x6D);
 
     s->buttons[BUTTON_SCAN_SW].write((val & scan) == 0);
     s->buttons[BUTTON_FILE_SW].write((val & file) == 0);

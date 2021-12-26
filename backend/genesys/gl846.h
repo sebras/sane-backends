@@ -67,7 +67,7 @@ public:
                                     Genesys_Register_Set* reg,
                                     const ScanSession& session) const override;
 
-    void set_fe(Genesys_Device* dev, const Genesys_Sensor& sensor, uint8_t set) const override;
+    void set_fe(Genesys_Device* dev, const Genesys_Sensor& sensor, std::uint8_t set) const override;
     void set_powersaving(Genesys_Device* dev, int delay) const override;
     void save_power(Genesys_Device* dev, bool enable) const override;
 
@@ -101,7 +101,7 @@ public:
 
     void eject_document(Genesys_Device* dev) const override;
 
-    void send_shading_data(Genesys_Device* dev, const Genesys_Sensor& sensor, uint8_t* data,
+    void send_shading_data(Genesys_Device* dev, const Genesys_Sensor& sensor, std::uint8_t* data,
                            int size) const override;
 
     ScanSession calculate_scan_session(const Genesys_Device* dev,

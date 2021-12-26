@@ -47,8 +47,8 @@
 
 namespace genesys {
 
-TestScannerInterface::TestScannerInterface(Genesys_Device* dev, uint16_t vendor_id,
-                                           uint16_t product_id, uint16_t bcd_device) :
+TestScannerInterface::TestScannerInterface(Genesys_Device* dev, std::uint16_t vendor_id,
+                                           std::uint16_t product_id, std::uint16_t bcd_device) :
     dev_{dev},
     usb_dev_{vendor_id, product_id, bcd_device}
 {

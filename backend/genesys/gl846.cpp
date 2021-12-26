@@ -305,7 +305,7 @@ gl846_init_registers (Genesys_Device * dev)
 /**
  * Set register values of Analog Device type frontend
  * */
-static void gl846_set_adi_fe(Genesys_Device* dev, uint8_t set)
+static void gl846_set_adi_fe(Genesys_Device* dev, std::uint8_t set)
 {
     DBG_HELPER(dbg);
   int i;
@@ -335,15 +335,16 @@ static void gl846_set_adi_fe(Genesys_Device* dev, uint8_t set)
 }
 
 // Set values of analog frontend
-void CommandSetGl846::set_fe(Genesys_Device* dev, const Genesys_Sensor& sensor, uint8_t set) const
+void CommandSetGl846::set_fe(Genesys_Device* dev, const Genesys_Sensor& sensor,
+                             std::uint8_t set) const
 {
     DBG_HELPER_ARGS(dbg, "%s", set == AFE_INIT ? "init" :
                                set == AFE_SET ? "set" :
                                set == AFE_POWER_SAVE ? "powersave" : "huh?");
     (void) sensor;
 
-  /* route to specific analog frontend setup */
-    uint8_t frontend_type = dev->reg.find_reg(0x04).value & REG_0x04_FESET;
+    // route to specific analog frontend setup
+    std::uint8_t frontend_type = dev->reg.find_reg(0x04).value & REG_0x04_FESET;
     switch (frontend_type) {
       case 0x02: /* ADI FE */
         gl846_set_adi_fe(dev, set);
@@ -788,7 +789,6 @@ void CommandSetGl846::begin_scan(Genesys_Device* dev, const Genesys_Sensor& sens
 {
     DBG_HELPER(dbg);
     (void) sensor;
-  uint8_t val;
 
     if (reg->state.is_xpa_on && reg->state.is_lamp_on) {
         dev->cmd_set->set_xpa_lamp_power(*dev, true);
@@ -796,7 +796,7 @@ void CommandSetGl846::begin_scan(Genesys_Device* dev, const Genesys_Sensor& sens
 
     scanner_clear_scan_and_feed_counts(*dev);
 
-    val = dev->interface->read_register(REG_0x01);
+    std::uint8_t val = dev->interface->read_register(REG_0x01);
     val |= REG_0x01_SCAN;
     dev->interface->write_register(REG_0x01, val);
     reg->set8(REG_0x01, val);
@@ -902,11 +902,10 @@ void CommandSetGl846::init_regs_for_shading(Genesys_Device* dev, const Genesys_S
  * for all the channels.
  */
 void CommandSetGl846::send_shading_data(Genesys_Device* dev, const Genesys_Sensor& sensor,
-                                        uint8_t* data, int size) const
+                                        std::uint8_t* data, int size) const
 {
     DBG_HELPER_ARGS(dbg, "writing %d bytes of shading data", size);
     std::uint32_t addr, i;
-  uint8_t val,*ptr,*src;
 
     unsigned length = static_cast<unsigned>(size / 3);
 
@@ -924,7 +923,7 @@ void CommandSetGl846::send_shading_data(Genesys_Device* dev, const Genesys_Senso
     dev->interface->record_key_value("shading_length", std::to_string(length));
     dev->interface->record_key_value("shading_factor", std::to_string(sensor.shading_factor));
 
-  std::vector<uint8_t> buffer(pixels, 0);
+    std::vector<std::uint8_t> buffer(pixels, 0);
 
   DBG(DBG_io2, "%s: using chunks of %d (0x%04x) bytes\n", __func__, pixels, pixels);
 
@@ -936,12 +935,12 @@ void CommandSetGl846::send_shading_data(Genesys_Device* dev, const Genesys_Senso
     {
       /* build up actual shading data by copying the part from the full width one
        * to the one corresponding to SHDAREA */
-      ptr = buffer.data();
+        std::uint8_t* ptr = buffer.data();
 
       /* iterate on both sensor segment */
         for (unsigned x = 0; x < pixels; x += 4 * sensor.shading_factor) {
           // coefficient source
-          src = (data + offset + i * length) + x;
+            std::uint8_t* src = (data + offset + i * length) + x;
 
           /* coefficient copy */
           ptr[0]=src[0];
@@ -953,7 +952,7 @@ void CommandSetGl846::send_shading_data(Genesys_Device* dev, const Genesys_Senso
           ptr+=4;
         }
 
-        val = dev->interface->read_register(0xd0+i);
+        std::uint8_t val = dev->interface->read_register(0xd0+i);
         addr = val * 8192 + 0x10000000;
         dev->interface->write_ahb(addr, pixels, buffer.data());
     }
@@ -1001,7 +1000,7 @@ static void gl846_init_memory_layout(Genesys_Device* dev)
 void CommandSetGl846::asic_boot(Genesys_Device* dev, bool cold) const
 {
     DBG_HELPER(dbg);
-  uint8_t val;
+    std::uint8_t val;
 
     // reset ASIC if cold boot
     if (cold) {
@@ -1076,8 +1075,7 @@ void CommandSetGl846::update_hardware_sensors(Genesys_Scanner* s) const
   /* do what is needed to get a new set of events, but try to not lose
      any of them.
    */
-  uint8_t val;
-  uint8_t scan, file, email, copy;
+    std::uint8_t scan, file, email, copy;
   switch(s->dev->model->gpio_id)
     {
       default:
@@ -1086,7 +1084,7 @@ void CommandSetGl846::update_hardware_sensors(Genesys_Scanner* s) const
         email=0x04;
         copy=0x08;
     }
-    val = s->dev->interface->read_register(REG_0x6D);
+    std::uint8_t val = s->dev->interface->read_register(REG_0x6D);
 
     s->buttons[BUTTON_SCAN_SW].write((val & scan) == 0);
     s->buttons[BUTTON_FILE_SW].write((val & file) == 0);

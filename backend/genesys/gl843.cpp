@@ -618,7 +618,7 @@ gl843_init_registers (Genesys_Device * dev)
     }
 
     if (dev->model->model_id == ModelId::PLUSTEK_OPTICFILM_7200I) {
-        uint8_t data[32] = {
+        std::uint8_t data[32] = {
             0x8c, 0x8f, 0xc9, 0x00, 0x01, 0x00, 0x00, 0x00,
             0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
             0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -637,7 +637,8 @@ static void gl843_set_ad_fe(Genesys_Device* dev)
 }
 
 // Set values of analog frontend
-void CommandSetGl843::set_fe(Genesys_Device* dev, const Genesys_Sensor& sensor, uint8_t set) const
+void CommandSetGl843::set_fe(Genesys_Device* dev, const Genesys_Sensor& sensor,
+                             std::uint8_t set) const
 {
     DBG_HELPER_ARGS(dbg, "%s", set == AFE_INIT ? "init" :
                                set == AFE_SET ? "set" :
@@ -650,7 +651,7 @@ void CommandSetGl843::set_fe(Genesys_Device* dev, const Genesys_Sensor& sensor, 
 
     // check analog frontend type
     // FIXME: looks like we write to that register with initial data
-    uint8_t fe_type = dev->interface->read_register(REG_0x04) & REG_0x04_FESET;
+    std::uint8_t fe_type = dev->interface->read_register(REG_0x04) & REG_0x04_FESET;
     if (fe_type == 2) {
         gl843_set_ad_fe(dev);
         return;
@@ -1141,7 +1142,7 @@ void CommandSetGl843::save_power(Genesys_Device* dev, bool enable) const
 
     // switch KV-SS080 lamp off
     if (dev->model->gpio_id == GpioId::KVSS080) {
-        uint8_t val = dev->interface->read_register(REG_0x6C);
+        std::uint8_t val = dev->interface->read_register(REG_0x6C);
         if (enable) {
             val &= 0xef;
         } else {
@@ -1161,7 +1162,7 @@ static bool gl843_get_paper_sensor(Genesys_Device* dev)
 {
     DBG_HELPER(dbg);
 
-    uint8_t val = dev->interface->read_register(REG_0x6D);
+    std::uint8_t val = dev->interface->read_register(REG_0x6D);
 
     return (val & 0x1) == 0;
 }
@@ -1304,7 +1305,7 @@ void CommandSetGl843::begin_scan(Genesys_Device* dev, const Genesys_Sensor& sens
     scanner_clear_scan_and_feed_counts(*dev);
 
     // enable scan and motor
-    uint8_t val = dev->interface->read_register(REG_0x01);
+    std::uint8_t val = dev->interface->read_register(REG_0x01);
     val |= REG_0x01_SCAN;
     dev->interface->write_register(REG_0x01, val);
 
@@ -1457,11 +1458,11 @@ void CommandSetGl843::send_gamma_table(Genesys_Device* dev, const Genesys_Sensor
   size = 256;
 
   /* allocate temporary gamma tables: 16 bits words, 3 channels */
-  std::vector<uint8_t> gamma(size * 2 * 3);
+    std::vector<std::uint8_t> gamma(size * 2 * 3);
 
-    std::vector<uint16_t> rgamma = get_gamma_table(dev, sensor, GENESYS_RED);
-    std::vector<uint16_t> ggamma = get_gamma_table(dev, sensor, GENESYS_GREEN);
-    std::vector<uint16_t> bgamma = get_gamma_table(dev, sensor, GENESYS_BLUE);
+    std::vector<std::uint16_t> rgamma = get_gamma_table(dev, sensor, GENESYS_RED);
+    std::vector<std::uint16_t> ggamma = get_gamma_table(dev, sensor, GENESYS_GREEN);
+    std::vector<std::uint16_t> bgamma = get_gamma_table(dev, sensor, GENESYS_BLUE);
 
     // copy sensor specific's gamma tables
     for (i = 0; i < size; i++) {
@@ -1574,7 +1575,7 @@ static void gl843_init_gpio(Genesys_Device* dev)
 void CommandSetGl843::asic_boot(Genesys_Device* dev, bool cold) const
 {
     DBG_HELPER(dbg);
-  uint8_t val;
+    std::uint8_t val;
 
     if (cold) {
         dev->interface->write_register(0x0e, 0x01);
@@ -1686,7 +1687,7 @@ void CommandSetGl843::update_hardware_sensors(Genesys_Scanner* s) const
      any of them.
    */
 
-    uint8_t val = s->dev->interface->read_register(REG_0x6D);
+    std::uint8_t val = s->dev->interface->read_register(REG_0x6D);
     DBG(DBG_io, "%s: read buttons_gpio value=0x%x\n", __func__, (int)val);
 
   switch (s->dev->model->gpio_id)
@@ -1724,11 +1725,10 @@ void CommandSetGl843::update_home_sensor_gpio(Genesys_Device& dev) const
  * for all the channels.
  */
 void CommandSetGl843::send_shading_data(Genesys_Device* dev, const Genesys_Sensor& sensor,
-                                        uint8_t* data, int size) const
+                                        std::uint8_t* data, int size) const
 {
     DBG_HELPER(dbg);
-    uint32_t final_size, i;
-  uint8_t *buffer;
+    std::uint32_t final_size, i;
     int count;
 
     int offset = 0;
@@ -1756,10 +1756,10 @@ void CommandSetGl843::send_shading_data(Genesys_Device* dev, const Genesys_Senso
   /* compute and allocate size for final data */
   final_size = ((length+251) / 252) * 256;
   DBG(DBG_io, "%s: final shading size=%04x (length=%d)\n", __func__, final_size, length);
-  std::vector<uint8_t> final_data(final_size, 0);
+    std::vector<std::uint8_t> final_data(final_size, 0);
 
   /* copy regular shading data to the expected layout */
-  buffer = final_data.data();
+    std::uint8_t* buffer = final_data.data();
   count = 0;
     if (offset < 0) {
         count += (-offset);
