@@ -194,7 +194,7 @@ ImagePipelineNodeDesegment::ImagePipelineNodeDesegment(ImagePipelineNode& source
     std::iota(segment_order_.begin(), segment_order_.end(), 0);
 }
 
-bool ImagePipelineNodeDesegment::get_next_row_data(uint8_t* out_data)
+bool ImagePipelineNodeDesegment::get_next_row_data(std::uint8_t* out_data)
 {
     bool got_data = true;
 

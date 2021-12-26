@@ -147,8 +147,8 @@ void ScannerInterfaceUsb::write_registers(const Genesys_Register_Set& regs)
     if (dev_->model->asic_type == AsicType::GL646 ||
         dev_->model->asic_type == AsicType::GL841)
     {
-        uint8_t outdata[8];
-        std::vector<uint8_t> buffer;
+        std::uint8_t outdata[8];
+        std::vector<std::uint8_t> buffer;
         buffer.reserve(regs.size() * 2);
 
         /* copy registers and values in data buffer */
@@ -206,7 +206,7 @@ static void bulk_read_data_send_header(UsbDevice& usb_dev, AsicType asic_type, s
 {
     DBG_HELPER(dbg);
 
-    uint8_t outdata[8];
+    std::uint8_t outdata[8];
     if (asic_type == AsicType::GL124 ||
         asic_type == AsicType::GL845 ||
         asic_type == AsicType::GL846 ||

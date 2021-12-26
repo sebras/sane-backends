@@ -224,8 +224,8 @@ void scanner_register_rw_set_bits(Genesys_Device& dev, std::uint16_t address, st
 void scanner_register_rw_bits(Genesys_Device& dev, std::uint16_t address,
                               std::uint8_t value, std::uint8_t mask);
 
-extern void sanei_genesys_write_ahb(Genesys_Device* dev, uint32_t addr, uint32_t size,
-                                    uint8_t* data);
+void sanei_genesys_write_ahb(Genesys_Device* dev, std::uint32_t addr, std::uint32_t size,
+                             std::uint8_t* data);
 
 extern void sanei_genesys_init_structs (Genesys_Device * dev);
 
@@ -272,14 +272,14 @@ bool should_enable_gamma(const ScanSession& session, const Genesys_Sensor& senso
     i.e. the number written to REG_FWDSTEP.
 */
 void sanei_genesys_calculate_zmod(bool two_table,
-                                  uint32_t exposure_time,
-                                  const std::vector<uint16_t>& slope_table,
+                                  std::uint32_t exposure_time,
+                                  const std::vector<std::uint16_t>& slope_table,
                                   unsigned acceleration_steps,
                                   unsigned move_steps,
                                   unsigned buffer_acceleration_steps,
-                                  uint32_t* out_z1, uint32_t* out_z2);
+                                  std::uint32_t* out_z1, std::uint32_t* out_z2);
 
-extern void sanei_genesys_set_buffer_address(Genesys_Device* dev, uint32_t addr);
+extern void sanei_genesys_set_buffer_address(Genesys_Device* dev, std::uint32_t addr);
 
 unsigned sanei_genesys_get_bulk_max_size(AsicType asic_type);
 
@@ -287,10 +287,10 @@ SANE_Int sanei_genesys_exposure_time2(Genesys_Device* dev, const MotorProfile& p
                                       int endpixel, int led_exposure);
 
 void sanei_genesys_create_default_gamma_table(Genesys_Device* dev,
-                                              std::vector<uint16_t>& gamma_table, float gamma);
+                                              std::vector<std::uint16_t>& gamma_table, float gamma);
 
-std::vector<uint16_t> get_gamma_table(Genesys_Device* dev, const Genesys_Sensor& sensor,
-                                      int color);
+std::vector<std::uint16_t> get_gamma_table(Genesys_Device* dev, const Genesys_Sensor& sensor,
+                                           int color);
 
 void sanei_genesys_send_gamma_table(Genesys_Device* dev, const Genesys_Sensor& sensor);
 
@@ -328,14 +328,14 @@ SensorExposure scanner_led_calibration(Genesys_Device& dev, const Genesys_Sensor
 void scanner_clear_scan_and_feed_counts(Genesys_Device& dev);
 
 void scanner_send_slope_table(Genesys_Device* dev, const Genesys_Sensor& sensor, unsigned table_nr,
-                              const std::vector<uint16_t>& slope_table);
+                              const std::vector<std::uint16_t>& slope_table);
 
 extern void sanei_genesys_write_file(const char* filename, const std::uint8_t* data,
                                      std::size_t length);
 
 void wait_until_buffer_non_empty(Genesys_Device* dev, bool check_status_twice = false);
 
-extern void sanei_genesys_read_data_from_scanner(Genesys_Device* dev, uint8_t* data, size_t size);
+void sanei_genesys_read_data_from_scanner(Genesys_Device* dev, std::uint8_t* data, size_t size);
 
 Image read_unshuffled_image_from_scanner(Genesys_Device* dev, const ScanSession& session,
                                          std::size_t total_bytes);
@@ -413,12 +413,12 @@ extern void sanei_genesys_load_lut(unsigned char* lut,
                                    int out_min, int out_max,
                                    int slope, int offset);
 
-extern void sanei_genesys_generate_gamma_buffer(Genesys_Device* dev,
-                                    const Genesys_Sensor& sensor,
-                                    int bits,
-                                    int max,
-                                    int size,
-                                    uint8_t* gamma);
+void sanei_genesys_generate_gamma_buffer(Genesys_Device* dev,
+                                         const Genesys_Sensor& sensor,
+                                         int bits,
+                                         int max,
+                                         int size,
+                                         std::uint8_t* gamma);
 
 unsigned session_adjust_output_pixels(unsigned output_pixels,
                                       const Genesys_Device& dev, const Genesys_Sensor& sensor,

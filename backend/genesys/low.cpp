@@ -127,7 +127,7 @@ unsigned sanei_genesys_get_bulk_max_size(AsicType asic_type)
 }
 
 // Set address for writing data
-void sanei_genesys_set_buffer_address(Genesys_Device* dev, uint32_t addr)
+void sanei_genesys_set_buffer_address(Genesys_Device* dev, std::uint32_t addr)
 {
     DBG_HELPER(dbg);
 
@@ -377,7 +377,7 @@ void wait_until_has_valid_words(Genesys_Device* dev)
 }
 
 // Read data (e.g scanned image) from scan buffer
-void sanei_genesys_read_data_from_scanner(Genesys_Device* dev, uint8_t* data, size_t size)
+void sanei_genesys_read_data_from_scanner(Genesys_Device* dev, std::uint8_t* data, size_t size)
 {
     DBG_HELPER_ARGS(dbg, "size = %zu bytes", size);
 
@@ -582,7 +582,7 @@ void sanei_genesys_read_feed_steps(Genesys_Device* dev, unsigned int* steps)
 void sanei_genesys_set_lamp_power(Genesys_Device* dev, const Genesys_Sensor& sensor,
                                   Genesys_Register_Set& regs, bool set)
 {
-    static const uint8_t REG_0x03_LAMPPWR = 0x10;
+    static const std::uint8_t REG_0x03_LAMPPWR = 0x10;
 
     if (set) {
         regs.find_reg(0x03).value |= REG_0x03_LAMPPWR;
@@ -623,7 +623,7 @@ void sanei_genesys_set_lamp_power(Genesys_Device* dev, const Genesys_Sensor& sen
 
 void sanei_genesys_set_motor_power(Genesys_Register_Set& regs, bool set)
 {
-    static const uint8_t REG_0x02_MTRPWR = 0x10;
+    static const std::uint8_t REG_0x02_MTRPWR = 0x10;
 
     if (set) {
         regs.find_reg(0x02).value |= REG_0x02_MTRPWR;
@@ -652,13 +652,13 @@ bool should_enable_gamma(const ScanSession& session, const Genesys_Sensor& senso
     return true;
 }
 
-std::vector<uint16_t> get_gamma_table(Genesys_Device* dev, const Genesys_Sensor& sensor,
-                                      int color)
+std::vector<std::uint16_t> get_gamma_table(Genesys_Device* dev, const Genesys_Sensor& sensor,
+                                           int color)
 {
     if (!dev->gamma_override_tables[color].empty()) {
         return dev->gamma_override_tables[color];
     } else {
-        std::vector<uint16_t> ret;
+        std::vector<std::uint16_t> ret;
         sanei_genesys_create_default_gamma_table(dev, ret, sensor.gamma[color]);
         return ret;
     }
@@ -678,16 +678,16 @@ void sanei_genesys_generate_gamma_buffer(Genesys_Device* dev,
                                                 int bits,
                                                 int max,
                                                 int size,
-                                                uint8_t* gamma)
+                                         std::uint8_t* gamma)
 {
     DBG_HELPER(dbg);
-    std::vector<uint16_t> rgamma = get_gamma_table(dev, sensor, GENESYS_RED);
-    std::vector<uint16_t> ggamma = get_gamma_table(dev, sensor, GENESYS_GREEN);
-    std::vector<uint16_t> bgamma = get_gamma_table(dev, sensor, GENESYS_BLUE);
+    std::vector<std::uint16_t> rgamma = get_gamma_table(dev, sensor, GENESYS_RED);
+    std::vector<std::uint16_t> ggamma = get_gamma_table(dev, sensor, GENESYS_GREEN);
+    std::vector<std::uint16_t> bgamma = get_gamma_table(dev, sensor, GENESYS_BLUE);
 
   if(dev->settings.contrast!=0 || dev->settings.brightness!=0)
     {
-      std::vector<uint16_t> lut(65536);
+        std::vector<std::uint16_t> lut(65536);
       sanei_genesys_load_lut(reinterpret_cast<unsigned char *>(lut.data()),
                              bits,
                              bits,
@@ -697,7 +697,7 @@ void sanei_genesys_generate_gamma_buffer(Genesys_Device* dev,
                              dev->settings.brightness);
       for (int i = 0; i < size; i++)
         {
-          uint16_t value=rgamma[i];
+            std::uint16_t value = rgamma[i];
           value=lut[value];
           gamma[i * 2 + size * 0 + 0] = value & 0xff;
           gamma[i * 2 + size * 0 + 1] = (value >> 8) & 0xff;
@@ -717,7 +717,7 @@ void sanei_genesys_generate_gamma_buffer(Genesys_Device* dev,
     {
       for (int i = 0; i < size; i++)
         {
-          uint16_t value=rgamma[i];
+            std::uint16_t value=rgamma[i];
           gamma[i * 2 + size * 0 + 0] = value & 0xff;
           gamma[i * 2 + size * 0 + 1] = (value >> 8) & 0xff;
 
@@ -747,15 +747,15 @@ void sanei_genesys_send_gamma_table(Genesys_Device* dev, const Genesys_Sensor& s
 
   size = 256 + 1;
 
-  /* allocate temporary gamma tables: 16 bits words, 3 channels */
-  std::vector<uint8_t> gamma(size * 2 * 3, 255);
+    // allocate temporary gamma tables: 16 bits words, 3 channels
+    std::vector<std::uint8_t> gamma(size * 2 * 3, 255);
 
     sanei_genesys_generate_gamma_buffer(dev, sensor, 16, 65535, size, gamma.data());
 
     // loop sending gamma tables NOTE: 0x01000000 not 0x10000000
     for (i = 0; i < 3; i++) {
         // clear corresponding GMM_N bit
-        uint8_t val = dev->interface->read_register(0xbd);
+        std::uint8_t val = dev->interface->read_register(0xbd);
         val &= ~(0x01 << i);
         dev->interface->write_register(0xbd, val);
 
@@ -1410,7 +1410,7 @@ void sanei_genesys_asic_init(Genesys_Device* dev)
 {
     DBG_HELPER(dbg);
 
-  uint8_t val;
+    std::uint8_t val;
     bool cold = true;
 
     // URB    16  control  0xc0 0x0c 0x8e 0x0b len     1 read  0x00 */
@@ -1507,13 +1507,13 @@ void scanner_start_action(Genesys_Device& dev, bool start_motor)
 void sanei_genesys_set_dpihw(Genesys_Register_Set& regs, unsigned dpihw)
 {
     // same across GL646, GL841, GL843, GL846, GL847, GL124
-    const uint8_t REG_0x05_DPIHW_MASK = 0xc0;
-    const uint8_t REG_0x05_DPIHW_600 = 0x00;
-    const uint8_t REG_0x05_DPIHW_1200 = 0x40;
-    const uint8_t REG_0x05_DPIHW_2400 = 0x80;
-    const uint8_t REG_0x05_DPIHW_4800 = 0xc0;
+    const std::uint8_t REG_0x05_DPIHW_MASK = 0xc0;
+    const std::uint8_t REG_0x05_DPIHW_600 = 0x00;
+    const std::uint8_t REG_0x05_DPIHW_1200 = 0x40;
+    const std::uint8_t REG_0x05_DPIHW_2400 = 0x80;
+    const std::uint8_t REG_0x05_DPIHW_4800 = 0xc0;
 
-    uint8_t dpihw_setting;
+    std::uint8_t dpihw_setting;
     switch (dpihw) {
         case 600:
             dpihw_setting = REG_0x05_DPIHW_600;
@@ -1925,8 +1925,8 @@ void sanei_genesys_load_lut(unsigned char* lut,
   double shift, rise;
   int max_in_val = (1 << in_bits) - 1;
   int max_out_val = (1 << out_bits) - 1;
-  uint8_t *lut_p8 = lut;
-    uint16_t* lut_p16 = reinterpret_cast<std::uint16_t*>(lut);
+    std::uint8_t* lut_p8 = lut;
+    std::uint16_t* lut_p16 = reinterpret_cast<std::uint16_t*>(lut);
 
   /* slope is converted to rise per unit run:
    * first [-127,127] to [-.999,.999]
