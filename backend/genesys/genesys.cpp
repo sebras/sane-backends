@@ -795,6 +795,8 @@ void scanner_move(Genesys_Device& dev, ScanMethod scan_method, unsigned steps, D
     session.params.scan_method = scan_method;
     session.params.scan_mode = ScanColorMode::GRAY;
     session.params.color_filter = ColorFilter::GREEN;
+    session.params.contrast_adjustment = dev.settings.contrast;
+    session.params.brightness_adjustment = dev.settings.brightness;
 
     session.params.flags = ScanFlag::DISABLE_SHADING |
                            ScanFlag::DISABLE_GAMMA |
@@ -959,6 +961,8 @@ void scanner_move_back_home(Genesys_Device& dev, bool wait_until_home)
     session.params.scan_method = dev.settings.scan_method;
     session.params.scan_mode = ScanColorMode::GRAY;
     session.params.color_filter = ColorFilter::GREEN;
+    session.params.contrast_adjustment = dev.settings.contrast;
+    session.params.brightness_adjustment = dev.settings.brightness;
 
     session.params.flags =  ScanFlag::DISABLE_SHADING |
                             ScanFlag::DISABLE_GAMMA |
@@ -1100,6 +1104,8 @@ void scanner_move_back_home_ta(Genesys_Device& dev)
     session.params.scan_method = scan_method;
     session.params.scan_mode = ScanColorMode::GRAY;
     session.params.color_filter = ColorFilter::GREEN;
+    session.params.contrast_adjustment = dev.settings.contrast;
+    session.params.brightness_adjustment = dev.settings.brightness;
 
     session.params.flags =  ScanFlag::DISABLE_SHADING |
                             ScanFlag::DISABLE_GAMMA |
@@ -1210,6 +1216,8 @@ void scanner_search_strip(Genesys_Device& dev, bool forward, bool black)
     session.params.scan_method = dev.settings.scan_method;
     session.params.scan_mode = ScanColorMode::GRAY;
     session.params.color_filter = ColorFilter::RED;
+    session.params.contrast_adjustment = dev.settings.contrast;
+    session.params.brightness_adjustment = dev.settings.brightness;
     session.params.flags = ScanFlag::DISABLE_SHADING |
                            ScanFlag::DISABLE_GAMMA;
     if (dev.model->asic_type != AsicType::GL841 && !forward) {
@@ -1506,6 +1514,8 @@ void scanner_offset_calibration(Genesys_Device& dev, const Genesys_Sensor& senso
     session.params.scan_mode = ScanColorMode::COLOR_SINGLE_PASS;
     session.params.color_filter = dev.model->asic_type == AsicType::GL843 ? ColorFilter::RED
                                                                           : dev.settings.color_filter;
+    session.params.contrast_adjustment = dev.settings.contrast;
+    session.params.brightness_adjustment = dev.settings.brightness;
     session.params.flags = flags;
     compute_session(&dev, session, *calib_sensor);
 
@@ -1815,6 +1825,8 @@ void scanner_coarse_gain_calibration(Genesys_Device& dev, const Genesys_Sensor& 
     session.params.scan_method = dev.settings.scan_method;
     session.params.scan_mode = ScanColorMode::COLOR_SINGLE_PASS;
     session.params.color_filter = dev.settings.color_filter;
+    session.params.contrast_adjustment = dev.settings.contrast;
+    session.params.brightness_adjustment = dev.settings.brightness;
     session.params.flags = flags;
     compute_session(&dev, session, *calib_sensor);
 
@@ -2023,6 +2035,8 @@ SensorExposure scanner_led_calibration(Genesys_Device& dev, const Genesys_Sensor
     session.params.scan_method = dev.settings.scan_method;
     session.params.scan_mode = ScanColorMode::COLOR_SINGLE_PASS;
     session.params.color_filter = dev.settings.color_filter;
+    session.params.contrast_adjustment = dev.settings.contrast;
+    session.params.brightness_adjustment = dev.settings.brightness;
     session.params.flags = ScanFlag::DISABLE_SHADING |
                            ScanFlag::DISABLE_GAMMA |
                            ScanFlag::SINGLE_LINE |
@@ -5243,7 +5257,7 @@ static void probe_genesys_devices()
    of Genesys_Calibration_Cache as is.
 */
 static const char* CALIBRATION_IDENT = "sane_genesys";
-static const int CALIBRATION_VERSION = 31;
+static const int CALIBRATION_VERSION = 32;
 
 bool read_calibration(std::istream& str, Genesys_Device::Calibration& calibration,
                       const std::string& path)
