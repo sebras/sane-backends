@@ -2007,14 +2007,9 @@ SensorExposure scanner_led_calibration(Genesys_Device& dev, const Genesys_Sensor
         regs = dev.reg; // FIXME: apply this to all ASICs
     }
 
-    unsigned yres = resolution;
-    if (dev.model->asic_type == AsicType::GL841) {
-        yres = dev.settings.yres; // FIXME: remove this
-    }
-
     ScanSession session;
     session.params.xres = resolution;
-    session.params.yres = yres;
+    session.params.yres = resolution;
     session.params.startx = 0;
     session.params.starty = 0;
     session.params.pixels = dev.model->x_size_calib_mm * resolution / MM_PER_INCH;
