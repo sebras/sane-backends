@@ -2030,10 +2030,6 @@ SensorExposure scanner_led_calibration(Genesys_Device& dev, const Genesys_Sensor
 
     dev.cmd_set->init_regs_for_scan_session(&dev, calib_sensor, &regs, session);
 
-    if (dev.model->asic_type == AsicType::GL841) {
-        dev.interface->write_registers(regs); // FIXME: remove this
-    }
-
     std::uint16_t exp[3];
 
     if (dev.model->asic_type == AsicType::GL841) {
