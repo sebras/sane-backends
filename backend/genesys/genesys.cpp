@@ -1884,7 +1884,8 @@ void scanner_coarse_gain_calibration(Genesys_Device& dev, const Genesys_Sensor& 
         float curr_output = 0;
         float target_value = 0;
 
-        if (dev.model->asic_type == AsicType::GL842 ||
+        if (dev.model->asic_type == AsicType::GL841 ||
+            dev.model->asic_type == AsicType::GL842 ||
             dev.model->asic_type == AsicType::GL843)
         {
             std::vector<std::uint16_t> values;
@@ -1900,18 +1901,6 @@ void scanner_coarse_gain_calibration(Genesys_Device& dev, const Genesys_Sensor& 
             curr_output = static_cast<float>(values[unsigned((values.size() - 1) * 0.95)]);
             target_value = calib_sensor->gain_white_ref * coeff;
 
-        } else if (dev.model->asic_type == AsicType::GL841) {
-            // FIXME: use the GL843 approach
-            unsigned max = 0;
-            for (std::size_t x = 0; x < image.get_width(); x++) {
-                auto value = image.get_raw_channel(x, 0, ch);
-                if (value > max) {
-                    max = value;
-                }
-            }
-
-            curr_output = max;
-            target_value = 65535.0f;
         } else {
             // FIXME: use the GL843 approach
             auto width = image.get_width();
