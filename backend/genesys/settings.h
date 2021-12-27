@@ -76,9 +76,6 @@ struct Genesys_Settings
 
     ColorFilter color_filter = ColorFilter::NONE;
 
-    // true if scan is true gray, false if monochrome scan
-    int true_gray = 0;
-
     // value for contrast enhancement in the [-100..100] range
     int contrast = 0;
 

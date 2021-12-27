@@ -4380,12 +4380,6 @@ static Genesys_Settings calculate_scan_settings(Genesys_Scanner* s)
         settings.color_filter = ColorFilter::NONE;
     }
 
-    if (s->color_filter == "None") {
-        settings.true_gray = 1;
-    } else {
-        settings.true_gray = 0;
-    }
-
     // brightness and contrast only for for 8 bit scans
     if (s->bit_depth == 8) {
         settings.contrast = (s->contrast * 127) / 100;

@@ -1119,7 +1119,8 @@ void compute_session(const Genesys_Device* dev, ScanSession& s, const Genesys_Se
         dev->model->asic_type == AsicType::GL845 ||
         dev->model->asic_type == AsicType::GL846)
     {
-        s.enable_ledadd = (s.params.channels == 1 && dev->model->is_cis && dev->settings.true_gray);
+        s.enable_ledadd = (s.params.channels == 1 && dev->model->is_cis &&
+                           s.params.color_filter == ColorFilter::NONE);
     }
 
     s.use_host_side_calib = sensor.use_host_side_calib;
