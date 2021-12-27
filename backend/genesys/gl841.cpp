@@ -899,9 +899,9 @@ static int gl841_exposure_time(Genesys_Device *dev, const Genesys_Sensor& sensor
     int led_exposure = 0;
     if (dev->model->is_cis) {
         unsigned dummy = dev->reg.find_reg(0x19).value;
-        unsigned min_sensor_exposure = std::min({sensor.exposure.red, sensor.exposure.green,
+        unsigned max_sensor_exposure = std::max({sensor.exposure.red, sensor.exposure.green,
                                                  sensor.exposure.blue});
-        led_exposure = dummy + min_sensor_exposure;
+        led_exposure = dummy + max_sensor_exposure;
     }
     return sanei_genesys_exposure_time2(dev, profile, slope_dpi,
                                         start + used_pixels,/*+tgtime? currently done in sanei_genesys_exposure_time2 with tgtime = 32 pixel*/
