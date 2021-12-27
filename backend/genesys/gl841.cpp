@@ -149,15 +149,6 @@ gl841_init_registers (Genesys_Device * dev)
     dev->reg.init_reg(0x13, 0x00); // SENSOR_DEF
     dev->reg.init_reg(0x14, 0x00); // SENSOR_DEF
     dev->reg.init_reg(0x15, 0x00); // SENSOR_DEF
-    if (dev->model->model_id == ModelId::CANON_LIDE_80) {
-        dev->reg.init_reg(0x10, 0x40);
-        dev->reg.init_reg(0x11, 0x00);
-        dev->reg.init_reg(0x12, 0x40);
-        dev->reg.init_reg(0x13, 0x00);
-        dev->reg.init_reg(0x14, 0x40);
-        dev->reg.init_reg(0x15, 0x00);
-    }
-
     dev->reg.init_reg(0x16, 0x00); // SENSOR_DEF, overwritten in scanner_setup_sensor() below
     dev->reg.init_reg(0x17, 0x00); // SENSOR_DEF, overwritten in scanner_setup_sensor() below
     dev->reg.init_reg(0x18, 0x00); // SENSOR_DEF, overwritten in scanner_setup_sensor() below
@@ -184,36 +175,21 @@ gl841_init_registers (Genesys_Device * dev)
     dev->reg.init_reg(0x27, 0x00);
     dev->reg.init_reg(0x29, 0xff);
 
-    dev->reg.init_reg(0x2c, 0x00);
-    dev->reg.init_reg(0x2d, 0x00);
-    if (dev->model->model_id == ModelId::CANON_LIDE_80) {
-        dev->reg.init_reg(0x2c, sensor.full_resolution >> 8);
-        dev->reg.init_reg(0x2d, sensor.full_resolution & 0xff);
-    }
+    dev->reg.init_reg(0x2c, 0x02); // DPISET: overwritten during scanner setup
+    dev->reg.init_reg(0x2d, 0x58); // DPISET: overwritten during scanner setup
     dev->reg.init_reg(0x2e, 0x80);
     dev->reg.init_reg(0x2f, 0x80);
 
-    dev->reg.init_reg(0x30, 0x00);
-    dev->reg.init_reg(0x31, 0x00);
-    dev->reg.init_reg(0x32, 0x00);
-    dev->reg.init_reg(0x33, 0x00);
-    dev->reg.init_reg(0x34, 0x00);
-    dev->reg.init_reg(0x35, 0x00);
-    dev->reg.init_reg(0x36, 0x00);
-    dev->reg.init_reg(0x37, 0x00);
-    dev->reg.init_reg(0x38, 0x4f);
-    dev->reg.init_reg(0x39, 0xc1);
-    if (dev->model->model_id == ModelId::CANON_LIDE_80) {
-        dev->reg.init_reg(0x31, 0x10);
-        dev->reg.init_reg(0x32, 0x15);
-        dev->reg.init_reg(0x33, 0x0e);
-        dev->reg.init_reg(0x34, 0x40);
-        dev->reg.init_reg(0x35, 0x00);
-        dev->reg.init_reg(0x36, 0x2a);
-        dev->reg.init_reg(0x37, 0x30);
-        dev->reg.init_reg(0x38, 0x2a);
-        dev->reg.init_reg(0x39, 0xf8);
-    }
+    dev->reg.init_reg(0x30, 0x00); // STRPIXEL: overwritten during scanner setup
+    dev->reg.init_reg(0x31, 0x00); // STRPIXEL: overwritten during scanner setup
+    dev->reg.init_reg(0x32, 0x00); // ENDPIXEL: overwritten during scanner setup
+    dev->reg.init_reg(0x33, 0x00); // ENDPIXEL: overwritten during scanner setup
+    dev->reg.init_reg(0x34, 0x00); // DUMMY: overwritten during scanner setup
+    dev->reg.init_reg(0x35, 0x00); // MAXWD: overwritten during scanner setup
+    dev->reg.init_reg(0x36, 0x00); // MAXWD: overwritten during scanner setup
+    dev->reg.init_reg(0x37, 0x00); // MAXWD: overwritten during scanner setup
+    dev->reg.init_reg(0x38, 0x4f); // LPERIOD: overwritten during scanner setup
+    dev->reg.init_reg(0x39, 0xc1); // LPERIOD: overwritten during scanner setup
 
     dev->reg.init_reg(0x3d, 0x00);
     dev->reg.init_reg(0x3e, 0x00);
@@ -330,11 +306,6 @@ gl841_init_registers (Genesys_Device * dev)
 
         dev->interface->write_0x8c(0x10, 0x94);
         dev->interface->write_register(0x09, 0x10);
-
-        // FIXME: the following code originally changed 0x6b, but due to bug the 0x6c register was
-        // effectively changed. The current behavior matches the old code, but should probably be fixed.
-        dev->reg.find_reg(0x6c).value |= REG_0x6B_GPO18;
-        dev->reg.find_reg(0x6c).value &= ~REG_0x6B_GPO17;
     }
 }
 
@@ -541,7 +512,6 @@ static void gl841_init_motor_regs_feed(Genesys_Device* dev, const Genesys_Sensor
 {
     DBG_HELPER_ARGS(dbg, "feed_steps=%d, flags=%x", feed_steps, static_cast<unsigned>(flags));
     unsigned step_multiplier = 2;
-    int use_fast_fed = 0;
     unsigned int feedl;
 /*number of scan lines to add in a scan_lines line*/
 
@@ -572,10 +542,6 @@ static void gl841_init_motor_regs_feed(Genesys_Device* dev, const Genesys_Sensor
 
     // BUG: fast table is counted in base_ydpi / 4
     feedl = feed_steps - fast_table.table.size() * 2;
-    use_fast_fed = 1;
-    if (has_flag(dev->model->flags, ModelFlag::DISABLE_FAST_FEEDING)) {
-        use_fast_fed = false;
-    }
 
     reg->set8(0x3d, (feedl >> 16) & 0xf);
     reg->set8(0x3e, (feedl >> 8) & 0xff);
@@ -590,10 +556,6 @@ static void gl841_init_motor_regs_feed(Genesys_Device* dev, const Genesys_Sensor
     reg->find_reg(0x02).value &= ~0x80; /*NOT_HOME OFF*/
 
     reg->find_reg(0x02).value |= REG_0x02_MTRPWR;
-
-    if (use_fast_fed)
-    reg->find_reg(0x02).value |= 0x08;
-    else
     reg->find_reg(0x02).value &= ~0x08;
 
     if (has_flag(flags, ScanFlag::AUTO_GO_HOME)) {
@@ -640,9 +602,6 @@ static void gl841_init_motor_regs_scan(Genesys_Device* dev, const Genesys_Sensor
 
     unsigned step_multiplier = 2;
 
-    int use_fast_fed = 0;
-    unsigned int fast_time;
-    unsigned int slow_time;
     unsigned int feedl;
     unsigned int min_restep = 0x20;
 
@@ -679,54 +638,11 @@ static void gl841_init_motor_regs_scan(Genesys_Device* dev, const Genesys_Sensor
         fast_table.slice_steps(max_fast_slope_steps_count, step_multiplier);
     }
 
-    /* fast fed special cases handling */
-    if (dev->model->gpio_id == GpioId::XP300
-     || dev->model->gpio_id == GpioId::DP685)
-      {
-	/* quirk: looks like at least this scanner is unable to use
-	   2-feed mode */
-	use_fast_fed = 0;
-      }
-    else if (feed_steps < fast_table.table.size() * 2 +
-             (slow_table.table.size() >> static_cast<unsigned>(motor_profile.step_type)))
-    {
-        use_fast_fed = 0;
-        DBG(DBG_info, "%s: feed too short, slow move forced.\n", __func__);
-    } else {
-/* for deciding whether we should use fast mode we need to check how long we
-   need for (fast)accelerating, moving, decelerating, (TODO: stopping?)
-   (slow)accelerating again versus (slow)accelerating and moving. we need
-   fast and slow tables here.
-*/
-/*NOTE: scan_exposure_time is per scan_yres*/
-/*NOTE: fast_exposure is per base_ydpi/4*/
-/*we use full steps as base unit here*/
-	fast_time =
-        (fast_table.table.back() << static_cast<unsigned>(fast_profile->step_type)) / 4 *
-        (feed_steps - fast_table.table.size()*2 -
-         (slow_table.table.size() >> static_cast<unsigned>(motor_profile.step_type)))
-        + fast_table.pixeltime_sum() * 2 + slow_table.pixeltime_sum();
-	slow_time =
-	    (scan_exposure_time * scan_yres) / dev->motor.base_ydpi *
-        (feed_steps - (slow_table.table.size() >> static_cast<unsigned>(motor_profile.step_type)))
-        + slow_table.pixeltime_sum();
-
-        use_fast_fed = fast_time < slow_time;
-    }
-
-    if (has_flag(dev->model->flags, ModelFlag::DISABLE_FAST_FEEDING)) {
-        use_fast_fed = false;
-    }
-
-    if (use_fast_fed) {
-        feedl = feed_steps - fast_table.table.size() * 2 -
-                (slow_table.table.size() >> static_cast<unsigned>(motor_profile.step_type));
-    } else if ((feed_steps << static_cast<unsigned>(motor_profile.step_type)) < slow_table.table.size()) {
+    if ((feed_steps << static_cast<unsigned>(motor_profile.step_type)) < slow_table.table.size()) {
         feedl = 0;
     } else {
         feedl = (feed_steps << static_cast<unsigned>(motor_profile.step_type)) - slow_table.table.size();
     }
-    DBG(DBG_info, "%s: Decided to use %s mode\n", __func__, use_fast_fed?"fast feed":"slow feed");
 
     reg->set8(0x3d, (feedl >> 16) & 0xf);
     reg->set8(0x3e, (feedl >> 8) & 0xff);
@@ -743,9 +659,6 @@ static void gl841_init_motor_regs_scan(Genesys_Device* dev, const Genesys_Sensor
         reg->find_reg(0x02).value &= ~REG_0x02_MTRREV;
     }
 
-    if (use_fast_fed)
-    reg->find_reg(0x02).value |= 0x08;
-    else
     reg->find_reg(0x02).value &= ~0x08;
 
     if (has_flag(flags, ScanFlag::AUTO_GO_HOME))
@@ -819,8 +732,6 @@ static void gl841_init_optical_regs_scan(Genesys_Device* dev, const Genesys_Sens
                                          const ScanSession& session)
 {
     DBG_HELPER_ARGS(dbg, "exposure_time=%d", exposure_time);
-    uint16_t expavg, expr, expb, expg;
-
     dev->cmd_set->set_fe(dev, sensor, AFE_SET);
 
     /* gpio part.*/
@@ -876,11 +787,7 @@ static void gl841_init_optical_regs_scan(Genesys_Device* dev, const Genesys_Sens
     /* AFEMOD should depend on FESET, and we should set these
      * bits separately */
     reg->find_reg(0x04).value &= ~(REG_0x04_FILTER | REG_0x04_AFEMOD);
-    if (has_flag(session.params.flags, ScanFlag::ENABLE_LEDADD)) {
-        reg->find_reg(0x04).value |= 0x10;	/* no filter */
-    }
-    else if (session.params.channels == 1)
-      {
+    if (session.params.channels == 1) {
     switch (session.params.color_filter)
 	  {
             case ColorFilter::RED:
@@ -910,23 +817,6 @@ static void gl841_init_optical_regs_scan(Genesys_Device* dev, const Genesys_Sens
 
     /* CIS scanners can do true gray by setting LEDADD */
     reg->find_reg(0x87).value &= ~REG_0x87_LEDADD;
-    if (has_flag(session.params.flags, ScanFlag::ENABLE_LEDADD)) {
-        reg->find_reg(0x87).value |= REG_0x87_LEDADD;
-        expr = reg->get16(REG_EXPR);
-        expg = reg->get16(REG_EXPG);
-        expb = reg->get16(REG_EXPB);
-
-	/* use minimal exposure for best image quality */
-	expavg = expg;
-	if (expr < expg)
-	  expavg = expr;
-	if (expb < expavg)
-	  expavg = expb;
-
-        dev->reg.set16(REG_EXPR, expavg);
-        dev->reg.set16(REG_EXPG, expavg);
-        dev->reg.set16(REG_EXPB, expavg);
-      }
 
     // enable gamma tables
     if (should_enable_gamma(session, sensor)) {
@@ -946,27 +836,6 @@ static void gl841_init_optical_regs_scan(Genesys_Device* dev, const Genesys_Sens
     reg->set8(0x34, sensor.dummy_pixel);
 }
 
-static int
-gl841_get_led_exposure(Genesys_Device * dev, const Genesys_Sensor& sensor)
-{
-    int d,r,g,b,m;
-    if (!dev->model->is_cis)
-	return 0;
-    d = dev->reg.find_reg(0x19).value;
-
-    r = sensor.exposure.red;
-    g = sensor.exposure.green;
-    b = sensor.exposure.blue;
-
-    m = r;
-    if (m < g)
-	m = g;
-    if (m < b)
-	m = b;
-
-    return m + d;
-}
-
 /** @brief compute exposure time
  * Compute exposure time for the device and the given scan resolution
  */
@@ -975,9 +844,13 @@ static int gl841_exposure_time(Genesys_Device *dev, const Genesys_Sensor& sensor
                                int start,
                                int used_pixels)
 {
-int led_exposure;
-
-  led_exposure=gl841_get_led_exposure(dev, sensor);
+    int led_exposure = 0;
+    if (dev->model->is_cis) {
+        unsigned dummy = dev->reg.find_reg(0x19).value;
+        unsigned max_sensor_exposure = std::max({sensor.exposure.red, sensor.exposure.green,
+                                                 sensor.exposure.blue});
+        led_exposure = dummy + max_sensor_exposure;
+    }
     return sanei_genesys_exposure_time2(dev, profile, slope_dpi,
                                         start + used_pixels,/*+tgtime? currently done in sanei_genesys_exposure_time2 with tgtime = 32 pixel*/
                                         led_exposure);
@@ -1069,6 +942,9 @@ dummy \ scanned lines
 
     dev->total_bytes_read = 0;
     dev->total_bytes_to_read = session.output_line_bytes_requested * session.params.lines;
+    if (session.use_host_side_gray) {
+        dev->total_bytes_to_read /= 3;
+    }
 
     DBG(DBG_info, "%s: total bytes to send = %zu\n", __func__, dev->total_bytes_to_read);
 }
@@ -1106,19 +982,6 @@ ScanSession CommandSetGl841::calculate_scan_session(const Genesys_Device* dev,
     start += dev->settings.tl_x;
     start = static_cast<float>((start * dev->settings.xres) / MM_PER_INCH);
 
-    // we enable true gray for cis scanners only, and just when doing
-    // scan since color calibration is OK for this mode
-    ScanFlag flags = ScanFlag::NONE;
-
-    // true gray (led add for cis scanners)
-    if (dev->model->is_cis && dev->settings.true_gray &&
-        dev->settings.scan_mode != ScanColorMode::COLOR_SINGLE_PASS &&
-        dev->model->sensor_id != SensorId::CIS_CANON_LIDE_80)
-    {
-        // on Lide 80 the LEDADD bit results in only red LED array being lit
-        flags |= ScanFlag::ENABLE_LEDADD;
-    }
-
     ScanSession session;
     session.params.xres = dev->settings.xres;
     session.params.yres = dev->settings.yres;
@@ -1132,7 +995,9 @@ ScanSession CommandSetGl841::calculate_scan_session(const Genesys_Device* dev,
     session.params.scan_method = dev->settings.scan_method;
     session.params.scan_mode = dev->settings.scan_mode;
     session.params.color_filter = dev->settings.color_filter;
-    session.params.flags = flags;
+    session.params.contrast_adjustment = dev->settings.contrast;
+    session.params.brightness_adjustment = dev->settings.brightness;
+    session.params.flags = ScanFlag::NONE;
     compute_session(dev, session, sensor);
 
     return session;
@@ -1613,6 +1478,8 @@ void CommandSetGl841::init_regs_for_shading(Genesys_Device* dev, const Genesys_S
     session.params.scan_method = dev->settings.scan_method;
     session.params.scan_mode = ScanColorMode::COLOR_SINGLE_PASS;
     session.params.color_filter = dev->settings.color_filter;
+    session.params.contrast_adjustment = dev->settings.contrast;
+    session.params.brightness_adjustment = dev->settings.brightness;
     session.params.flags = ScanFlag::DISABLE_SHADING |
                            ScanFlag::DISABLE_GAMMA;
     compute_session(dev, session, calib_sensor);
@@ -1690,6 +1557,8 @@ static void ad_fe_offset_calibration(Genesys_Device* dev, const Genesys_Sensor& 
     session.params.scan_method = dev->settings.scan_method;
     session.params.scan_mode = ScanColorMode::COLOR_SINGLE_PASS;
     session.params.color_filter = dev->settings.color_filter;
+    session.params.contrast_adjustment = dev->settings.contrast;
+    session.params.brightness_adjustment = dev->settings.brightness;
     session.params.flags = ScanFlag::DISABLE_SHADING |
                            ScanFlag::DISABLE_GAMMA |
                            ScanFlag::SINGLE_LINE |
@@ -1760,14 +1629,10 @@ static void ad_fe_offset_calibration(Genesys_Device* dev, const Genesys_Sensor& 
       turn++;
   } while ((top-bottom)>1 && turn < 100);
 
-  // FIXME: don't overwrite the calibrated values
-  dev->frontend.set_offset(0, 0);
-  dev->frontend.set_offset(1, 0);
-  dev->frontend.set_offset(2, 0);
-  DBG(DBG_info, "%s: offset=(%d,%d,%d)\n", __func__,
-      dev->frontend.get_offset(0),
-      dev->frontend.get_offset(1),
-      dev->frontend.get_offset(2));
+    DBG(DBG_info, "%s: offset=(%d,%d,%d)\n", __func__,
+        dev->frontend.get_offset(0),
+        dev->frontend.get_offset(1),
+        dev->frontend.get_offset(2));
 }
 
 /* this function does the offset calibration by scanning one line of the calibration
@@ -1811,6 +1676,8 @@ void CommandSetGl841::offset_calibration(Genesys_Device* dev, const Genesys_Sens
     session.params.scan_method = dev->settings.scan_method;
     session.params.scan_mode = ScanColorMode::COLOR_SINGLE_PASS;
     session.params.color_filter = dev->settings.color_filter;
+    session.params.contrast_adjustment = dev->settings.contrast;
+    session.params.brightness_adjustment = dev->settings.brightness;
     session.params.flags = ScanFlag::DISABLE_SHADING |
                            ScanFlag::DISABLE_GAMMA |
                            ScanFlag::SINGLE_LINE |
@@ -2160,6 +2027,8 @@ void CommandSetGl841::init_regs_for_warmup(Genesys_Device* dev, const Genesys_Se
     session.params.scan_method = dev->settings.scan_method;
     session.params.scan_mode = ScanColorMode::COLOR_SINGLE_PASS;
     session.params.color_filter = dev->settings.color_filter;
+    session.params.contrast_adjustment = 0;
+    session.params.brightness_adjustment = 0;
     session.params.flags = flags;
 
     compute_session(dev, session, sensor);

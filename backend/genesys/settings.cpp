@@ -86,6 +86,8 @@ std::ostream& operator<<(std::ostream& out, const SetupParams& params)
         << "    channels: " << params.channels << '\n'
         << "    scan_mode: " << params.scan_mode << '\n'
         << "    color_filter: " << params.color_filter << '\n'
+        << "    contrast_adjustment: " << params.contrast_adjustment << '\n'
+        << "    brightness_adjustment: " << params.brightness_adjustment << '\n'
         << "    flags: " << params.flags << '\n'
         << "}";
     return out;
@@ -127,7 +129,8 @@ bool ScanSession::operator==(const ScanSession& other) const
         shading_pixel_offset == other.shading_pixel_offset &&
         buffer_size_read == other.buffer_size_read &&
         enable_ledadd == other.enable_ledadd &&
-        use_host_side_calib == other.use_host_side_calib;
+        use_host_side_calib == other.use_host_side_calib &&
+        use_host_side_gray == other.use_host_side_gray;
 }
 
 std::ostream& operator<<(std::ostream& out, const ScanSession& session)
@@ -164,6 +167,7 @@ std::ostream& operator<<(std::ostream& out, const ScanSession& session)
         << "    buffer_size_read: " << session.buffer_size_read << '\n'
         << "    enable_ledadd: " << session.enable_ledadd << '\n'
         << "    use_host_side_calib: " << session.use_host_side_calib << '\n'
+        << "    use_host_side_gray: " << session.use_host_side_gray << '\n'
         << "    params: " << format_indent_braced_list(4, session.params) << '\n'
         << "}";
     return out;

@@ -442,7 +442,11 @@ Image read_unshuffled_image_from_scanner(Genesys_Device* dev, const ScanSession&
     }
 
     if (dev->model->is_cis && session.params.channels == 3) {
-        pipeline.push_node<ImagePipelineNodeMergeMonoLines>(dev->model->line_mode_color_order);
+        pipeline.push_node<ImagePipelineNodeMergeMonoLinesToColor>(dev->model->line_mode_color_order);
+    }
+
+    if (session.use_host_side_gray) {
+        pipeline.push_node<ImagePipelineNodeMergeColorToGray>();
     }
 
     if (pipeline.get_output_format() == PixelFormat::BGR888) {
@@ -540,7 +544,7 @@ Image read_shuffled_image_from_scanner(Genesys_Device* dev, const ScanSession& s
     }
 
     if (dev->model->is_cis && session.params.channels == 3) {
-        pipeline.push_node<ImagePipelineNodeMergeMonoLines>(dev->model->line_mode_color_order);
+        pipeline.push_node<ImagePipelineNodeMergeMonoLinesToColor>(dev->model->line_mode_color_order);
     }
 
     if (pipeline.get_output_format() == PixelFormat::BGR888) {
@@ -638,11 +642,16 @@ bool should_enable_gamma(const ScanSession& session, const Genesys_Sensor& senso
     if ((session.params.flags & ScanFlag::DISABLE_GAMMA) != ScanFlag::NONE) {
         return false;
     }
+    if (session.params.depth == 16) {
+        return false;
+    }
+    if (session.params.brightness_adjustment != 0 || session.params.contrast_adjustment != 0) {
+        return true;
+    }
+
     if (sensor.gamma[0] == 1.0f || sensor.gamma[1] == 1.0f || sensor.gamma[2] == 1.0f) {
         return false;
     }
-    if (session.params.depth == 16)
-        return false;
 
     return true;
 }
@@ -949,6 +958,14 @@ void compute_session(const Genesys_Device* dev, ScanSession& s, const Genesys_Se
     s.output_startx = static_cast<unsigned>(
                 static_cast<int>(s.params.startx) + sensor.output_pixel_offset);
 
+    if (has_flag(dev->model->flags, ModelFlag::HOST_SIDE_GRAY) && s.params.channels == 1 &&
+        s.params.color_filter == ColorFilter::NONE)
+    {
+        s.use_host_side_gray = true;
+        s.params.channels = 3;
+        s.params.scan_mode = ScanColorMode::COLOR_SINGLE_PASS;
+    }
+
     s.stagger_x = sensor.stagger_x;
     s.stagger_y = sensor.stagger_y;
 
@@ -1114,7 +1131,8 @@ void compute_session(const Genesys_Device* dev, ScanSession& s, const Genesys_Se
         dev->model->asic_type == AsicType::GL845 ||
         dev->model->asic_type == AsicType::GL846)
     {
-        s.enable_ledadd = (s.params.channels == 1 && dev->model->is_cis && dev->settings.true_gray);
+        s.enable_ledadd = (s.params.channels == 1 && dev->model->is_cis &&
+                           s.params.color_filter == ColorFilter::NONE);
     }
 
     s.use_host_side_calib = sensor.use_host_side_calib;
@@ -1212,7 +1230,7 @@ ImagePipelineStack build_image_pipeline(const Genesys_Device& dev, const ScanSes
     }
 
     if (dev.model->is_cis && session.params.channels == 3) {
-        pipeline.push_node<ImagePipelineNodeMergeMonoLines>(dev.model->line_mode_color_order);
+        pipeline.push_node<ImagePipelineNodeMergeMonoLinesToColor>(dev.model->line_mode_color_order);
 
         if (log_image_data) {
             pipeline.push_node<ImagePipelineNodeDebug>(debug_prefix + "_4_after_merge_mono.tiff");
@@ -1271,6 +1289,14 @@ ImagePipelineStack build_image_pipeline(const Genesys_Device& dev, const ScanSes
 
         if (log_image_data) {
             pipeline.push_node<ImagePipelineNodeDebug>(debug_prefix + "_9_after_calibrate.tiff");
+        }
+    }
+
+    if (session.use_host_side_gray) {
+        pipeline.push_node<ImagePipelineNodeMergeColorToGray>();
+
+        if (log_image_data) {
+            pipeline.push_node<ImagePipelineNodeDebug>(debug_prefix + "_10_after_nogray.tiff");
         }
     }
 
