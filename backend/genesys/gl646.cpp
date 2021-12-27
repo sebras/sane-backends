@@ -606,7 +606,9 @@ void CommandSetGl646::init_regs_for_scan_session(Genesys_Device* dev, const Gene
     }
 
   /* true CIS gray if needed */
-    if (dev->model->is_cis && session.params.channels == 1 && dev->settings.true_gray) {
+    if (dev->model->is_cis && session.params.channels == 1 &&
+        session.params.color_filter == ColorFilter::NONE)
+    {
         regs->find_reg(0x05).value |= REG_0x05_LEDADD;
     } else {
         regs->find_reg(0x05).value &= ~REG_0x05_LEDADD;

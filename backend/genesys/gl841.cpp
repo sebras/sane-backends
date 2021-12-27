@@ -1093,7 +1093,8 @@ ScanSession CommandSetGl841::calculate_scan_session(const Genesys_Device* dev,
     ScanFlag flags = ScanFlag::NONE;
 
     // true gray (led add for cis scanners)
-    if (dev->model->is_cis && dev->settings.true_gray &&
+    if (dev->model->is_cis &&
+        settings.color_filter == ColorFilter::NONE &&
         dev->settings.scan_mode != ScanColorMode::COLOR_SINGLE_PASS &&
         dev->model->sensor_id != SensorId::CIS_CANON_LIDE_80)
     {
