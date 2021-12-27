@@ -526,6 +526,9 @@ enum class ModelFlag : unsigned
     // disable fast feeding mode on this scanner
     DISABLE_FAST_FEEDING = 1 << 14,
 
+    // scan gray scans as color and combine on host side
+    HOST_SIDE_GRAY = 1 << 15,
+
     // the scanner uses multi-segment sensors that must be handled during calibration
     SIS_SENSOR = 1 << 16,
 

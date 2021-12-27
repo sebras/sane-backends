@@ -445,6 +445,10 @@ Image read_unshuffled_image_from_scanner(Genesys_Device* dev, const ScanSession&
         pipeline.push_node<ImagePipelineNodeMergeMonoLinesToColor>(dev->model->line_mode_color_order);
     }
 
+    if (session.use_host_side_gray) {
+        pipeline.push_node<ImagePipelineNodeMergeColorToGray>();
+    }
+
     if (pipeline.get_output_format() == PixelFormat::BGR888) {
         pipeline.push_node<ImagePipelineNodeFormatConvert>(PixelFormat::RGB888);
     }
@@ -954,6 +958,14 @@ void compute_session(const Genesys_Device* dev, ScanSession& s, const Genesys_Se
     s.output_startx = static_cast<unsigned>(
                 static_cast<int>(s.params.startx) + sensor.output_pixel_offset);
 
+    if (has_flag(dev->model->flags, ModelFlag::HOST_SIDE_GRAY) && s.params.channels == 1 &&
+        s.params.color_filter == ColorFilter::NONE)
+    {
+        s.use_host_side_gray = true;
+        s.params.channels = 3;
+        s.params.scan_mode = ScanColorMode::COLOR_SINGLE_PASS;
+    }
+
     s.stagger_x = sensor.stagger_x;
     s.stagger_y = sensor.stagger_y;
 
@@ -1277,6 +1289,14 @@ ImagePipelineStack build_image_pipeline(const Genesys_Device& dev, const ScanSes
 
         if (log_image_data) {
             pipeline.push_node<ImagePipelineNodeDebug>(debug_prefix + "_9_after_calibrate.tiff");
+        }
+    }
+
+    if (session.use_host_side_gray) {
+        pipeline.push_node<ImagePipelineNodeMergeColorToGray>();
+
+        if (log_image_data) {
+            pipeline.push_node<ImagePipelineNodeDebug>(debug_prefix + "_10_after_nogray.tiff");
         }
     }
 
