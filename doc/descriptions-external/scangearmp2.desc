@@ -29,6 +29,74 @@
 ;
 
 ; ---- V420 --------------------------
+:model "TS5350i series"
+:interface "USB WiFi"
+:usbid "0x04A9" "0x18D9"
+:status :untested
+:comment "Testers needed!"
+
+:model "G600 series"
+:interface "USB WiFi"
+:usbid "0x04A9" "0x18D5"
+:status :untested
+:comment "Testers needed!"
+
+:model "TS3500 series"
+:interface "USB WiFi"
+:usbid "0x04A9" "0x18D4"
+:status :untested
+:comment "Testers needed!"
+
+:model "TR4600 series"
+:interface "USB WiFi"
+:usbid "0x04A9" "0x18DA"
+:status :untested
+:comment "Testers needed!"
+
+:model "E4500 series"
+:interface "USB WiFi"
+:usbid "0x04A9" "0x18DB"
+:status :untested
+:comment "Testers needed!"
+
+:model "TR4700 series"
+:interface "USB WiFi"
+:usbid "0x04A9" "0x18DC"
+:status :untested
+:comment "Testers needed!"
+
+:model "XK500 series"
+:interface "USB WiFi"
+:usbid "0x04A9" "0x18DF"
+:status :untested
+:comment "Testers needed!"
+
+:model "TS8530 series"
+:interface "USB WiFi"
+:usbid "0x04A9" "0x18E0"
+:status :untested
+:comment "Testers needed!"
+
+:model "XK100 series"
+:interface "USB WiFi"
+:usbid "0x04a9" "0x18E2"
+:status :untested
+:comment "Testers needed!"
+
+:model "TS7530 series"
+:interface "USB WiFi"
+:usbid "0x04a9" "0x18E1"
+:status :untested
+:comment "Testers needed!"
+
+:model "TS7450i series"
+:interface "USB WiFi"
+:usbid "0x04a9" "0x18F7"
+:status :untested
+:comment "Testers needed!"
+
+
+; ---- V420 --------------------------
 :model "GX6000 series"
 :interface "USB WiFi"
 :usbid "0x04a9" "0x0153"
@@ -47,62 +115,62 @@
 ; ---- V410 --------------------------
 :model "TS3400 series"
 :interface "USB WiFi"
-:usbid "0x04a9" "0x18b7"
+:usbid "0x04a9" "0x18B7"
 :status :good
 
 :model "E3400 series"
 :interface "USB WiFi"
-:usbid "0x04a9" "0x18b8"
+:usbid "0x04a9" "0x18B8"
 :status :good
 
 :model "TR7000 series"
 :interface "USB WiFi"
-:usbid "0x04a9" "0x18b9"
+:usbid "0x04a9" "0x18B9"
 :status :good
 
 :model "G2020 series"
 :interface "USB WiFi"
-:usbid "0x04a9" "0x18bd"
+:usbid "0x04A9" "0x18BD"
 :status :good
 
 :model "G3060 series"
 :interface "USB WiFi"
-:usbid "0x04a9" "0x18c3"
+:usbid "0x04A9" "0x18C3"
 :status :good
 
 :model "G2060 series"
 :interface "USB WiFi"
-:usbid "0x04a9" "0x18c1"
+:usbid "0x04A9" "0x18C1"
 :status :good
 
 :model "G3020 series"
 :interface "USB WiFi"
-:usbid "0x04a9" "0x18bf"
+:usbid "0x04A9" "0x18BF"
 :status :good
 
 :model "TS7430 series"
 :interface "USB WiFi"
-:usbid "0x04a9" "0x18b2"
+:usbid "0x04A9" "0x18B2"
 :status :good
 
 :model "XK90 series"
 :interface "USB WiFi"
-:usbid "0x04a9" "0x18b6"
+:usbid "0x04A9" "0x18B6"
 :status :good
 
 :model "TS8430 series"
 :interface "USB WiFi"
-:usbid "0x04a9" "0x18b5"
+:usbid "0x04A9" "0x18B5"
 :status :good
 
 :model "TR7600 series"
 :interface "USB WiFi"
-:usbid "0x04a9" "0x18aa"
+:usbid "0x04A9" "0x18AA"
 :status :good
 
 :model "TR8600 series"
 :interface "USB WiFi"
-:usbid "0x04a9" "0x18ad"
+:usbid "0x04A9" "0x18AD"
 :status :good
 
 :model "TR8630 series"
