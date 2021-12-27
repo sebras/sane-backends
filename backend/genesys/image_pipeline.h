@@ -342,6 +342,33 @@ private:
     unsigned next_channel_ = 0;
 };
 
+
+// A pipeline node that merges 3 mono lines into a gray channel
+class ImagePipelineNodeMergeColorToGray : public ImagePipelineNode
+{
+public:
+    ImagePipelineNodeMergeColorToGray(ImagePipelineNode& source);
+
+    std::size_t get_width() const override { return source_.get_width(); }
+    std::size_t get_height() const override { return source_.get_height(); }
+    PixelFormat get_format() const override { return output_format_; }
+
+    bool eof() const override { return source_.eof(); }
+
+    bool get_next_row_data(std::uint8_t* out_data) override;
+
+private:
+    static PixelFormat get_output_format(PixelFormat input_format);
+
+    ImagePipelineNode& source_;
+    PixelFormat output_format_ = PixelFormat::UNKNOWN;
+    float ch0_mult_ = 0;
+    float ch1_mult_ = 0;
+    float ch2_mult_ = 0;
+
+    std::vector<std::uint8_t> temp_buffer_;
+};
+
 // A pipeline node that shifts colors across lines by the given offsets
 class ImagePipelineNodeComponentShiftLines : public ImagePipelineNode
 {

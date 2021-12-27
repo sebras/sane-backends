@@ -417,6 +417,75 @@ PixelFormat ImagePipelineNodeSplitMonoLines::get_output_format(PixelFormat input
     throw SaneException("Unsupported input format %d", static_cast<unsigned>(input_format));
 }
 
+
+ImagePipelineNodeMergeColorToGray::ImagePipelineNodeMergeColorToGray(ImagePipelineNode& source) :
+    source_(source)
+{
+
+    output_format_ = get_output_format(source_.get_format());
+    float red_mult = 0.2125f;
+    float green_mult = 0.7154f;
+    float blue_mult = 0.0721f;
+
+    switch (get_pixel_format_color_order(source_.get_format())) {
+        case ColorOrder::RGB: {
+            ch0_mult_ = red_mult;
+            ch1_mult_ = green_mult;
+            ch2_mult_ = blue_mult;
+            break;
+        }
+        case ColorOrder::BGR: {
+            ch0_mult_ = blue_mult;
+            ch1_mult_ = green_mult;
+            ch2_mult_ = red_mult;
+            break;
+        }
+        case ColorOrder::GBR: {
+            ch0_mult_ = green_mult;
+            ch1_mult_ = blue_mult;
+            ch2_mult_ = red_mult;
+            break;
+        }
+        default:
+            throw SaneException("Unknown color order");
+    }
+    temp_buffer_.resize(source_.get_row_bytes());
+}
+
+bool ImagePipelineNodeMergeColorToGray::get_next_row_data(std::uint8_t* out_data)
+{
+    auto* src_data = temp_buffer_.data();
+
+    bool got_data = source_.get_next_row_data(src_data);
+
+    auto src_format = source_.get_format();
+
+    for (std::size_t x = 0, width = get_width(); x < width; ++x) {
+        std::uint16_t ch0 = get_raw_channel_from_row(src_data, x, 0, src_format);
+        std::uint16_t ch1 = get_raw_channel_from_row(src_data, x, 1, src_format);
+        std::uint16_t ch2 = get_raw_channel_from_row(src_data, x, 2, src_format);
+        float mono = ch0 * ch0_mult_ + ch1 * ch1_mult_ + ch2 * ch2_mult_;
+        set_raw_channel_to_row(out_data, x, 0, static_cast<std::uint16_t>(mono), output_format_);
+    }
+    return got_data;
+}
+
+PixelFormat ImagePipelineNodeMergeColorToGray::get_output_format(PixelFormat input_format)
+{
+    switch (input_format) {
+        case PixelFormat::RGB111:
+            return PixelFormat::I1;
+        case PixelFormat::RGB888:
+        case PixelFormat::BGR888:
+            return PixelFormat::I8;
+        case PixelFormat::RGB161616:
+        case PixelFormat::BGR161616:
+            return PixelFormat::I16;
+        default: break;
+    }
+    throw SaneException("Unsupported format %d", static_cast<unsigned>(input_format));
+}
+
 ImagePipelineNodeComponentShiftLines::ImagePipelineNodeComponentShiftLines(
         ImagePipelineNode& source, unsigned shift_r, unsigned shift_g, unsigned shift_b) :
     source_(source),
