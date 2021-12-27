@@ -471,8 +471,8 @@ void genesys_init_sensor_tables()
     sensor.register_dpihw = 1200;
     sensor.black_pixels = 87;
     sensor.dummy_pixel = 87;
-    sensor.fau_gain_white_ref = 0;
-    sensor.gain_white_ref = 0;
+    sensor.fau_gain_white_ref = 100;
+    sensor.gain_white_ref = 100;
     sensor.exposure = { 0x0400, 0x0400, 0x0400 };
     sensor.custom_regs = {
         { 0x16, 0x00 }, { 0x17, 0x02 }, { 0x18, 0x00 }, { 0x19, 0x50 },
@@ -519,8 +519,8 @@ void genesys_init_sensor_tables()
     sensor.register_dpihw = 1200;
     sensor.black_pixels = 87;
     sensor.dummy_pixel = 87;
-    sensor.fau_gain_white_ref = 0;
-    sensor.gain_white_ref = 0;
+    sensor.fau_gain_white_ref = 100;
+    sensor.gain_white_ref = 100;
     sensor.exposure = { 0x0400, 0x0400, 0x0400 };
     sensor.custom_regs = {
         { 0x16, 0x00 }, { 0x17, 0x01 }, { 0x18, 0x00 }, { 0x19, 0x50 },
