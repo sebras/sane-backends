@@ -1999,7 +1999,8 @@ SensorExposure scanner_led_calibration(Genesys_Device& dev, const Genesys_Sensor
     const auto& calib_sensor = sanei_genesys_find_sensor(&dev, resolution, channels,
                                                          dev.settings.scan_method);
 
-    if (dev.model->asic_type == AsicType::GL845 ||
+    if (dev.model->asic_type == AsicType::GL841 ||
+        dev.model->asic_type == AsicType::GL845 ||
         dev.model->asic_type == AsicType::GL846 ||
         dev.model->asic_type == AsicType::GL847 ||
         dev.model->asic_type == AsicType::GL124)
