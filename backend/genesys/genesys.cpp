@@ -674,9 +674,9 @@ void scanner_setup_sensor(Genesys_Device& dev, const Genesys_Sensor& sensor,
         regs.set8(custom_reg.address, custom_reg.value);
     }
 
-    if (dev.model->asic_type != AsicType::GL841 &&
-        dev.model->asic_type != AsicType::GL843)
+    if (dev.model->asic_type != AsicType::GL843)
     {
+        // FIXME: remove the above check
         regs_set_exposure(dev.model->asic_type, regs, sensor.exposure);
     }
 
