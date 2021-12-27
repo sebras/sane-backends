@@ -1653,14 +1653,10 @@ static void ad_fe_offset_calibration(Genesys_Device* dev, const Genesys_Sensor& 
       turn++;
   } while ((top-bottom)>1 && turn < 100);
 
-  // FIXME: don't overwrite the calibrated values
-  dev->frontend.set_offset(0, 0);
-  dev->frontend.set_offset(1, 0);
-  dev->frontend.set_offset(2, 0);
-  DBG(DBG_info, "%s: offset=(%d,%d,%d)\n", __func__,
-      dev->frontend.get_offset(0),
-      dev->frontend.get_offset(1),
-      dev->frontend.get_offset(2));
+    DBG(DBG_info, "%s: offset=(%d,%d,%d)\n", __func__,
+        dev->frontend.get_offset(0),
+        dev->frontend.get_offset(1),
+        dev->frontend.get_offset(2));
 }
 
 /* this function does the offset calibration by scanning one line of the calibration
