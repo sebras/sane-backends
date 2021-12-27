@@ -2123,16 +2123,8 @@ SensorExposure scanner_led_calibration(Genesys_Device& dev, const Genesys_Sensor
 
         acceptable = true;
 
-        if (dev.model->asic_type == AsicType::GL841) {
-            for (unsigned i = 0; i < 3; i++) {
-                // we accept +- 2% delta from target
-                if (std::abs(avg[i] - target) > target / 50) {
-                    exp[i] = (exp[i] * target) / avg[i];
-                    acceptable = false;
-                }
-            }
-        } else if (dev.model->asic_type == AsicType::GL845 ||
-                   dev.model->asic_type == AsicType::GL846)
+        if (dev.model->asic_type == AsicType::GL845 ||
+            dev.model->asic_type == AsicType::GL846)
         {
             for (unsigned i = 0; i < 3; i++) {
                 if (avg[i] < bottom[i]) {
@@ -2165,7 +2157,9 @@ SensorExposure scanner_led_calibration(Genesys_Device& dev, const Genesys_Sensor
                     acceptable = false;
                 }
             }
-        } else if (dev.model->asic_type == AsicType::GL124) {
+        } else if (dev.model->asic_type == AsicType::GL841 ||
+                   dev.model->asic_type == AsicType::GL124)
+        {
             for (unsigned i = 0; i < 3; i++) {
                 // we accept +- 2% delta from target
                 if (std::abs(avg[i] - target) > target / 50) {
