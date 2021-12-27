@@ -149,15 +149,6 @@ gl841_init_registers (Genesys_Device * dev)
     dev->reg.init_reg(0x13, 0x00); // SENSOR_DEF
     dev->reg.init_reg(0x14, 0x00); // SENSOR_DEF
     dev->reg.init_reg(0x15, 0x00); // SENSOR_DEF
-    if (dev->model->model_id == ModelId::CANON_LIDE_80) {
-        dev->reg.init_reg(0x10, 0x40);
-        dev->reg.init_reg(0x11, 0x00);
-        dev->reg.init_reg(0x12, 0x40);
-        dev->reg.init_reg(0x13, 0x00);
-        dev->reg.init_reg(0x14, 0x40);
-        dev->reg.init_reg(0x15, 0x00);
-    }
-
     dev->reg.init_reg(0x16, 0x00); // SENSOR_DEF, overwritten in scanner_setup_sensor() below
     dev->reg.init_reg(0x17, 0x00); // SENSOR_DEF, overwritten in scanner_setup_sensor() below
     dev->reg.init_reg(0x18, 0x00); // SENSOR_DEF, overwritten in scanner_setup_sensor() below
@@ -184,36 +175,21 @@ gl841_init_registers (Genesys_Device * dev)
     dev->reg.init_reg(0x27, 0x00);
     dev->reg.init_reg(0x29, 0xff);
 
-    dev->reg.init_reg(0x2c, 0x00);
-    dev->reg.init_reg(0x2d, 0x00);
-    if (dev->model->model_id == ModelId::CANON_LIDE_80) {
-        dev->reg.init_reg(0x2c, sensor.full_resolution >> 8);
-        dev->reg.init_reg(0x2d, sensor.full_resolution & 0xff);
-    }
+    dev->reg.init_reg(0x2c, 0x02); // DPISET: overwritten during scanner setup
+    dev->reg.init_reg(0x2d, 0x58); // DPISET: overwritten during scanner setup
     dev->reg.init_reg(0x2e, 0x80);
     dev->reg.init_reg(0x2f, 0x80);
 
-    dev->reg.init_reg(0x30, 0x00);
-    dev->reg.init_reg(0x31, 0x00);
-    dev->reg.init_reg(0x32, 0x00);
-    dev->reg.init_reg(0x33, 0x00);
-    dev->reg.init_reg(0x34, 0x00);
-    dev->reg.init_reg(0x35, 0x00);
-    dev->reg.init_reg(0x36, 0x00);
-    dev->reg.init_reg(0x37, 0x00);
-    dev->reg.init_reg(0x38, 0x4f);
-    dev->reg.init_reg(0x39, 0xc1);
-    if (dev->model->model_id == ModelId::CANON_LIDE_80) {
-        dev->reg.init_reg(0x31, 0x10);
-        dev->reg.init_reg(0x32, 0x15);
-        dev->reg.init_reg(0x33, 0x0e);
-        dev->reg.init_reg(0x34, 0x40);
-        dev->reg.init_reg(0x35, 0x00);
-        dev->reg.init_reg(0x36, 0x2a);
-        dev->reg.init_reg(0x37, 0x30);
-        dev->reg.init_reg(0x38, 0x2a);
-        dev->reg.init_reg(0x39, 0xf8);
-    }
+    dev->reg.init_reg(0x30, 0x00); // STRPIXEL: overwritten during scanner setup
+    dev->reg.init_reg(0x31, 0x00); // STRPIXEL: overwritten during scanner setup
+    dev->reg.init_reg(0x32, 0x00); // ENDPIXEL: overwritten during scanner setup
+    dev->reg.init_reg(0x33, 0x00); // ENDPIXEL: overwritten during scanner setup
+    dev->reg.init_reg(0x34, 0x00); // DUMMY: overwritten during scanner setup
+    dev->reg.init_reg(0x35, 0x00); // MAXWD: overwritten during scanner setup
+    dev->reg.init_reg(0x36, 0x00); // MAXWD: overwritten during scanner setup
+    dev->reg.init_reg(0x37, 0x00); // MAXWD: overwritten during scanner setup
+    dev->reg.init_reg(0x38, 0x4f); // LPERIOD: overwritten during scanner setup
+    dev->reg.init_reg(0x39, 0xc1); // LPERIOD: overwritten during scanner setup
 
     dev->reg.init_reg(0x3d, 0x00);
     dev->reg.init_reg(0x3e, 0x00);
