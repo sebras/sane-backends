@@ -541,7 +541,6 @@ static void gl841_init_motor_regs_feed(Genesys_Device* dev, const Genesys_Sensor
 {
     DBG_HELPER_ARGS(dbg, "feed_steps=%d, flags=%x", feed_steps, static_cast<unsigned>(flags));
     unsigned step_multiplier = 2;
-    int use_fast_fed = 0;
     unsigned int feedl;
 /*number of scan lines to add in a scan_lines line*/
 
@@ -572,10 +571,6 @@ static void gl841_init_motor_regs_feed(Genesys_Device* dev, const Genesys_Sensor
 
     // BUG: fast table is counted in base_ydpi / 4
     feedl = feed_steps - fast_table.table.size() * 2;
-    use_fast_fed = 1;
-    if (has_flag(dev->model->flags, ModelFlag::DISABLE_FAST_FEEDING)) {
-        use_fast_fed = false;
-    }
 
     reg->set8(0x3d, (feedl >> 16) & 0xf);
     reg->set8(0x3e, (feedl >> 8) & 0xff);
@@ -590,10 +585,6 @@ static void gl841_init_motor_regs_feed(Genesys_Device* dev, const Genesys_Sensor
     reg->find_reg(0x02).value &= ~0x80; /*NOT_HOME OFF*/
 
     reg->find_reg(0x02).value |= REG_0x02_MTRPWR;
-
-    if (use_fast_fed)
-    reg->find_reg(0x02).value |= 0x08;
-    else
     reg->find_reg(0x02).value &= ~0x08;
 
     if (has_flag(flags, ScanFlag::AUTO_GO_HOME)) {
@@ -640,9 +631,6 @@ static void gl841_init_motor_regs_scan(Genesys_Device* dev, const Genesys_Sensor
 
     unsigned step_multiplier = 2;
 
-    int use_fast_fed = 0;
-    unsigned int fast_time;
-    unsigned int slow_time;
     unsigned int feedl;
     unsigned int min_restep = 0x20;
 
@@ -679,54 +667,11 @@ static void gl841_init_motor_regs_scan(Genesys_Device* dev, const Genesys_Sensor
         fast_table.slice_steps(max_fast_slope_steps_count, step_multiplier);
     }
 
-    /* fast fed special cases handling */
-    if (dev->model->gpio_id == GpioId::XP300
-     || dev->model->gpio_id == GpioId::DP685)
-      {
-	/* quirk: looks like at least this scanner is unable to use
-	   2-feed mode */
-	use_fast_fed = 0;
-      }
-    else if (feed_steps < fast_table.table.size() * 2 +
-             (slow_table.table.size() >> static_cast<unsigned>(motor_profile.step_type)))
-    {
-        use_fast_fed = 0;
-        DBG(DBG_info, "%s: feed too short, slow move forced.\n", __func__);
-    } else {
-/* for deciding whether we should use fast mode we need to check how long we
-   need for (fast)accelerating, moving, decelerating, (TODO: stopping?)
-   (slow)accelerating again versus (slow)accelerating and moving. we need
-   fast and slow tables here.
-*/
-/*NOTE: scan_exposure_time is per scan_yres*/
-/*NOTE: fast_exposure is per base_ydpi/4*/
-/*we use full steps as base unit here*/
-	fast_time =
-        (fast_table.table.back() << static_cast<unsigned>(fast_profile->step_type)) / 4 *
-        (feed_steps - fast_table.table.size()*2 -
-         (slow_table.table.size() >> static_cast<unsigned>(motor_profile.step_type)))
-        + fast_table.pixeltime_sum() * 2 + slow_table.pixeltime_sum();
-	slow_time =
-	    (scan_exposure_time * scan_yres) / dev->motor.base_ydpi *
-        (feed_steps - (slow_table.table.size() >> static_cast<unsigned>(motor_profile.step_type)))
-        + slow_table.pixeltime_sum();
-
-        use_fast_fed = fast_time < slow_time;
-    }
-
-    if (has_flag(dev->model->flags, ModelFlag::DISABLE_FAST_FEEDING)) {
-        use_fast_fed = false;
-    }
-
-    if (use_fast_fed) {
-        feedl = feed_steps - fast_table.table.size() * 2 -
-                (slow_table.table.size() >> static_cast<unsigned>(motor_profile.step_type));
-    } else if ((feed_steps << static_cast<unsigned>(motor_profile.step_type)) < slow_table.table.size()) {
+    if ((feed_steps << static_cast<unsigned>(motor_profile.step_type)) < slow_table.table.size()) {
         feedl = 0;
     } else {
         feedl = (feed_steps << static_cast<unsigned>(motor_profile.step_type)) - slow_table.table.size();
     }
-    DBG(DBG_info, "%s: Decided to use %s mode\n", __func__, use_fast_fed?"fast feed":"slow feed");
 
     reg->set8(0x3d, (feedl >> 16) & 0xf);
     reg->set8(0x3e, (feedl >> 8) & 0xff);
@@ -743,9 +688,6 @@ static void gl841_init_motor_regs_scan(Genesys_Device* dev, const Genesys_Sensor
         reg->find_reg(0x02).value &= ~REG_0x02_MTRREV;
     }
 
-    if (use_fast_fed)
-    reg->find_reg(0x02).value |= 0x08;
-    else
     reg->find_reg(0x02).value &= ~0x08;
 
     if (has_flag(flags, ScanFlag::AUTO_GO_HOME))
