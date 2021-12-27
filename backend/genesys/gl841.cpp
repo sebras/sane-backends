@@ -761,8 +761,6 @@ static void gl841_init_optical_regs_scan(Genesys_Device* dev, const Genesys_Sens
                                          const ScanSession& session)
 {
     DBG_HELPER_ARGS(dbg, "exposure_time=%d", exposure_time);
-    uint16_t expavg, expr, expb, expg;
-
     dev->cmd_set->set_fe(dev, sensor, AFE_SET);
 
     /* gpio part.*/
@@ -818,11 +816,7 @@ static void gl841_init_optical_regs_scan(Genesys_Device* dev, const Genesys_Sens
     /* AFEMOD should depend on FESET, and we should set these
      * bits separately */
     reg->find_reg(0x04).value &= ~(REG_0x04_FILTER | REG_0x04_AFEMOD);
-    if (has_flag(session.params.flags, ScanFlag::ENABLE_LEDADD)) {
-        reg->find_reg(0x04).value |= 0x10;	/* no filter */
-    }
-    else if (session.params.channels == 1)
-      {
+    if (session.params.channels == 1) {
     switch (session.params.color_filter)
 	  {
             case ColorFilter::RED:
@@ -852,23 +846,6 @@ static void gl841_init_optical_regs_scan(Genesys_Device* dev, const Genesys_Sens
 
     /* CIS scanners can do true gray by setting LEDADD */
     reg->find_reg(0x87).value &= ~REG_0x87_LEDADD;
-    if (has_flag(session.params.flags, ScanFlag::ENABLE_LEDADD)) {
-        reg->find_reg(0x87).value |= REG_0x87_LEDADD;
-        expr = reg->get16(REG_EXPR);
-        expg = reg->get16(REG_EXPG);
-        expb = reg->get16(REG_EXPB);
-
-	/* use minimal exposure for best image quality */
-	expavg = expg;
-	if (expr < expg)
-	  expavg = expr;
-	if (expb < expavg)
-	  expavg = expb;
-
-        dev->reg.set16(REG_EXPR, expavg);
-        dev->reg.set16(REG_EXPG, expavg);
-        dev->reg.set16(REG_EXPB, expavg);
-      }
 
     // enable gamma tables
     if (should_enable_gamma(session, sensor)) {
@@ -994,6 +971,9 @@ dummy \ scanned lines
 
     dev->total_bytes_read = 0;
     dev->total_bytes_to_read = session.output_line_bytes_requested * session.params.lines;
+    if (session.use_host_side_gray) {
+        dev->total_bytes_to_read /= 3;
+    }
 
     DBG(DBG_info, "%s: total bytes to send = %zu\n", __func__, dev->total_bytes_to_read);
 }
@@ -1031,20 +1011,6 @@ ScanSession CommandSetGl841::calculate_scan_session(const Genesys_Device* dev,
     start += dev->settings.tl_x;
     start = static_cast<float>((start * dev->settings.xres) / MM_PER_INCH);
 
-    // we enable true gray for cis scanners only, and just when doing
-    // scan since color calibration is OK for this mode
-    ScanFlag flags = ScanFlag::NONE;
-
-    // true gray (led add for cis scanners)
-    if (dev->model->is_cis &&
-        settings.color_filter == ColorFilter::NONE &&
-        dev->settings.scan_mode != ScanColorMode::COLOR_SINGLE_PASS &&
-        dev->model->sensor_id != SensorId::CIS_CANON_LIDE_80)
-    {
-        // on Lide 80 the LEDADD bit results in only red LED array being lit
-        flags |= ScanFlag::ENABLE_LEDADD;
-    }
-
     ScanSession session;
     session.params.xres = dev->settings.xres;
     session.params.yres = dev->settings.yres;
@@ -1060,7 +1026,7 @@ ScanSession CommandSetGl841::calculate_scan_session(const Genesys_Device* dev,
     session.params.color_filter = dev->settings.color_filter;
     session.params.contrast_adjustment = dev->settings.contrast;
     session.params.brightness_adjustment = dev->settings.brightness;
-    session.params.flags = flags;
+    session.params.flags = ScanFlag::NONE;
     compute_session(dev, session, sensor);
 
     return session;
