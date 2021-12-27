@@ -888,27 +888,6 @@ static void gl841_init_optical_regs_scan(Genesys_Device* dev, const Genesys_Sens
     reg->set8(0x34, sensor.dummy_pixel);
 }
 
-static int
-gl841_get_led_exposure(Genesys_Device * dev, const Genesys_Sensor& sensor)
-{
-    int d,r,g,b,m;
-    if (!dev->model->is_cis)
-	return 0;
-    d = dev->reg.find_reg(0x19).value;
-
-    r = sensor.exposure.red;
-    g = sensor.exposure.green;
-    b = sensor.exposure.blue;
-
-    m = r;
-    if (m < g)
-	m = g;
-    if (m < b)
-	m = b;
-
-    return m + d;
-}
-
 /** @brief compute exposure time
  * Compute exposure time for the device and the given scan resolution
  */
@@ -917,9 +896,13 @@ static int gl841_exposure_time(Genesys_Device *dev, const Genesys_Sensor& sensor
                                int start,
                                int used_pixels)
 {
-int led_exposure;
-
-  led_exposure=gl841_get_led_exposure(dev, sensor);
+    int led_exposure = 0;
+    if (dev->model->is_cis) {
+        unsigned dummy = dev->reg.find_reg(0x19).value;
+        unsigned min_sensor_exposure = std::min({sensor.exposure.red, sensor.exposure.green,
+                                                 sensor.exposure.blue});
+        led_exposure = dummy + min_sensor_exposure;
+    }
     return sanei_genesys_exposure_time2(dev, profile, slope_dpi,
                                         start + used_pixels,/*+tgtime? currently done in sanei_genesys_exposure_time2 with tgtime = 32 pixel*/
                                         led_exposure);
