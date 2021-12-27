@@ -442,7 +442,7 @@ Image read_unshuffled_image_from_scanner(Genesys_Device* dev, const ScanSession&
     }
 
     if (dev->model->is_cis && session.params.channels == 3) {
-        pipeline.push_node<ImagePipelineNodeMergeMonoLines>(dev->model->line_mode_color_order);
+        pipeline.push_node<ImagePipelineNodeMergeMonoLinesToColor>(dev->model->line_mode_color_order);
     }
 
     if (pipeline.get_output_format() == PixelFormat::BGR888) {
@@ -540,7 +540,7 @@ Image read_shuffled_image_from_scanner(Genesys_Device* dev, const ScanSession& s
     }
 
     if (dev->model->is_cis && session.params.channels == 3) {
-        pipeline.push_node<ImagePipelineNodeMergeMonoLines>(dev->model->line_mode_color_order);
+        pipeline.push_node<ImagePipelineNodeMergeMonoLinesToColor>(dev->model->line_mode_color_order);
     }
 
     if (pipeline.get_output_format() == PixelFormat::BGR888) {
@@ -1218,7 +1218,7 @@ ImagePipelineStack build_image_pipeline(const Genesys_Device& dev, const ScanSes
     }
 
     if (dev.model->is_cis && session.params.channels == 3) {
-        pipeline.push_node<ImagePipelineNodeMergeMonoLines>(dev.model->line_mode_color_order);
+        pipeline.push_node<ImagePipelineNodeMergeMonoLinesToColor>(dev.model->line_mode_color_order);
 
         if (log_image_data) {
             pipeline.push_node<ImagePipelineNodeDebug>(debug_prefix + "_4_after_merge_mono.tiff");

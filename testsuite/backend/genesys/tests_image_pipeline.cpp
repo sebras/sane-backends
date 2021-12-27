@@ -468,7 +468,7 @@ void test_node_invert_1_bits()
     ASSERT_EQ(out_data, expected_data);
 }
 
-void test_node_merge_mono_lines()
+void test_node_merge_mono_lines_to_color()
 {
     using Data = std::vector<std::uint8_t>;
 
@@ -481,7 +481,7 @@ void test_node_merge_mono_lines()
     ImagePipelineStack stack;
     stack.push_first_node<ImagePipelineNodeArraySource>(8, 3, PixelFormat::I8,
                                                         std::move(in_data));
-    stack.push_node<ImagePipelineNodeMergeMonoLines>(ColorOrder::RGB);
+    stack.push_node<ImagePipelineNodeMergeMonoLinesToColor>(ColorOrder::RGB);
 
     ASSERT_EQ(stack.get_output_width(), 8u);
     ASSERT_EQ(stack.get_output_height(), 1u);
@@ -937,7 +937,7 @@ void test_image_pipeline()
     test_node_invert_16_bits();
     test_node_invert_8_bits();
     test_node_invert_1_bits();
-    test_node_merge_mono_lines();
+    test_node_merge_mono_lines_to_color();
     test_node_split_mono_lines();
     test_node_component_shift_lines();
     test_node_pixel_shift_columns_no_switch();

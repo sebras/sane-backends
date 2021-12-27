@@ -304,8 +304,8 @@ bool ImagePipelineNodeInvert::get_next_row_data(std::uint8_t* out_data)
     return got_data;
 }
 
-ImagePipelineNodeMergeMonoLines::ImagePipelineNodeMergeMonoLines(ImagePipelineNode& source,
-                                                                 ColorOrder color_order) :
+ImagePipelineNodeMergeMonoLinesToColor::ImagePipelineNodeMergeMonoLinesToColor(
+        ImagePipelineNode& source, ColorOrder color_order) :
     source_(source),
     buffer_(source_.get_row_bytes())
 {
@@ -314,7 +314,7 @@ ImagePipelineNodeMergeMonoLines::ImagePipelineNodeMergeMonoLines(ImagePipelineNo
     output_format_ = get_output_format(source_.get_format(), color_order);
 }
 
-bool ImagePipelineNodeMergeMonoLines::get_next_row_data(std::uint8_t* out_data)
+bool ImagePipelineNodeMergeMonoLinesToColor::get_next_row_data(std::uint8_t* out_data)
 {
     bool got_data = true;
 
@@ -341,8 +341,8 @@ bool ImagePipelineNodeMergeMonoLines::get_next_row_data(std::uint8_t* out_data)
     return got_data;
 }
 
-PixelFormat ImagePipelineNodeMergeMonoLines::get_output_format(PixelFormat input_format,
-                                                               ColorOrder order)
+PixelFormat ImagePipelineNodeMergeMonoLinesToColor::get_output_format(PixelFormat input_format,
+                                                                      ColorOrder order)
 {
     switch (input_format) {
         case PixelFormat::I1: {

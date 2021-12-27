@@ -295,11 +295,11 @@ private:
 };
 
 // A pipeline node that merges 3 mono lines into a color channel
-class ImagePipelineNodeMergeMonoLines : public ImagePipelineNode
+class ImagePipelineNodeMergeMonoLinesToColor : public ImagePipelineNode
 {
 public:
-    ImagePipelineNodeMergeMonoLines(ImagePipelineNode& source,
-                                    ColorOrder color_order);
+    ImagePipelineNodeMergeMonoLinesToColor(ImagePipelineNode& source,
+                                           ColorOrder color_order);
 
     std::size_t get_width() const override { return source_.get_width(); }
     std::size_t get_height() const override { return source_.get_height() / 3; }
