@@ -2044,9 +2044,6 @@ SensorExposure scanner_led_calibration(Genesys_Device& dev, const Genesys_Sensor
 
     std::uint16_t target = sensor.gain_white_ref * 256;
 
-    std::uint16_t min_exposure = 500; // only gl841
-    std::uint16_t max_exposure = ((exp[0] + exp[1] + exp[2]) / 3) * 2; // only gl841
-
     std::uint16_t top[3] = {};
     std::uint16_t bottom[3] = {};
 
@@ -2127,52 +2124,11 @@ SensorExposure scanner_led_calibration(Genesys_Device& dev, const Genesys_Sensor
         acceptable = true;
 
         if (dev.model->asic_type == AsicType::GL841) {
-            if (avg[0] < avg[1] * 0.95 || avg[1] < avg[0] * 0.95 ||
-                avg[0] < avg[2] * 0.95 || avg[2] < avg[0] * 0.95 ||
-                avg[1] < avg[2] * 0.95 || avg[2] < avg[1] * 0.95)
-            {
-                acceptable = false;
-            }
-
-            // led exposure is not acceptable if white level is too low.
-            // ~80 hardcoded value for white level
-            if (avg[0] < 20000 || avg[1] < 20000 || avg[2] < 20000) {
-                acceptable = false;
-            }
-
-            // for scanners using target value
-            if (target > 0) {
-                acceptable = true;
-                for (unsigned i = 0; i < 3; i++) {
-                    // we accept +- 2% delta from target
-                    if (std::abs(avg[i] - target) > target / 50) {
-                        exp[i] = (exp[i] * target) / avg[i];
-                        acceptable = false;
-                    }
-                }
-            } else {
-                if (!acceptable) {
-                    unsigned avga = (avg[0] + avg[1] + avg[2]) / 3;
-                    exp[0] = (exp[0] * avga) / avg[0];
-                    exp[1] = (exp[1] * avga) / avg[1];
-                    exp[2] = (exp[2] * avga) / avg[2];
-                    /*  Keep the resulting exposures below this value. Too long exposure drives
-                        the ccd into saturation. We may fix this by relying on the fact that
-                        we get a striped scan without shading, by means of statistical calculation
-                    */
-                    unsigned avge = (exp[0] + exp[1] + exp[2]) / 3;
-
-                    if (avge > max_exposure) {
-                        exp[0] = (exp[0] * max_exposure) / avge;
-                        exp[1] = (exp[1] * max_exposure) / avge;
-                        exp[2] = (exp[2] * max_exposure) / avge;
-                    }
-                    if (avge < min_exposure) {
-                        exp[0] = (exp[0] * min_exposure) / avge;
-                        exp[1] = (exp[1] * min_exposure) / avge;
-                        exp[2] = (exp[2] * min_exposure) / avge;
-                    }
-
+            for (unsigned i = 0; i < 3; i++) {
+                // we accept +- 2% delta from target
+                if (std::abs(avg[i] - target) > target / 50) {
+                    exp[i] = (exp[i] * target) / avg[i];
+                    acceptable = false;
                 }
             }
         } else if (dev.model->asic_type == AsicType::GL845 ||
