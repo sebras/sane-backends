@@ -374,25 +374,13 @@ static void gl846_init_motor_regs_scan(Genesys_Device* dev,
 
     unsigned step_multiplier = gl846_get_step_multiplier(reg);
 
-    bool use_fast_fed = false;
-    if (dev->settings.yres == 4444 && feed_steps > 100 && !has_flag(flags, ScanFlag::FEEDING)) {
-        use_fast_fed = true;
-    }
-    if (has_flag(dev->model->flags, ModelFlag::DISABLE_FAST_FEEDING)) {
-        use_fast_fed = false;
-    }
-
     reg->set24(REG_LINCNT, scan_lines);
 
     reg->set8(REG_0x02, 0);
     sanei_genesys_set_motor_power(*reg, true);
 
     std::uint8_t reg02 = reg->get8(REG_0x02);
-    if (use_fast_fed) {
-        reg02 |= REG_0x02_FASTFED;
-    } else {
-        reg02 &= ~REG_0x02_FASTFED;
-    }
+    reg02 &= ~REG_0x02_FASTFED;
 
     if (has_flag(flags, ScanFlag::AUTO_GO_HOME)) {
         reg02 |= REG_0x02_AGOHOME | REG_0x02_NOTHOME;
@@ -446,18 +434,11 @@ static void gl846_init_motor_regs_scan(Genesys_Device* dev,
 
     unsigned feedl = feed_steps;
     unsigned dist = 0;
-    if (use_fast_fed) {
-        feedl <<= static_cast<unsigned>(fast_profile->step_type);
-        dist = (scan_table.table.size() + 2 * fast_table.table.size());
-        // TODO read and decode REG_0xAB
-        dist += (reg->get8(0x5e) & 31);
-        dist += reg->get8(REG_FEDCNT);
-    } else {
-        feedl <<= static_cast<unsigned>(motor_profile.step_type);
-        dist = scan_table.table.size();
-        if (has_flag(flags, ScanFlag::FEEDING)) {
-            dist *= 2;
-        }
+
+    feedl <<= static_cast<unsigned>(motor_profile.step_type);
+    dist = scan_table.table.size();
+    if (has_flag(flags, ScanFlag::FEEDING)) {
+        dist *= 2;
     }
 
     // check for overflow
@@ -513,7 +494,7 @@ static void gl846_init_motor_regs_scan(Genesys_Device* dev,
     reg->set8(REG_BWDSTEP, min_restep);
 
     std::uint32_t z1, z2;
-    sanei_genesys_calculate_zmod(use_fast_fed,
+    sanei_genesys_calculate_zmod(false,
                                  scan_exposure_time * ccdlmt * tgtime,
                                  scan_table.table,
                                  scan_table.table.size(),
