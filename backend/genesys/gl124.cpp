@@ -453,7 +453,6 @@ static void gl124_init_motor_regs_scan(Genesys_Device* dev,
                                        ScanFlag flags)
 {
     DBG_HELPER(dbg);
-  int use_fast_fed;
   unsigned int lincnt, fast_dpi;
   unsigned int feedl,dist;
     std::uint32_t z1, z2;
@@ -466,9 +465,6 @@ static void gl124_init_motor_regs_scan(Genesys_Device* dev,
         scan_yres, static_cast<unsigned>(motor_profile.step_type), scan_lines, scan_dummy,
         feed_steps, static_cast<unsigned>(scan_mode),
         static_cast<unsigned>(flags));
-
-  /* we never use fast fed since we do manual feed for the scans */
-  use_fast_fed=0;
 
   /* enforce motor minimal scan speed
    * @TODO extend motor struct for this value */
@@ -515,12 +511,6 @@ static void gl124_init_motor_regs_scan(Genesys_Device* dev,
 
   /* compute register 02 value */
     std::uint8_t r02 = REG_0x02_NOTHOME;
-
-    if (use_fast_fed) {
-        r02 |= REG_0x02_FASTFED;
-    } else {
-        r02 &= ~REG_0x02_FASTFED;
-    }
 
     if (has_flag(flags, ScanFlag::AUTO_GO_HOME)) {
         r02 |= REG_0x02_AGOHOME;
@@ -573,9 +563,6 @@ static void gl124_init_motor_regs_scan(Genesys_Device* dev,
     if (has_flag(flags, ScanFlag::FEEDING)) {
         dist *= 2;
     }
-    if (use_fast_fed) {
-        dist += fast_table.table.size() * 2;
-    }
 
   /* get sure we don't use insane value */
     if (dist < feedl) {
@@ -587,7 +574,7 @@ static void gl124_init_motor_regs_scan(Genesys_Device* dev,
     reg->set24(REG_FEEDL, feedl);
 
   /* doesn't seem to matter that much */
-    sanei_genesys_calculate_zmod(use_fast_fed,
+    sanei_genesys_calculate_zmod(false,
 				  scan_exposure_time,
                                  scan_table.table,
                                  scan_table.table.size(),
