@@ -191,6 +191,7 @@ void genesys_init_usb_device_tables()
     model.gpio_id = GpioId::CANON_LIDE_35;
     model.motor_id = MotorId::CANON_LIDE_35;
     model.flags = ModelFlag::DARK_WHITE_CALIBRATION |
+                  ModelFlag::HOST_SIDE_GRAY |
                   ModelFlag::CUSTOM_GAMMA;
     model.buttons = GENESYS_HAS_SCAN_SW |
                     GENESYS_HAS_FILE_SW |
@@ -1110,6 +1111,7 @@ void genesys_init_usb_device_tables()
     model.gpio_id = GpioId::CANON_LIDE_35;
     model.motor_id = MotorId::CANON_LIDE_60;
     model.flags = ModelFlag::DARK_WHITE_CALIBRATION |
+                  ModelFlag::HOST_SIDE_GRAY |
                   ModelFlag::CUSTOM_GAMMA;
 
     model.buttons = GENESYS_HAS_COPY_SW |
@@ -1165,6 +1167,7 @@ void genesys_init_usb_device_tables()
     model.gpio_id = GpioId::CANON_LIDE_80;
     model.motor_id = MotorId::CANON_LIDE_80;
     model.flags = ModelFlag::DARK_WHITE_CALIBRATION |
+                  ModelFlag::HOST_SIDE_GRAY |
                   ModelFlag::CUSTOM_GAMMA;
     model.buttons = GENESYS_HAS_SCAN_SW |
                     GENESYS_HAS_FILE_SW |

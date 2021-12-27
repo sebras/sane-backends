@@ -76,9 +76,6 @@ struct Genesys_Settings
 
     ColorFilter color_filter = ColorFilter::NONE;
 
-    // true if scan is true gray, false if monochrome scan
-    int true_gray = 0;
-
     // value for contrast enhancement in the [-100..100] range
     int contrast = 0;
 
@@ -327,6 +324,9 @@ struct ScanSession {
     // whether calibration should be performed host-side
     bool use_host_side_calib = false;
 
+    // whether gray scanning should be performed host-side (scan as color and merge to gray)
+    bool use_host_side_gray = false;
+
     void assert_computed() const
     {
         if (!computed) {
@@ -378,6 +378,7 @@ void serialize(Stream& str, ScanSession& x)
     serialize(str, x.buffer_size_read);
     serialize(str, x.enable_ledadd);
     serialize(str, x.use_host_side_calib);
+    serialize(str, x.use_host_side_gray);
 }
 
 std::ostream& operator<<(std::ostream& out, const SANE_Parameters& params);

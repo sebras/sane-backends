@@ -673,9 +673,9 @@ void scanner_setup_sensor(Genesys_Device& dev, const Genesys_Sensor& sensor,
         regs.set8(custom_reg.address, custom_reg.value);
     }
 
-    if (dev.model->asic_type != AsicType::GL841 &&
-        dev.model->asic_type != AsicType::GL843)
+    if (dev.model->asic_type != AsicType::GL843)
     {
+        // FIXME: remove the above check
         regs_set_exposure(dev.model->asic_type, regs, sensor.exposure);
     }
 
@@ -1884,7 +1884,8 @@ void scanner_coarse_gain_calibration(Genesys_Device& dev, const Genesys_Sensor& 
         float curr_output = 0;
         float target_value = 0;
 
-        if (dev.model->asic_type == AsicType::GL842 ||
+        if (dev.model->asic_type == AsicType::GL841 ||
+            dev.model->asic_type == AsicType::GL842 ||
             dev.model->asic_type == AsicType::GL843)
         {
             std::vector<std::uint16_t> values;
@@ -1900,18 +1901,6 @@ void scanner_coarse_gain_calibration(Genesys_Device& dev, const Genesys_Sensor& 
             curr_output = static_cast<float>(values[unsigned((values.size() - 1) * 0.95)]);
             target_value = calib_sensor->gain_white_ref * coeff;
 
-        } else if (dev.model->asic_type == AsicType::GL841) {
-            // FIXME: use the GL843 approach
-            unsigned max = 0;
-            for (std::size_t x = 0; x < image.get_width(); x++) {
-                auto value = image.get_raw_channel(x, 0, ch);
-                if (value > max) {
-                    max = value;
-                }
-            }
-
-            curr_output = max;
-            target_value = 65535.0f;
         } else {
             // FIXME: use the GL843 approach
             auto width = image.get_width();
@@ -2009,7 +1998,8 @@ SensorExposure scanner_led_calibration(Genesys_Device& dev, const Genesys_Sensor
     const auto& calib_sensor = sanei_genesys_find_sensor(&dev, resolution, channels,
                                                          dev.settings.scan_method);
 
-    if (dev.model->asic_type == AsicType::GL845 ||
+    if (dev.model->asic_type == AsicType::GL841 ||
+        dev.model->asic_type == AsicType::GL845 ||
         dev.model->asic_type == AsicType::GL846 ||
         dev.model->asic_type == AsicType::GL847 ||
         dev.model->asic_type == AsicType::GL124)
@@ -2017,14 +2007,9 @@ SensorExposure scanner_led_calibration(Genesys_Device& dev, const Genesys_Sensor
         regs = dev.reg; // FIXME: apply this to all ASICs
     }
 
-    unsigned yres = resolution;
-    if (dev.model->asic_type == AsicType::GL841) {
-        yres = dev.settings.yres; // FIXME: remove this
-    }
-
     ScanSession session;
     session.params.xres = resolution;
-    session.params.yres = yres;
+    session.params.yres = resolution;
     session.params.startx = 0;
     session.params.starty = 0;
     session.params.pixels = dev.model->x_size_calib_mm * resolution / MM_PER_INCH;
@@ -2045,26 +2030,13 @@ SensorExposure scanner_led_calibration(Genesys_Device& dev, const Genesys_Sensor
 
     dev.cmd_set->init_regs_for_scan_session(&dev, calib_sensor, &regs, session);
 
-    if (dev.model->asic_type == AsicType::GL841) {
-        dev.interface->write_registers(regs); // FIXME: remove this
-    }
-
     std::uint16_t exp[3];
 
-    if (dev.model->asic_type == AsicType::GL841) {
-        exp[0] = sensor.exposure.red;
-        exp[1] = sensor.exposure.green;
-        exp[2] = sensor.exposure.blue;
-    } else {
-        exp[0] = calib_sensor.exposure.red;
-        exp[1] = calib_sensor.exposure.green;
-        exp[2] = calib_sensor.exposure.blue;
-    }
+    exp[0] = calib_sensor.exposure.red;
+    exp[1] = calib_sensor.exposure.green;
+    exp[2] = calib_sensor.exposure.blue;
 
     std::uint16_t target = sensor.gain_white_ref * 256;
-
-    std::uint16_t min_exposure = 500; // only gl841
-    std::uint16_t max_exposure = ((exp[0] + exp[1] + exp[2]) / 3) * 2; // only gl841
 
     std::uint16_t top[3] = {};
     std::uint16_t bottom[3] = {};
@@ -2101,16 +2073,6 @@ SensorExposure scanner_led_calibration(Genesys_Device& dev, const Genesys_Sensor
     for (unsigned i_test = 0; i_test < 100 && !acceptable; ++i_test) {
         regs_set_exposure(dev.model->asic_type, regs, { exp[0], exp[1], exp[2] });
 
-        if (dev.model->asic_type == AsicType::GL841) {
-            // FIXME: remove
-            dev.interface->write_register(0x10, (exp[0] >> 8) & 0xff);
-            dev.interface->write_register(0x11, exp[0] & 0xff);
-            dev.interface->write_register(0x12, (exp[1] >> 8) & 0xff);
-            dev.interface->write_register(0x13, exp[1] & 0xff);
-            dev.interface->write_register(0x14, (exp[2] >> 8) & 0xff);
-            dev.interface->write_register(0x15, exp[2] & 0xff);
-        }
-
         dev.interface->write_registers(regs);
 
         dbg.log(DBG_info, "starting line reading");
@@ -2121,15 +2083,13 @@ SensorExposure scanner_led_calibration(Genesys_Device& dev, const Genesys_Sensor
             if (dev.model->asic_type == AsicType::GL841) {
                 scanner_stop_action(dev);
                 dev.cmd_set->move_back_home(&dev, true);
-                return { exp[0], exp[1], exp[2] };
             } else if (dev.model->asic_type == AsicType::GL124) {
                 scanner_stop_action(dev);
-                return calib_sensor.exposure;
             } else {
                 scanner_stop_action(dev);
                 dev.cmd_set->move_back_home(&dev, true);
-                return calib_sensor.exposure;
             }
+            return { exp[0], exp[1], exp[2] };
         }
 
         auto image = read_unshuffled_image_from_scanner(&dev, session, session.output_line_bytes);
@@ -2155,57 +2115,8 @@ SensorExposure scanner_led_calibration(Genesys_Device& dev, const Genesys_Sensor
 
         acceptable = true;
 
-        if (dev.model->asic_type == AsicType::GL841) {
-            if (avg[0] < avg[1] * 0.95 || avg[1] < avg[0] * 0.95 ||
-                avg[0] < avg[2] * 0.95 || avg[2] < avg[0] * 0.95 ||
-                avg[1] < avg[2] * 0.95 || avg[2] < avg[1] * 0.95)
-            {
-                acceptable = false;
-            }
-
-            // led exposure is not acceptable if white level is too low.
-            // ~80 hardcoded value for white level
-            if (avg[0] < 20000 || avg[1] < 20000 || avg[2] < 20000) {
-                acceptable = false;
-            }
-
-            // for scanners using target value
-            if (target > 0) {
-                acceptable = true;
-                for (unsigned i = 0; i < 3; i++) {
-                    // we accept +- 2% delta from target
-                    if (std::abs(avg[i] - target) > target / 50) {
-                        exp[i] = (exp[i] * target) / avg[i];
-                        acceptable = false;
-                    }
-                }
-            } else {
-                if (!acceptable) {
-                    unsigned avga = (avg[0] + avg[1] + avg[2]) / 3;
-                    exp[0] = (exp[0] * avga) / avg[0];
-                    exp[1] = (exp[1] * avga) / avg[1];
-                    exp[2] = (exp[2] * avga) / avg[2];
-                    /*  Keep the resulting exposures below this value. Too long exposure drives
-                        the ccd into saturation. We may fix this by relying on the fact that
-                        we get a striped scan without shading, by means of statistical calculation
-                    */
-                    unsigned avge = (exp[0] + exp[1] + exp[2]) / 3;
-
-                    if (avge > max_exposure) {
-                        exp[0] = (exp[0] * max_exposure) / avge;
-                        exp[1] = (exp[1] * max_exposure) / avge;
-                        exp[2] = (exp[2] * max_exposure) / avge;
-                    }
-                    if (avge < min_exposure) {
-                        exp[0] = (exp[0] * min_exposure) / avge;
-                        exp[1] = (exp[1] * min_exposure) / avge;
-                        exp[2] = (exp[2] * min_exposure) / avge;
-                    }
-
-                }
-            }
-        } else if (dev.model->asic_type == AsicType::GL845 ||
-                   dev.model->asic_type == AsicType::GL846)
+        if (dev.model->asic_type == AsicType::GL845 ||
+            dev.model->asic_type == AsicType::GL846)
         {
             for (unsigned i = 0; i < 3; i++) {
                 if (avg[i] < bottom[i]) {
@@ -2238,7 +2149,9 @@ SensorExposure scanner_led_calibration(Genesys_Device& dev, const Genesys_Sensor
                     acceptable = false;
                 }
             }
-        } else if (dev.model->asic_type == AsicType::GL124) {
+        } else if (dev.model->asic_type == AsicType::GL841 ||
+                   dev.model->asic_type == AsicType::GL124)
+        {
             for (unsigned i = 0; i < 3; i++) {
                 // we accept +- 2% delta from target
                 if (std::abs(avg[i] - target) > target / 50) {
@@ -4368,12 +4281,6 @@ static Genesys_Settings calculate_scan_settings(Genesys_Scanner* s)
         settings.color_filter = ColorFilter::BLUE;
     } else {
         settings.color_filter = ColorFilter::NONE;
-    }
-
-    if (s->color_filter == "None") {
-        settings.true_gray = 1;
-    } else {
-        settings.true_gray = 0;
     }
 
     // brightness and contrast only for for 8 bit scans

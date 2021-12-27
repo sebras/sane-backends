@@ -468,7 +468,7 @@ void test_node_invert_1_bits()
     ASSERT_EQ(out_data, expected_data);
 }
 
-void test_node_merge_mono_lines()
+void test_node_merge_mono_lines_to_color()
 {
     using Data = std::vector<std::uint8_t>;
 
@@ -481,7 +481,7 @@ void test_node_merge_mono_lines()
     ImagePipelineStack stack;
     stack.push_first_node<ImagePipelineNodeArraySource>(8, 3, PixelFormat::I8,
                                                         std::move(in_data));
-    stack.push_node<ImagePipelineNodeMergeMonoLines>(ColorOrder::RGB);
+    stack.push_node<ImagePipelineNodeMergeMonoLinesToColor>(ColorOrder::RGB);
 
     ASSERT_EQ(stack.get_output_width(), 8u);
     ASSERT_EQ(stack.get_output_height(), 1u);
@@ -499,6 +499,37 @@ void test_node_merge_mono_lines()
 
     ASSERT_EQ(out_data, expected_data);
 }
+
+void test_node_merge_color_to_gray()
+{
+    using Data = std::vector<std::uint8_t>;
+
+    Data in_data = {
+        0x10, 0x20, 0x30, 0x11, 0x21, 0x31,
+        0x12, 0x22, 0x32, 0x13, 0x23, 0x33,
+        0x14, 0x24, 0x34, 0x15, 0x25, 0x35,
+        0x16, 0x26, 0x36, 0x17, 0x27, 0x37,
+    };
+
+    ImagePipelineStack stack;
+    stack.push_first_node<ImagePipelineNodeArraySource>(8, 1, PixelFormat::RGB888,
+                                                        std::move(in_data));
+    stack.push_node<ImagePipelineNodeMergeColorToGray>();
+
+    ASSERT_EQ(stack.get_output_width(), 8u);
+    ASSERT_EQ(stack.get_output_height(), 1u);
+    ASSERT_EQ(stack.get_output_row_bytes(), 8u);
+    ASSERT_EQ(stack.get_output_format(), PixelFormat::I8);
+
+    auto out_data = stack.get_all_data();
+
+    Data expected_data = {
+        0x1d, 0x1e, 0x1f, 0x20, 0x21, 0x22, 0x23, 0x24
+    };
+
+    ASSERT_EQ(out_data, expected_data);
+}
+
 
 void test_node_split_mono_lines()
 {
@@ -937,7 +968,8 @@ void test_image_pipeline()
     test_node_invert_16_bits();
     test_node_invert_8_bits();
     test_node_invert_1_bits();
-    test_node_merge_mono_lines();
+    test_node_merge_mono_lines_to_color();
+    test_node_merge_color_to_gray();
     test_node_split_mono_lines();
     test_node_component_shift_lines();
     test_node_pixel_shift_columns_no_switch();
