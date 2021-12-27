@@ -2033,15 +2033,9 @@ SensorExposure scanner_led_calibration(Genesys_Device& dev, const Genesys_Sensor
 
     std::uint16_t exp[3];
 
-    if (dev.model->asic_type == AsicType::GL841) {
-        exp[0] = sensor.exposure.red;
-        exp[1] = sensor.exposure.green;
-        exp[2] = sensor.exposure.blue;
-    } else {
-        exp[0] = calib_sensor.exposure.red;
-        exp[1] = calib_sensor.exposure.green;
-        exp[2] = calib_sensor.exposure.blue;
-    }
+    exp[0] = calib_sensor.exposure.red;
+    exp[1] = calib_sensor.exposure.green;
+    exp[2] = calib_sensor.exposure.blue;
 
     std::uint16_t target = sensor.gain_white_ref * 256;
 
