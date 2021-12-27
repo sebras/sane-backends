@@ -2090,15 +2090,13 @@ SensorExposure scanner_led_calibration(Genesys_Device& dev, const Genesys_Sensor
             if (dev.model->asic_type == AsicType::GL841) {
                 scanner_stop_action(dev);
                 dev.cmd_set->move_back_home(&dev, true);
-                return { exp[0], exp[1], exp[2] };
             } else if (dev.model->asic_type == AsicType::GL124) {
                 scanner_stop_action(dev);
-                return calib_sensor.exposure;
             } else {
                 scanner_stop_action(dev);
                 dev.cmd_set->move_back_home(&dev, true);
-                return calib_sensor.exposure;
             }
+            return { exp[0], exp[1], exp[2] };
         }
 
         auto image = read_unshuffled_image_from_scanner(&dev, session, session.output_line_bytes);
