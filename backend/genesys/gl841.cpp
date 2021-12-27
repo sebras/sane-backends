@@ -330,11 +330,6 @@ gl841_init_registers (Genesys_Device * dev)
 
         dev->interface->write_0x8c(0x10, 0x94);
         dev->interface->write_register(0x09, 0x10);
-
-        // FIXME: the following code originally changed 0x6b, but due to bug the 0x6c register was
-        // effectively changed. The current behavior matches the old code, but should probably be fixed.
-        dev->reg.find_reg(0x6c).value |= REG_0x6B_GPO18;
-        dev->reg.find_reg(0x6c).value &= ~REG_0x6B_GPO17;
     }
 }
 
