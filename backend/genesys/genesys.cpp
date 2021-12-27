@@ -2101,16 +2101,6 @@ SensorExposure scanner_led_calibration(Genesys_Device& dev, const Genesys_Sensor
     for (unsigned i_test = 0; i_test < 100 && !acceptable; ++i_test) {
         regs_set_exposure(dev.model->asic_type, regs, { exp[0], exp[1], exp[2] });
 
-        if (dev.model->asic_type == AsicType::GL841) {
-            // FIXME: remove
-            dev.interface->write_register(0x10, (exp[0] >> 8) & 0xff);
-            dev.interface->write_register(0x11, exp[0] & 0xff);
-            dev.interface->write_register(0x12, (exp[1] >> 8) & 0xff);
-            dev.interface->write_register(0x13, exp[1] & 0xff);
-            dev.interface->write_register(0x14, (exp[2] >> 8) & 0xff);
-            dev.interface->write_register(0x15, exp[2] & 0xff);
-        }
-
         dev.interface->write_registers(regs);
 
         dbg.log(DBG_info, "starting line reading");
