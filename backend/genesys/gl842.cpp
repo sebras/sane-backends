@@ -17,9 +17,6 @@
 
     You should have received a copy of the GNU General Public License
     along with this program.  If not, see <https://www.gnu.org/licenses/>.
-
-    As a special exception, the authors of SANE give permission for
-    additional uses of the libraries contained in this release of SANE.
 */
 
 #define DEBUG_DECLARE_ONLY
