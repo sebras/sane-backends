@@ -1,0 +1,55 @@
+epsonds: Implemented support for the following Epson scanners:
+ - DS-1610
+ - DS-1630
+ - DS-1660W
+ - DS-310
+ - DS-320
+ - DS-360W
+ - DS-410
+ - DS-530
+ - DS-530II
+ - DS-531
+ - DS-535
+ - DS-535H
+ - DS-535II
+ - DS-570W
+ - DS-570WII
+ - DS-571W
+ - DS-575W
+ - DS-575WII
+ - DS-70
+ - DS-80W
+ - ES-200
+ - ES-300W
+ - ES-300WR
+ - ES-400
+ - ES-400II
+ - ES-50
+ - ES-500W
+ - ES-500WII
+ - ES-500WR
+ - ES-55R
+ - ES-580W
+ - ES-60W
+ - ES-60WB
+ - ES-60WW
+ - ES-65WR
+ - ET-2700 Series
+ - ET-2710 Series
+ - ET-2810 Series
+ - ET-M2140 Series
+ - ET-M3140 Series
+ - EW-052A Series
+ - FF-680W
+ - L3150 Series
+ - L3200 Series
+ - L3210 Series
+ - L3250 Series
+ - L4150 Series
+ - M2140 Series
+ - M3140 Series
+ - RR-60
+ - RR-600W
+ - RR-70W
+ - XP-2100 Series
+ - XP-2150 Series
