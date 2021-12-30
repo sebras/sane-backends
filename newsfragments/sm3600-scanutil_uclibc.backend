@@ -1,0 +1,1 @@
+sm3600-scanutil: Fixed support for embedded platforms using `uclibc`.
