@@ -36,11 +36,15 @@ epsonds: Implemented support for the following Epson scanners:
  - ES-65WR
  - ET-2700 Series
  - ET-2710 Series
+ - ET-2810 Series
  - ET-M2140 Series
  - ET-M3140 Series
  - EW-052A Series
  - FF-680W
  - L3150 Series
+ - L3200 Series
+ - L3210 Series
+ - L3250 Series
  - L4150 Series
  - M2140 Series
  - M3140 Series
@@ -48,3 +52,4 @@ epsonds: Implemented support for the following Epson scanners:
  - RR-600W
  - RR-70W
  - XP-2100 Series
+ - XP-2150 Series
