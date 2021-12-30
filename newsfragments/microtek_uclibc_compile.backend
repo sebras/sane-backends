@@ -1,0 +1,1 @@
+microtek: Fixed support for embedded platforms using `uclibc`.
