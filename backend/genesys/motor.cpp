@@ -115,7 +115,8 @@ MotorSlopeTable create_slope_table_for_speed(const MotorSlope& slope, unsigned t
     unsigned max_speed_shifted_w = slope.max_speed_w >> step_shift;
 
     if (target_speed_shifted_w < max_speed_shifted_w) {
-        dbg.log(DBG_warn, "failed to reach target speed");
+        dbg.vlog(DBG_warn, "failed to reach target speed %d %d", target_speed_w,
+                  slope.max_speed_w);
     }
 
     if (target_speed_shifted_w >= std::numeric_limits<std::uint16_t>::max()) {
