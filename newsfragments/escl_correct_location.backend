@@ -1,0 +1,1 @@
+escl: Fixed scanning problems on certain scanners due to incorrect URL being used (https://gitlab.com/sane-project/backends/-/issues/479)
