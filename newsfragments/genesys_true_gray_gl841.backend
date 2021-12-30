@@ -1,0 +1,4 @@
+genesys: Fixed gray scans to use white color for illumination instead of red on
+Canon LiDE 35/40/50/60 and potentially other gl841 scanners. Old behavior can
+be restored via the color filter setting to select specific color component for
+the gray scan.
