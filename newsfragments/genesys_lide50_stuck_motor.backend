@@ -1,0 +1,2 @@
+genesys: Fixed issue of motor becoming stuck at certain resolutions on Canon LiDE 50
+and possibly other gl841 scanners (https://gitlab.com/sane-project/backends/-/issues/357)

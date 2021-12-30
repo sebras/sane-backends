@@ -1,0 +1,2 @@
+genesys: Fixed incorrect LED exposure calculation leading to wrong color balance on certain
+resolutions on gl841 scanners
