@@ -1,0 +1,2 @@
+genesys: Fixed control of contrast and brigthness on certain scanners
+(https://gitlab.com/sane-project/backends/-/issues/271).

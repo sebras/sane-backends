@@ -1,11 +1,10 @@
 <!-- -*- Mode: markdown -*- -->
 
-## UNRELEASED
+<!-- Please add new release notes to the newsfragments directory (read the README.md file there).
+     The release notes will be collected at release time and put into this document
+     semi-automatically.
+-->
 
-- `canon_lide70`: Color adjustments. Faster scanning at 600 dpi for
-  the LiDE 600.
-
-
 ## New with 1.0.32 (released 2021-02-14)
 
 ### Backends
