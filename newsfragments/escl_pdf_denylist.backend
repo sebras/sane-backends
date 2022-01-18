@@ -1,2 +1,0 @@
-escl: Implemented support for disabling PDF output on scanners where it's broken
-(https://gitlab.com/sane-project/backends/-/issues/510)

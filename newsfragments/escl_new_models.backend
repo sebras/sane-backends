@@ -1,9 +1,4 @@
-escl: Added support for Brother DCP-J772DW and Epson ET-2750 scanners.
 escl: Marked the following scanners as supported in documentation:
  - Brother MFC-J985DW
  - Brother MFC-J1300DW
- - Canon PIXMA G4511
- - Canon PIXMA TR4550 Series
- - Canon PIXMA TR4551 Series
  - Canon PIXMA TS8350 Series
- - Epson ET-6100
