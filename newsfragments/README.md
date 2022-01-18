@@ -10,6 +10,7 @@ The file extension specifies the type of a change. The following are currently s
  - .frontend: a new feature or a bugfix for a backend.
  - .security: a fix for security issue.
  - .removal: a deprecation or removal of functionality.
+ - .misc: miscellaneous changes
 
 Please don't add links to the merge requests into the release notes. If it's not clear where
 the feature is coming from by looking into the git history (e.g. if a release note is being
