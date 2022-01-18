@@ -1,1 +1,0 @@
-gt68xx: Fixed several memory issues that can potentially lead to crashes or increased memory use.

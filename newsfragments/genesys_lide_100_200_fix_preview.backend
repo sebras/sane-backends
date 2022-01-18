@@ -1,3 +1,0 @@
-genesys: Removed support for broken 75 and 100 dpi hardware resolutions to fix preview
-scans (https://gitlab.com/sane-project/backends/-/issues/383). These resolutions did
-not have any benefit compared to next smallest 150 dpi resolution.

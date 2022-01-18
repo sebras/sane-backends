@@ -1,2 +1,0 @@
-genesys: Fixed crashes when handling slightly unexpected conditions
-(https://gitlab.com/sane-project/backends/-/issues/464).
