@@ -1,1 +1,0 @@
-escl: Fixed handling of ipp-usb redirects to localhost which previously caused certain scanners to be always reported as busy.
