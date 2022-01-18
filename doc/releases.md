@@ -24,14 +24,9 @@ Once you pick a date (and time), say `DT`, the planning is simply a
 matter of counting back from there:
 
  - `$DT -  0 days`: **release** :confetti_ball:
- - `$DT -  7 days`: **code freeze** after which only documentation
-   changes are allowed.  As an exception, critical issues, such as
-   hardware destroying bugs, compile errors and completely unusable
-   backends, may still be addressed.
- - `$DT - 21 days`: **feature freeze** after which only bug fixes and
-   documentation changes are allowed.
- - `$DT - 35 days`: **schedule announcement** including the timetable
-   and a pointer to the corresponding GitLab milestone.
+ - `$DT - 21 days`: **branch off** after which the release branch will not get any new features,
+   only bug fixes and translations.
+ - `$DT - 35 days`: **schedule announcement** including the timetable.
 
 Feel free to adjust the offsets if that works better.  Also, pinging
 on the mailing list well in advance, say two, three months, about a
@@ -45,30 +40,23 @@ suitable date for everyone involved is a good idea.
 
 ## Schedule Announcement
 
-Create a milestone on GitLab that shows the schedule.  The milestone
-can be used to collect issues resolved and merge request merged to
-`master` that will be included in the `$new_version` and coordinate
-work leading up to the release.
+Send an announcement to the `sane-devel` mailing list announcing the schedule.
 
-Send an announcement to the `sane-devel` mailing list announcing the
-schedule and point to the milestone.
+All notable changes are tracked as separate files in the newsfragments directory which means there's
+no need to track them manually.
 
-Add closed issues that triggered code changes and merge requests to
-the milestone so you get an idea of what has been added, fixed,
-changed or removed.  This will serve as the input for the NEWS file,
-together with `git log` and `git diff` outputs.
+## Branch off
 
-## Feature Freeze
+A separate branch for the upcoming release is created on the repository. This marks the point when
+the code for the release effectively enters a feature freeze and no new features will land into
+the release branch.
 
-New backends, support for new models and new bells and whistles for
-existing backends (and frontends) are no longer allowed so this is a
-good time to cut a `release/$new_version` branch from the latest
-public `master` and publish it on GitLab.
+Use branch in the format of `release-1.2.x` so that it's clear that further bugfix releases will
+happen on that branch.
 
-Notify `sane-devel` of the Feature Freeze and point out that merge
-requests that have to be included in the upcoming release need to be
-targeted at `release/$new_version`.  Anything else can go to `master`
-as usual.
+Notify `sane-devel` of the Branch Off and point out that merge requests that have to be included
+in the upcoming release need to be targeted at release branch. Anything else can go to `master` as
+usual.
 
 For backends added since the `$old_version`, make sure that its
 `.desc` file includes a `:new :yes` near the top.  You can find such
@@ -81,52 +69,46 @@ git ls-files -- backend | while read f; do
 done | cat
 ```
 
-## Code Freeze
+Feature changes are no longer allowed, bar exceptional circumstances, so now is a good time to
+sync the `po/*.po` files in the repository for translators.
 
-Code changes are no longer allowed, bar exceptional circumstances, so
-now is a good time to sync the `po/*.po` files in the repository for
-translators.
-
-Announce the Code Freeze on `sane-devel` and invite translators to
-contribute their updates.
-
-Start creating the `NEWS` file section for the `$new_version`.  You
-should now have a list of issues and merge requests to help you get
-started.  The following commands may be helpful as well
-
-``` sh
-git diff --stat $old_version..release/$new_version | sort -k3 -n
-                        # sorted list of heavily modified files
-git log $old_version..release/$new_version
-git diff $old_version..release/$new_version    # nitty-gritty details
-```
-
-> Note that `po/*.po` files normally see quite a lot of changes due to
-> the inclusion of source code line numbers.
+Announce the Branch Off on `sane-devel` and invite translators to contribute their updates.
+Release manager should ensure that whichever branch the translator work on, their work lands on
+both the release branch and the master branch.
 
 Occasionally, you may notice changes that have not been documented,
 either in a `.desc` file or a manual page.  Now is a good time to
 rectify the omission.
 
-Happy that `NEWS` covers everything?  Then
-
-``` sh
-git commit NEWS
-git push origin release/$new_version
-```
-
-on the day of the release.
+The `NEWS` file is updated during the release time, there's no need to do anything with the
+release notes now.
 
 ## Release
 
-Once `release/$new_version` contains everything that should go in,
-including the changes to the `NEWS` file, releasing `sane-backends` is
-as easy as pushing a tag and clicking a web UI button.  GitLab CI/CD
+The release consists of two parts: a release notes MR and the actual release.
+
+The release notes are handled by the towncrier tool. The easiest way to use it is from virtualenv:
+
+``` sh
+virtualenv some/path/to/virtualenv
+source some/path/to/virtualenv
+pip install towncrier
+```
+
+To update the `NEWS `document, run the following:
+
+```
+towncrier --version $new_version --date `date -u  +%F`
+```
+
+After that, create a new MR, merge it and fetch the new release branch.
+
+The actual release is as easy as pushing a tag and clicking a web UI button.  GitLab CI/CD
 takes care of the rest.
 
 ``` sh
-git tag -a -s $new_version -m Release
-git push --tags origin release/$new_release
+git tag -a -s $new_version -m "Release $new_version"
+git push --tags origin release-$new_release
 ```
 
 The final job in the release pipeline that is triggered by the above
@@ -209,12 +191,9 @@ your post approved sooner rather than later.
 
 ## Post-Release
 
-With the release all done, there are still a few finishing touches that need taking care of*
+With the release all done, there are still a few finishing touches that need taking care of:
 
-* merge `release/$new_version` to current `master`
 * remove the `:new` tag from all `doc/descriptions*/*.desc` files
-* add a new `UNRELEASED` section at top of the `NEWS` file
 * update this file!
-* and get those changes on the `master` branch
 
 That's All Folks!
