@@ -1854,10 +1854,7 @@ void CommandSetGl646::send_gamma_table(Genesys_Device* dev, const Genesys_Sensor
       bits = 12;
     }
 
-  /* allocate temporary gamma tables: 16 bits words, 3 channels */
-  std::vector<uint8_t> gamma(size * 2 * 3);
-
-    sanei_genesys_generate_gamma_buffer(dev, sensor, bits, size-1, size, gamma.data());
+    auto gamma = generate_gamma_buffer(dev, sensor, bits, size-1, size);
 
   /* table address */
   switch (dev->reg.find_reg(0x05).value >> 6)
