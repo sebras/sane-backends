@@ -654,16 +654,16 @@ std::vector<std::uint16_t> get_gamma_table(Genesys_Device* dev, const Genesys_Se
  * @param bits number of bits used by gamma
  * @param max value for gamma
  * @param size of the gamma table
- * @param gamma allocated gamma buffer to fill
  */
-void sanei_genesys_generate_gamma_buffer(Genesys_Device* dev,
+std::vector<std::uint8_t> generate_gamma_buffer(Genesys_Device* dev,
                                                 const Genesys_Sensor& sensor,
-                                                int bits,
-                                                int max,
-                                                int size,
-                                         std::uint8_t* gamma)
+                                                int bits, int max, int size)
 {
     DBG_HELPER(dbg);
+
+    // the gamma tables are 16 bits words and contain 3 channels
+    std::vector<std::uint8_t> gamma(size * 2 * 3);
+
     std::vector<std::uint16_t> rgamma = get_gamma_table(dev, sensor, GENESYS_RED);
     std::vector<std::uint16_t> ggamma = get_gamma_table(dev, sensor, GENESYS_GREEN);
     std::vector<std::uint16_t> bgamma = get_gamma_table(dev, sensor, GENESYS_BLUE);
@@ -713,6 +713,7 @@ void sanei_genesys_generate_gamma_buffer(Genesys_Device* dev,
           gamma[i * 2 + size * 4 + 1] = (value >> 8) & 0xff;
         }
     }
+    return gamma;
 }
 
 
@@ -730,10 +731,7 @@ void sanei_genesys_send_gamma_table(Genesys_Device* dev, const Genesys_Sensor& s
 
   size = 256 + 1;
 
-    // allocate temporary gamma tables: 16 bits words, 3 channels
-    std::vector<std::uint8_t> gamma(size * 2 * 3, 255);
-
-    sanei_genesys_generate_gamma_buffer(dev, sensor, 16, 65535, size, gamma.data());
+    auto gamma = generate_gamma_buffer(dev, sensor, 16, 65535, size);
 
     // loop sending gamma tables NOTE: 0x01000000 not 0x10000000
     for (i = 0; i < 3; i++) {
