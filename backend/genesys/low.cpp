@@ -662,11 +662,26 @@ std::vector<std::uint8_t> generate_gamma_buffer(Genesys_Device* dev,
     DBG_HELPER(dbg);
 
     // the gamma tables are 16 bits words and contain 3 channels
-    std::vector<std::uint8_t> gamma(size * 2 * 3);
+    std::vector<std::uint8_t> gamma_buf(size * 2 * 3);
 
     std::vector<std::uint16_t> rgamma = get_gamma_table(dev, sensor, GENESYS_RED);
     std::vector<std::uint16_t> ggamma = get_gamma_table(dev, sensor, GENESYS_GREEN);
     std::vector<std::uint16_t> bgamma = get_gamma_table(dev, sensor, GENESYS_BLUE);
+
+    auto get_gamma_value = [](const std::vector<std::uint16_t>& array,
+                              std::size_t index) -> std::uint16_t
+    {
+        if (index < array.size())
+            return array[index];
+        return 0xffff;
+    };
+
+    auto set_gamma_buf_value = [](std::vector<std::uint8_t>& array, std::size_t pos,
+                                  std::uint16_t value)
+    {
+        array[pos * 2 + 0] = value & 0xff;
+        array[pos * 2 + 1] = (value >> 8) & 0xff;
+    };
 
   if(dev->settings.contrast!=0 || dev->settings.brightness!=0)
     {
@@ -680,40 +695,21 @@ std::vector<std::uint8_t> generate_gamma_buffer(Genesys_Device* dev,
                              dev->settings.brightness);
       for (int i = 0; i < size; i++)
         {
-          uint16_t value=rgamma[i];
-          value=lut[value];
-          gamma[i * 2 + size * 0 + 0] = value & 0xff;
-          gamma[i * 2 + size * 0 + 1] = (value >> 8) & 0xff;
-
-          value=ggamma[i];
-          value=lut[value];
-          gamma[i * 2 + size * 2 + 0] = value & 0xff;
-          gamma[i * 2 + size * 2 + 1] = (value >> 8) & 0xff;
-
-          value=bgamma[i];
-          value=lut[value];
-          gamma[i * 2 + size * 4 + 0] = value & 0xff;
-          gamma[i * 2 + size * 4 + 1] = (value >> 8) & 0xff;
+            set_gamma_buf_value(gamma_buf, i + size * 0, lut[get_gamma_value(rgamma, i)]);
+            set_gamma_buf_value(gamma_buf, i + size * 1, lut[get_gamma_value(ggamma, i)]);
+            set_gamma_buf_value(gamma_buf, i + size * 2, lut[get_gamma_value(bgamma, i)]);
         }
     }
   else
     {
       for (int i = 0; i < size; i++)
         {
-          uint16_t value=rgamma[i];
-          gamma[i * 2 + size * 0 + 0] = value & 0xff;
-          gamma[i * 2 + size * 0 + 1] = (value >> 8) & 0xff;
-
-          value=ggamma[i];
-          gamma[i * 2 + size * 2 + 0] = value & 0xff;
-          gamma[i * 2 + size * 2 + 1] = (value >> 8) & 0xff;
-
-          value=bgamma[i];
-          gamma[i * 2 + size * 4 + 0] = value & 0xff;
-          gamma[i * 2 + size * 4 + 1] = (value >> 8) & 0xff;
+            set_gamma_buf_value(gamma_buf, i + size * 0, get_gamma_value(rgamma, i));
+            set_gamma_buf_value(gamma_buf, i + size * 1, get_gamma_value(ggamma, i));
+            set_gamma_buf_value(gamma_buf, i + size * 2, get_gamma_value(bgamma, i));
         }
     }
-    return gamma;
+    return gamma_buf;
 }
 
 
