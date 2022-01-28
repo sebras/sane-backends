@@ -392,12 +392,9 @@ extern void sanei_genesys_load_lut(unsigned char* lut,
                                    int out_min, int out_max,
                                    int slope, int offset);
 
-void sanei_genesys_generate_gamma_buffer(Genesys_Device* dev,
-                                         const Genesys_Sensor& sensor,
-                                         int bits,
-                                         int max,
-                                         int size,
-                                         std::uint8_t* gamma);
+std::vector<std::uint8_t> generate_gamma_buffer(Genesys_Device* dev,
+                                                const Genesys_Sensor& sensor,
+                                                int bits, int max, int size);
 
 unsigned session_adjust_output_pixels(unsigned output_pixels,
                                       const Genesys_Device& dev, const Genesys_Sensor& sensor,
