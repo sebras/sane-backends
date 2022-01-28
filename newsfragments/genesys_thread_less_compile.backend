@@ -1,1 +1,0 @@
-genesys: Add support for running in embedded environments that don't support threads.
