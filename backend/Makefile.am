@@ -109,9 +109,9 @@ install-data-hook: install-becfg install-firmware-path $(INSTALL_LOCKPATH)
 # are not lost.
 install-becfg: becfg
 	@# Libtool has a bug where it will sometimes symlink the last
-	@# installed library in $(sanelibdir) to $(sanelibdir)/libsane.*.
-	@# Having two libsane's can cause issues so get rid of it.
-	-rm -f $(DESTDIR)$(sanelibdir)/libsane.*
+	@# installed library in $(execsanelibdir) to libsane.*, which
+	@# causes a conflict with the actual libsane.* in $(libdir).
+	-rm -f $(DESTDIR)$(execsanelibdir)/libsane.*
 	test -z "$(configdir)" || $(MKDIR_P) "$(DESTDIR)$(configdir)"
 	test -z "$(configdir)/dll.d" || $(MKDIR_P) "$(DESTDIR)$(configdir)/dll.d"
 	@list="$(BACKEND_CONFS_ENABLED) saned.conf dll.conf"; for cfg in $$list; do \
@@ -225,8 +225,11 @@ EXTRA_LTLIBRARIES = $(be_convenience_libs) $(be_dlopen_libs)
 
 lib_LTLIBRARIES = libsane.la
 
-sanelibdir = $(libdir)/sane
-sanelib_LTLIBRARIES = $(BACKEND_LIBS_ENABLED) libsane-dll.la
+# The libraries in $(libdir)/sane are platform-dependent files, so they
+# should be installed during "make install-exec". For that reason, the
+# variable names here must contain "exec".
+execsanelibdir = $(libdir)/sane
+execsanelib_LTLIBRARIES = $(BACKEND_LIBS_ENABLED) libsane-dll.la
 
 COMMON_LIBS = ../lib/liblib.la $(XML_LIBS)
 
