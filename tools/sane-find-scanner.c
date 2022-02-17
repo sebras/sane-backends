@@ -384,7 +384,7 @@ check_usb_file (char *file_name)
 	{
 	  if (verbose > 1)
 	    printf (" open ok, vendor and product ids were identified\n");
-	  printf ("found USB scanner (vendor=0x%04x, "
+	  printf ("found possible USB scanner (vendor=0x%04x, "
 		  "product=0x%04x) at %s\n", vendor, product, file_name);
 	}
       else
@@ -392,8 +392,8 @@ check_usb_file (char *file_name)
 	  if (verbose > 1)
 	    printf (" open ok, but vendor and product could NOT be "
 		    "identified\n");
-	  printf ("found USB scanner (UNKNOWN vendor and product) "
-		  "at device %s\n", file_name);
+	  printf ("found possible USB scanner (UNKNOWN vendor and "
+		  "product) at %s\n", file_name);
 	  unknown_found = SANE_TRUE;
 	}
       device_found = SANE_TRUE;
@@ -676,7 +676,8 @@ check_libusb_device (struct usb_device *dev, SANE_Bool from_file)
     {
       char * chipset = check_usb_chip (dev, verbose, from_file);
 
-      printf ("found USB scanner (vendor=0x%04x", dev->descriptor.idVendor);
+      printf ("found possible USB scanner (vendor=0x%04x",
+	      dev->descriptor.idVendor);
       if (vendor)
 	printf (" [%s]", vendor);
       printf (", product=0x%04x", dev->descriptor.idProduct);
@@ -1066,7 +1067,7 @@ check_libusb_device (libusb_device *dev, SANE_Bool from_file)
       if(!from_file)
         chipset = check_usb_chip (verbose, desc, hdl, config0);
 
-      printf ("found USB scanner (vendor=0x%04x", vid);
+      printf ("found possible USB scanner (vendor=0x%04x", vid);
       if (vendor)
 	printf (" [%s]", vendor);
       printf (", product=0x%04x", pid);
