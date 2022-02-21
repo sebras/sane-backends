@@ -917,9 +917,9 @@ fetch_options (SANE_Device * device)
 	  scanimage_exit (1);
 	}
 
-      /* create command line option only for settable options */
-      if (!SANE_OPTION_IS_SETTABLE (opt->cap) || opt->type == SANE_TYPE_GROUP)
-	continue;
+      /* create command line option only for non-group options */
+      if (opt->type == SANE_TYPE_GROUP)
+        continue;
 
       option_number[option_count] = i;
 
@@ -1072,6 +1072,12 @@ process_backend_option (SANE_Handle device, int optnum, const char *optarg)
 
   opt = sane_get_option_descriptor (device, optnum);
 
+  if (!SANE_OPTION_IS_SETTABLE (opt->cap))
+    {
+      fprintf (stderr, "%s: attempted to set readonly option %s\n",
+               prog_name, opt->name);
+      scanimage_exit (1);
+    }
   if (!SANE_OPTION_IS_ACTIVE (opt->cap))
     {
       fprintf (stderr, "%s: attempted to set inactive option %s\n",
