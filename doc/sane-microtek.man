@@ -104,7 +104,7 @@ ignored.  A sample configuration file is shown below:
 The configuration file may also contain the special tokens
 .I norealcal
 or
-.I noprecal.
+.IR noprecal .
 .I norealcal
 will disable the use of magic, undocumented scanner calibration commands
 which are known to work on the E6, but may not work with other models.

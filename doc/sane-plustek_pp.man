@@ -244,12 +244,12 @@ Unpack this tar-ball and go to the directory:
 .IR sane\-backends/doc/plustek .
 Within this directory, you should find a script called:
 .IR MakeModule.sh .
-Now if your Linux kernelsources are installed correctly,
+Now if your Linux kernel sources are installed correctly,
 it should be possible to build, install and load the
 module
 .BR pt_drv .
 .B Please note,
-that the kernelsources need to be configured correctly.
+that the kernel sources need to be configured correctly.
 Refer to your distributions
 manual on how this is done. As root user, try
 .PP
@@ -259,8 +259,8 @@ the script will try and get all necessary information about your
 running kernel and will lead you through the whole installation
 process.
 .br
-.B Note: Installing and loading the can only be done as
-superuser.
+.B Note:
+Installing and loading the module can only be done as a superuser.
 .PP
 
 .SH "KERNEL MODULE SETUP"
@@ -366,18 +366,18 @@ Sample entry for file
 .IR /etc/modules.conf :
 .PP
 .RS
-alias char\-major\-40 pt_drv
+.I alias char\-major\-40 pt_drv
 .br
-pre-install pt_drv modprobe -k parport
+.I pre-install pt_drv modprobe -k parport
 .br
-options pt_drv lampoff=180 warmup=15 port=0x378 lOffonEnd=0 mov=0 slowIO=0 forceMode=0
+.I options pt_drv lampoff=180 warmup=15 port=0x378 lOffonEnd=0 mov=0 slowIO=0 forceMode=0
 .RE
 .PP
 For multidevice support, simply add values separated by commas to
-the different options
+the different options:
 .PP
 .RS
-options pt_drv port=0x378,0x278 mov=0,4 slowIO=0,1 forceMode=0,1
+.I options pt_drv port=0x378,0x278 mov=0,4 slowIO=0,1 forceMode=0,1
 .RE
 .PP
 Remember to call
@@ -425,10 +425,10 @@ The shared library implementing this backend (present on systems that
 support dynamic loading).
 .TP
 .I /lib/modules/<Kernel-Version>/kernel/drivers/parport/pt_drv.o
-The Linux kernelmodule for kernels < 2.6.x.
+The Linux kernel module for kernels < 2.6.x.
 .TP
 .I /lib/modules/<Kernel-Version>/kernel/drivers/parport/pt_drv.ko
-The Linux kernelmodule for kernels >= 2.6.x.
+The Linux kernel module for kernels >= 2.6.x.
 .PP
 
 .SH ENVIRONMENT
@@ -472,21 +472,18 @@ Please send any information and bug-reports to:
 .br
 .B SANE Mailing List
 .PP
-Additional info and hints can be obtained from our
-.br
-Mailing-List archive at:
-.br
-.I http://www.sane\-project.org/mailing\-lists.html
+Additional info and hints can be obtained from our mailing-List archive at:
+.IR http://www.sane\-project.org/mailing\-lists.html .
 .PP
 To obtain debug messages from the backend, please set the
 environment-variable
 .B SANE_DEBUG_PLUSTEK_PP
-before calling your favorite scan-frontend (i.e.
-.BR xscanimage (1)), i.e.:
-.br
+before calling your favorite SANE frontend (e.g.
+.BR xscanimage (1)):
+.PP
 .I export SANE_DEBUG_PLUSTEK_PP=20 ; xscanimage
 .PP
-The value controls the verbosity of the backend.
+The value controls the verbosity of the output.
 .PP
 
 .SH "KNOWN BUGS & RESTRICTIONS"

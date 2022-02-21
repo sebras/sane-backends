@@ -86,7 +86,7 @@ Instead of using the device name, the scanner can be autodetected by
 statements which are already included into
 .IR mustek_usb.conf .
 This is only supported with Linux 2.4.8 and higher and all systems that
-support libsub. "vendor_id" and "product_id" are hexadecimal numbers that
+support libusb. "vendor_id" and "product_id" are hexadecimal numbers that
 identify the scanner. If this doesn't work, a device name and the option
 specifying the scanner type must be placed in
 .I mustek_usb.conf

@@ -100,7 +100,7 @@ Note that the backend needs to run as root or has to have appropriate access
 rights to
 .I /dev/parport*
 if libieee1284 support is compiled in. To allow user
-access to the scanner run the backend through the network interface (See
+access to the scanner run the backend through the network interface (see
 .BR saned (8)
 and
 .BR sane\-net (5)).
@@ -109,15 +109,12 @@ Note also that the backend
 support
 .IR "parport sharing" ,
 i.e. if you try printing while scanning, your computer may crash. To enable
-parport sharing, you have to enable libieee1284 at compile time. This backend
-also conflicts with the
-.BR sane\-musteka4s2 (5)
-backend. You can only enable one of them in your
+parport sharing, you have to enable
+.BR libieee1284 (3)
+at compile time.
+You may also have to enable the backend explicitly in your
 .IR dll.conf .
-However, you have
-to enable the backend explicitly in your
-.IR dll.conf ,
-just remove the hash mark in the line "mustek_pp".
+Just remove the hash mark in the line "mustek_pp".
 
 .SH "DEVICE DEFINITION"
 This backend allows multiple devices being defined and configured via the

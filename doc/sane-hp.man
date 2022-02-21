@@ -220,8 +220,9 @@ levels reduce verbosity.
 .TP
 .B SANE_HOME_HP
 Only used for OS/2 and along with use of HP PhotoSmart PhotoScanner.
-Must be set to the directory where the directory .sane is located.
-Is used to save and read the calibration file.
+Must be set to the directory where the directory
+.I .sane
+is located. Is used to save and read the calibration file.
 .TP
 .B SANE_HP_KEEPOPEN_SCSI
 .TP

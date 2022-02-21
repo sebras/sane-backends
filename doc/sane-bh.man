@@ -89,7 +89,7 @@ compression is disabled and the image is delivered in a
 frame.
 .TP
 .B \-\-mode lineart|halftone [lineart]
-Selects the scan mode (e.g., lineart,monochrome, or color).
+Selects the scan mode (e.g., lineart, monochrome, or color).
 .TP
 .B \-\-resolution 200|240|300dpi [200]
 Sets the resolution of the scanned image.  Each scanner model supports
@@ -148,7 +148,8 @@ Bottom-right y position of scan area.
 .B \-\-source Automatic Document Feeder|Manual Feed Tray [Automatic Document Feeder]
 Selects the scan source (such as a document feeder).  This option is provided
 to allow multiple image scans with
-.BR xsane (1); it has no other purpose.
+.BR xsane (1);
+it has no other purpose.
 .TP
 .B \-\-batch[=(yes|no)] [no]
 Enable/disable batch mode scanning.  Batch mode allows scanning at maximum throughput
@@ -171,7 +172,7 @@ Sets the timeout in seconds for semi-automatic feeder.  The value 0 specifies
 the hardware default value which varies based on the scanner model.
 .TP
 .B \-\-check\-adf[=(yes|no)] [no]
-Check ADF Status prior to starting scan using the OBJECT POSITION command.
+Check ADF status prior to starting scan using the OBJECT POSITION command.
 Note that this feature requires RSC firmware level 1.5 or higher and dip
 switch 4 must be in the on position.  NOTE: This option has not been tested
 extensively and may produce undesirable results.
@@ -381,7 +382,7 @@ with a hash mark (#) are ignored.
 .SH OPTIONS
 The following options can be specified in the
 .I bh.conf
-file.
+file:
 .TP
 .B disable\-optional\-frames
 This option prevents the backend from sending any optional frames.  This
@@ -544,7 +545,9 @@ prior to initiating the last scan command.  Currently, there is no mechanism
 available for the frontend to pass this knowledge to the backend.
 If batch mode is enabled and the
 .B \-\-end\-count
-terminates a scanadf session,
+terminates a
+.BR scanadf (1)
+session,
 an extra page will be pulled through the scanner, but is neither read
 nor delivered to the frontend.  The issue can be avoided by specifying
 .B \-\-batch=no
@@ -556,7 +559,7 @@ with revision 1.2 or higher that is faster and more reliable than the
 standard Bar/Patch code decoder.  This is not currently supported.
 
 .SH BUGS
-This is a new backend; detailed bug reports are welcome -- and expected ;)
+Detailed bug reports are welcome -- and expected ;)
 .PP
 If you have found something that you think is a bug, please attempt to
 recreate it with the

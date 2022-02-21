@@ -266,7 +266,7 @@ will ignore this option.
 
 The
 .B \-\-bay
-option selects which bay to scan
+option selects which bay to scan.
 
 The
 .B \-\-eject

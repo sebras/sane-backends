@@ -82,7 +82,7 @@ scanimage \-\-help \-d stv680
 
 .TP
 .B \-\-mode
-selects the basic mode of operation of the webcams valid choices.
+selects the basic mode of operation of the webcam's valid choices.
 
 The read resolution mode is 8 bits, output resolution is 24 bits.
 Selects the resolution for a scan.
@@ -113,7 +113,7 @@ value loaded into the scanner. Scale \-32 .. 0 .. +32 in steps of 1.
 .TP
 .B \-\-white\-level\-g \-32..+32
 Selects what green radiance level should be
-considered "white", when scanning some sheets by changing the calibration i
+considered "white", when scanning some sheets by changing the calibration
 value loaded into the scanner. Scale \-32 .. 0 .. +32 in steps of 1.
 
 .TP

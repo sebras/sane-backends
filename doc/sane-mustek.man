@@ -181,7 +181,9 @@ is 128. Because of double buffering the buffer actually sent to the scanner
 is half the size of this value. Try to increase this value to achieve higher
 scan speeds. Note that some ScanExpress scanners don't like buffer sizes above
 64 kb (buffersize = 128). If your sg driver can't set SCSI buffer sizes at
-runtime you may have to change that value, too. See sane\-scsi(5) for details.
+runtime you may have to change that value, too. See
+.BR sane\-scsi (5)
+for details.
 .PP
 Option
 .B blocksize
@@ -312,7 +314,7 @@ I/O ports.  Thus, either make frontends such as
 .BR scanimage (1)
 and
 .BR xscanimage (1)
-setuid root (generally not recommended for safety reasons) or, alternatively,
+setuid root (generally not recommended for security reasons) or, alternatively,
 access this backend through the network daemon
 .BR saned (8).
 .PP

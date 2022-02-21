@@ -49,7 +49,9 @@ This image is a 1599-by-1200 pixel full-color image constructed by filtering
 and interpolating the "raw" image.  The filtering and interpolation is
 done in software, so this mode is very slow.  Also, this mode places
 restrictions on how the image is read which means that the "preview" mode
-of xscanimage does not work in Super Resolution mode.
+of
+.BR xscanimage (1)
+does not work in Super Resolution mode.
 .RB ( xcam (1)
 and the non-preview modes of
 .BR scanimage (1)
@@ -150,4 +152,4 @@ David F. Skoll
 .PP
 The backend is derived from
 .BR sane\-hp (5)
-by David Mosberger
+by David Mosberger.

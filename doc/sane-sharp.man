@@ -98,7 +98,7 @@ default selection.
 
 .TP
 .B \-\-custom\-gamma
-Custom Gamma  This option determines whether a builtin or a custom
+Custom Gamma. This option determines whether a builtin or a custom
 gamma table is used. Possible settings are:
 .I yes
 (enables custom gamma tables) or
@@ -197,7 +197,7 @@ This option is only available in scan mode
 
 .TP
 .B \-\-threshold-red
-Sets the threshold for the red component of a pixel in
+Sets the threshold for the red component of a pixel
 in lineart color scan mode. Possible values are 1..255.
 The default value is 128.
 This option is only available in scan mode color
@@ -205,7 +205,7 @@ This option is only available in scan mode color
 
 .TP
 .B \-\-threshold-green
-Sets the threshold for the green component of a pixel in
+Sets the threshold for the green component of a pixel
 in lineart color scan mode. Possible values are 1..255.
 The default value is 128.
 This option is only available in scan mode color
@@ -213,7 +213,7 @@ This option is only available in scan mode color
 
 .TP
 .B \-\-threshold-blue
-Sets the threshold for the blue component of a pixel in
+Sets the threshold for the blue component of a pixel
 in lineart color scan mode. Possible values are 1..255.
 The default value is 128.
 This option is only available in scan mode color
@@ -321,11 +321,11 @@ stops.
 Stops of the carriage can be caused by the following reasons:
 .PP
 .RS
-\- too much "traffic" on the SCSI bus
+\- too much "traffic" on the SCSI bus,
 .br
 \- slow responses by the backend to the scanner,
 .br
-\- a program which processes the data acquired by the backend too slow.
+\- a program which processes the data acquired by the backend is too slow.
 .PP
 .RE
 Too much "traffic" on the SCSI bus: This happens for example, if hard disks
@@ -409,12 +409,12 @@ backend. At present, the scanner must power off and on to stop this
 annoying behaviour.
 .RE
 
-2. Threshold level does not work (only JX-610)
+2. Threshold level does not work (only JX\-610)
 .PP
-3. The maximum resolution is limited to 600 dpi(JX-610 supported
-to 1200 dpi) resp. 400 dpi (JX-250)
+3. The maximum resolution is limited to 600 dpi (JX\-610 supported
+to 1200 dpi) resp. 400 dpi (JX\-250)
 .PP
-4. If the JX250 is used with an ADF, the following situation can occur: After
+4. If the JX\-250 is used with an ADF, the following situation can occur: After
 several scans, the scanner moves, after loading a new sheet of paper, the
 carriage to the idle position, and then back to the position used for ADF
 scans. This happens for
@@ -436,8 +436,8 @@ tested.
 Kazuya Fukuda, Abel Deuring
 
 .SH CREDITS
-The Sharp backend is based on the Canon backend written by Helmut Koeberle
+The Sharp backend is based on the Canon backend written by Helmut Koeberle.
 .PP
 Parts of this man page are a plain copy of
 .BR sane\-mustek (5)
-by David Mosberger-Tang, Andreas Czechanowski and Andreas Bolsch
+by David Mosberger-Tang, Andreas Czechanowski and Andreas Bolsch.

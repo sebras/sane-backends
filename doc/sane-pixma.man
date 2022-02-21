@@ -165,7 +165,7 @@ The backend supports:
 .br
 * a custom gamma table,
 .br
-* Automatic Document Feeder, Simplex and Duplex.
+* Automatic Document Feeder, Simplex and Duplex,
 .br
 * Transparency Unit, 24 or 48 bits depth. Infrared channel on certain models.
 .RE
@@ -181,7 +181,7 @@ where aaaa is the scanners model and bbbb is the hostname or ip-adress.
 Example: pixma:MF4800_192.168.1.45 is a MF4800 Series multi-function peripheral.
 .PP
 This backend, based on cloning original Canon drivers protocols, is in
-a production stage. Designed has been carried out without any applicable
+a production stage. Design has been carried out without any applicable
 manufacturer documentation, probably never available. However, we have tested
 it as well as we could, but it may not work in all situations. You will find
 an up-to-date status at the project homepage. (See below).
@@ -233,8 +233,8 @@ backward compatibility reasons.
 .TP
 .I button\-1 button\-2
 (read only) These options will return the value of the respective buttons.
-value 0 means that the button was not pressed, 1 is returned when the button
-was pressed. Some scanners with more than two buttons send the button number
+Value 0 means that the button was not pressed, 1 is returned when the button
+was pressed. Some scanners, with more than two buttons, send the button number
 as target.
 .TP
 .I original
@@ -291,7 +291,7 @@ only scanners that cannot be auto-detected because they are on a different
 subnet shall be listed here. If you do not use Linux and your OS does not allow enumeration of
 interfaces (i.e. it does not support the
 .BR getifaddrs ()
-qfunction) you also may need
+function) you also may need
 to add your scanner here as well.
 .PP
 Scanners shall be listed in the configuration file as follows:
@@ -300,48 +300,56 @@ Scanners shall be listed in the configuration file as follows:
 .I <method>://<host>[:port][/timeout=<value>]
 .RE
 .PP
-where method indicates the protocol used (bjnp is used for inkjet multi-functionals
-and mfnp is used for laser multi-functionals).
-.PP
-host is the hostname or IP address of the scanner, e.g. bjnp://10.0.1.4
-for IPv4, bjnp://[2001:888:118e:18e2:21e:8fff:fe36:b64a] for a literal
-IPv6-address or bjnp://myscanner.mydomain.org for a hostname.
-.PP
-The port number is optional and in normally implied by the method.
+.TP
+.B method
+indicates the protocol used.
+.I bjnp
+is used for inkjet multi-functionals and
+.I mfnp
+is used for laser multi-functionals).
+.TP
+.B host
+is the hostname or IP address of the scanner, e.g.
+.I bjnp://10.0.1.4
+for IPv4,
+.I bjnp://[2001:888:118e:18e2:21e:8fff:fe36:b64a]
+for a literal IPv6-address or
+.I bjnp://myscanner.mydomain.org
+for a hostname.
+.TP
+.B port
+is optional and is normally implied by the method.
 Port 8610 is the standard port for mfnp, 8612 for bjnp.
+.TP
+.B timeout
+scanner-specific timeout value for the network protocol. The value is in ms.
 .PP
-A scanner specific timeout value for the network protocol can be set using the
-bjnp-timeout parameter. The value is in ms.
+Define each scanner each on a separate line.
 .PP
-Define scanners each on a new line.
-.PP
-More globally applicable timeouts can be set using the bjnp-timeout parameter as follows:
+More globally-applicable timeouts can be set using the bjnp-timeout parameter as follows:
 .PP
 .RS
 .I bjnp-timeout=<value>
 .RE
 .PP
 A timeout defined using bjnp-timeout will apply to the following scanner definitions
-in the file. If required the bjnp-timeout setting
+in the file. If required, the bjnp-timeout setting
 can be defined multiple times, where each setting will apply only to the scanners that
-follow the setting. The last setting is used for the auto discovered scanners.
+follow the setting. The last setting is used for auto-discovered scanners.
 If not explicitly set, the default 1000ms setting will apply.
 .PP
 Setting timeouts should only be required in exceptional cases.
 .PP
 .RE
 .PP
-If so desired networking can be disabled as follows:
+If so desired, networking can be disabled as follows:
 .RS
-.IP -
-If the first non-commented line contains
-.B networking=no
-all networking will be disabled.
-This will cause all further statements in the configuration file to be ignored.
-.IP -
-A line that contains
-.B auto_detection=no
-will cause auto-detection to be skipped. Explicitly defined network scanners will still be probed.
+.IP \fInetworking=no\FR
+If the first non-commented line contains this entry all networking will be disabled.
+All further statements in the configuration file will be ignored.
+.IP \fIauto_detection=no\fR
+This line will cause auto-detection to be skipped.
+Explicitly defined network scanners will still be probed.
 .SH USB SUPPORT
 USB scanners will be auto-detected and require no configuration.
 .SH NETWORKING SUPPORT
@@ -444,7 +452,7 @@ the verbosity and includes the information printed at the lower levels.
 .RE
 .TP
 .B PIXMA_EXPERIMENT
-Setting to a non-zero value will enable the support for experimental models.
+Setting to a non-zero value will enable experimental support for further models.
 You should also set SANE_DEBUG_PIXMA to 11.
 .TP
 .B SANE_CONFIG_DIR

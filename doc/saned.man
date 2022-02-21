@@ -316,8 +316,9 @@ to the
 .BR systemd (1)
 journal. The
 .BR systemd (1)
-support requires compilation with the systemd-devel package
-installed on the system. This is the preferred option.
+support requires compilation with the
+.BR systemd (1)
+development package installed on the system. This is the preferred option.
 
 .B saned
 can be used with
@@ -330,14 +331,16 @@ The
 .BR systemd (1)
 configuration is different for the 2 options, so both are described below.
 
-.SH Systemd configuration for saned with systemd support compiled in
+.SH Systemd configuration for
+.B saned
+with systemd support compiled in
 For
 .BR systemd (1)
 configuration we need to add 2 configuration files in
 .IR /etc/systemd/system .
 .PP
 The first file we need to add here is called
-.I saned.socket.
+.IR saned.socket .
 It shall have
 the following contents:
 .PP
@@ -424,7 +427,7 @@ we need to add 2 configuration files in
 .IR /etc/systemd/system .
 .PP
 The first file we need to add here is called
-.I saned.socket.
+.IR saned.socket .
 It is identical to the version for
 .BR systemd (1)
 with the support compiled in.
@@ -525,10 +528,11 @@ being searched (in this order).
 .BR xcam (1),
 .BR sane\-dll (5),
 .BR sane\-net (5),
-.BR sane\-"backendname" (5),
 .BR inetd (8),
 .BR xinetd (8),
 .BR systemd (1)
+.br
+Backend-specific man pages.
 .br
 .I http://www.penguin-breeder.org/?page=sane\-net
 .SH AUTHOR

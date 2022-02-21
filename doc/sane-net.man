@@ -93,10 +93,8 @@ are contacted in addition to the hosts listed above.
 For this backend to function properly, it is also necessary to define the
 .B sane\-port
 service in
-.IR /etc/services .
-The
-.B sane
-service should be defined using a line of the following form:
+.I /etc/services
+using a line of the following form:
 .PP
 .RS
 sane\-port 6566/tcp # SANE network scanner daemon

@@ -54,7 +54,9 @@ scanner under Linux) or disable the driver when compiling a new kernel. For
 Linux, your kernel needs support for the USB filesystem (usbfs). For kernels
 older than 2.4.19, replace "usbfs" with "usbdevfs" because the name has
 changed. This filesystem must be mounted. That's done automatically at boot
-time, if /etc/fstab contains a line like this:
+time, if
+.I /etc/fstab
+contains a line like this:
 .PP
 .RS
 none /proc/bus/usb usbfs defaults  0  0
@@ -97,7 +99,9 @@ For the
 .BR BSDs ,
 the device files used by libusb are named
 .IR /dev/ugen* .
-Use chmod to apply appropriate permissions.
+Use
+.BR chmod (1)
+to apply appropriate permissions.
 
 .SH "SANE ISSUES"
 .PP

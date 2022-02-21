@@ -55,15 +55,15 @@ if you have a kernel with ppdev support.
 .PP
 Note that if you don't use the ppdev character device, the backend
 needs to run as root. To allow user access to the scanner
-run the backend through the network interface (See
+run the backend through the network interface (see
 .BR saned (8)
 and
 .BR sane\-net (5)).
 A more relaxed solution (security wise) is to add suid bit to the frontend
-(See
+(see
 .BR chmod (1)).
-The backend drop root privileges as soon as it can, right after gaining direct
-access to IO ports, which lessen risks when being root.
+The backend drops root privileges as soon as it can, right after gaining direct
+access to I/O ports, which lessen risks of being root.
 
 .SH "DEVICE NAMES"
 This backend expects device names of the form:
@@ -73,7 +73,7 @@ This backend expects device names of the form:
 .RE
 .PP
 Where
-\fBvalue\fR is :
+\fBvalue\fR is:
 
 .RS
 .TP
@@ -102,8 +102,8 @@ have to use
 .TP
 0x378
 does direct hardware access on the given
-address. Usual values are 0x378, 0x278, 0x3BC
-In this case, you have to run the scanner as
+address. Usual values are 0x378, 0x278, 0x3BC.
+In this case, you have to run the backend as
 root (*BSD and Linux), or with 'IOPL=yes' on
 OS/2
 .PP
@@ -166,8 +166,7 @@ user provided values.
 .PP
 
 Options
-.B red\-offset
-,
+.BR red\-offset ,
 .B green\-offset
 and
 .B blue\-offset

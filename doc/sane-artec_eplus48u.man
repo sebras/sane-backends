@@ -50,7 +50,9 @@ find the firmware file under
 .SH CONFIGURATION
 The contents of the
 .I artec_eplus48u.conf
-file is a list of usb lines containing vendor and product ids that correspond
+file is a list of
+.I usb
+lines containing vendor and product ids that correspond
 to USB scanners. The file can also contain option lines.  Empty lines and
 lines starting with a hash mark (#) are ignored.  The scanners are
 autodetected by
@@ -59,7 +61,9 @@ statements which are already included into
 .I artec_eplus48u.conf .
 "vendor_id" and "product_id" are hexadecimal numbers that identify the scanner.
 .PP
-Every usb section can have additional options.
+Every
+.I usb
+section can have additional options.
 .TP
 .B artecFirmwareFile @DATADIR@/sane/artec_eplus48u/Artec48.usb
 The path to the firmware file. This option is required.
