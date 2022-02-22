@@ -40,6 +40,10 @@
 #include <unistd.h>
 #include <stdarg.h>
 
+#if defined (__APPLE__) && defined (__MACH__)
+#include <libgen.h>     // for basename()
+#endif
+
 #include <sys/types.h>
 #include <sys/stat.h>
 
