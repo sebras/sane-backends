@@ -132,6 +132,21 @@
 :status :good
 :comment "All resolutions supported."
 
+:model "PIXMA TS3450"
+:interface "WiFi"
+:status :good
+:comment "All resolutions supported."
+
+:model "PIXMA TS3451"
+:interface "WiFi"
+:status :good
+:comment "All resolutions supported."
+
+:model "PIXMA TS3452"
+:interface "WiFi"
+:status :good
+:comment "All resolutions supported."
+
 :model "PIXMA TS5350 Series"
 :interface "WiFi"
 :status :good
