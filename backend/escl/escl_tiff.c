@@ -26,6 +26,8 @@
 
 #include "escl.h"
 
+#include "../include/_stdint.h"
+
 #include "../include/sane/sanei.h"
 
 #include <stdio.h>
@@ -53,11 +55,11 @@ SANE_Status
 get_TIFF_data(capabilities_t *scanner, int *width, int *height, int *bps)
 {
     TIFF* tif = NULL;
-    uint32  w = 0;
-    uint32  h = 0;
+    uint32_t w = 0;
+    uint32_t h = 0;
     unsigned char *surface = NULL;         /*  image data*/
     int components = 4;
-    uint32 npixels = 0;
+    uint32_t npixels = 0;
     SANE_Status status = SANE_STATUS_GOOD;
 
     lseek(fileno(scanner->tmp), 0, SEEK_SET);
@@ -71,7 +73,7 @@ get_TIFF_data(capabilities_t *scanner, int *width, int *height, int *bps)
     TIFFGetField(tif, TIFFTAG_IMAGEWIDTH, &w);
     TIFFGetField(tif, TIFFTAG_IMAGELENGTH, &h);
     npixels = w * h;
-    surface = (unsigned char*) malloc(npixels * sizeof (uint32));
+    surface = (unsigned char*) malloc(npixels * sizeof (uint32_t));
     if (surface != NULL)
     {
         DBG( 1, "Escl Tiff : raster Memory allocation problem.\n");
@@ -79,7 +81,7 @@ get_TIFF_data(capabilities_t *scanner, int *width, int *height, int *bps)
 	goto close_tiff;
     }
 
-    if (!TIFFReadRGBAImage(tif, w, h, (uint32 *)surface, 0))
+    if (!TIFFReadRGBAImage(tif, w, h, (uint32_t *)surface, 0))
     {
         DBG( 1, "Escl Tiff : Problem reading image data.\n");
         status = SANE_STATUS_INVAL;

@@ -1799,7 +1799,7 @@ ProcessPageData (struct ScannerState *pState)
   struct PageInfo pageInfo;
 
   JSAMPLE *pJpegLine = NULL;
-  uint32 *pTiffRgba = NULL;
+  uint32_t *pTiffRgba = NULL;
   unsigned char *pOut;
   char tiffErrBuf[1024];
 
