@@ -613,9 +613,9 @@ static void p48xxSetGeneralRegister( pScanData ps )
     if (ps->DataInf.xyPhyDpi.x <= 200)
         ps->AsicReg.RD_ScanControl |= _SCAN_1ST_AVERAGE;
 
-	DBG( DBG_LOW, "RD_ModeControl  = 0x%02x\n", ps->AsicReg.RD_ModeControl  );
-	DBG( DBG_LOW, "RD_MotorControl = 0x%02x\n", ps->Asic96Reg.RD_MotorControl );
-	DBG( DBG_LOW, "RD_ScanControl  = 0x%02x\n", ps->AsicReg.RD_ScanControl  );
+    DBG( DBG_LOW, "RD_ModeControl  = 0x%02x\n", ps->AsicReg.RD_ModeControl  );
+    DBG( DBG_LOW, "RD_MotorControl = 0x%02x\n", ps->Asic96Reg.RD_MotorControl );
+    DBG( DBG_LOW, "RD_ScanControl  = 0x%02x\n", ps->AsicReg.RD_ScanControl  );
 }
 
 /*.............................................................................

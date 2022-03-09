@@ -1068,7 +1068,7 @@ sane_get_devices (const SANE_Device *** device_list, SANE_Bool local_only)
   char *full_name;
   int i, num_devs;
   size_t len;
-#define ASSERT_SPACE(n)                                                    \
+#define ASSERT_SPACE(n) do                                                 \
   {                                                                        \
     if (devlist_len + (n) > devlist_size)                                  \
       {                                                                    \
@@ -1080,7 +1080,7 @@ sane_get_devices (const SANE_Device *** device_list, SANE_Bool local_only)
         if (!devlist)                                                      \
           return SANE_STATUS_NO_MEM;                                       \
       }                                                                    \
-  }
+  } while (0)
 
   DBG (3, "sane_get_devices\n");
 

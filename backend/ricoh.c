@@ -514,7 +514,8 @@ sane_init (SANE_Int * version_code, SANE_Auth_Callback authorize)
             continue;                   /* ignore empty lines */
 
 	  /* skip white space: */
-	  for (lp = line; isspace(*lp); ++lp);
+	  for (lp = line; isspace(*lp); ++lp)
+            ;
           strcpy (devnam, lp);
         }
       fclose (fp);

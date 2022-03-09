@@ -432,10 +432,10 @@ step1 (pixma_t * s)
                 int tmo = 10;  /* like Windows driver, 10 sec CCD calibration ? */
                 while (--tmo >= 0)
                   {
-                    error = handle_interrupt (s, 1000);		\
-                    if (s->cancel)				\
-                      return PIXMA_ECANCELED;			\
-                    if (error != PIXMA_ECANCELED && error < 0)	\
+                    error = handle_interrupt (s, 1000);
+                    if (s->cancel)
+                      return PIXMA_ECANCELED;
+                    if (error != PIXMA_ECANCELED && error < 0)
                       return error;
                     PDBG (pixma_dbg (2, "CCD Calibration ends in %d sec.\n", tmo));
                   }

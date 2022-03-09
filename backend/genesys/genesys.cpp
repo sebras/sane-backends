@@ -2847,7 +2847,8 @@ static void compute_averaged_planar(Genesys_Device * dev, const Genesys_Sensor& 
     avgpixels = 15;
 
   /* LiDE80 packs shading data */
-    if (dev->model->sensor_id != SensorId::CIS_CANON_LIDE_80) {
+  if (dev->model->sensor_id != SensorId::CIS_CANON_LIDE_80)
+    {
       factor=1;
       fill=avgpixels;
     }
@@ -4883,28 +4884,28 @@ static void init_options(Genesys_Scanner* s)
     s->opt[OPT_POWER_SW].cap = SANE_CAP_INACTIVE;
 
   /* extra button */
-    s->opt[OPT_EXTRA_SW].name = "extra";
-    s->opt[OPT_EXTRA_SW].title = SANE_I18N("Extra button");
-    s->opt[OPT_EXTRA_SW].desc = SANE_I18N("Extra button");
-    s->opt[OPT_EXTRA_SW].type = SANE_TYPE_BOOL;
-    s->opt[OPT_EXTRA_SW].unit = SANE_UNIT_NONE;
-    if (model->buttons & GENESYS_HAS_EXTRA_SW) {
-        s->opt[OPT_EXTRA_SW].cap = SANE_CAP_SOFT_DETECT | SANE_CAP_HARD_SELECT | SANE_CAP_ADVANCED;
-    } else {
-        s->opt[OPT_EXTRA_SW].cap = SANE_CAP_INACTIVE;
-    }
+  s->opt[OPT_EXTRA_SW].name = "extra";
+  s->opt[OPT_EXTRA_SW].title = SANE_I18N("Extra button");
+  s->opt[OPT_EXTRA_SW].desc = SANE_I18N("Extra button");
+  s->opt[OPT_EXTRA_SW].type = SANE_TYPE_BOOL;
+  s->opt[OPT_EXTRA_SW].unit = SANE_UNIT_NONE;
+  if (model->buttons & GENESYS_HAS_EXTRA_SW)
+    s->opt[OPT_EXTRA_SW].cap =
+      SANE_CAP_SOFT_DETECT | SANE_CAP_HARD_SELECT | SANE_CAP_ADVANCED;
+  else
+    s->opt[OPT_EXTRA_SW].cap = SANE_CAP_INACTIVE;
 
-    // transparency/scan_film button
-    s->opt[OPT_TRANSP_SW].name = "transparency";
-    s->opt[OPT_TRANSP_SW].title = SANE_I18N ("Transparency button");
-    s->opt[OPT_TRANSP_SW].desc = SANE_I18N ("Transparency button");
-    s->opt[OPT_TRANSP_SW].type = SANE_TYPE_BOOL;
-    s->opt[OPT_TRANSP_SW].unit = SANE_UNIT_NONE;
-    if (model->buttons & GENESYS_HAS_TRANSP_SW) {
-        s->opt[OPT_TRANSP_SW].cap = SANE_CAP_SOFT_DETECT | SANE_CAP_HARD_SELECT | SANE_CAP_ADVANCED;
-    } else {
-        s->opt[OPT_TRANSP_SW].cap = SANE_CAP_INACTIVE;
-    }
+  /* transparency/scan_film button */
+  s->opt[OPT_TRANSP_SW].name = "transparency";
+  s->opt[OPT_TRANSP_SW].title = SANE_I18N ("Transparency button");
+  s->opt[OPT_TRANSP_SW].desc = SANE_I18N ("Transparency button");
+  s->opt[OPT_TRANSP_SW].type = SANE_TYPE_BOOL;
+  s->opt[OPT_TRANSP_SW].unit = SANE_UNIT_NONE;
+  if (model->buttons & GENESYS_HAS_TRANSP_SW)
+    s->opt[OPT_TRANSP_SW].cap =
+      SANE_CAP_SOFT_DETECT | SANE_CAP_HARD_SELECT | SANE_CAP_ADVANCED;
+  else
+    s->opt[OPT_TRANSP_SW].cap = SANE_CAP_INACTIVE;
 
   /* calibration needed */
   s->opt[OPT_NEED_CALIBRATION_SW].name = "need-calibration";

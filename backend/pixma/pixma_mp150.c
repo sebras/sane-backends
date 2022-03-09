@@ -1658,7 +1658,7 @@ mp150_finish_scan (pixma_t * s)
       else
         PDBG (pixma_dbg (4, "*mp150_finish_scan***** wait for next page from ADF  *****\n"));
 
-        mp->state = state_idle;
+      mp->state = state_idle;
       /* fall through */
     case state_idle:
       break;

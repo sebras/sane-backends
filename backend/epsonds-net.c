@@ -513,7 +513,7 @@ fail:
     if (simple_poll)
         avahi_simple_poll_free(simple_poll);
 
-	DBG(10, "epsonds_searchDevices fin\n");
+    DBG(10, "epsonds_searchDevices fin\n");
 
     return result;
 }

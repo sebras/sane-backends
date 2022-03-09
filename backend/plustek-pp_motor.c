@@ -3128,7 +3128,7 @@ _LOC Bool MotorP96AheadToDarkArea( pScanData ps )
 		if((bDark < 0x80) || (wTotalLastLine==wTL)) {
 
 		    IOCmdRegisterToScanner( ps, ps->RegMotorControl, 0 );
-	    	return _TRUE;
+		    return _TRUE;
 		}
     }
 #else
@@ -3216,9 +3216,10 @@ _LOC void MotorP98003BackToHomeSensor( pScanData ps )
 	MiscStartTimer( &timer, _SECOND * 2 );
 
     while(!(IOGetScanState( ps, _TRUE ) & _SCANSTATE_STOP) &&
-                                                    !MiscCheckTimer( &timer ));
+                                                     !MiscCheckTimer( &timer ))
+	    ;
 
-	_DODELAY( 1000UL );
+    _DODELAY( 1000UL );
 
     ps->AsicReg.RD_ModeControl = _ModeScan;
 
@@ -3324,7 +3325,8 @@ _LOC void MotorP98003PositionYProc( pScanData ps, ULong steps)
 	MiscStartTimer( &timer, _SECOND * 5 );
 
     while(!(IOGetScanState( ps, _TRUE ) & _SCANSTATE_STOP) &&
-                                                (!MiscCheckTimer( &timer )));
+                                                     !MiscCheckTimer( &timer ))
+	    ;
 
     _DODELAY( 12 );
 
