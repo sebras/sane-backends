@@ -1107,7 +1107,7 @@ SANE_Status sane_control_option (SANE_Handle h,
                  "%s: writing \"%s\" to location %p\n",
                  me,
                  pss->mode_s,
-                 (SANE_String) v);
+                 (void *) v);
             strcpy ((SANE_String) v, pss->mode_s);
             break;
         case OPT_PREVIEW_MODE:
@@ -1115,7 +1115,7 @@ SANE_Status sane_control_option (SANE_Handle h,
                  "%s: writing \"%s\" to location %p\n",
                  me,
                  pss->preview_mode_s,
-                 (SANE_String) v);
+                 (void *) v);
             strcpy ((SANE_String) v, pss->preview_mode_s);
             break;
         case OPT_SOURCE:
@@ -1144,7 +1144,7 @@ SANE_Status sane_control_option (SANE_Handle h,
                 "%s: writing \"%s\" to location %p\n",
                 me,
                 pss->predef_window,
-                (SANE_String) v);
+                (void *) v);
             strcpy ((SANE_String) v, pss->predef_window);
             break;
         case OPT_GAMMA_GS:
@@ -1179,7 +1179,7 @@ SANE_Status sane_control_option (SANE_Handle h,
                 "%s: writing \"%s\" to location %p\n",
                 me,
                 pss->dither_matrix,
-                (SANE_String) v);
+                (void *) v);
             strcpy ((SANE_String) v, pss->dither_matrix);
             break;
         case OPT_NEGATIVE:

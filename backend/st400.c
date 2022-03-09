@@ -1221,7 +1221,7 @@ sane_read( SANE_Handle handle, SANE_Byte *buf, SANE_Int maxlen, SANE_Int *lenP )
 	size_t r, i;
 	SANE_Byte val;
 
-	DBG(DCODE, "sane_read(%p, %p, %d, %p)\n", handle, buf, (int)maxlen, (void *) lenP);
+	DBG(DCODE, "sane_read(%p, %p, %d, %p)\n", handle, (void *) buf, (int) maxlen, (void *) lenP);
 
 	*lenP = 0;
 	if( !dev->status.scanning )

@@ -1365,7 +1365,7 @@ sane_read (SANE_Handle handle, SANE_Byte * data, SANE_Int max_length,
   struct meta_scanner *s = handle;
 
   DBG (3, "sane_read(handle=%p,data=%p,maxlen=%d,lenp=%p)\n",
-       handle, data, max_length, (void *) length);
+       handle, (void *) data, max_length, (void *) length);
   return (*(op_read_t)s->be->op[OP_READ]) (s->handle, data, max_length, length);
 }
 

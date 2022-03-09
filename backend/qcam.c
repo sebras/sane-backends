@@ -2119,7 +2119,7 @@ sane_read (SANE_Handle handle, SANE_Byte * buf, SANE_Int max_len,
     len = s->bytes_per_frame - s->num_bytes;
 
   DBG (8, "read(buf=%p,num_bytes=%ld,max_len=%d,len=%ld)\n",
-       buf, (long) s->num_bytes, max_len, (long) len);
+       (void *) buf, (long) s->num_bytes, max_len, (long) len);
 
   nread = read (s->read_fd, buf, len);
   if (nread <= 0)

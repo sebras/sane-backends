@@ -1007,7 +1007,7 @@ sane_start (SANE_Handle handle)
 	  buffer = NULL;
 	  return SANE_STATUS_IO_ERROR;
 	}
-      DBG (3, "sane_start: mmapped frame, capture 1 pict into %p\n", buffer);
+      DBG (3, "sane_start: mmapped frame, capture 1 pict into %p\n", (void *) buffer);
       s->mmap.frame = 0;
       s->mmap.width = s->window.width;
       /*   s->mmap.width = parms.pixels_per_line;  ??? huh? */

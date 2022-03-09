@@ -4994,14 +4994,14 @@ sanei_lexmark_low_read_scan_data (SANE_Byte * data, SANE_Int size,
 	  DBG (2, "   Filled a buffer from the scanner\n");
 	  DBG (2, "   bytes_remaining: %lu\n", (u_long) dev->bytes_remaining);
 	  DBG (2, "   bytes_in_buffer: %lu\n", (u_long) dev->bytes_in_buffer);
-	  DBG (2, "   read_pointer: %p\n", dev->read_pointer);
+	  DBG (2, "   read_pointer: %p\n", (void *) dev->read_pointer);
 	}
     }
 
   DBG (5, "READ BUFFER INFO: \n");
-  DBG (5, "   write ptr:     %p\n", dev->read_buffer->writeptr);
-  DBG (5, "   read ptr:      %p\n", dev->read_buffer->readptr);
-  DBG (5, "   max write ptr: %p\n", dev->read_buffer->max_writeptr);
+  DBG (5, "   write ptr:     %p\n", (void *) dev->read_buffer->writeptr);
+  DBG (5, "   read ptr:      %p\n", (void *) dev->read_buffer->readptr);
+  DBG (5, "   max write ptr: %p\n", (void *) dev->read_buffer->max_writeptr);
   DBG (5, "   buffer size:   %lu\n", (u_long) dev->read_buffer->size);
   DBG (5, "   line size:     %lu\n", (u_long) dev->read_buffer->linesize);
   DBG (5, "   empty:         %d\n", dev->read_buffer->empty);
@@ -5059,9 +5059,9 @@ sanei_lexmark_low_read_scan_data (SANE_Byte * data, SANE_Int size,
     }
 
   DBG (5, "READ BUFFER INFO: \n");
-  DBG (5, "   write ptr:     %p\n", dev->read_buffer->writeptr);
-  DBG (5, "   read ptr:      %p\n", dev->read_buffer->readptr);
-  DBG (5, "   max write ptr: %p\n", dev->read_buffer->max_writeptr);
+  DBG (5, "   write ptr:     %p\n", (void *) dev->read_buffer->writeptr);
+  DBG (5, "   read ptr:      %p\n", (void *) dev->read_buffer->readptr);
+  DBG (5, "   max write ptr: %p\n", (void *) dev->read_buffer->max_writeptr);
   DBG (5, "   buffer size:   %lu\n", (u_long) dev->read_buffer->size);
   DBG (5, "   line size:     %lu\n", (u_long) dev->read_buffer->linesize);
   DBG (5, "   empty:         %d\n", dev->read_buffer->empty);
@@ -5074,7 +5074,7 @@ sanei_lexmark_low_read_scan_data (SANE_Byte * data, SANE_Int size,
   DBG (2, "    Copying lines from buffer to data\n");
   DBG (2, "    bytes_remaining: %lu\n", (u_long) dev->bytes_remaining);
   DBG (2, "    bytes_in_buffer: %lu\n", (u_long) dev->bytes_in_buffer);
-  DBG (2, "    read_pointer: %p\n", dev->read_buffer->readptr);
+  DBG (2, "    read_pointer: %p\n", (void *) dev->read_buffer->readptr);
   DBG (2, "    bytes_read %lu\n", (u_long) bytes_read);
 
   /* if no more bytes to xfer and read buffer empty we're at the end */

@@ -2132,7 +2132,7 @@ sane_read (SANE_Handle handle, SANE_Byte * data, SANE_Int max_length,
   int is_even;
 
   DBG (3, "sane_read: handle=%p, data=%p, max_length=%d, length=%p\n",
-       handle, data, max_length, (void *) length);
+       handle, (void *) data, max_length, (void *) length);
   if (!length)
     {
       DBG (1, "sane_read: length == NULL\n");

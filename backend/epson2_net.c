@@ -70,7 +70,7 @@ sanei_epson_net_read_buf(Epson_Scanner *s, unsigned char *buf, ssize_t wanted,
 	ssize_t read = 0;
 
 	DBG(23, "%s: reading up to %lu from buffer at %p, %lu available\n",
-		__func__, (u_long) wanted, s->netptr, (u_long) s->netlen);
+		__func__, (u_long) wanted, (void *) s->netptr, (u_long) s->netlen);
 
 	if ((size_t) wanted > s->netlen) {
 		*status = SANE_STATUS_IO_ERROR;
@@ -84,7 +84,7 @@ sanei_epson_net_read_buf(Epson_Scanner *s, unsigned char *buf, ssize_t wanted,
 	s->netlen -= read;
 
 	if (s->netlen == 0) {
-		DBG(23, "%s: freeing %p\n", __func__, s->netbuf);
+		DBG(23, "%s: freeing %p\n", __func__, (void *) s->netbuf);
 		free(s->netbuf);
 		s->netbuf = s->netptr = NULL;
 		s->netlen = 0;
@@ -179,7 +179,7 @@ sanei_epson_net_write(Epson_Scanner *s, unsigned int cmd, const unsigned char *b
 	if (reply_len) {
 		if (s->netbuf) {
 			DBG(23, "%s, freeing %p, %ld bytes unprocessed\n",
-				__func__, s->netbuf, (u_long) s->netlen);
+				__func__, (void *) s->netbuf, (u_long) s->netlen);
 			free(s->netbuf);
 			s->netbuf = s->netptr = NULL;
 			s->netlen = 0;
@@ -192,11 +192,11 @@ sanei_epson_net_write(Epson_Scanner *s, unsigned int cmd, const unsigned char *b
 		}
 		s->netlen = reply_len;
 		DBG(24, "%s: allocated %lu bytes at %p\n", __func__,
-			(u_long) s->netlen, s->netbuf);
+			(u_long) s->netlen, (void *) s->netbuf);
 	}
 
 	DBG(24, "%s: cmd = %04x, buf = %p, buf_size = %lu, reply_len = %lu\n",
-		__func__, cmd, buf, (u_long) buf_size, (u_long) reply_len);
+		__func__, cmd, (void *) buf, (u_long) buf_size, (u_long) reply_len);
 
 	memset(h1, 0x00, 12);
 	memset(h2, 0x00, 8);

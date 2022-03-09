@@ -1450,7 +1450,7 @@ reader_process (Test_Device * test_device, SANE_Int fd)
     return status;
 
   DBG (2, "(child) reader_process: buffer=%p, buffersize=%lu\n",
-       buffer, (u_long) buffer_size);
+       (void *) buffer, (u_long) buffer_size);
 
   while (byte_count < bytes_total)
     {
@@ -2877,7 +2877,7 @@ sane_read (SANE_Handle handle, SANE_Byte * data,
 
 
   DBG (4, "sane_read: handle=%p, data=%p, max_length = %d, length=%p\n",
-       handle, data, max_length, (void *) length);
+       handle, (void *) data, max_length, (void *) length);
   if (!inited)
     {
       DBG (1, "sane_read: not inited, call sane_init() first\n");

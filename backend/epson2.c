@@ -2348,7 +2348,7 @@ sane_read(SANE_Handle handle, SANE_Byte *data, SANE_Int max_length,
 	/* XXX if FS G and STATUS_IOERR, use e2_check_extended_status */
 
 	DBG(18, "moving data %p %p, %d (%d lines)\n",
-		s->ptr, s->end,
+		(void *) s->ptr, (void *) s->end,
 		max_length, max_length / s->params.bytes_per_line);
 
 	e2_copy_image_data(s, data, max_length, length);

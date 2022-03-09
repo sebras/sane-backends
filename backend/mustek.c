@@ -4656,7 +4656,7 @@ output_data (Mustek_Scanner * s, FILE * fp,
   SANE_Int y, num_lines;
 
   DBG (5, "output_data: data=%p, lpb=%d, bpl=%d, extra=%p\n",
-       data, lines_per_buffer, bpl, extra);
+       (void *) data, lines_per_buffer, bpl, (void *) extra);
 
   /* convert to pixel-interleaved format: */
   if ((s->mode & MUSTEK_MODE_COLOR)

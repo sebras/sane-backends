@@ -1628,7 +1628,7 @@ artec48u_device_memory_read (Artec48U_Device * dev,
   SANE_Status status;
 
   XDBG ((8, "%s: dev=%p, addr=0x%x, size=0x%x, data=%p\n",
-       function_name, (void *) dev, addr, size, data));
+       function_name, (void *) dev, addr, size, (void *) data));
   CHECK_DEV_ACTIVE (dev, function_name);
 
   status = sanei_usb_control_msg (dev->fd, 0xc0, 0x01,

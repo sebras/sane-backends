@@ -2356,7 +2356,8 @@ static SANE_Status do_real_calibrate(Microtek_Scanner *s)
   input = calloc(STRIPS * 3 * linewidth, sizeof(input[0]));
   combuff = calloc(linewidth + 6, sizeof(combuff[0]));
   if ((input == NULL) || (combuff == NULL)) {
-    DBG(23, "do_real_cal:  bad calloc %p %p\n", input, combuff);
+    DBG(23, "do_real_cal:  bad calloc %p %p\n",
+        (void *) input, (void *) combuff);
     free(input);
     free(combuff);
     return SANE_STATUS_NO_MEM;
@@ -2370,7 +2371,7 @@ static SANE_Status do_real_calibrate(Microtek_Scanner *s)
     ntoget = (nleft > nmax) ? nmax : nleft;
     buffsize = ntoget * 3 * linewidth;
     DBG(23, "...nleft %d  toget %d  size %lu  spot %d  input+spot %p\n",
-	nleft, ntoget, (u_long) buffsize, spot, input+spot);
+        nleft, ntoget, (u_long) buffsize, spot, (void *) (input+spot));
     if ((statusA = read_scan_data(s, ntoget, input+spot, &buffsize))
 	!= SANE_STATUS_GOOD) {
       DBG(23, "...read scan failed\n");
