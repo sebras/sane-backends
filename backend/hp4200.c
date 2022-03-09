@@ -512,7 +512,7 @@ read_available_data (HP4200_Scanner * s, SANE_Byte * buffer,
       buffer += really_read;
       to_read -= really_read;
 #ifdef DEBUG
-      fprintf (stderr, "read %d bytes\n", really_read);
+      fprintf (stderr, "read %zu bytes\n", really_read);
 #endif
     }
   return SANE_STATUS_GOOD;
