@@ -189,9 +189,12 @@ static scsiblk inquiry = { inquiryC, sizeof(inquiryC) };
 #define get_inquiry_additional_length(in)			in[0x04]
 #define set_inquiry_length(out,n)				out[0x04]=n-5
 
-#define get_inquiry_vendor(in, buf)				strncpy(buf, in + 0x08, 0x08)
-#define get_inquiry_product(in, buf)				strncpy(buf, in + 0x10, 0x010)
-#define get_inquiry_version(in, buf)				strncpy(buf, in + 0x20, 0x04)
+#define get_inquiry_vendor(in, buf)				snprintf(buf, 0x08 + 1, "%.*s", \
+										0x08, in + 0x08)
+#define get_inquiry_product(in, buf)				snprintf(buf, 0x10 + 1, "%.*s", \
+										0x10, in + 0x10)
+#define get_inquiry_version(in, buf)				snprintf(buf, 0x04 + 1, "%.*s", \
+										0x04, in + 0x20)
 
 #define get_inquiry_max_x_res(in)				getnbyte1(in + 0x24, 2)
 #define get_inquiry_max_y_res(in)				getnbyte1(in + 0x26, 2)

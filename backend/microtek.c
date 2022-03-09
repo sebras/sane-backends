@@ -1502,14 +1502,10 @@ parse_inquiry(Microtek_Info *mi, unsigned char *result)
   };
 #endif
   DBG(15, "parse_inquiry...\n");
-  strncpy(mi->vendor_id, (char *)&result[8], 8);
-  strncpy(mi->model_name, (char *)&result[16], 16);
-  strncpy(mi->revision_num, (char *)&result[32], 4);
-  strncpy(mi->vendor_string, (char *)&result[36], 20);
-  mi->vendor_id[8]   = 0;
-  mi->model_name[16] = 0;
-  mi->revision_num[4] = 0;
-  mi->vendor_string[20] = 0;
+  snprintf(mi->vendor_id,      8 + 1, "%.*s",  8, (char *)&result[8]);
+  snprintf(mi->model_name,    16 + 1, "%.*s", 16, (char *)&result[16]);
+  snprintf(mi->revision_num,   4 + 1, "%.*s",  4, (char *)&result[32]);
+  snprintf(mi->vendor_string, 20 + 1, "%.*s", 20, (char *)&result[36]);
 
   mi->device_type                = (SANE_Byte)(result[0] & 0x1f);
   mi->SCSI_firmware_ver_major    = (SANE_Byte)((result[1] & 0xf0) >> 4);
@@ -1947,12 +1943,9 @@ dump_suspect_inquiry(unsigned char *result)
   }
   fprintf(stderr, "\n\n");
 #endif
-  strncpy(vendor_id, (char *)&result[8], 8);
-  strncpy(model_name, (char *)&result[16], 16);
-  strncpy(revision_num, (char *)&result[32], 4);
-  vendor_id[8]    = 0;
-  model_name[16]  = 0;
-  revision_num[4] = 0;
+  snprintf(vendor_id,     8 + 1, "%.*s",  8, (char *)&result[8]);
+  snprintf(model_name,   16 + 1, "%.*s", 16, (char *)&result[16]);
+  snprintf(revision_num,  4 + 1, "%.*s",  4, (char *)&result[32]);
   device_type                = (SANE_Byte)(result[0] & 0x1f);
   SCSI_firmware_ver_major    = (SANE_Byte)((result[1] & 0xf0) >> 4);
   SCSI_firmware_ver_minor    = (SANE_Byte)(result[1] & 0x0f);
