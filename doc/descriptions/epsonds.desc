@@ -341,20 +341,15 @@
 
 :model      "ET-2810 Series"
 :interface  "USB"
-:usbid      "0x04b8" "0x118A"
+:usbid      "0x04b8" "0x118a"
 :status     :complete
 
 :model      "L3250 Series"
 :interface  "USB"
-:usbid      "0x04b8" "0x118A"
+:usbid      "0x04b8" "0x118a"
 :status     :complete
 
 :model      "XP-2150 Series"
 :interface  "USB"
-:usbid      "0x04b8" "0x119B"
-:status     :complete
-
-:model      ""
-:interface  "USB"
-:usbid      "0x04b8" "0x00"
+:usbid      "0x04b8" "0x119b"
 :status     :complete
