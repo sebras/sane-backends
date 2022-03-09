@@ -1439,7 +1439,7 @@ stv680_bayer_unshuffle (Stv680_Vidcam * dev, SANE_Byte * buf, size_t * size)
 	   "stv680_bayer_unshuffle: if needed, trim to size 160 done\n");
     }
   /* reset to proper width */
-  if ((dev->subsample == 160))
+  if (dev->subsample == 160)
     {
       vw = 160;
       vh = 120;

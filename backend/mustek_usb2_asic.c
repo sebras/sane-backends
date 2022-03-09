@@ -3901,12 +3901,12 @@ Asic_SetWindow (PAsic chip, SANE_Byte bScanBits,
       BytePerPixel = 2;
       chip->dwBytesCountPerRow = (unsigned int) (wWidth) * 2;
     }
-  else if ((bScanBits == 8))
+  else if (bScanBits == 8)
     {
       BytePerPixel = 1;
       chip->dwBytesCountPerRow = (unsigned int) (wWidth);
     }
-  else if ((bScanBits < 8))
+  else if (bScanBits < 8)
     {
       BytePerPixel = 1;
       chip->dwBytesCountPerRow = (unsigned int) (wWidth);
@@ -4926,13 +4926,13 @@ Asic_SetCalibrate (PAsic chip, SANE_Byte bScanBits, unsigned short wXResolution,
       BytePerPixel = 2;
       chip->dwBytesCountPerRow = (unsigned int) (wWidth) * 2;
     }
-  else if ((bScanBits == 8))
+  else if (bScanBits == 8)
     {
       wPerLineNeedBufferSize = wWidth;
       BytePerPixel = 1;
       chip->dwBytesCountPerRow = (unsigned int) (wWidth);
     }
-  else if ((bScanBits < 8))
+  else if (bScanBits < 8)
     {
       wPerLineNeedBufferSize = wWidth >> 3;
       BytePerPixel = 1;
