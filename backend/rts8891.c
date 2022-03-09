@@ -76,6 +76,7 @@
 #include <errno.h>
 #include <fcntl.h>
 #include <limits.h>
+#include <math.h>
 #include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -4778,7 +4779,7 @@ dark_calibration (struct Rts8891_Device *dev, int mode, int light)
 	   global, ra, ga, ba);
 
       /* dichotomie ... */
-      if (abs (ra - DARK_TARGET) < DARK_MARGIN)
+      if (fabs (ra - DARK_TARGET) < DARK_MARGIN)
 	{
 	  /* offset is OK */
 	  tro = ro;
@@ -4800,7 +4801,7 @@ dark_calibration (struct Rts8891_Device *dev, int mode, int light)
 	}
 
       /* same for blue channel */
-      if (abs (ba - DARK_TARGET) < DARK_MARGIN)
+      if (fabs (ba - DARK_TARGET) < DARK_MARGIN)
 	{
 	  bbo = bo;
 	  tbo = bo;
@@ -4821,7 +4822,7 @@ dark_calibration (struct Rts8891_Device *dev, int mode, int light)
 	}
 
       /* and for green channel */
-      if (abs (ga - DARK_TARGET) < DARK_MARGIN)
+      if (fabs (ga - DARK_TARGET) < DARK_MARGIN)
 	{
 	  tgo = go;
 	  bgo = go;
@@ -5084,7 +5085,7 @@ gain_calibration (struct Rts8891_Device *dev, int mode, int light)
 	   global, ra, ga, ba);
 
       /* dichotomy again ... */
-      if (abs (ra - RED_GAIN_TARGET) < GAIN_MARGIN)
+      if (fabs (ra - RED_GAIN_TARGET) < GAIN_MARGIN)
 	{
 	  /* gain is OK, it is whitin the tolerance margin */
 	  trg = rg;
@@ -5125,7 +5126,7 @@ gain_calibration (struct Rts8891_Device *dev, int mode, int light)
 	}
 
       /* same for blue channel */
-      if (abs (ba - BLUE_GAIN_TARGET) < GAIN_MARGIN)
+      if (fabs (ba - BLUE_GAIN_TARGET) < GAIN_MARGIN)
 	{
 	  bbg = bg;
 	  tbg = bg;
@@ -5161,7 +5162,7 @@ gain_calibration (struct Rts8891_Device *dev, int mode, int light)
 	}
 
       /* and for green channel */
-      if (abs (ga - GREEN_GAIN_TARGET) < GAIN_MARGIN)
+      if (fabs (ga - GREEN_GAIN_TARGET) < GAIN_MARGIN)
 	{
 	  tgg = gg;
 	  bgg = gg;
@@ -5367,7 +5368,7 @@ offset_calibration (struct Rts8891_Device *dev, int mode, int light)
 	   global, ra, ga, ba);
 
       /* dichotomie ... */
-      if (abs (ra - OFFSET_TARGET) < OFFSET_MARGIN)
+      if (fabs (ra - OFFSET_TARGET) < OFFSET_MARGIN)
 	{
 	  /* offset is OK */
 	  tro = ro;
@@ -5389,7 +5390,7 @@ offset_calibration (struct Rts8891_Device *dev, int mode, int light)
 	}
 
       /* same for blue channel */
-      if (abs (ba - OFFSET_TARGET) < OFFSET_MARGIN)
+      if (fabs (ba - OFFSET_TARGET) < OFFSET_MARGIN)
 	{
 	  bbo = bo;
 	  tbo = bo;
@@ -5410,7 +5411,7 @@ offset_calibration (struct Rts8891_Device *dev, int mode, int light)
 	}
 
       /* and for green channel */
-      if (abs (ga - OFFSET_TARGET) < OFFSET_MARGIN)
+      if (fabs (ga - OFFSET_TARGET) < OFFSET_MARGIN)
 	{
 	  tgo = go;
 	  bgo = go;

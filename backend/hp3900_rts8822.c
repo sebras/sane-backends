@@ -4856,8 +4856,8 @@ Refs_Analyze_Pattern (struct st_scanparams *scancfg,
 		    {
 		      /*d4df */
 		      diff_max = color_dif[cnt];
-		      if (abs (color_dif[cnt] - color_dif[cnt - 1]) >
-			  abs (color_dif[coord] - color_dif[coord - 1]))
+		      if (fabs (color_dif[cnt] - color_dif[cnt - 1]) >
+			  fabs (color_dif[coord] - color_dif[coord - 1]))
 			coord = cnt;
 		    }
 
@@ -4907,8 +4907,8 @@ Refs_Analyze_Pattern (struct st_scanparams *scancfg,
 		  if ((color_dif[cnt] >= 0) && (color_dif[cnt] > diff_max))
 		    {
 		      diff_max = color_dif[cnt];
-		      if (abs (color_dif[cnt] - color_dif[cnt - 1]) >
-			  abs (color_dif[coord] - color_dif[coord - 1]))
+		      if (fabs (color_dif[cnt] - color_dif[cnt - 1]) >
+			  fabs (color_dif[coord] - color_dif[coord - 1]))
 			coord = cnt;
 		    }
 
@@ -4954,8 +4954,8 @@ Refs_Analyze_Pattern (struct st_scanparams *scancfg,
 		  if ((color_dif[cnt] >= 0) && (color_dif[cnt] > diff_max))
 		    {
 		      diff_max = color_dif[cnt];
-		      if (abs (color_dif[cnt] - color_dif[cnt - 1]) >
-			  abs (color_dif[coord] - color_dif[coord - 1]))
+		      if (fabs (color_dif[cnt] - color_dif[cnt - 1]) >
+			  fabs (color_dif[coord] - color_dif[coord - 1]))
 			coord = cnt;
 		    }
 
