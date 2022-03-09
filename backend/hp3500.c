@@ -1530,8 +1530,6 @@ rt_get_available_bytes (void)
 static int
 rt_get_data (int bytes, void *data)
 {
-  int total = 0;
-
   while (bytes)
     {
       int bytesnow = bytes;
@@ -1542,7 +1540,6 @@ rt_get_data (int bytes, void *data)
 	  (RTCMD_READBYTES, 0, bytesnow, 0, 0, bytesnow, data) < 0
 	  || rt_execute_commands () < 0)
 	return -1;
-      total += bytesnow;
       bytes -= bytesnow;
       data = (char *) data + bytesnow;
     }

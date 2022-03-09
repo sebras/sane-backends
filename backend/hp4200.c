@@ -941,7 +941,6 @@ compute_dpd (HP4200_Scanner * s, int step_size, int line_end)
 static SANE_Status
 read_required_bytes (HP4200_Scanner * s, int required, SANE_Byte * buffer)
 {
-  int read_count = 0;
   unsigned char scankb1;
   unsigned char scankb2;
   size_t to_read;
@@ -987,7 +986,6 @@ read_required_bytes (HP4200_Scanner * s, int required, SANE_Byte * buffer)
 	  buffer += really_read;
 	  required -= really_read;
 	  to_read -= really_read;
-	  read_count += really_read;
 	}
     }
 
