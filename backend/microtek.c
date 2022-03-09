@@ -1925,7 +1925,7 @@ static SANE_Status
 dump_suspect_inquiry(unsigned char *result)
 {
   int i;
-  char vendor_id[64], model_name[64], revision_num[16];
+  char vendor_id[9], model_name[17], revision_num[5];
   SANE_Byte device_type, model_code;
   SANE_Byte SCSI_firmware_ver_major, SCSI_firmware_ver_minor;
   SANE_Byte scanner_firmware_ver_major, scanner_firmware_ver_minor;
@@ -1952,7 +1952,7 @@ dump_suspect_inquiry(unsigned char *result)
   strncpy(revision_num, (char *)&result[32], 4);
   vendor_id[8]    = 0;
   model_name[16]  = 0;
-  revision_num[5] = 0;
+  revision_num[4] = 0;
   device_type                = (SANE_Byte)(result[0] & 0x1f);
   SCSI_firmware_ver_major    = (SANE_Byte)((result[1] & 0xf0) >> 4);
   SCSI_firmware_ver_minor    = (SANE_Byte)(result[1] & 0x0f);
