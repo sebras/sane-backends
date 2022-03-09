@@ -3901,8 +3901,8 @@ get_scan_parameters(Microtek2_Scanner *ms)
     if ( y2_dots >= mi->geo_height )
         y2_dots = mi->geo_height - 1;
     ms->width_dots = x2_dots - ms->x1_dots;
-    if ( md->model_flags && MD_OFFSET_2 ) /* this firmware has problems with */
-      if ( ( ms->width_dots % 2 ) == 1 )  /* odd pixel numbers */
+    if ( md->model_flags & MD_OFFSET_2 ) /* this firmware has problems with */
+      if ( ( ms->width_dots % 2 ) == 1 ) /* odd pixel numbers */
         ms->width_dots -= 1;
     if ( ms->width_dots < 10 )
         ms->width_dots = 10;

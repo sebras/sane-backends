@@ -1399,7 +1399,7 @@ sane_read (SANE_Handle handle, SANE_Byte * buf, SANE_Int max_len,
 
       status = sanei_scsi_cmd (s->fd, test_unit_ready,
 			       sizeof (test_unit_ready), 0, 0);
-      if (status != SANE_STATUS_GOOD || status != SANE_STATUS_INVAL)
+      if (status != SANE_STATUS_GOOD && status != SANE_STATUS_INVAL)
 	return status;
       return SANE_STATUS_CANCELLED;
     }

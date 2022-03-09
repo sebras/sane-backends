@@ -3587,12 +3587,12 @@ get_and_parse_nvram (Avision_Scanner* s, char* str, int n)
 	i += snprintf (str+i, n-i, "\nSerial: %.24s",
 		       nvram.serial);
 
-      if (nvram.born_year)
+      if (get_double(nvram.born_year))
 	i += snprintf (str+i, n-i, "\nManufacturing date: %d-%d-%d",
 		       get_double(nvram.born_year),
 		       get_double(nvram.born_month),
 		       get_double(nvram.born_day));
-      if (nvram.first_scan_year)
+      if (get_double(nvram.first_scan_year))
 	i += snprintf (str+i, n-i, "\nFirst scan date: %d-%d-%d",
 		       get_double(nvram.first_scan_year),
 		       get_double(nvram.first_scan_month),

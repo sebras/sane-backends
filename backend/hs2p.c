@@ -3125,7 +3125,7 @@ sane_start (SANE_Handle handle)	/* begin scanning */
 	       sane_strstatus (status));
 	  return (status);
 	}
-      if ((s->data.adf_status & 0x00) == 0x01)
+      if ((s->data.adf_status & 0x01) == 0x01)
 	{
 	  DBG (DBG_warning, "sane_start: No document on ADF\n");
 	  return (SANE_STATUS_NO_DOCS);
