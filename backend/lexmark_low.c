@@ -5252,12 +5252,12 @@ read_buffer_bytes_available (Read_Buffer * rb)
 
   if (rb->empty)
     return rb->size;
-  else if ((size_t) abs (rb->writeptr - rb->readptr) < rb->linesize)
-    return 0;			/* ptrs are less than one line apart */
   else if (rb->writeptr < rb->readptr)
-    return (rb->readptr - rb->writeptr - rb->linesize);
+    return (size_t)(rb->readptr - rb->writeptr) < rb->linesize ? 0 :
+           (size_t)(rb->readptr - rb->writeptr) - rb->linesize;
   else
-    return (rb->size + rb->readptr - rb->writeptr - rb->linesize);
+    return (size_t)(rb->writeptr - rb->readptr) < rb->linesize ? 0 :
+           rb->size - (size_t)(rb->writeptr - rb->readptr) - rb->linesize;
 }
 
 SANE_Status
