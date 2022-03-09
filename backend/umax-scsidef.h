@@ -1053,7 +1053,7 @@ static char *scanner_error_str[] =
  "fb sensor error",     /* 70 */
  "fb home or motor sensor error",
  "fb filter or motor sensor error",
- "fb lens or motor sensor error"
+ "fb lens or motor sensor error",
  "first line position error (LER error, vertical)",
  "first pixel position error (SER error, horizontal)",
  "first pixel position error for lens 2 (SER2 error, horizontal)",
