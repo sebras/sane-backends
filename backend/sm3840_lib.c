@@ -200,9 +200,8 @@ idle_ab (p_usb_dev_handle udev)
 
 /* CW: 40 04 00b0 0000 <len> :  <reg1> <value1> <reg2> <value2> ... */
 static void
-write_regs (p_usb_dev_handle udev, int regs, unsigned char reg1,
-	    unsigned char val1,
-	    ... /*unsigned char reg, unsigned char val, ... */ )
+write_regs (p_usb_dev_handle udev, int regs, int reg1, int val1,
+	    ... /* int reg, int val, ... */ )
 {
   unsigned char buff[512];
   va_list marker;
