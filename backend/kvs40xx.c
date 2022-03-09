@@ -118,11 +118,6 @@ static inline void buf_set_st(struct buf *b, SANE_Status st)
 	pthread_mutex_unlock(&b->mu);
 }
 
-static inline void buf_cancel(struct buf *b)
-{
-	buf_set_st(b, SANE_STATUS_CANCELLED);
-}
-
 static inline void push_buf(struct buf *b, SANE_Int sz)
 {
 	pthread_mutex_lock(&b->mu);

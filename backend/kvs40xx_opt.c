@@ -29,11 +29,6 @@ mm2scanner_units (unsigned mm)
 {
   return (mm * 12000 / 254.0 + .5);
 }
-static inline unsigned
-scanner_units2mm (unsigned u)
-{
-  return (u * 254.0 / 12000 + .5);
-}
 struct restriction
 {
   unsigned ux, uy, ux_pix, uy_pix;

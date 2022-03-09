@@ -2297,21 +2297,6 @@ sane_start(SANE_Handle handle)
 	return status;
 }
 
-static inline int
-get_color(int status)
-{
-	switch ((status >> 2) & 0x03) {
-	case 1:
-		return 1;
-	case 2:
-		return 0;
-	case 3:
-		return 2;
-	default:
-		return 0;	/* required to make the compiler happy */
-	}
-}
-
 /* this moves data from our buffers to SANE */
 
 SANE_Status
