@@ -1523,19 +1523,16 @@ static SANE_Int hp3800_checkstable(SANE_Int lamp, struct st_checkstable *check)
 
 	SANE_Int rst = ERROR;
 
-	if (reg != NULL)
-	{
-		SANE_Int a;
-		SANE_Int count = sizeof(reg) / sizeof(struct st_reg);
+	SANE_Int a;
+	SANE_Int count = sizeof(reg) / sizeof(struct st_reg);
 
-		for (a = 0; a < count; a++)
+	for (a = 0; a < count; a++)
+	{
+		if (reg[a].lamp == lamp)
 		{
-			if (reg[a].lamp == lamp)
-			{
-				memcpy(check, &reg[a].values, sizeof(struct st_checkstable));
-				rst = OK;
-				break;
-			}
+			memcpy(check, &reg[a].values, sizeof(struct st_checkstable));
+			rst = OK;
+			break;
 		}
 	}
 
@@ -1560,19 +1557,16 @@ static SANE_Int hp3970_checkstable(SANE_Int lamp, struct st_checkstable *check)
 
 	SANE_Int rst = ERROR;
 
-	if (reg != NULL)
-	{
-		SANE_Int a;
-		SANE_Int count = sizeof(reg) / sizeof(struct st_reg);
+	SANE_Int a;
+	SANE_Int count = sizeof(reg) / sizeof(struct st_reg);
 
-		for (a = 0; a < count; a++)
+	for (a = 0; a < count; a++)
+	{
+		if (reg[a].lamp == lamp)
 		{
-			if (reg[a].lamp == lamp)
-			{
-				memcpy(check, &reg[a].values, sizeof(struct st_checkstable));
-				rst = OK;
-				break;
-			}
+			memcpy(check, &reg[a].values, sizeof(struct st_checkstable));
+			rst = OK;
+			break;
 		}
 	}
 
@@ -1597,19 +1591,16 @@ static SANE_Int hp4370_checkstable(SANE_Int lamp, struct st_checkstable *check)
 
 	SANE_Int rst = ERROR;
 
-	if (reg != NULL)
-	{
-		SANE_Int a;
-		SANE_Int count = sizeof(reg) / sizeof(struct st_reg);
+	SANE_Int a;
+	SANE_Int count = sizeof(reg) / sizeof(struct st_reg);
 
-		for (a = 0; a < count; a++)
+	for (a = 0; a < count; a++)
+	{
+		if (reg[a].lamp == lamp)
 		{
-			if (reg[a].lamp == lamp)
-			{
-				memcpy(check, &reg[a].values, sizeof(struct st_checkstable));
-				rst = OK;
-				break;
-			}
+			memcpy(check, &reg[a].values, sizeof(struct st_checkstable));
+			rst = OK;
+			break;
 		}
 	}
 
@@ -1634,19 +1625,16 @@ static SANE_Int ua4900_checkstable(SANE_Int lamp, struct st_checkstable *check)
 
 	SANE_Int rst = ERROR;
 
-	if (reg != NULL)
-	{
-		SANE_Int a;
-		SANE_Int count = sizeof(reg) / sizeof(struct st_reg);
+	SANE_Int a;
+	SANE_Int count = sizeof(reg) / sizeof(struct st_reg);
 
-		for (a = 0; a < count; a++)
+	for (a = 0; a < count; a++)
+	{
+		if (reg[a].lamp == lamp)
 		{
-			if (reg[a].lamp == lamp)
-			{
-				memcpy(check, &reg[a].values, sizeof(struct st_checkstable));
-				rst = OK;
-				break;
-			}
+			memcpy(check, &reg[a].values, sizeof(struct st_checkstable));
+			rst = OK;
+			break;
 		}
 	}
 
