@@ -424,7 +424,10 @@ sane_open(SANE_String_Const name, SANE_Handle * h)
 
 	for (i_option = 0; i_option < CS3_N_OPTIONS; i_option++) {
 		o.name = o.title = o.desc = NULL;
-		o.type = o.unit = o.cap = o.constraint_type = o.size = 0;
+		o.type = SANE_TYPE_BOOL;
+		o.unit = SANE_UNIT_NONE;
+		o.size = o.cap = 0;
+		o.constraint_type = SANE_CONSTRAINT_NONE;
 		o.constraint.range = NULL;	/* only one union member needs to be NULLed */
 		switch (i_option) {
 		case CS3_OPTION_NUM:
