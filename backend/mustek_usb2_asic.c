@@ -2092,7 +2092,7 @@ SetMotorCurrent (PAsic chip, unsigned short dwMotorSpeed,
   STATUS status = STATUS_GOOD;
   DBG (DBG_ASIC, "SetMotorCurrent:Enter\n");
 
-  chip = chip;
+  (void) chip;
 
   if (dwMotorSpeed < 2000)
     {
@@ -4596,7 +4596,7 @@ static STATUS
 Asic_SetMotorType (PAsic chip, SANE_Bool isMotorMove, SANE_Bool isUniformSpeed)
 {
   STATUS status = STATUS_GOOD;
-  isUniformSpeed = isUniformSpeed;
+  (void) isUniformSpeed;
   DBG (DBG_ASIC, "Asic_SetMotorType:Enter\n");
 
   if (isMotorMove)
@@ -4680,7 +4680,7 @@ Asic_CarriageHome (PAsic chip, SANE_Bool isTA)
 {
   STATUS status = STATUS_GOOD;
   SANE_Bool LampHome, TAHome;
-  isTA = isTA;
+  (void) isTA;
 
   DBG (DBG_ASIC, "Asic_CarriageHome:Enter\n");
 
@@ -4705,7 +4705,7 @@ Asic_SetShadingTable (PAsic chip, unsigned short * lpWhiteShading,
   double dbXRatioAdderDouble;
   unsigned int wShadingTableSize;
 
-  wX = wX;
+  (void) wX;
   DBG (DBG_ASIC, "Asic_SetShadingTable:Enter\n");
 
   if (chip->firmwarestate < FS_OPENED)
@@ -4807,7 +4807,7 @@ Asic_WaitCarriageHome (PAsic chip, SANE_Bool isTA)
   SANE_Bool LampHome, TAHome;
   int i;
 
-  isTA = isTA;
+  (void) isTA;
 
   DBG (DBG_ASIC, "Asic_WaitCarriageHome:Enter\n");
 

@@ -705,9 +705,9 @@ net_avahi_resolve_callback (AvahiServiceResolver *r, AvahiIfIndex interface, Ava
   char *t;
 
   /* unused */
-  interface = interface;
-  protocol = protocol;
-  userdata = userdata;
+  (void) interface;
+  (void) protocol;
+  (void) userdata;
 
   if (!r)
     return;
@@ -759,8 +759,8 @@ net_avahi_browse_callback (AvahiServiceBrowser *b, AvahiIfIndex interface, Avahi
   AvahiProtocol proto;
 
   /* unused */
-  flags = flags;
-  userdata = userdata;
+  (void) flags;
+  (void) userdata;
 
   if (!b)
     return;
@@ -808,7 +808,7 @@ net_avahi_callback (AvahiClient *c, AvahiClientState state, void * userdata)
   int error;
 
   /* unused */
-  userdata = userdata;
+  (void) userdata;
 
   if (!c)
     return;

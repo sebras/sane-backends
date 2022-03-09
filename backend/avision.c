@@ -2158,8 +2158,8 @@ sense_handler (int fd, u_char* sense, void* arg)
   uint8_t sense_key = sense[2] & 0xf;
   uint8_t additional_sense = sense[7];
 
-  fd = fd; /* silence gcc */
-  arg = arg; /* silence gcc */
+  (void) fd; /* silence gcc */
+  (void) arg; /* silence gcc */
 
   DBG (3, "sense_handler:\n");
 
@@ -8451,7 +8451,7 @@ sane_reload_devices (void)
 SANE_Status
 sane_init (SANE_Int* version_code, SANE_Auth_Callback authorize)
 {
-  authorize = authorize; /* silence gcc */
+  (void) authorize; /* silence gcc */
 
   DBG_INIT();
 
@@ -8500,7 +8500,7 @@ sane_get_devices (const SANE_Device*** device_list, SANE_Bool local_only)
   Avision_Device* dev;
   int i;
 
-  local_only = local_only; /* silence gcc */
+  (void) local_only; /* silence gcc */
 
   DBG (3, "sane_get_devices:\n");
 

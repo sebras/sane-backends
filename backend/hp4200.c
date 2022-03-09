@@ -2369,7 +2369,7 @@ sane_init (SANE_Int * version_code, SANE_Auth_Callback authorize)
   char dev_name[PATH_MAX];
   FILE *fp;
 
-  authorize = authorize;	/* keep gcc quiet */
+  (void) authorize;		/* keep gcc quiet */
 
   DBG_INIT ();
 
@@ -2939,7 +2939,7 @@ sane_set_io_mode (SANE_Handle handle, SANE_Bool non_blocking)
   HP4200_Scanner *dev = handle;
   SANE_Status status;
 
-  non_blocking = non_blocking;	/* silence gcc */
+  (void) non_blocking;		/* silence gcc */
 
   if (dev->scanning == SANE_FALSE)
     {
@@ -2965,8 +2965,8 @@ sane_get_select_fd (SANE_Handle h, SANE_Int * fd)
 {
   static char me[] = "sane_get_select_fd";
 
-  h = h;			/* keep gcc quiet */
-  fd = fd;			/* keep gcc quiet */
+  (void) h;			/* keep gcc quiet */
+  (void) fd;			/* keep gcc quiet */
 
   DBG (DBG_proc, "%s\n", me);
   return SANE_STATUS_UNSUPPORTED;

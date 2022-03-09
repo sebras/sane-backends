@@ -380,7 +380,7 @@ bknd_colormodes (TScanner * scanner, SANE_Int model)
 	{ SANE_VALUE_SCAN_MODE_COLOR, SANE_VALUE_SCAN_MODE_GRAY, SANE_VALUE_SCAN_MODE_LINEART, 0 };
 
       /* silence gcc */
-      model = model;
+      (void) model;
 
       colormode = (SANE_String_Const *) malloc (sizeof (mycolormode));
       if (colormode != NULL)
@@ -460,7 +460,7 @@ bknd_depths (TScanner * scanner, SANE_Int model)
       SANE_Int mydepth[] = { 2, 8, 16 };	/*{3, 8, 12, 16}; */
 
       /* silence gcc */
-      model = model;
+      (void) model;
 
       depth = (SANE_Int *) malloc (sizeof (mydepth));
       if (depth != NULL)
@@ -1760,7 +1760,7 @@ sane_init (SANE_Int * version_code, SANE_Auth_Callback authorize)
   DBG (DBG_FNC, "> sane_init\n");
 
   /* silence gcc */
-  authorize = authorize;
+  (void) authorize;
 
   /* Initialize usb */
   sanei_usb_init ();
@@ -1816,7 +1816,7 @@ sane_get_devices (const SANE_Device *** device_list, SANE_Bool local_only)
 {
   SANE_Status rst = SANE_STATUS_GOOD;
 
-  local_only = local_only;
+  (void) local_only;
 
   if (_pSaneDevList)
     free (_pSaneDevList);
@@ -2654,7 +2654,7 @@ sane_cancel (SANE_Handle h)
   DBG (DBG_FNC, "> sane_cancel\n");
 
   /* silence gcc */
-  h = h;
+  (void) h;
 
   device->status->cancel = TRUE;
 }
@@ -2665,8 +2665,8 @@ sane_set_io_mode (SANE_Handle handle, SANE_Bool non_blocking)
   DBG (DBG_FNC, "> sane_set_io_mode\n");
 
   /* silence gcc */
-  handle = handle;
-  non_blocking = non_blocking;
+  (void) handle;
+  (void) non_blocking;
 
   return SANE_STATUS_UNSUPPORTED;
 }
@@ -2677,8 +2677,8 @@ sane_get_select_fd (SANE_Handle handle, SANE_Int * fd)
   DBG (DBG_FNC, "> sane_get_select_fd\n");
 
   /* silence gcc */
-  handle = handle;
-  fd = fd;
+  (void) handle;
+  (void) fd;
 
   return SANE_STATUS_UNSUPPORTED;
 }

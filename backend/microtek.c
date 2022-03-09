@@ -3060,7 +3060,7 @@ sane_init(SANE_Int *version_code, SANE_Auth_Callback authorize)
   size_t len;
   FILE *fp;
 
-  authorize = authorize;
+  (void) authorize;
   DBG_INIT();
   DBG(1, "sane_init:  MICROTEK says hello! (v%d.%d.%d)\n",
       MICROTEK_MAJOR, MICROTEK_MINOR, MICROTEK_PATCH);
@@ -3111,7 +3111,7 @@ sane_get_devices(const SANE_Device ***device_list,
   Microtek_Device *dev;
   int i;
 
-  local_only = local_only;
+  (void) local_only;
   DBG(10, "sane_get_devices\n");
   /* we keep an internal copy */
   if (devlist)
@@ -4166,7 +4166,7 @@ SANE_Status
 sane_set_io_mode (SANE_Handle handle, SANE_Bool non_blocking)
 {
   DBG(10, "sane_set_io_mode...\n");
-  handle = handle;
+  (void) handle;
   if (non_blocking)
     return SANE_STATUS_UNSUPPORTED;
   else
@@ -4182,6 +4182,6 @@ SANE_Status
 sane_get_select_fd (SANE_Handle handle, SANE_Int * fd)
 {
   DBG(10, "sane_get_select_fd...\n");
-  handle = handle, fd = fd;
+  (void) handle, (void) fd;
   return SANE_STATUS_UNSUPPORTED;
 }

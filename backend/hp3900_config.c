@@ -2719,7 +2719,7 @@ static SANE_Int bq5550_scanmodes(SANE_Int usb, SANE_Int sm, struct st_scanmode *
 	SANE_Int rst = ERROR;
 
 	/* silence compiler */
-	usb = usb;
+	(void) usb;
 
 	if (mymode != NULL)
 	{

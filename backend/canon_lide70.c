@@ -956,7 +956,7 @@ sane_set_io_mode (SANE_Handle handle, SANE_Bool non_blocking)
 SANE_Status
 sane_get_select_fd (SANE_Handle handle, SANE_Int * fd)
 {
-  handle = handle;		/* silence gcc */
-  fd = fd;			/* silence gcc */
+  (void) handle;		/* silence gcc */
+  (void) fd;			/* silence gcc */
   return SANE_STATUS_UNSUPPORTED;
 }

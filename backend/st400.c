@@ -439,8 +439,8 @@ st400_sense_handler( int fd, SANE_Byte *result, void *arg )
 	/* ST400_Device *dev = arg; */
 	SANE_Status status;
 
-	fd = fd;
-	arg = arg; /* silence compilation warnings */
+	(void) fd;
+	(void) arg; /* silence compilation warnings */
 
 	switch( result[0] & 0x0f ) {
 		case 0x0:
@@ -563,7 +563,7 @@ st400_config_get_arg(char **optP, unsigned long *argP, size_t linenum)
 {
 	int n;
 
-	linenum = linenum; /* silence compilation warnings */
+	(void) linenum; /* silence compilation warnings */
 
 	if( sscanf(*optP, "%lu%n", argP, &n) == 1 ) {
 		*optP += n;

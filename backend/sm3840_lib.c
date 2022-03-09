@@ -64,8 +64,8 @@ my_usb_bulk_write (p_usb_dev_handle dev, int ep,
   SANE_Status status;
   size_t my_size;
 
-  timeout = timeout;
-  ep = ep;
+  (void) timeout;
+  (void) ep;
   my_size = size;
   status =
     sanei_usb_write_bulk ((SANE_Int) dev, (SANE_Byte *) bytes, &my_size);
@@ -81,8 +81,8 @@ my_usb_bulk_read (p_usb_dev_handle dev, int ep,
   SANE_Status status;
   size_t my_size;
 
-  timeout = timeout;
-  ep = ep;
+  (void) timeout;
+  (void) ep;
   my_size = size;
   status =
     sanei_usb_read_bulk ((SANE_Int) dev, (SANE_Byte *) bytes, &my_size);
@@ -98,7 +98,7 @@ my_usb_control_msg (p_usb_dev_handle dev, int requesttype,
 {
   SANE_Status status;
 
-  timeout = timeout;
+  (void) timeout;
   status = sanei_usb_control_msg ((SANE_Int) dev, (SANE_Int) requesttype,
 				  (SANE_Int) request, (SANE_Int) value,
 				  (SANE_Int) index, (SANE_Int) size,

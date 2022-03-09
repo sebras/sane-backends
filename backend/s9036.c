@@ -124,8 +124,8 @@ test_ready (int fd)
 static SANE_Status
 sense_handler (int scsi_fd, u_char *result, void *arg)
 {
-  scsi_fd = scsi_fd;
-  arg = arg; /* silence compilation warnings */
+  (void) scsi_fd;
+  (void) arg; /* silence compilation warnings */
 
   if (result[0])
     {
@@ -141,7 +141,7 @@ sense_handler (int scsi_fd, u_char *result, void *arg)
 static SANE_Status
 stop_scan (int fd)
 {
-  fd = fd; /* silence compilation warnings */
+  (void) fd; /* silence compilation warnings */
 
   /* XXX don't know how to stop the scanner. To be tested ! */
 #if 0
@@ -829,7 +829,7 @@ sane_init (SANE_Int * version_code, SANE_Auth_Callback authorize)
   size_t len;
   FILE *fp;
 
-  authorize = authorize; /* silence compilation warnings */
+  (void) authorize; /* silence compilation warnings */
 
   DBG_INIT ();
 
@@ -882,7 +882,7 @@ sane_get_devices (const SANE_Device *** device_list, SANE_Bool local_only)
   S9036_Device *dev;
   int i;
 
-  local_only = local_only; /* silence compilation warnings */
+  (void) local_only; /* silence compilation warnings */
 
   if (devlist)
     free (devlist);
@@ -1327,7 +1327,7 @@ sane_cancel (SANE_Handle handle)
 SANE_Status
 sane_set_io_mode (SANE_Handle handle, SANE_Bool non_blocking)
 {
-  handle = handle; /* silence compilation warnings */
+  (void) handle; /* silence compilation warnings */
 
   DBG (1, "sane_set_io_mode(%d)\n", non_blocking);
 
@@ -1338,8 +1338,8 @@ sane_set_io_mode (SANE_Handle handle, SANE_Bool non_blocking)
 SANE_Status
 sane_get_select_fd (SANE_Handle handle, SANE_Int * fd)
 {
-  handle = handle;
-  fd = fd; /* silence compilation warnings */
+  (void) handle;
+  (void) fd; /* silence compilation warnings */
 
   return SANE_STATUS_UNSUPPORTED;
 }

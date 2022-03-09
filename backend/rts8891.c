@@ -307,7 +307,7 @@ sane_init (SANE_Int * version_code, SANE_Auth_Callback authorize)
 {
   SANE_Status status;
 
-  authorize = authorize;	/* get rid of compiler warning */
+  (void) authorize;		/* get rid of compiler warning */
 
   /* init ASIC libraries */
   sanei_rts88xx_lib_init ();

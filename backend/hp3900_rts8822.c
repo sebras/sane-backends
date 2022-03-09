@@ -7703,7 +7703,7 @@ Scan_Read_BufferA (struct st_device *dev, SANE_Int buffer_size, SANE_Int arg2,
        "+ Scan_Read_BufferA(buffer_size=%i, arg2, *pBuffer, *bytes_transferred):\n",
        buffer_size);
 
-  arg2 = arg2;			/* silence gcc */
+  (void) arg2;			/* silence gcc */
   *bytes_transferred = 0;
 
   if (pBuffer != NULL)
@@ -11364,7 +11364,7 @@ Calib_CreateBuffers (struct st_device *dev, struct st_calibration *buffer,
   SANE_Int ebp, ret, channel;
 
   ret = ERROR;
-  dev = dev;
+  (void) dev;
 
   buffer->shadinglength = scan.coord.width;
   ebp = 0x14;
@@ -12602,9 +12602,9 @@ Calib_BWShading (struct st_calibration_config *calibcfg,
   /*falta codigo */
 
   /*silence gcc */
-  calibcfg = calibcfg;
-  myCalib = myCalib;
-  gainmode = gainmode;
+  (void) calibcfg;
+  (void) myCalib;
+  (void) gainmode;
 
   return OK;
 }
@@ -13624,7 +13624,7 @@ Calibration (struct st_device *dev, SANE_Byte * Regs,
   DBG (DBG_FNC, "> Calibration\n");
   dbg_ScanParams (scancfg);
 
-  value = value;		/*silence gcc */
+  (void) value;			/*silence gcc */
 
   memcpy (&calibdata->Regs, Regs, sizeof (SANE_Byte) * RT_BUFFER_LEN);
 

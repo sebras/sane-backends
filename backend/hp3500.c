@@ -265,7 +265,7 @@ static const SANE_Device **devlist = 0;
 SANE_Status
 sane_init (SANE_Int * version_code, SANE_Auth_Callback authorize)
 {
-  authorize = authorize;	/* get rid of compiler warning */
+  (void) authorize;		/* get rid of compiler warning */
 
   DBG_INIT ();
   DBG (10, "sane_init\n");
@@ -1117,7 +1117,7 @@ init_options (struct hp3500_data *scanner)
 static void
 do_reset (struct hp3500_data *scanner)
 {
-  scanner = scanner;		/* kill warning */
+  (void) scanner;		/* kill warning */
 }
 
 static void
@@ -2774,7 +2774,7 @@ rts8801_doscan (unsigned width,
   int result = 0;
   unsigned rows_supplied = 0;
 
-  calib_info = calib_info;	/* Kill warning */
+  (void) calib_info;		/* Kill warning */
   if (cancelled_scan)
     return -1;
   rt_start_moving ();
@@ -3784,7 +3784,7 @@ writefunc (struct hp3500_write_info *winfo, int bytes, char *data)
 static void
 sigtermHandler (int signal)
 {
-  signal = signal;		/* get rid of compiler warning */
+  (void) signal;		/* get rid of compiler warning */
   cancelled_scan = 1;
 }
 #endif

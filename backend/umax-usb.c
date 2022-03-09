@@ -261,8 +261,8 @@ sanei_umaxusb_open (const char *dev, int *fdp,
 {
 	SANE_Status status;
 
-	handler = handler;			/* silence gcc */
-	handler_arg = handler_arg;	/* silence gcc */
+	(void) handler;			/* silence gcc */
+	(void) handler_arg;		/* silence gcc */
 
 	status = sanei_usb_open (dev, fdp);
 	if (status != SANE_STATUS_GOOD) {
@@ -306,7 +306,7 @@ static SANE_Status
 sanei_umaxusb_open_extended (const char *dev, int *fdp,
 					SANEI_SCSI_Sense_Handler handler, void *handler_arg, int *buffersize)
 {
-	buffersize = buffersize;
+	(void) buffersize;
 	return(sanei_umaxusb_open(dev, fdp, handler, handler_arg));
 }
 

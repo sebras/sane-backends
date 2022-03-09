@@ -812,7 +812,7 @@ sane_init(SANE_Int *version_code, SANE_Auth_Callback authorize)
     size_t len;
     FILE *fp;
 
-    authorize = authorize;
+    (void) authorize;
 
     DBG_INIT();
     if (version_code) {
@@ -891,7 +891,7 @@ sane_get_devices(SANE_Device const ***device_list, SANE_Bool local_only)
     DMC_Device *dev;
     int i = 0;
 
-    local_only = local_only;
+    (void) local_only;
 
     if (devlist) free(devlist);
     devlist = malloc((NumDevices+1) * sizeof(devlist[0]));
@@ -1392,8 +1392,8 @@ sane_cancel (SANE_Handle handle)
 SANE_Status
 sane_set_io_mode (SANE_Handle handle, SANE_Bool non_blocking)
 {
-  handle = handle;
-  non_blocking = non_blocking;
+  (void) handle;
+  (void) non_blocking;
 
   return SANE_STATUS_UNSUPPORTED;
 }
@@ -1401,8 +1401,8 @@ sane_set_io_mode (SANE_Handle handle, SANE_Bool non_blocking)
 SANE_Status
 sane_get_select_fd (SANE_Handle handle, SANE_Int *fd)
 {
-  handle = handle;
-  fd = fd;
+  (void) handle;
+  (void) fd;
 
   return SANE_STATUS_UNSUPPORTED;
 }

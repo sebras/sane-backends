@@ -305,7 +305,7 @@ Transparent_SetupScan (COLORMODE ColorMode, unsigned short XDpi, unsigned short 
   SANE_Bool hasTA;
   unsigned short wTAShadingMinus = 0;
 
-  isInvert = isInvert;
+  (void) isInvert;
   DBG (DBG_FUNC, "Transparent_SetupScan: call in\n");
 
   if (g_bOpened)

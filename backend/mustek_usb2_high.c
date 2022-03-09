@@ -2132,7 +2132,7 @@ MustScanner_GetMono16BitLine (SANE_Byte * lpLine, SANE_Bool isOrderInvert,
   unsigned short wLinePos = 0;
   unsigned short i;
 
-  isOrderInvert = isOrderInvert;
+  (void) isOrderInvert;
 
   DBG (DBG_FUNC, "MustScanner_GetMono16BitLine: call in\n");
 
@@ -2228,7 +2228,7 @@ MustScanner_GetMono16BitLine1200DPI (SANE_Byte * lpLine, SANE_Bool isOrderInvert
   unsigned short i;
   SANE_Byte * lpTemp = lpLine;
 
-  isOrderInvert = isOrderInvert;
+  (void) isOrderInvert;
   DBG (DBG_FUNC, "MustScanner_GetMono16BitLine1200DPI: call in\n");
 
   TotalXferLines = 0;
@@ -2407,7 +2407,7 @@ MustScanner_GetMono8BitLine (SANE_Byte * lpLine, SANE_Bool isOrderInvert,
   unsigned short i;
   unsigned short wLinePos = 0;
 
-  isOrderInvert = isOrderInvert;
+  (void) isOrderInvert;
   DBG (DBG_FUNC, "MustScanner_GetMono8BitLine: call in\n");
 
   TotalXferLines = 0;
@@ -2502,7 +2502,7 @@ MustScanner_GetMono8BitLine1200DPI (SANE_Byte * lpLine, SANE_Bool isOrderInvert,
   unsigned short i;
   SANE_Byte bNextPixel = 0;
 
-  isOrderInvert = isOrderInvert;
+  (void) isOrderInvert;
   DBG (DBG_FUNC, "MustScanner_GetMono8BitLine1200DPI: call in\n");
 
   TotalXferLines = 0;
@@ -2660,7 +2660,7 @@ MustScanner_GetMono1BitLine (SANE_Byte * lpLine, SANE_Bool isOrderInvert,
   unsigned short wLinePos;
   unsigned short i;
 
-  isOrderInvert = isOrderInvert;
+  (void) isOrderInvert;
 
   DBG (DBG_FUNC, "MustScanner_GetMono1BitLine: call in\n");
 
@@ -2752,7 +2752,7 @@ MustScanner_GetMono1BitLine1200DPI (SANE_Byte * lpLine, SANE_Bool isOrderInvert,
   unsigned short wLinePosOdd;
   unsigned short wLinePosEven;
 
-  isOrderInvert = isOrderInvert;
+  (void) isOrderInvert;
 
   DBG (DBG_FUNC, "MustScanner_GetMono1BitLine1200DPI: call in\n");
 
@@ -2919,7 +2919,7 @@ MustScanner_CalculateMaxMin (SANE_Byte * pBuffer, unsigned short * lpMaxValue,
   unsigned short *wSecData = NULL, *wDarkSecData = NULL;
   int i, j;
 
-  wResolution = wResolution;
+  (void) wResolution;
 
   wSecData = (unsigned short *) malloc (sizeof (unsigned short) * g_nSecNum);
   if (wSecData == NULL)
@@ -3001,7 +3001,7 @@ MustScanner_ReadDataFromScanner (void * dummy)
   unsigned short wScanLinesThisBlock;
   unsigned short wBufferLines = g_wLineDistance * 2 + g_wPixelDistance;
 
-  dummy = dummy;
+  (void) dummy;
   DBG (DBG_FUNC,
        "MustScanner_ReadDataFromScanner: call in, and in new thread\n");
 

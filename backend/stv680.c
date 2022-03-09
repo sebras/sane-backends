@@ -1520,7 +1520,7 @@ sane_init (SANE_Int * version_code, SANE_Auth_Callback authorize)
 
   DBG (DBG_sane_init, "sane_init\n");
 
-  authorize = authorize;	/* silence gcc */
+  (void) authorize;		/* silence gcc */
 
   DBG (DBG_error, "This is sane-stv680 version %d.%d-%d\n", SANE_CURRENT_MAJOR,
        SANE_CURRENT_MINOR, BUILD);
@@ -1584,7 +1584,7 @@ sane_get_devices (const SANE_Device *** device_list, SANE_Bool local_only)
 
   DBG (DBG_proc, "sane_get_devices: enter\n");
 
-  local_only = local_only;	/* silence gcc */
+  (void) local_only;		/* silence gcc */
 
   if (devlist)
     free (devlist);
@@ -2073,8 +2073,8 @@ sane_set_io_mode (SANE_Handle handle, SANE_Bool non_blocking)
 
   DBG (DBG_proc, "sane_set_io_mode: enter\n");
 
-  handle = handle;		/* silence gcc */
-  non_blocking = non_blocking;	/* silence gcc */
+  (void) handle;		/* silence gcc */
+  (void) non_blocking;		/* silence gcc */
 
 
   DBG (DBG_proc, "sane_set_io_mode: exit\n");
@@ -2087,8 +2087,8 @@ sane_get_select_fd (SANE_Handle handle, SANE_Int * fd)
 {
   DBG (DBG_proc, "sane_get_select_fd: enter\n");
 
-  handle = handle;		/* silence gcc */
-  fd = fd;			/* silence gcc */
+  (void) handle;		/* silence gcc */
+  (void) fd;			/* silence gcc */
 
   DBG (DBG_proc, "sane_get_select_fd: exit\n");
 

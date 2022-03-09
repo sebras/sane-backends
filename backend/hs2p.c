@@ -3322,8 +3322,8 @@ sane_get_select_fd (SANE_Handle handle, SANE_Int * fd)
   *fd = s->fd;
   return SANE_STATUS_GOOD;
 #else
-  handle = handle;
-  fd = fd;			/* get rid of compiler warning */
+  (void) handle;
+  (void) fd;			/* get rid of compiler warning */
   DBG (DBG_proc, "<< sane_get_select_fd\n");
   return SANE_STATUS_UNSUPPORTED;
 #endif
