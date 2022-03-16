@@ -9,18 +9,10 @@ The
 library implements a SANE (Scanner Access Now Easy) backend that
 provides access to Plustek ASIC 9600[1/3] and P9800[1/3] based
 parallel port flatbed scanners.
-The access of the scanner is either done directly by the backend
-or via kernel module, called pt_drv which can be created out of
-the
-.B sane\-plustek_pp
-backend code \- see also section
-.B "BUILDING THE KERNEL MODULE"
-for further information.
 
 .SH "SUPPORTED DEVICES"
 
-At present, the following scanners should work with this backend
-and/or the kernel module:
+At present, the following scanners should work with this backend:
 .PP
 .B "PLUSTEK SCANNERS"
 .PP
@@ -112,18 +104,14 @@ BrightScan OpticPro         OpticPro P12
 .ft R
 
 .SH "DEVICE NAMES"
-This backend works in two modes, the so called "direct-mode"
-and the "kernel-mode". In direct-mode, the user-space backend is
-used, in kernel-mode, you should have a kernel-module named pt_drv
-loaded.
-This backends default device is:
+This backend's default device is:
 .PP
 .RS
 .I 0x378
 .RE
 .PP
-This "default device" will be used, if no configuration
-file can be found. It is rather the base address of the parallel port
+This "default device" will be used if no configuration
+file can be found. It is the base address of the parallel port
 on i386 machines.
 .PP
 As the backend supports up to four devices, it is possible to
@@ -150,24 +138,13 @@ For a proper setup, you will need at least two entries:
 .I device 0x378
 .RE
 .PP
-or
-.RS
-.I [kernel]
-.br
-.I device /dev/pt_drv
-.RE
-.PP
 .I direct
 tells the backend, that the following devicename (here
 .IR 0x378 )
 has to be interpreted as parallel port scanner device. In
-fact it is the address to use, alternatively you can use
+fact it is the address to use. Alternatively you can use
 .I /dev/parport0
 if the backend has been compiled with libieee1284 support.
-.I kernel
-should only be used, when a kernel-module has been built
-out of the backend sources. See below for more instructions
-about this.
 .PP
 Further options:
 .PP
@@ -235,157 +212,6 @@ See the
 file for examples.
 .PP
 
-.SH "BUILDING THE KERNEL MODULE"
-As mentioned before, the
-.B sane\-plustek_pp
-backend code can also be compiled and installed as linux kernel module. To do so,
-you will need the source-files of this sane\-backend installation.
-Unpack this tar-ball and go to the directory:
-.IR sane\-backends/doc/plustek .
-Within this directory, you should find a script called:
-.IR MakeModule.sh .
-Now if your Linux kernelsources are installed correctly,
-it should be possible to build, install and load the
-module
-.BR pt_drv .
-.B Please note,
-that the kernelsources need to be configured correctly.
-Refer to your distributions
-manual on how this is done. As root user, try
-.PP
-.I ./MakeModule.sh
-.PP
-the script will try and get all necessary information about your
-running kernel and will lead you through the whole installation
-process.
-.br
-.B Note: Installing and loading the can only be done as
-superuser.
-.PP
-
-.SH "KERNEL MODULE SETUP"
-The configuration of the kernel module is done by providing
-some or more options found below to the kernel module at
-load time. This can be done by invoking
-.BR insmod (8)
-with the appropriate parameters or appending the options to the file
-.I /etc/modules.conf (kernel < 2.6.x)
-or
-.I /etc/modprobe.conf (kernel >= 2.6.x)
-.PP
-.B
-The Options:
-.br
-lampoff=lll
-.RS
-The value
-.I lll
-tells the driver, after how many seconds to
-switch-off the lamp(s). The default value is 180.
-0 will disable this feature.
-.br
-.B HINT:
-Do not use a value that is too small, because often
-switching on/off the lamps will reduce their lifetime.
-.RE
-.PP
-port=ppp
-.RS
-.I ppp
-specifies the port base address, where the scanner
-is connected to. The default value is 0x378, which
-is normally a standard.
-.RE
-.PP
-warmup=www
-.RS
-.I www
-specifies the time in seconds, how long a lamp has to be on,
-until the driver will start to scan. The default value is 30.
-.RE
-.PP
-lOffonEnd=e
-.RS
-.I e
-specifies the behaviour when unloading the driver, 1 --> switch
-lamps off, 0 --> do not change lamp status
-.RE
-.PP
-slowIO=s
-.RS
-.I s
-specifies which I/O functions the driver should use, 1 --> use
-delayed functions, 0 --> use the non-delayed ones
-.RE
-.PP
-forceMode=fm
-.RS
-.I fm
-specifies port mode which should be used, 0 --> autodetection,
-1 --> use SPP mode and 2 --> use EPP mode
-.RE
-.PP
-mov=m
-.RS
-.TP
-.IR m " = 0"
-default: no override
-.TP
-.IR m " = 1"
-OpticPro 9630PL override (works if OP9630
-has been detected) forces legal size (14")
-.TP
-.IR m " = 2"
-Primax 4800Direct override (works if OP600
-has been detected) swaps red/green color
-.TP
-.IR m " = 3"
-OpticPro 9636 override (works if OP9636 has
-been detected) disables backends
-transparency/negative capabilities
-.TP
-.IR m " = 4"
-OpticPro 9636P override (works if OP9636 has
-been detected) disables backends
-transparency/negative capabilities
-.TP
-.IR m " = 5"
-OpticPro A3I override (works if OP12000 has
-been detected) enables A3 scanning
-.TP
-.IR m " = 6"
-OpticPro 4800P override (works if OP600
-has been detected) swaps red/green color
-.TP
-.IR m " = 7"
-Primax 4800Direct 30bit override (works if
-OP4830 has been detected)
-.RE
-.PP
-Sample entry for file
-.IR /etc/modules.conf :
-.PP
-.RS
-alias char\-major\-40 pt_drv
-.br
-pre-install pt_drv modprobe -k parport
-.br
-options pt_drv lampoff=180 warmup=15 port=0x378 lOffonEnd=0 mov=0 slowIO=0 forceMode=0
-.RE
-.PP
-For multidevice support, simply add values separated by commas to
-the different options
-.PP
-.RS
-options pt_drv port=0x378,0x278 mov=0,4 slowIO=0,1 forceMode=0,1
-.RE
-.PP
-Remember to call
-.BR depmod (8)
-after changing
-.IR /etc/conf.modules .
-.PP
-
 .SH "PARALLEL PORT MODES"
 .PP
 The current driver works best, when the parallel port
@@ -423,13 +249,6 @@ The static library implementing this backend.
 .I @LIBDIR@/libsane\-plustek_pp.so
 The shared library implementing this backend (present on systems that
 support dynamic loading).
-.TP
-.I /lib/modules/<Kernel-Version>/kernel/drivers/parport/pt_drv.o
-The Linux kernelmodule for kernels < 2.6.x.
-.TP
-.I /lib/modules/<Kernel-Version>/kernel/drivers/parport/pt_drv.ko
-The Linux kernelmodule for kernels >= 2.6.x.
-.PP
 
 .SH ENVIRONMENT
 .TP

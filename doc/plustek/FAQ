@@ -12,110 +12,9 @@ If you have some more FAQ entries, let me know <gerhard@gjaeger.de>
 THANKS to Jochen <jochen@puchalla-online.de>, who roamed through the
 mailing-list and gathered the different questions.
 
-
 *******************************************************************************
-*                           TROUBLE-SHOOTING                                  *
-*                                                                             *
-*                             DRIVER TOPICS                                   *
+*                                 General                                     *
 *******************************************************************************
-
-
-SYMPTOM: "kernel-module version mismatch"
---------
-"When I try to "make load" I get an error"
-
-/sbin/modprobe pt_drv || exit 1
-/lib/modules/2.2.14-6.0.6/misc/pt_drv.o: kernel-module version mismatch
-/lib/modules/2.2.14-6.0.1/misc/pt_drv.o was compiled
-for kernel version 2.2.14-5.0
-while this kernel is version 2.2.14-6.0.1.
-
-PROBLEM:
---------
-You're using the wrong Kernel-header files.
-
-The path
-/usr/include/linux is a link to
-/usr/src/linux/include/linux and
-/usr/src/linux is normally a link to your current
-kernel, i.e:
-/usr/src/linux-2.2.14
-
-If you now upgrade your kernel and you have
-forgotten to correct the link /usr/src/linux, then
-every kernel-module you build outside the
-kernelsource structure will include the wrong
-version information.
-
-SOLUTION:
----------
-Set the link /usr/src/linux
-to your current kernel-source tree before recompiling
-kernel-modules like pt_drv, then your version mismatch
-problem should be solved.
-
-
-
-SYMPTOM: "Device or resource busy"
---------
-Any attempt to "modprobe" or "make load" the driver leads
-to this message.
-
-PROBLEM:
---------
-The driver refuses to load. During startup, the driver performs
-some tests according to the parallel port and the connected
-scanners.
-If the parallel port is not supported or the scanner cannot be
-found, the driver returns an error and the system will report
-"device or resource busy"
-
-SOLUTION:
----------
-There's no way to provide a general solution. First of all
-you should check your connections and the parallel port.
-Also check power for your scanner.
-If the problem still exists, enable the debug-messages of the
-pt_drv module (see INSTALL).
-Then check the messages after loading or send the output to
-the mailing list.
-Most of these problems are related to HW-problems. Before
-giving up, check the scanner under Windows (not really a
-good advice I know, but it helps to find HW-damage).
-There was also one case were the internal plugs of the parport
-connection were wrong...
-
-
-
-SYMPTOM: "Unresolved symbols"
---------
-"make load" or "modprobe pt_drv" produces this message:
-
-/sbin/modprobe pt_drv || exit 1
-/lib/modules/2.2.14-5.0/misc/pt_drv.o: unresolved symbol parport_unregister_device
-/lib/modules/2.2.14-5.0/misc/pt_drv.o: unresolved symbol parport_enumerate
-/lib/modules/2.2.14-5.0/misc/pt_drv.o: unresolved symbol parport_register_device
-/lib/modules/2.2.14-5.0/misc/pt_drv.o: unresolved symbol parport_claim
-/lib/modules/2.2.14-5.0/misc/pt_drv.o: unresolved symbol parport_release
-/lib/modules/2.2.14-5.0/misc/pt_drv.o: insmod
-/lib/modules/2.2.14-5.0/misc/pt_drv.o failed
-
-
-PROBLEM:
---------
-The driver needs at least the parport_pc and the parport modules
-to work. They MUST be loaded prior to pt_drv. If these modules
-are not loaded you get this message.
-
-SOLUTION:
----------
-Simply load the parport module. You can add this dependency to
-your /etc/modules.conf (or /etc/conf.modules) file (see INSTALL).
-Then every time you load pt_drv with modprobe, parport will be loaded
-automatically. After modifying this file, call
-depmod -va
-
-
 
 SYMPTOM: Scanner makes awful noise
 --------
@@ -136,7 +35,6 @@ happens, when the driver can't keep track of the stepper motor. The image
 you get is normally unusable.
 The second case is often reported when the printer driver lp.o is
 already loaded. So remove lp.o before loading pt_drv.
-
 
 
 SYMPTOM: Printer starts to print while scanning
@@ -293,23 +191,6 @@ A:  You should be able to use xscanimage with gimp:
     Now call gimp, in the xtns menu you should find
     now the Acquire Image menu entry. That's all.
     If not, start gimp from an xterm and have a look at the output.
-
-
-Q:  Is there any way to load the plustek_driver at bootup-time?
-
-A:  Normally, there is no need to do so, because once you
-    altered your /etc/conf.modules file (or /etc/modules.conf)
-    and added the suggested stuff (see INSTALL file), you won't
-    have to worry about loading the driver. It happens automagically. ;-)
-    The driver will be loaded when needed (and eventually
-    removed after a specific time of not using it).
-
-    Nevertheless, another possibility is to do a modprobe pt_drv in the
-    /etc/rc.d/boot.local (using SuSE) or
-    /etc/rc.d/rc.local (using RedHat or Mandrake) file
-    So the driver will be loaded at bootup-time...
-    !!! YOUR SCANNER MUST BE ONLINE during power-up then !!!
-
 
 Q:  I wonder if Mandrake 7.1's sane rpm file has this support already built in.
     My scanner light is coming on yet Xscanimage seems to report that there
