@@ -52,8 +52,9 @@ debian-11-mini:
   image: $REGISTRY_HUB:debian-bullseye-mini
   variables:
     CONFIGURE_OPTS: "$CONFIGURE_MINI"
-    MAKE_FLAGS: "CFLAGS=-Werror"
+    MAKE_FLAGS: "CFLAGS=-Werror CXXFLAGS=-Werror"
   <<: *compile_definition
+  allow_failure: true
 
 # In addition to the regular compile check, the full Debian stable
 # environment is used to keep some of the HTML documentation that's
@@ -75,18 +76,23 @@ debian-11-full:
     - lists
     - doc/sanei-html
     expire_in: 1 day
+  allow_failure: true
 
 fedora-35-clang:
   image: $REGISTRY_HUB:fedora-35-clang
   variables:
     CONFIGURE_OPTS: "$CONFIGURE_MINI $CONFIGURE_FULL"
+    MAKE_FLAGS: "CFLAGS=-Werror CXXFLAGS=-Werror"
   <<: *compile_definition
+  allow_failure: true
 
 alpine-3.15-musl:
   image: $REGISTRY_HUB:alpine-3.15-musl
   variables:
     CONFIGURE_OPTS: "$CONFIGURE_MINI $CONFIGURE_FULL"
+    MAKE_FLAGS: "CFLAGS=-Werror CXXFLAGS=-Werror"
   <<: *compile_definition
+  allow_failure: true
 
 ubuntu-20.04-lts:
   image: $REGISTRY_HUB:ubuntu-focal-dist
