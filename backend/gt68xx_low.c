@@ -425,7 +425,7 @@ gt68xx_device_memory_write (GT68xx_Device * dev,
   SANE_Status status;
   DBG (8,
        "gt68xx_device_memory_write: dev=%p, addr=0x%x, size=0x%x, data=%p\n",
-       (void *) dev, addr, size, data);
+       (void *) dev, addr, size, (void *) data);
   CHECK_DEV_ACTIVE (dev, "gt68xx_device_memory_write");
   status =
     sanei_usb_control_msg (dev->fd, 0x40,
@@ -448,7 +448,7 @@ gt68xx_device_memory_read (GT68xx_Device * dev,
   SANE_Status status;
   DBG (8,
        "gt68xx_device_memory_read: dev=%p, addr=0x%x, size=0x%x, data=%p\n",
-       (void *) dev, addr, size, data);
+       (void *) dev, addr, size, (void *) data);
   CHECK_DEV_ACTIVE (dev, "gt68xx_device_memory_read");
   status =
     sanei_usb_control_msg (dev->fd, 0xc0,

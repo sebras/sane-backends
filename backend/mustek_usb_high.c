@@ -2672,7 +2672,7 @@ usb_high_scan_get_rgb_24_bit_line (Mustek_Usb_Device * dev, SANE_Byte * line,
   SANE_Word lines_left;
 
   DBG (5, "usb_high_scan_get_rgb_24_bit_line: start, dev=%p, line=%p, "
-       "is_order_invert=%d\n", (void *) dev, line, is_order_invert);
+       "is_order_invert=%d\n", (void *) dev, (void *) line, is_order_invert);
 
   RIE (usb_low_get_row (dev->chip, dev->green, &lines_left));
 
@@ -2701,7 +2701,7 @@ usb_high_scan_get_mono_8_bit_line (Mustek_Usb_Device * dev, SANE_Byte * line,
   SANE_Word lines_left;
 
   DBG (5, "usb_high_scan_get_mono_8_bit_line: start, dev=%p, line=%p, "
-       "is_order_invert=%d\n", (void *) dev, line, is_order_invert);
+       "is_order_invert=%d\n", (void *) dev, (void *) line, is_order_invert);
 
   RIE (usb_low_get_row (dev->chip, dev->green, &lines_left));
   RIE (usb_high_cal_calibrate (dev->mono_calibrator, dev->green +

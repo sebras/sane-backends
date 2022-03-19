@@ -87,7 +87,8 @@ sanei_pv8630_read_byte (int fd, SANEI_PV_Index index, SANE_Byte * byte)
 {
   SANE_Status status;
 
-  DBG(DBG_info, "sanei_pv8630_read_byte - index=%d, byte=%p\n", index, byte);
+  DBG(DBG_info, "sanei_pv8630_read_byte - index=%d, byte=%p\n",
+      index, (void *) byte);
 
   status =
     sanei_usb_control_msg (fd, 0xc0, PV8630_REQ_READBYTE, 0, index, 1, byte);

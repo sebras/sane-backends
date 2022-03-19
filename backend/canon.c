@@ -817,13 +817,12 @@ attach (const char *devnam, CANON_Device ** devp)
 
   dev->sane.name = strdup (devnam);
   dev->sane.vendor = "CANON";
-  if ((str = calloc (16 + 1, 1)) == NULL)
+  if ((str = strndup ((char *) ibuf + 16, 16)) == NULL)
     {
       sanei_scsi_close (fd);
       fd = -1;
       return (SANE_STATUS_NO_MEM);
     }
-  strncpy (str, (char *) (ibuf + 16), 16);
   dev->sane.model = str;
 
   /* Register the fixed properties of the scanner below:

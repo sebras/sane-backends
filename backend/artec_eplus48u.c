@@ -351,9 +351,6 @@ static void
 finish_shading_buffer (Artec48U_Scanner * s, SANE_Bool white)
 {
   unsigned int i, j, cnt, c, div;
-  unsigned long max_r;
-  unsigned long max_g;
-  unsigned long max_b;
   unsigned char *shading_buffer;
   cnt = 0;
 
@@ -379,18 +376,12 @@ finish_shading_buffer (Artec48U_Scanner * s, SANE_Bool white)
 	  ++cnt;
 	}
     }
-  max_r = 0;
-  max_g = 0;
-  max_b = 0;
 
   for (c = 0; c < (30720 * s->dev->epro_mult) - 5; c += 6) /*epro*/
     {
       i = (int) shading_buffer[c] + ((int) shading_buffer[c + 1] << 8);
-      max_r += i;
       i = (int) shading_buffer[c + 2] + ((int) shading_buffer[c + 3] << 8);
-      max_g += i;
       i = (int) shading_buffer[c + 4] + ((int) shading_buffer[c + 5] << 8);
-      max_b += i;
     }
 }
 
@@ -1628,7 +1619,7 @@ artec48u_device_memory_read (Artec48U_Device * dev,
   SANE_Status status;
 
   XDBG ((8, "%s: dev=%p, addr=0x%x, size=0x%x, data=%p\n",
-       function_name, (void *) dev, addr, size, data));
+       function_name, (void *) dev, addr, size, (void *) data));
   CHECK_DEV_ACTIVE (dev, function_name);
 
   status = sanei_usb_control_msg (dev->fd, 0xc0, 0x01,

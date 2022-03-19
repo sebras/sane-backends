@@ -1068,7 +1068,7 @@ sane_get_devices (const SANE_Device *** device_list, SANE_Bool local_only)
   char *full_name;
   int i, num_devs;
   size_t len;
-#define ASSERT_SPACE(n)                                                    \
+#define ASSERT_SPACE(n) do                                                 \
   {                                                                        \
     if (devlist_len + (n) > devlist_size)                                  \
       {                                                                    \
@@ -1080,7 +1080,7 @@ sane_get_devices (const SANE_Device *** device_list, SANE_Bool local_only)
         if (!devlist)                                                      \
           return SANE_STATUS_NO_MEM;                                       \
       }                                                                    \
-  }
+  } while (0)
 
   DBG (3, "sane_get_devices\n");
 
@@ -1365,7 +1365,7 @@ sane_read (SANE_Handle handle, SANE_Byte * data, SANE_Int max_length,
   struct meta_scanner *s = handle;
 
   DBG (3, "sane_read(handle=%p,data=%p,maxlen=%d,lenp=%p)\n",
-       handle, data, max_length, (void *) length);
+       handle, (void *) data, max_length, (void *) length);
   return (*(op_read_t)s->be->op[OP_READ]) (s->handle, data, max_length, length);
 }
 

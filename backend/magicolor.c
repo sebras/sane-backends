@@ -3001,7 +3001,7 @@ sane_read(SANE_Handle handle, SANE_Byte *data, SANE_Int max_length,
 	}
 
 	DBG(18, "moving data %p %p, %d (%d lines)\n",
-		s->ptr, s->end,
+		(void *) s->ptr, (void *) s->end,
 		max_length, max_length / s->params.bytes_per_line);
 
 	mc_copy_image_data(s, data, max_length, length);

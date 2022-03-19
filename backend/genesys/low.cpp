@@ -360,8 +360,8 @@ void sanei_genesys_read_data_from_scanner(Genesys_Device* dev, std::uint8_t* dat
 {
     DBG_HELPER_ARGS(dbg, "size = %zu bytes", size);
 
-  if (size & 1)
-    DBG(DBG_info, "WARNING %s: odd number of bytes\n", __func__);
+    if (size & 1)
+        DBG(DBG_info, "WARNING %s: odd number of bytes\n", __func__);
 
     wait_until_has_valid_words(dev);
 

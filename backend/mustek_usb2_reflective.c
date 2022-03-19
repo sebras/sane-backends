@@ -362,7 +362,7 @@ Reflective_SetupScan (COLORMODE ColorMode,
 		      unsigned short YDpi,
 		      SANE_Bool isInvert, unsigned short X, unsigned short Y, unsigned short Width, unsigned short Height)
 {
-  isInvert = isInvert;
+  (void) isInvert;
   DBG (DBG_FUNC, "Reflective_SetupScan: Call in\n");
   if (g_bOpened)
     {

@@ -527,7 +527,7 @@ sanei_magic_findSkew(SANE_Parameters * params, SANE_Byte * buffer,
 
   DBG (10, "sanei_magic_findSkew: start\n");
 
-  dpiX=dpiX;
+  (void) dpiX;
 
   /* get buffers for edge detection */
   topBuf = sanei_magic_getTransY(params,dpiY,buffer,1);
@@ -1406,7 +1406,7 @@ getLine (int height, int width, int * buff,
     minSlope,maxSlope,minOffset,maxOffset);
 
   /*silence compiler*/
-  height = height;
+  (void) height;
 
   if(absMaxSlope < absMinSlope)
     absMaxSlope = absMinSlope;

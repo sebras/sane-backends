@@ -50,6 +50,7 @@
 #include <ctype.h>
 #include <errno.h>
 #include <fcntl.h>
+#include <inttypes.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
@@ -3509,7 +3510,7 @@ sanei_scsi_find_devices (const char *findvendor, const char *findmodel,
 	    if (cdm.matches[i].type != DEV_MATCH_PERIPH)
 	      continue;
 	    result = &cdm.matches[i].result.periph_result;
-	    DBG (4, "%s%d on scbus%d %d:%d\n",
+	    DBG (4, "%s%d on scbus%d %d:" PRIu64 "\n",
 		 result->periph_name, result->unit_number,
 		 result->path_id, result->target_id, result->target_lun);
 	    if (cam_compare_inquiry (fd, result->path_id,

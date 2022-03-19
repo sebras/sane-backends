@@ -1368,7 +1368,7 @@ sane_read (SANE_Handle h, SANE_Byte * buf, SANE_Int maxlen, SANE_Int * len)
   TDataPipe *p;
   TModeParam const *pMode;
 
-  DBG (DBG_MSG, "sane_read: buf=%p, maxlen=%d, ", buf, maxlen);
+  DBG (DBG_MSG, "sane_read: buf=%p, maxlen=%d, ", (void *) buf, maxlen);
 
   s = (TScanner *) h;
 

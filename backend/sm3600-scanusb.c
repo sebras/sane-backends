@@ -66,7 +66,7 @@ static int TransferControlMsg(TInstance *this,
 {
   SANE_Status err;
 
-  cJiffiesTimeout = cJiffiesTimeout;
+  (void) cJiffiesTimeout;
 
   err = sanei_usb_control_msg (this->hScanner,
 			 nReqType,
@@ -95,8 +95,8 @@ static int TransferBulkRead(TInstance *this,
   int err;
   size_t sz = cchMax;
 
-  nEndPoint = nEndPoint;
-  cJiffiesTimeout = cJiffiesTimeout;
+  (void) nEndPoint;
+  (void) cJiffiesTimeout;
 
   err = sanei_usb_read_bulk(this->hScanner,
 			    pBuffer,

@@ -705,9 +705,9 @@ net_avahi_resolve_callback (AvahiServiceResolver *r, AvahiIfIndex interface, Ava
   char *t;
 
   /* unused */
-  interface = interface;
-  protocol = protocol;
-  userdata = userdata;
+  (void) interface;
+  (void) protocol;
+  (void) userdata;
 
   if (!r)
     return;
@@ -759,8 +759,8 @@ net_avahi_browse_callback (AvahiServiceBrowser *b, AvahiIfIndex interface, Avahi
   AvahiProtocol proto;
 
   /* unused */
-  flags = flags;
-  userdata = userdata;
+  (void) flags;
+  (void) userdata;
 
   if (!b)
     return;
@@ -808,7 +808,7 @@ net_avahi_callback (AvahiClient *c, AvahiClientState state, void * userdata)
   int error;
 
   /* unused */
-  userdata = userdata;
+  (void) userdata;
 
   if (!c)
     return;
@@ -1201,7 +1201,7 @@ sane_get_devices (const SANE_Device *** device_list, SANE_Bool local_only)
   char *full_name;
   int i, num_devs;
   size_t len;
-#define ASSERT_SPACE(n)                                                    \
+#define ASSERT_SPACE(n) do                                                 \
   {                                                                        \
     if (devlist_len + (n) > devlist_size)                                  \
       {                                                                    \
@@ -1216,7 +1216,7 @@ sane_get_devices (const SANE_Device *** device_list, SANE_Bool local_only)
              return SANE_STATUS_NO_MEM;                                    \
           }                                                                \
       }                                                                    \
-  }
+  } while (0)
 
   DBG (3, "sane_get_devices: local_only = %d\n", local_only);
 
@@ -2132,7 +2132,7 @@ sane_read (SANE_Handle handle, SANE_Byte * data, SANE_Int max_length,
   int is_even;
 
   DBG (3, "sane_read: handle=%p, data=%p, max_length=%d, length=%p\n",
-       handle, data, max_length, (void *) length);
+       handle, (void *) data, max_length, (void *) length);
   if (!length)
     {
       DBG (1, "sane_read: length == NULL\n");

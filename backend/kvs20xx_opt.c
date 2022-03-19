@@ -673,11 +673,6 @@ mm2scanner_units (unsigned mm)
 {
   return mm * 12000 / 254;
 }
-static inline unsigned
-scanner_units2mm (unsigned u)
-{
-  return u * 254 / 12000;
-}
 
 void
 kvs20xx_init_window (struct scanner *s, struct window *wnd, int wnd_id)

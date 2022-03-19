@@ -685,7 +685,7 @@ static u_char usb_GetNewGain( Plustek_Device *dev, u_short wMax, int channel )
 		dwInc = (u_long)((0.93 + ceil (dRatio) * 0.067) * wMax / dAmp);
 		dwDec = (u_long)((0.93 + floor (dRatio) * 0.067) * wMax / dAmp);
 		if((dwInc >= 0xff00) ||
-		   (labs (dwInc - m_dwIdealGain) > labs(dwDec - m_dwIdealGain))) {
+		   (dwInc - m_dwIdealGain > m_dwIdealGain - dwDec)) {
 			bGain = (u_char)floor(dRatio);
 		} else {
 			bGain = (u_char)ceil(dRatio);

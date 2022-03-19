@@ -1304,7 +1304,7 @@ sane_read(SANE_Handle h, SANE_Byte *buf, SANE_Int maxlen, SANE_Int *lenp)
     SANE_Status status;
     struct device *dev = h;
 
-    DBG(3, "%s: %p, %p, %d, %p\n", __func__, h, buf, maxlen, (void *)lenp);
+    DBG(3, "%s: %p, %p, %d, %p\n", __func__, h, (void *) buf, maxlen, (void *) lenp);
 
     if (lenp)
         *lenp = 0;

@@ -709,7 +709,7 @@ send_scan_param (pixma_t * s)
 
   if (mp->generation <= 2)
     {
-      PDBG (pixma_dbg (4, "*send_scan_param gen. 1-2 ***** Setting: xdpi=%hi ydpi=%hi  x=%i y=%i  wx=%i ***** \n",
+      PDBG (pixma_dbg (4, "*send_scan_param gen. 1-2 ***** Setting: xdpi=%u ydpi=%u  x=%i y=%i  wx=%i ***** \n",
                            xdpi, ydpi, x-xs, y, wx));
       data = pixma_newcmd (&mp->cb, cmd_scan_param, 0x30, 0);
       pixma_set_be16 (xdpi | 0x8000, data + 0x04);
@@ -731,7 +731,7 @@ send_scan_param (pixma_t * s)
     }
   else
     {
-      PDBG (pixma_dbg (4, "*send_scan_param gen. 3+ ***** Setting: xdpi=%hi ydpi=%hi x=%i xs=%i y=%i  wx=%i h=%i ***** \n",
+      PDBG (pixma_dbg (4, "*send_scan_param gen. 3+ ***** Setting: xdpi=%u ydpi=%u x=%i xs=%i y=%i  wx=%i h=%i ***** \n",
                            xdpi, ydpi, x, xs, y, wx, h));
       data = pixma_newcmd (&mp->cb, cmd_scan_param_3, 0x38, 0);
       data[0x00] = (is_scanning_from_adf (s)) ? 0x02 : 0x01;
@@ -1658,7 +1658,7 @@ mp150_finish_scan (pixma_t * s)
       else
         PDBG (pixma_dbg (4, "*mp150_finish_scan***** wait for next page from ADF  *****\n"));
 
-        mp->state = state_idle;
+      mp->state = state_idle;
       /* fall through */
     case state_idle:
       break;

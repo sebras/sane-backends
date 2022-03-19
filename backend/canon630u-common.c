@@ -1546,7 +1546,7 @@ CANON_open_device (CANON_Handle * scan, const char *dev)
 static const char *
 CANON_get_device_name (CANON_Handle * scanner)
 {
-  scanner = scanner;		/* Eliminate warning about unused parameters */
+  (void) scanner;		/* Eliminate warning about unused parameters */
   return "Canoscan FB630U";
 }
 

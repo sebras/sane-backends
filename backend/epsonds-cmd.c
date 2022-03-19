@@ -784,7 +784,7 @@ static SANE_Status stat_cb(void *userdata, char *token, int len)
 {
 	char *value = token + 3;
 
-	userdata = userdata;
+	(void) userdata;
 
 	if (DBG_LEVEL >= 11) {
 		debug_token(DBG_LEVEL, __func__, token, len);
@@ -816,7 +816,7 @@ static SANE_Status resa_cb(void *userdata, char *token, int len)
 {
 	/* epsonds_scanner *s = (epsonds_scanner *)userdata; */
 
-	userdata = userdata;
+	(void) userdata;
 
 	if (DBG_LEVEL >= 11) {
 		debug_token(DBG_LEVEL, __func__, token, len);
@@ -838,7 +838,7 @@ static SANE_Status para_cb(void *userdata, char *token, int len)
 		debug_token(DBG_LEVEL, __func__, token, len);
 	}
 
-	userdata = userdata;
+	(void) userdata;
 
 	if (strncmp("par", token, 3) == 0) {
 		if (strncmp("FAIL", token + 3, 4) == 0) {

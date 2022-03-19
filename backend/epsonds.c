@@ -1629,10 +1629,7 @@ device_detect(const char *name, int type, SANE_Status *status)
 			{//Convert to user friendly model name
 				free(s->hw->model);
 
-				char* deviceName = (char*)malloc(strlen(map->deviceID) + 1);
-				memset(deviceName, 0, strlen(map->deviceID) + 1);
-				strncpy(deviceName,  map->deviceID, strlen(map->deviceID));
-				s->hw->model = deviceName;
+				s->hw->model = strdup(map->deviceID);
 				s->hw->sane.model = s->hw->model;
 			}
 			{// set lutid

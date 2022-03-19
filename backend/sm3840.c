@@ -145,11 +145,12 @@ sane_read (SANE_Handle handle, SANE_Byte * buf, SANE_Int max_len,
   unsigned char c, d;
   int i;
 
-  DBG (2, "+sane-read:%p %p %d %p\n", (unsigned char *) s, buf, max_len,
-       (unsigned char *) len);
+  DBG (2, "+sane-read:%p %p %d %p\n", (void *) s, (void *) buf, max_len,
+       (void *) len);
   DBG (2,
        "+sane-read:remain:%lu offset:%lu linesleft:%d linebuff:%p linesread:%d\n",
-       (u_long)s->remaining, (u_long)s->offset, s->linesleft, s->line_buffer, s->linesread);
+       (u_long) s->remaining, (u_long) s->offset, s->linesleft,
+       (void *) s->line_buffer, s->linesread);
 
   if (!s->scanning)
     return SANE_STATUS_INVAL;
@@ -798,7 +799,7 @@ sane_open (SANE_String_Const devicename, SANE_Handle * handle)
       /* empty devicename -> use first device */
       dev = first_dev;
     }
-  DBG (2, "using device: %s %p\n", dev->sane.name, (unsigned char *) dev);
+  DBG (2, "using device: %s %p\n", dev->sane.name, (void *) dev);
   if (!dev)
     return SANE_STATUS_INVAL;
   s = calloc (sizeof (*s), 1);

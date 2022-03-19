@@ -2158,8 +2158,8 @@ sense_handler (int fd, u_char* sense, void* arg)
   uint8_t sense_key = sense[2] & 0xf;
   uint8_t additional_sense = sense[7];
 
-  fd = fd; /* silence gcc */
-  arg = arg; /* silence gcc */
+  (void) fd; /* silence gcc */
+  (void) arg; /* silence gcc */
 
   DBG (3, "sense_handler:\n");
 
@@ -3587,12 +3587,12 @@ get_and_parse_nvram (Avision_Scanner* s, char* str, int n)
 	i += snprintf (str+i, n-i, "\nSerial: %.24s",
 		       nvram.serial);
 
-      if (nvram.born_year)
+      if (get_double(nvram.born_year))
 	i += snprintf (str+i, n-i, "\nManufacturing date: %d-%d-%d",
 		       get_double(nvram.born_year),
 		       get_double(nvram.born_month),
 		       get_double(nvram.born_day));
-      if (nvram.first_scan_year)
+      if (get_double(nvram.first_scan_year))
 	i += snprintf (str+i, n-i, "\nFirst scan date: %d-%d-%d",
 		       get_double(nvram.first_scan_year),
 		       get_double(nvram.first_scan_month),
@@ -8451,7 +8451,7 @@ sane_reload_devices (void)
 SANE_Status
 sane_init (SANE_Int* version_code, SANE_Auth_Callback authorize)
 {
-  authorize = authorize; /* silence gcc */
+  (void) authorize; /* silence gcc */
 
   DBG_INIT();
 
@@ -8500,7 +8500,7 @@ sane_get_devices (const SANE_Device*** device_list, SANE_Bool local_only)
   Avision_Device* dev;
   int i;
 
-  local_only = local_only; /* silence gcc */
+  (void) local_only; /* silence gcc */
 
   DBG (3, "sane_get_devices:\n");
 

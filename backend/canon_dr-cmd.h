@@ -131,9 +131,12 @@ putnbyte (unsigned char *pnt, unsigned int value, unsigned int nbytes)
 #define IN_periph_devtype_unknown             0x1f
 #define get_IN_response_format(in)         getbitfield(in + 0x03, 0x07, 0)
 #define IN_recognized                         0x02
-#define get_IN_vendor(in, buf)            strncpy(buf, (char *)in + 0x08, 0x08)
-#define get_IN_product(in, buf)           strncpy(buf, (char *)in + 0x10, 0x010)
-#define get_IN_version(in, buf)           strncpy(buf, (char *)in + 0x20, 0x04)
+#define get_IN_vendor(in, buf)             snprintf(buf, 0x08 + 1, "%.*s", \
+                                                    0x08, (char*)in + 0x08)
+#define get_IN_product(in, buf)            snprintf(buf, 0x10 + 1, "%.*s", \
+                                                    0x10, (char*)in + 0x10)
+#define get_IN_version(in, buf)            snprintf(buf, 0x04 + 1, "%.*s", \
+                                                    0x04, (char*)in + 0x20)
 
 /* the VPD response */
 #define get_IN_page_length(in)             in[0x04]

@@ -581,13 +581,9 @@ hp_get_dev (const char *devname, HpDevice* devp)
   DBG(3, "hp_get_dev: New device %s, connect-%s, scsi-request=%lu\n",
       devname, connect, (unsigned long)info->config.use_scsi_request);
 
-  if (!ptr)
-  {
-     status =  sanei_hp_device_new (&new, devname);
-
-     if ( status != SANE_STATUS_GOOD )
-       return status;
-  }
+  status = sanei_hp_device_new (&new, devname);
+  if (status != SANE_STATUS_GOOD)
+      return status;
 
   if (devp)
       *devp = new;

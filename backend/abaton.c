@@ -236,8 +236,8 @@ wait_ready (int fd)
 static SANE_Status
 sense_handler (int scsi_fd, u_char * result, void *arg)
 {
-  scsi_fd = scsi_fd;			/* silence gcc */
-  arg = arg;					/* silence gcc */
+  (void) scsi_fd;			/* silence gcc */
+  (void) arg;				/* silence gcc */
 
   switch (result[2] & 0x0F)
     {
@@ -850,7 +850,7 @@ sane_init (SANE_Int * version_code, SANE_Auth_Callback authorize)
   size_t len;
   FILE *fp;
 
-  authorize = authorize;		/* silence gcc */
+  (void) authorize;			/* silence gcc */
 
   DBG_INIT ();
 
@@ -915,7 +915,7 @@ sane_get_devices (const SANE_Device *** device_list, SANE_Bool local_only)
   Abaton_Device *dev;
   int i;
 
-  local_only = local_only;		/* silence gcc */
+  (void) local_only;			/* silence gcc */
 
   if (devlist)
     free (devlist);
@@ -1399,7 +1399,7 @@ sane_read (SANE_Handle handle, SANE_Byte * buf, SANE_Int max_len,
 
       status = sanei_scsi_cmd (s->fd, test_unit_ready,
 			       sizeof (test_unit_ready), 0, 0);
-      if (status != SANE_STATUS_GOOD || status != SANE_STATUS_INVAL)
+      if (status != SANE_STATUS_GOOD && status != SANE_STATUS_INVAL)
 	return status;
       return SANE_STATUS_CANCELLED;
     }
@@ -1472,8 +1472,8 @@ sane_cancel (SANE_Handle handle)
 SANE_Status
 sane_set_io_mode (SANE_Handle handle, SANE_Bool non_blocking)
 {
-  handle = handle;			/* silence gcc */
-  non_blocking = non_blocking;	/* silence gcc */
+  (void) handle;			/* silence gcc */
+  (void) non_blocking;			/* silence gcc */
 
   DBG (FLOW_CONTROL, "sane_set_io_mode: Don't call me please. "
        "Unimplemented function\n");
@@ -1483,8 +1483,8 @@ sane_set_io_mode (SANE_Handle handle, SANE_Bool non_blocking)
 SANE_Status
 sane_get_select_fd (SANE_Handle handle, SANE_Int * fd)
 {
-  handle = handle;			/* silence gcc */
-  fd = fd;						/* silence gcc */
+  (void) handle;			/* silence gcc */
+  (void) fd;				/* silence gcc */
 
   DBG (FLOW_CONTROL, "sane_get_select_fd: Don't call me please. "
        "Unimplemented function\n");

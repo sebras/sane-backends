@@ -600,15 +600,15 @@ dbg_tiff_save (char *sFile, SANE_Int width, SANE_Int height, SANE_Int depth,
     }
 #else
   /* silent gcc */
-  sFile = sFile;
-  width = width;
-  height = height;
-  depth = depth;
-  colortype = colortype;
-  res_x = res_x;
-  res_y = res_y;
-  buffer = buffer;
-  size = size;
+  (void) sFile;
+  (void) width;
+  (void) height;
+  (void) depth;
+  (void) colortype;
+  (void) res_x;
+  (void) res_y;
+  (void) buffer;
+  (void) size;
 
   DBG (DBG_ERR, "- dbg_tiff_save: tiffio not supported\n");
 #endif
