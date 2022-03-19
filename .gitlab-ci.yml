@@ -19,7 +19,7 @@ stages:
 # Debian GNU/Linux.
 
 make-dist:
-  image: $REGISTRY_HUB:debian-buster-mini
+  image: $REGISTRY_HUB:debian-bullseye-mini
   stage: tarball
   script:
   - git ls-files | xargs ./tools/style-check.sh
@@ -41,15 +41,15 @@ make-dist:
   - ./configure $CONFIGURE_OPTS
   - make -j2 -k $MAKE_FLAGS
 
-debian-9-full:
-  image: $REGISTRY_HUB:debian-stretch-full
+debian-10-full:
+  image: $REGISTRY_HUB:debian-buster-full
   variables:
     CONFIGURE_OPTS: "$CONFIGURE_MINI $CONFIGURE_FULL"
     MAKE_FLAGS: "CFLAGS=-Werror CXXFLAGS=-Werror"
   <<: *compile_definition
 
-debian-10-mini:
-  image: $REGISTRY_HUB:debian-buster-mini
+debian-11-mini:
+  image: $REGISTRY_HUB:debian-bullseye-mini
   variables:
     CONFIGURE_OPTS: "$CONFIGURE_MINI"
     MAKE_FLAGS: "CFLAGS=-Werror"
@@ -59,8 +59,8 @@ debian-10-mini:
 # environment is used to keep some of the HTML documentation that's
 # available from our website up-to-date.
 
-debian-10-full:
-  image: $REGISTRY_HUB:debian-buster-full
+debian-11-full:
+  image: $REGISTRY_HUB:debian-bullseye-full
   variables:
     CONFIGURE_OPTS: "$CONFIGURE_MINI $CONFIGURE_FULL"
     MAKE_FLAGS: "CFLAGS=-Werror CXXFLAGS=-Werror"
@@ -76,20 +76,20 @@ debian-10-full:
     - doc/sanei-html
     expire_in: 1 day
 
-fedora-33-clang:
-  image: $REGISTRY_HUB:fedora-33-clang
+fedora-35-clang:
+  image: $REGISTRY_HUB:fedora-35-clang
   variables:
     CONFIGURE_OPTS: "$CONFIGURE_MINI $CONFIGURE_FULL"
   <<: *compile_definition
 
-alpine-3.13-musl:
-  image: $REGISTRY_HUB:alpine-3.13-musl
+alpine-3.15-musl:
+  image: $REGISTRY_HUB:alpine-3.15-musl
   variables:
     CONFIGURE_OPTS: "$CONFIGURE_MINI $CONFIGURE_FULL"
   <<: *compile_definition
 
-ubuntu-16.04-lts:
-  image: $REGISTRY_HUB:ubuntu-xenial-dist
+ubuntu-20.04-lts:
+  image: $REGISTRY_HUB:ubuntu-focal-dist
   variables:
     CONFIGURE_OPTS: "$CONFIGURE_MINI $CONFIGURE_FULL"
     MAKE_FLAGS: "CFLAGS=-Werror CXXFLAGS=-Werror"
@@ -107,10 +107,10 @@ ubuntu-16.04-lts:
 # hence the dependency.
 
 make-distcheck:
-  image: $REGISTRY_HUB:debian-buster-full
+  image: $REGISTRY_HUB:debian-bullseye-full
   stage: snapshot
   dependencies:
-  - debian-10-full
+  - debian-11-full
   script:
   - tar xzf sane-backends-*.tar.gz --strip-components=1
   - rm sane-backends-*.tar.gz
