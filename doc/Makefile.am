@@ -124,8 +124,8 @@ BEDOCS += mustek/mustek.CHANGES
 BEDOCS += mustek_usb/mustek_usb.CHANGES mustek_usb/mustek_usb.TODO
 BEDOCS += mustek_usb2/mustek_usb2.CHANGES mustek_usb2/mustek_usb2.TODO
 BEDOCS += niash/niash.TODO
-BEDOCS += plustek/FAQ plustek/MakeModule.sh plustek/Makefile.kernel24 \
-  plustek/Makefile.kernel26 plustek/Plustek-PARPORT-TODO.txt \
+BEDOCS += plustek/FAQ \
+  plustek/Plustek-PARPORT-TODO.txt \
   plustek/Plustek-PARPORT.changes plustek/Plustek-PARPORT.txt \
   plustek/Plustek-USB-TODO.txt plustek/Plustek-USB.changes \
   plustek/Plustek-USB.txt
