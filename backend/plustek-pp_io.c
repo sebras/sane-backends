@@ -257,21 +257,11 @@ static Bool fnEPPRead( pScanData ps, pUChar pBuffer, ULong ulSize )
 
 	if( _IS_ASIC98(ps->sCaps.AsicID)) {
 
-#ifndef __KERNEL__
 		sanei_pp_set_datadir( ps->pardev, SANEI_PP_DATAIN );
-#else
-		_OUTB_CTRL( ps, (_CTRL_GENSIGNAL + _CTRL_DIRECTION));
-		_DO_UDELAY( 1 );
-#endif
 		for( i = 0; i < ulSize; i++ )
 			pBuffer[i] = _INB_EPPDATA( ps );
 
-#ifndef __KERNEL__
 		sanei_pp_set_datadir( ps->pardev, SANEI_PP_DATAOUT );
-#else
-		_OUTB_CTRL( ps, _CTRL_GENSIGNAL );
-		_DO_UDELAY( 1 );
-#endif
 	} else {
 
 		for( i = 0; i < ulSize; i++ )
@@ -290,18 +280,12 @@ static Bool fnBiDirRead( pScanData ps, pUChar pBuffer, ULong ulSize )
 	start = _CTRL_START_BIDIREAD;
 	end   = _CTRL_END_BIDIREAD;
 
-#ifndef __KERNEL__
 	sanei_pp_set_datadir( ps->pardev, SANEI_PP_DATAIN );
 
 	if( !sanei_pp_uses_directio()) {
 		start &= ~_CTRL_DIRECTION;
 		end   &= ~_CTRL_DIRECTION;
 	}
-#else
-	if( _IS_ASIC98(ps->sCaps.AsicID)) {
-		_OUTB_CTRL( ps, (_CTRL_GENSIGNAL + _CTRL_DIRECTION));
-	}
-#endif
 
 	switch( ps->IO.delay ) {
 
@@ -341,13 +325,7 @@ static Bool fnBiDirRead( pScanData ps, pUChar pBuffer, ULong ulSize )
 
 	}
 
-#ifndef __KERNEL__
 	sanei_pp_set_datadir( ps->pardev, SANEI_PP_DATAOUT );
-#else
-	if( _IS_ASIC98(ps->sCaps.AsicID)) {
-		_OUTB_CTRL( ps, _CTRL_GENSIGNAL );
-	}
-#endif
 	return _TRUE;
 }
 
@@ -952,46 +930,5 @@ _LOC void IOReadScannerImageData( pScanData ps, pUChar pBuf, ULong size )
 	if( _ASIC_IS_98003 == ps->sCaps.AsicID )
 		ps->OpenScanPath( ps );
 }
-
-#ifdef __KERNEL__
-
-/** the wrapper functions to support delayed and non-delayed I/O
- */
-_LOC void IOOut( Byte data, UShort port )
-{
-	DBG( DBG_IOF, "sanei_outb(0x%04x, 0x%02x)\n", port, data );
-	sanei_outb( port, data );
-}
-
-_LOC void IOOutDelayed( Byte data, UShort port )
-{
-	DBG( DBG_IOF, "sanei_outb_p(0x%04x, 0x%02x)\n", port, data );
-	sanei_outb_p( port, data );
-}
-
-_LOC Byte IOIn( UShort port )
-{
-#ifdef DEBUG
-	Byte data = sani_inb( port );
-
-	DBG( DBG_IOF, "sanei_inb(0x%04x) = 0x%02x\n", port, data );
-	return data;
-#else
-	return sanei_inb( port );
-#endif
-}
-
-_LOC Byte IOInDelayed( UShort port )
-{
-#ifdef DEBUG
-	Byte data = sanei_inb_p( port );
-
-	DBG( DBG_IOF, "sanei_inb_p(0x%04x) = 0x%02x\n", port, data );
-	return data;
-#else
-	return sanei_inb_p( port );
-#endif
-}
-#endif /* guard __KERNEL__ */
 
 /* END PLUSTEK-PP_IO.C ......................................................*/

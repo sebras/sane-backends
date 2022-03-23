@@ -97,11 +97,6 @@ static int detectScannerConnection( pScanData ps )
 	UChar data, control, status;
 	int   retval = _E_NO_CONN;
 
-#ifdef __KERNEL__
-	DBG( DBG_LOW, "Dataport = 0x%04x\n", ps->IO.pbSppDataPort );
-	DBG( DBG_LOW, "Ctrlport = 0x%04x\n", ps->IO.pbControlPort );
-#endif
-
 	detectResetPort( ps );
 
 	/*
@@ -177,11 +172,7 @@ static int detectScannerConnection( pScanData ps )
 
 	/* work on the result */
 	if ( _OK == retval ) {
-#ifdef __KERNEL__
-		ps->sCaps.wIOBase = ps->IO.pbSppDataPort;
-#else
 		ps->sCaps.wIOBase = ps->pardev;
-#endif
 		ps->PutToIdleMode( ps );
 
 	} else {
@@ -209,11 +200,7 @@ static int detectSetupBuffers( pScanData ps )
      */
     if ( 0 == ps->TotalBufferRequire ) {
 
-#ifdef __KERNEL__
-		_PRINT(
-#else
 		DBG( DBG_HIGH,
-#endif
         "pt_drv: asic 0x%x probably not supported\n", ps->sCaps.AsicID);
 
         return _E_ALLOC;  /* Out of memory */
@@ -228,11 +215,7 @@ static int detectSetupBuffers( pScanData ps )
 
         if ( NULL == ps->driverbuf ) {
 
-#ifdef __KERNEL__
-		_PRINT(
-#else
 		DBG( DBG_HIGH,
-#endif
              "pt_drv: Not enough kernel memory %d\n",
                     ps->TotalBufferRequire);
             return _E_ALLOC;  /* Out of memory */
@@ -380,11 +363,7 @@ static int detectAsic98001( pScanData ps )
 
 	return detectScannerConnection( ps );
 #else
-#ifdef __KERNEL__
-		_PRINT(
-#else
 		DBG( DBG_HIGH,
-#endif
 			"!!!! WARNING, have a look at function detectAsic98001() !!!!\n" );
    	ps->sCaps.AsicID  =  _ASIC_IS_98001;
   	ps->sCaps.wIOBase = ps->IO.pbSppDataPort;
@@ -434,11 +413,7 @@ _LOC int DetectScanner( pScanData ps, int mode )
 
             /* read Register 0x18 (AsicID Register) of Asic9800x based devices */
 #ifdef _ASIC_98001_SIM
-#ifdef __KERNEL__
-			_PRINT(
-#else
 			DBG( DBG_HIGH,
-#endif
 						"!!!! WARNING, SW-Emulation active !!!!\n" );
             asic = _ASIC_IS_98001;
 #else

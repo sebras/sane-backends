@@ -586,19 +586,6 @@ typedef struct
  * structure to hold IO port specific stuff
  */
 typedef struct {
-
-#ifdef __KERNEL__
-	pFnOut fnOut;
-	pFnIn  fnIn;
-
-	UShort pbSppDataPort;
-	UShort pbEppDataPort;
-
-	UShort pbStatusPort;
-	UShort pbControlPort;
-	UShort pbAddrOffsetPort;
-#endif
-
 	UShort portBase;
 	UShort portMode;
 	UShort lastPortMode;
