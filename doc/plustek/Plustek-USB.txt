@@ -4,10 +4,7 @@ Plustek-USB.txt (2005-08-08) Gerhard Jäger <gerhard@gjaeger.de>
 NOTE:
 -----
 
-ALL YOU NEED TO RUN YOUR USB SCANNER IS ALREADY INCLUDED. THERE'S
-NO NEED TO INSTALL THE KERNEL MODULE pt_drv. THIS ONE IS ONLY NEEDED
-FOR THE PLUSTEK PARALLELPORT SCANNER.
-
+ALL YOU NEED TO RUN YOUR USB SCANNER IS ALREADY INCLUDED.
 
 List of all currently implemented devices
 -----------------------------------------

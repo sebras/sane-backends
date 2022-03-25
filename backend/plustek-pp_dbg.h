@@ -47,22 +47,11 @@
 /* #define _ASIC_98001_SIM */
 
 /*
- * the print macros
- */
-#ifdef __KERNEL__
-# define _PRINT	printk
-#endif
-
-/*
  * some debug definitions
  */
 #ifdef DEBUG
-# ifndef __KERNEL__
 #  include <assert.h>
 #  define _ASSERT(x) assert(x)
-# else
-#  define _ASSERT(x)
-# endif
 
 # ifndef DBG
 #  define DBG(level, msg, args...)		if ((dbg_level) & (level)) {	\

@@ -94,51 +94,12 @@
  * If you do not wish that, delete this exception notice.
  * <hr>
  */
-#ifdef __KERNEL__
-# include <linux/module.h>
-# include <linux/version.h>
-
-# ifdef CONFIG_DEVFS_FS
-#  include <linux/devfs_fs_kernel.h>
-#  if (LINUX_VERSION_CODE > KERNEL_VERSION(2,5,69))
-#   define DEVFS_26_STYLE
-#  endif
-# endif
-#endif
-
 #include "plustek-pp_scan.h"
-
-#ifdef __KERNEL__
-# include <linux/param.h>
-#endif
 
 /****************************** static vars **********************************/
 
 /* default port is at 0x378 */
 static int port[_MAX_PTDEVS] = { 0x378, 0, 0, 0 };
-
-#ifdef __KERNEL__
-static pScanData PtDrvDevices[_MAX_PTDEVS] = { [0 ... (_MAX_PTDEVS-1)] = NULL};
-
-/* default is 180 secs for lamp switch off */
-static int lampoff[_MAX_PTDEVS] = { [0 ... (_MAX_PTDEVS-1)] = 180 };
-
-/* warmup period for lamp (30 secs) */
-static int warmup[_MAX_PTDEVS] = { [0 ... (_MAX_PTDEVS-1)] = 30 };
-
-/* switch lamp off on unload (default = no)*/
-static int lOffonEnd[_MAX_PTDEVS] = { [0 ... (_MAX_PTDEVS-1)] = 0 };
-
-/* model override (0-->none) */
-static UShort mov[_MAX_PTDEVS] = { [0 ... (_MAX_PTDEVS-1)] = 0 };
-
-/* forceMode (0--> auto, 1: SPP, 2:EPP, others: auto) */
-static UShort forceMode[_MAX_PTDEVS] = { [0 ... (_MAX_PTDEVS-1)] = 0 };
-
-/* to use delayed I/O for each device */
-static Bool slowIO[_MAX_PTDEVS] = { [0 ... (_MAX_PTDEVS-1)] = _FALSE };
-
-#else
 
 static pScanData PtDrvDevices[_MAX_PTDEVS]= { NULL,   NULL,   NULL,   NULL   };
 static int       lampoff[_MAX_PTDEVS]     = { 180,    180,    180,    180    };
@@ -147,163 +108,20 @@ static int       lOffonEnd[_MAX_PTDEVS]   = { 0,      0,      0,      0      };
 static UShort    mov[_MAX_PTDEVS]         = { 0,      0,      0,      0      };
 static UShort    forceMode[_MAX_PTDEVS]   = { 0,      0,      0,      0      };
 
-#endif
-
 /* timers for warmup checks */
 static TimerDef toTimer[_MAX_PTDEVS];
 
-#ifndef __KERNEL__
 static Bool	PtDrvInitialized = _FALSE;
 #ifdef HAVE_SETITIMER
 static struct itimerval saveSettings;
 #endif
-#else
-static Bool deviceScanning = _FALSE;
 
-static struct timer_list tl[_MAX_PTDEVS];
-
-/* for calculation of the timer expiration */
-extern volatile unsigned long jiffies;
-
-/* the parameter interface
- */
-#if ((LINUX_VERSION_CODE > 0x020111) && defined(MODULE))
-MODULE_AUTHOR("Gerhard Jaeger <gerhard@gjaeger.de>");
-MODULE_DESCRIPTION("Plustek parallelport-scanner driver");
-
-/* addresses this 'new' license feature... */
-#ifdef MODULE_LICENSE
-MODULE_LICENSE("GPL");
-#endif
-
-#if (LINUX_VERSION_CODE < KERNEL_VERSION(2,6,13))
-MODULE_PARM(port, "1-" __MODULE_STRING(_MAX_PTDEVS) "i");
-MODULE_PARM(lampoff, "1-" __MODULE_STRING(_MAX_PTDEVS) "i");
-MODULE_PARM(warmup,"1-" __MODULE_STRING(_MAX_PTDEVS) "i");
-MODULE_PARM(lOffonEnd, "1-" __MODULE_STRING(_MAX_PTDEVS) "i");
-MODULE_PARM(mov, "1-" __MODULE_STRING(_MAX_PTDEVS) "i");
-MODULE_PARM(slowIO,"1-" __MODULE_STRING(_MAX_PTDEVS) "i");
-MODULE_PARM(forceMode,"1-" __MODULE_STRING(_MAX_PTDEVS) "i");
-
-#else
-
-static int array_len = _MAX_PTDEVS;
-
-module_param_array(port,      int,    &array_len, 0);
-module_param_array(lampoff,   int,    &array_len, 0);
-module_param_array(warmup,    int,    &array_len, 0);
-module_param_array(lOffonEnd, int,    &array_len, 0);
-module_param_array(mov,       ushort, &array_len, 0);
-module_param_array(slowIO,    int,    &array_len, 0);
-module_param_array(forceMode, ushort, &array_len, 0);
-
-#endif
-
-
-MODULE_PARM_DESC(port, "I/O base address of parport");
-MODULE_PARM_DESC(lampoff, "Lamp-Off timer preset in seconds");
-MODULE_PARM_DESC(warmup, "Minimum warmup time in seconds");
-MODULE_PARM_DESC(lOffonEnd, "1 - switchoff lamp on unload");
-MODULE_PARM_DESC(mov, "Modell-override switch");
-MODULE_PARM_DESC(slowIO, "0 = Fast I/O, 1 = Delayed I/O");
-MODULE_PARM_DESC(forceMode, "0 = use auto detection, "
-                            "1 = use SPP mode, 2 = use EPP mode");
-#endif
-
-#if defined (CONFIG_DEVFS_FS)
-# ifndef (DEVFS_26_STYLE)
-	static devfs_handle_t devfs_handle = NULL;
-# endif
-#else
-# ifdef LINUX_26
-	static class_t *ptdrv_class;
-# endif
-#endif
-
-/*
- * the module interface
- */
-static int 		 pt_drv_open ( struct inode *, struct file *);
-static CLOSETYPE pt_drv_close( struct inode *, struct file *);
-
-#ifdef LINUX_20
-  static int pt_drv_read(  struct inode*, struct file*, char*, int );
-  static int pt_drv_write( struct inode*, struct file*, const char*, int );
-#else
-  static ssize_t pt_drv_read ( struct file *file,
-							 char *buffer, size_t count, loff_t *);
-  static ssize_t pt_drv_write( struct file *file,
-							 const char *buffer, size_t tmp,loff_t *count);
-#endif
-
-#ifdef NOLOCK_IOCTL
-  static long pt_drv_ioctl( struct file *, UInt, unsigned long );
-#else
-  static int pt_drv_ioctl( struct inode *, struct file *, UInt, unsigned long );
-#endif
-
-
-/*
- * the driver interface
- */
-#ifdef LINUX_20
-
-static struct file_operations pt_drv_fops =
-{
-	NULL,			/* seek 				*/
-	pt_drv_read,	/* read 				*/
-	pt_drv_write,	/* write 				*/
-	NULL,			/* readdir 				*/
-	NULL,			/* select 				*/
-	pt_drv_ioctl,  	/* ioctl 				*/
-	NULL,   		/* mmap 				*/
-	pt_drv_open,    /* open 				*/
-	pt_drv_close,	/* release 				*/
-	NULL,			/* fsync 				*/
-	NULL,			/* fasync 				*/
-	NULL,			/* check_media_change 	*/
-	NULL			/* revalidate 			*/
-};
-
-#else	/* 2.2.x and higher stuff */
-
-static struct file_operations pt_drv_fops = {
-#ifdef LINUX_24
-	owner:		THIS_MODULE,
-#endif
-	read:		pt_drv_read,
-	write:		pt_drv_write,
-	IOCTL:		pt_drv_ioctl,
-	open:		pt_drv_open,
-	release:	pt_drv_close,
-};
-
-#endif
-
-#endif	/* guard __KERNEL */
 
 /****************************** some prototypes ******************************/
 
 static void ptdrvStartLampTimer( pScanData ps );
 
 /****************************** local functions ******************************/
-
-#ifdef __KERNEL__
-/** depending on the device, return the data structure
- */
-static pScanData get_pt_from_inode(struct inode *ip)
-{
-    int minor = _MINOR(ip);
-
-    /*
-     * unit out of range
-     */
-    if (minor >=  _MAX_PTDEVS )
-        return NULL;
-
-    return( PtDrvDevices[minor] );
-}
-#endif
 
 /** copy user-space data into kernel memory
  */
@@ -315,32 +133,9 @@ static int getUserPtr(const pVoid useraddr, pVoid where, UInt size )
 	if((NULL == useraddr) || ( 0 == size))
 		return _E_INVALID;
 
-#ifdef __KERNEL__
-	if ((err = verify_area_20(VERIFY_READ, useraddr, size)))
-		return err;
-#endif
-
 	switch (size) {
-#ifdef __KERNEL__
-	case sizeof(u_char):
-		GET_USER_RET(*(u_char *)where, (u_char *) useraddr, -EFAULT);
-		break;
-
-	case sizeof(u_short):
-		GET_USER_RET(*(u_short *)where, (u_short *) useraddr, -EFAULT);
-		break;
-
-	case sizeof(u_long):
-		GET_USER_RET(*(u_long *)where, (u_long *) useraddr, -EFAULT);
-		break;
-
-	default:
-		if (copy_from_user(where, useraddr, size))
-			return -EFAULT;
-#else
 	default:
 		memcpy( where, useraddr, size );
-#endif
 	}
 	return err;
 }
@@ -354,20 +149,11 @@ static int putUserPtr( const pVoid ptr, pVoid useraddr, UInt size )
 	if (NULL == useraddr)
     	return _E_INVALID;
 
-#ifdef __KERNEL__
-	if ((err = verify_area_20(VERIFY_WRITE, useraddr, size)))
-		return err;
-
-	if (copy_to_user(useraddr, ptr, size ))
-		return -EFAULT;
-#else
 	memcpy( useraddr, ptr, size );
-#endif
 
 	return err;
 }
 
-#ifndef __KERNEL__
 static unsigned long copy_from_user( pVoid dest, pVoid src, unsigned long len )
 {
 	memcpy( dest, src, len );
@@ -379,37 +165,16 @@ static unsigned long copy_to_user( pVoid dest, pVoid src, unsigned long len )
 	memcpy( dest, src, len );
 	return 0;
 }
-#endif
 
 /**
  */
 static int putUserVal(const ULong value, pVoid useraddr, UInt size)
 {
-#ifdef __KERNEL__
-	int err;
-#endif
-
 	if (NULL == useraddr)
     	return _E_INVALID;
 
-#ifdef __KERNEL__
-	if ((err = verify_area_20(VERIFY_WRITE, useraddr, size)))
-    	return err;
-#endif
-
 	switch (size) {
 
-#ifdef __KERNEL__
-	case sizeof(u_char):
-    	PUT_USER_RET((u_char)value, (u_char *) useraddr, -EFAULT);
-    	break;
-  	case sizeof(u_short):
-    	PUT_USER_RET((u_short)value, (u_short *) useraddr, -EFAULT);
-    	break;
-  	case sizeof(u_long):
-    	PUT_USER_RET((u_long)value, (u_long *) useraddr, -EFAULT);
-    	break;
-#else
 	case sizeof(UChar):
 		*(pUChar)useraddr = (UChar)value;
 		break;
@@ -420,7 +185,6 @@ static int putUserVal(const ULong value, pVoid useraddr, UInt size)
 		*(pULong)useraddr = (ULong)value;
 		break;
 
-#endif
   	default:
     	return _E_INVALID;
 	}
@@ -506,22 +270,14 @@ static void ptdrvLampWarmup( pScanData ps )
 
 /**
  */
-#ifdef __KERNEL__
-static void ptdrvLampTimerIrq( unsigned long ptr )
-#else
 static void ptdrvLampTimerIrq( int sig_num )
-#endif
 {
 	pScanData ps;
 
 	DBG( DBG_HIGH, "!! IRQ !! Lamp-Timer stopped.\n" );
 
-#ifdef __KERNEL__
-	ps = (pScanData)ptr;
-#else
     _VAR_NOT_USED( sig_num );
 	ps = PtDrvDevices[0];
-#endif
 
 	/*
 	 * paranoia check!
@@ -559,7 +315,6 @@ static void ptdrvLampTimerIrq( int sig_num )
  */
 static void ptdrvStartLampTimer( pScanData ps )
 {
-#ifndef __KERNEL__
 	sigset_t 		 block, pause_mask;
 	struct sigaction s;
 #ifdef HAVE_SETITIMER
@@ -597,17 +352,6 @@ static void ptdrvStartLampTimer( pScanData ps )
 #else
 	alarm( ps->lampoff );
 #endif
-#else
-	init_timer( &tl[ps->devno] );
-
-	/* timeout val in seconds */
-	tl[ps->devno].expires  =  jiffies + ps->lampoff * HZ;
-	tl[ps->devno].data     = (unsigned long)ps;
-	tl[ps->devno].function = ptdrvLampTimerIrq;
-
-	if( 0 != ps->lampoff )
-		add_timer( &tl[ps->devno] );
-#endif
 
 	DBG( DBG_HIGH, "Lamp-Timer started!\n" );
 }
@@ -616,7 +360,6 @@ static void ptdrvStartLampTimer( pScanData ps )
  */
 static void ptdrvStopLampTimer( pScanData ps )
 {
-#ifndef __KERNEL__
 	sigset_t block, pause_mask;
 
 	/* block SIGALRM */
@@ -629,10 +372,6 @@ static void ptdrvStopLampTimer( pScanData ps )
 #else
 	_VAR_NOT_USED( ps );
 	alarm(0);
-#endif
-#else
-	if( 0 != ps->lampoff )
-		del_timer( &tl[ps->devno] );
 #endif
 
 	DBG( DBG_HIGH, "Lamp-Timer stopped!\n" );
@@ -701,23 +440,11 @@ static int ptdrvOpenDevice( pScanData ps )
 	UShort lastMode;
 	ULong  devno;
 
-#ifdef __KERNEL__
-	UShort            flags;
-	struct pardevice *pd;
-	struct parport   *pp;
-	ProcDirDef        procDir;
-#else
     int pd;
-#endif
 
 	/*
 	 * push some values from the struct
      */
-#ifdef __KERNEL__
-	flags    = ps->flags;
-	pp       = ps->pp;
-	procDir  = ps->procDir;
-#endif
 	pd       = ps->pardev;
 	iobase   = ps->sCaps.wIOBase;
 	asic     = ps->sCaps.AsicID;
@@ -734,29 +461,10 @@ static int ptdrvOpenDevice( pScanData ps )
 	/*
 	 * pop the val(s)
 	 */
-#ifdef __KERNEL__
-	ps->flags   = flags;
-	ps->pp      = pp;
-	ps->procDir = procDir;
-#endif
 	ps->pardev          = pd;
 	ps->bLastLampStatus = lastStat;
 	ps->IO.lastPortMode = lastMode;
 	ps->devno           = devno;
-
-#ifdef __KERNEL__
-	if( _TRUE == slowIO[devno] ) {
-		DBG( DBG_LOW, "Using slow I/O\n" );
-		ps->IO.slowIO = _TRUE;
-		ps->IO.fnOut  = IOOutDelayed;
-		ps->IO.fnIn   = IOInDelayed;
-	} else {
-		DBG( DBG_LOW, "Using fast I/O\n" );
-		ps->IO.slowIO = _FALSE;
-		ps->IO.fnOut  = IOOut;
-		ps->IO.fnIn   = IOIn;
-	}
-#endif
 	ps->ModelOverride = mov[devno];
 	ps->warmup        = warmup[devno];
 	ps->lampoff		  = lampoff[devno];
@@ -798,19 +506,6 @@ static int ptdrvInit( int devno )
 		return _E_ALLOC;
 	}
 
-#ifdef __KERNEL__
-	if( _TRUE == slowIO[devno] ) {
-		DBG( DBG_LOW, "Using slow I/O\n" );
-		ps->IO.slowIO = _TRUE;
-		ps->IO.fnOut  = IOOutDelayed;
-		ps->IO.fnIn   = IOInDelayed;
-	} else {
-		DBG( DBG_LOW, "Using fast I/O\n" );
-		ps->IO.slowIO = _FALSE;
-		ps->IO.fnOut  = IOOut;
-		ps->IO.fnIn   = IOIn;
-	}
-#endif
 	ps->ModelOverride = mov[devno];
 	ps->warmup        = warmup[devno];
 	ps->lampoff       = lampoff[devno];
@@ -845,13 +540,8 @@ static int ptdrvInit( int devno )
 
 	if( _OK == retval ) {
 
-#ifdef __KERNEL__
-		_PRINT( "pt_drv%u: %s found on port 0x%04x\n",
-			 devno, MiscGetModelName(ps->sCaps.Model), ps->IO.pbSppDataPort );
-#else
 		DBG( DBG_LOW, "pt_drv%u: %s found\n",
 									 devno, MiscGetModelName(ps->sCaps.Model));
-#endif
 
 		/*
 		 * initialize the timespan timer
@@ -859,43 +549,23 @@ static int ptdrvInit( int devno )
 		MiscStartTimer( &toTimer[ps->devno], (_SECOND * ps->warmup));
 
 		if( 0 == ps->lampoff )
-#ifdef __KERNEL__
-		_PRINT(
-#else
 		DBG( DBG_LOW,
-#endif
 					"pt_drv%u: Lamp-Timer switched off.\n", devno );
 		else {
-#ifdef __KERNEL__
-		_PRINT(
-#else
 		DBG( DBG_LOW,
-#endif
 					"pt_drv%u: Lamp-Timer set to %u seconds.\n",
 														devno, ps->lampoff );
 		}
 
-#ifdef __KERNEL__
-		_PRINT(
-#else
 		DBG( DBG_LOW,
-#endif
 				"pt_drv%u: WarmUp period set to %u seconds.\n",
 														devno, ps->warmup );
 
 		if( 0 == ps->lOffonEnd ) {
-#ifdef __KERNEL__
-		_PRINT(
-#else
 		DBG( DBG_LOW,
-#endif
 				"pt_drv%u: Lamp untouched on driver unload.\n", devno );
 		} else {
-#ifdef __KERNEL__
-		_PRINT(
-#else
 		DBG( DBG_LOW,
-#endif
 				"pt_drv%u: Lamp switch-off on driver unload.\n", devno );
 		}
 
@@ -1287,31 +957,19 @@ static int ptdrvRead( pScanData ps, pUChar buffer, int count )
 	int 	retval      = _OK;
 
 #ifdef _ASIC_98001_SIM
-#ifdef __KERNEL__
-		_PRINT(
-#else
 		DBG( DBG_LOW,
-#endif
 					"pt_drv : Software-Emulation active, can't read!\n" );
 	return _E_INVALID;
 #endif
 
 	if((NULL == buffer) || (NULL == ps)) {
-#ifdef __KERNEL__
-		_PRINT(
-#else
 		DBG( DBG_HIGH,
-#endif
 						"pt_drv :  Internal NULL-pointer!\n" );
 		return _E_NULLPTR;
 	}
 
 	if( 0 == count ) {
-#ifdef __KERNEL__
-		_PRINT(
-#else
 		DBG( DBG_HIGH,
-#endif
 			"pt_drv%u: reading 0 bytes makes no sense!\n", ps->devno );
 		return _E_INVALID;
 	}
@@ -1325,11 +983,7 @@ static int ptdrvRead( pScanData ps, pUChar buffer, int count )
 	 * when using the cat /dev/pt_drv command!
 	 */
    	if (!(ps->DataInf.dwVxdFlag & _VF_ENVIRONMENT_READY)) {
-#ifdef __KERNEL__
-		_PRINT(
-#else
 		DBG( DBG_HIGH,
-#endif
 			"pt_drv%u:  Cannot read, driver not initialized!\n",ps->devno);
 		return _E_SEQUENCE;
 	}
@@ -1340,11 +994,7 @@ static int ptdrvRead( pScanData ps, pUChar buffer, int count )
 	ps->Scan.bp.pMonoBuf = _KALLOC( ps->DataInf.dwAppPhyBytesPerLine, GFP_KERNEL);
 
 	if ( NULL == ps->Scan.bp.pMonoBuf ) {
-#ifdef __KERNEL__
-		_PRINT(
-#else
 		DBG( DBG_HIGH,
-#endif
 			"pt_drv%u:  Not enough memory available!\n", ps->devno );
     	return _E_ALLOC;
 	}
@@ -1355,11 +1005,7 @@ static int ptdrvRead( pScanData ps, pUChar buffer, int count )
 		scaleBuf = _KALLOC( ps->DataInf.dwAppPhyBytesPerLine, GFP_KERNEL);
 		if ( NULL == scaleBuf ) {
 			_KFREE( ps->Scan.bp.pMonoBuf );
-#ifdef __KERNEL__
-		_PRINT(
-#else
 		DBG( DBG_HIGH,
-#endif
 			"pt_drv%u:  Not enough memory available!\n", ps->devno );
     		return _E_ALLOC;
 		}
@@ -1406,11 +1052,7 @@ static int ptdrvRead( pScanData ps, pUChar buffer, int count )
 
     retval = ps->Calibration( ps );
 	if( _OK != retval ) {
-#ifdef __KERNEL__
-		_PRINT(
-#else
 		DBG( DBG_HIGH,
-#endif
 			"pt_drv%u: calibration failed, result = %i\n",
 														ps->devno, retval );
 		goto ReadFinished;
@@ -1507,12 +1149,9 @@ static int ptdrvRead( pScanData ps, pUChar buffer, int count )
 				ps->Scan.dwLinesToRead--;
 
 				/* needed, esp. to avoid freezing the system in SPP mode */
-#ifdef __KERNEL__
-				schedule();
 /*#else
 				sched_yield();
 */
-#endif
         	}
 
 			if (ps->fScanningStatus) {
@@ -1564,346 +1203,6 @@ ReadFinished:
 
    	return retval;
 }
-
-/*************************** the module interface ****************************/
-
-#ifdef __KERNEL__		/* the kernel module interface */
-
-/* Designed to be used as a module */
-#ifdef MODULE
-
-/*.............................................................................
- * gets called upon module initialization
- */
-#ifdef LINUX_26
-static int __init ptdrv_init( void )
-#else
-int init_module( void )
-#endif
-{
-    UInt devCount;
-    UInt i;
-    int  retval = _OK;
-    int  result = _OK;
-#if (defined(CONFIG_DEVFS_FS) && !defined(DEVFS_26_STYLE))
-    char controlname[24];
-#endif
-# ifdef LINUX_26
-    char devname[20];
-#endif
-
-    DBG( DBG_HIGH, "*********************************************\n" );
-    DBG( DBG_HIGH, "pt_drv: init_module()\n" );
-
-#if (defined(CONFIG_DEVFS_FS) && !defined(DEVFS_26_STYLE))
-	devfs_handle = devfs_mk_dir(NULL, "scanner", NULL);
-	if( devfs_register_chrdev(_PTDRV_MAJOR, _DRV_NAME, &pt_drv_fops)) {
-#else
-	if( register_chrdev(_PTDRV_MAJOR, _DRV_NAME, &pt_drv_fops)) {
-#endif
-
-		_PRINT(KERN_INFO "pt_drv: unable to get major %d for pt_drv devices\n",
-		       _PTDRV_MAJOR);
-		return -EIO;
-	}
-	printk( KERN_INFO "pt_drv : driver version "_PTDRV_VERSTR"\n" );
-
-#if !defined (CONFIG_DEVFS_FS) && defined (LINUX_26)
-	ptdrv_class = class_create(THIS_MODULE, "scanner");
-	if (IS_ERR(ptdrv_class))
-		goto out_devfs;
-#endif
-
-	/* register the proc_fs */
-	ProcFsInitialize();
-
-	/* go through the list of defined ports and try to find a device
-	 */
-	devCount = 0;
-	for( i = 0; i < _MAX_PTDEVS; i++ ) {
-
-		if( 0 != port[i] ) {
-			result = ptdrvInit( i );
-
-			if ( _OK == result ) {
-		    	PtDrvDevices[i]->flags |= _PTDRV_INITALIZED;
-
-#ifdef CONFIG_DEVFS_FS
-# ifndef DEVFS_26_STYLE
-				sprintf( controlname, "scanner/pt_drv%d", devCount );
-				devfs_register( NULL, controlname,
-				                DEVFS_FL_DEFAULT, _PTDRV_MAJOR, 0,
-			                    (S_IFCHR | S_IRUGO | S_IWUGO | S_IFCHR),
-				                &pt_drv_fops, NULL );
-# else /* DEVFS_26_STYLE */
-				devfs_mk_cdev(MKDEV(_PTDRV_MAJOR, devCount),
-				    (S_IFCHR | S_IRUGO | S_IWUGO | S_IFCHR),
-				    "scanner/pt_drv%d", devCount);
-# endif
-#else
-# ifdef LINUX_26
-				sprintf(devname, "pt_drv%d", devCount);
-				CLASS_DEV_CREATE(ptdrv_class,
-				                 MKDEV(_PTDRV_MAJOR, devCount), NULL,
-				                 devname);
-
-# endif /* LINUX_26 */
-#endif /* CONFIG_DEVFS_FS */
-				ProcFsRegisterDevice( PtDrvDevices[i] );
-				devCount++;
-			} else {
-				retval = result;
-				ptdrvShutdown( PtDrvDevices[i] );
-				PtDrvDevices[i] = NULL;
-			}
-		}
-	}
-
-	/* * if something went wrong, shutdown all... */
-	if( devCount == 0 ) {
-
-#if !defined (CONFIG_DEVFS_FS) && defined (LINUX_26)
-out_devfs:
-		class_destroy(ptdrv_class);
-#endif
-
-#if (defined(CONFIG_DEVFS_FS) && !defined(DEVFS_26_STYLE))
-		devfs_unregister_chrdev( _PTDRV_MAJOR, _DRV_NAME );
-#else
-		unregister_chrdev( _PTDRV_MAJOR, _DRV_NAME );
-#endif
-		ProcFsShutdown();
-
-#ifdef __KERNEL__
-		_PRINT( KERN_INFO "pt_drv : no device(s) detected, (%i)\n", retval );
-#endif
-
-	} else {
-
-		DBG( DBG_HIGH, "pt_drv : init done, %u device(s) found\n", devCount );
-		retval = _OK;
-	}
-	DBG( DBG_HIGH, "---------------------------------------------\n" );
-
-	deviceScanning = _FALSE;
-	return retval;
-}
-
-/*.............................................................................
- * cleanup the show
- */
-#ifdef LINUX_26
-static void __exit ptdrv_exit( void )
-#else
-void cleanup_module( void )
-#endif
-{
-	UInt      i;
-	pScanData ps;
-#if (defined(CONFIG_DEVFS_FS) && !defined(DEVFS_26_STYLE))
-	char           controlname[24];
-	devfs_handle_t master;
-#endif
-
-	DBG( DBG_HIGH, "pt_drv: cleanup_module()\n" );
-
-	for ( i = 0; i < _MAX_PTDEVS; i++ ) {
-
-		ps = PtDrvDevices[i];
-		PtDrvDevices[i] = NULL;
-
-		if ( NULL != ps ) {
-#ifdef CONFIG_DEVFS_FS
-# ifndef DEVFS_26_STYLE
-			sprintf( controlname, "scanner/pt_drv%d", i );
-			master = devfs_find_handle( NULL,controlname, 0, 0,
-			                            DEVFS_SPECIAL_CHR, 0 );
-			devfs_unregister( master );
-# else
-			devfs_remove("scanner/pt_drv%d", i);
-# endif
-#else
-# ifdef LINUX_26
-			CLASS_DEV_DESTROY(ptdrv_class, MKDEV(_PTDRV_MAJOR, i));
-# endif /* LINUX_26 */
-#endif /* CONFIG_DEVFS_FS */
-			ptdrvShutdown( ps );
-			ProcFsUnregisterDevice( ps );
-		}
-	}
-
-#if (defined(CONFIG_DEVFS_FS) && !defined(DEVFS_26_STYLE))
-	devfs_unregister_chrdev( _PTDRV_MAJOR, _DRV_NAME );
-#else
-	unregister_chrdev( _PTDRV_MAJOR, _DRV_NAME );
-#endif
-	ProcFsShutdown();
-
-#if !defined (CONFIG_DEVFS_FS) && defined (LINUX_26)
-	class_destroy(ptdrv_class);
-#endif
-
-	DBG( DBG_HIGH, "pt_drv: cleanup done.\n" );
-	DBG( DBG_HIGH, "*********************************************\n" );
-}
-
-#ifdef LINUX_26
-module_init(ptdrv_init);
-module_exit(ptdrv_exit);
-#endif
-
-#endif /*MODULE*/
-
-
-/*.............................................................................
- * device open...
- */
-static int pt_drv_open(struct inode *inode, struct file *file)
-{
-	pScanData ps;
-
-	DBG( DBG_HIGH, "pt_drv_open()\n" );
-
-	ps = get_pt_from_inode(inode);
-
-	if ( NULL == ps ) {
-		return(-ENXIO);
-	}
-
-	/* device not found ? */
-	if (!(ps->flags & _PTDRV_INITALIZED)) {
-		return(-ENXIO);
-	}
-
-	/* device is busy ? */
-	if (ps->flags & _PTDRV_OPEN) {
-		return(-EBUSY);
-	}
-
-#ifdef LINUX_26
-	if (!try_module_get(THIS_MODULE))
-		return -EAGAIN;
-#else
-	MOD_INC_USE_COUNT;
-#endif
-	ps->flags |= _PTDRV_OPEN;
-
-	return _OK;
-}
-
-/*.............................................................................
- * device close...
- */
-static CLOSETYPE pt_drv_close(struct inode * inode, struct file * file)
-{
-	pScanData ps;
-
-	DBG( DBG_HIGH, "pt_drv_close()\n" );
-
-	if ((ps = get_pt_from_inode(inode)) ) {
-
-		ptdrvClose( ps );
-
-    	ps->flags &= ~_PTDRV_OPEN;
-#ifdef LINUX_26
-		module_put(THIS_MODULE);
-#else
-    	MOD_DEC_USE_COUNT;
-#endif
-	    CLOSERETURN(0);
-	} else {
-
-		DBG( DBG_HIGH, "pt_drv: - close failed!\n" );
-		CLOSERETURN(-ENXIO);
-	}
-}
-
-/*.............................................................................
- * read data from device
- */
-#ifdef LINUX_20
-static int pt_drv_read(struct inode *inode, struct file *file,
-                       char *buffer, int count)
-{
-	int		  result;
-	pScanData ps;
-
-	if ( !(ps = get_pt_from_inode(inode)))
-    	return(-ENXIO);
-#else
-static ssize_t pt_drv_read( struct file *file,
-                             char *buffer, size_t count, loff_t *tmp )
-{
-	int       result;
-	pScanData ps;
-
-	if ( !(ps = get_pt_from_inode(file->f_dentry->d_inode)) )
-		return(-ENXIO);
-#endif
-	if ((result = verify_area_20(VERIFY_WRITE, buffer, count)))
-		return result;
-
-	/*
-	 * as the driver contains some global vars, it is not
-	 * possible to scan simultaenously with two or more devices
-	 */
-	if( _TRUE == deviceScanning ) {
-	    printk( KERN_INFO "pt_drv: device %u busy!!!\n", ps->devno );
-		return(-EBUSY);
-	}
-
-	deviceScanning = _TRUE;
-
-	result = ptdrvRead( ps, buffer, count );
-
-	deviceScanning = _FALSE;
-	return result;
-}
-
-/*.............................................................................
- * writing makes no sense
- */
-#ifdef LINUX_20
-static int pt_drv_write(struct inode * inode, struct file * file,
-                        const char * buffer, int count)
-{
-  return -EPERM;
-}
-#else
- static ssize_t pt_drv_write( struct file * file,const char * buffer,
-                              size_t tmp,loff_t* count)
-{
-  return -EPERM;
-}
-#endif
-
-/*.............................................................................
- * the ioctl interface
- */
-#ifdef NOLOCK_IOCTL
-static long pt_drv_ioctl( struct file *file, UInt cmd, unsigned long arg )
-{
-	pScanData ps;
-
-	if ( !(ps = get_pt_from_inode(file->f_dentry->d_inode)) )
-    	return(-ENXIO);
-
-  	return ptdrvIoctl( ps, cmd, (pVoid)arg);
-}
-#else
-static int pt_drv_ioctl( struct inode *inode, struct file *file,
-                         UInt cmd, unsigned long arg )
-{
-	pScanData ps;
-
-	if ( !(ps = get_pt_from_inode(inode)) )
-    	return(-ENXIO);
-
-  	return ptdrvIoctl( ps, cmd, (pVoid)arg);
-}
-#endif
-
-#else	/* the user-mode interface */
 
 /*.............................................................................
  * here we only have wrapper functions
@@ -1979,7 +1278,5 @@ static int PtDrvRead ( pUChar buffer, int count )
 
 	return ptdrvRead( PtDrvDevices[0], buffer, count );
 }
-
-#endif /* guard __KERNEL__ */
 
 /* END PLUSTEK-PP_PTDRV.C ...................................................*/

@@ -1288,11 +1288,7 @@ static Bool imageP98003ReadOneImageLine( pScanData ps )
 
     } while( !MiscCheckTimer( &timer ));
 
-#ifdef __KERNEL__
-	_PRINT(
-#else
 	DBG( DBG_HIGH,
-#endif
 	"Timeout - Scanner malfunction !!\n" );
 	MotorToHomePosition(ps);
 

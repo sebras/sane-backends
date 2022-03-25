@@ -77,27 +77,11 @@
 
 /*************************** some definitions ********************************/
 
-#ifndef __KERNEL__
 # define PPA_PROBE_SPP   0x0001
 # define PPA_PROBE_PS2   0x0002
 # define PPA_PROBE_ECR   0x0010
 # define PPA_PROBE_EPP17 0x0100
 # define PPA_PROBE_EPP19 0x0200
-#else
-
-/* the parport driver in Kernel 2.4 has changed. It does report the
- * possible modes in a different, more general way. As long, as
- * we do not use the parport-module change mode facility, I assume
- * the following correlations
- */
-#if defined LINUX_24 || defined LINUX_26
-# define PARPORT_MODE_PCPS2     PARPORT_MODE_TRISTATE
-# define PARPORT_MODE_PCEPP     PARPORT_MODE_EPP
-# define PARPORT_MODE_PCECPPS2  PARPORT_MODE_TRISTATE
-# define PARPORT_MODE_PCECPEPP  PARPORT_MODE_EPP
-# define PARPORT_MODE_PCECR     PARPORT_MODE_ECP
-#endif
-#endif
 
 #define _PP_A 16807         /**< multiplier */
 #define _PP_M 2147483647L   /**< 2**31 - 1  */
@@ -107,298 +91,9 @@
 static int  port_feature = 0;
 static long randomnum    = 1;
 
-#ifdef __KERNEL__
-static int portIsClaimed[_MAX_PTDEVS] = { [0 ... (_MAX_PTDEVS-1)] = 0 };
-
-MODELSTR;	/**< a static char array (see plustek-pp.h) */
-
-#else
 static int portIsClaimed[_MAX_PTDEVS] = { 0, 0, 0, 0 };
-#endif
 
 /*************************** local functions *********************************/
-
-#ifdef __KERNEL__
-#ifdef LINUX_26
-
-static pScanData __ps = NULL;
-static int       __pa = -1;
-
-/** callback from parport driver
- */
-static void misc_attach(struct parport *port)
-{
-	DBG( DBG_LOW, "misc_attach\n" );
-
-	__ps->pp = NULL;
-	if( port->base == (unsigned long)__pa ) {
-		DBG( DBG_LOW, "Requested port (0x%02x) found\n", __pa );
-		DBG( DBG_LOW, "Port mode reported: (0x%04x)\n",  port->modes );
-		__ps->pp = port;
-	}
-}
-
-static void misc_detach( struct parport *port )
-{
-	DBG( DBG_LOW, "misc_detach\n" );
-}
-
-static struct parport_driver pt_drv = {
-	.name   = "pt_drv",
-	.attach = misc_attach,
-	.detach = misc_detach,
-};
-#endif
-
-/** display the available port-modes
- */
-#ifdef DEBUG
-static void miscShowPortModes( int modes )
-{
-	DBG( DBG_LOW, "parport-modi:" );
-
-	if( modes & PARPORT_MODE_PCSPP )
-		DBG( DBG_LOW, " SPP" );
-
-	if( modes & PARPORT_MODE_PCPS2 )
-		DBG( DBG_LOW, " PS/2" );
-
-	if( modes & PARPORT_MODE_PCEPP )
-		DBG( DBG_LOW, " EPP" );
-
-	if( modes & PARPORT_MODE_PCECR )
-		DBG( DBG_LOW, " ECP" );
-
-	if( modes & PARPORT_MODE_PCECPEPP )
-		DBG( DBG_LOW, " EPP(ECP)" );
-
-	if( modes & PARPORT_MODE_PCECPPS2 )
-		DBG( DBG_LOW, " PS/2(ECP)" );
-
-	DBG( DBG_LOW, "\n" );
-}
-#endif
-
-/** probe the parallel port
- */
-static int initPortProbe( pScanData ps )
-{
-    int retv = 0;
-
-	/* clear the controls */
-	ps->IO.lastPortMode = 0xFFFF;
-
-	if( NULL != ps->pardev )
-		retv = ps->pardev->port->modes;
-    return retv;
-}
-
-/** will be called by the parport module when we already have access, but
- * another module wants access to the port...
- */
-static int miscPreemptionCallback( pVoid data )
-{
-	pScanData ps = (pScanData)data;
-
-	if( NULL != ps ) {
-
-		/* never release during scanning */
-		if( ps->DataInf.dwScanFlag & _SCANNER_SCANNING ) {
-			DBG( DBG_LOW, "no way!!!\n" );
-			return 1;
-		}
-	}
-
-	/* let the port go...*/
-	return 0;
-}
-
-/** depending on the reported possible port modes, we try to set a faster mode
- * than SPP
- */
-static int miscSetFastMode( pScanData ps )
-{
-	UChar a, b;
-
-	/*
-	 *  when previously found the EPP mode, break right here
-	 */
-	if (( _PORT_EPP == ps->IO.portMode ) && (!(port_feature & PARPORT_MODE_PCECR)))
- 		return _OK;
-
- 	/* CHECK REMOVE: from here we should have SPP (Paranoia Code !) */
-	if (( _PORT_SPP != ps->IO.portMode ) && (!(port_feature & PARPORT_MODE_PCECR)))
- 		return _OK;
-
-	DBG(DBG_LOW, "Trying faster mode...\n" );
-
-	/*
-	 * ECP mode usually has sub-modes of EPP and/or PS2.
-	 * First we try to set EPP
-	 */
-    if((port_feature & PARPORT_MODE_PCECR) &&
-									(port_feature & PARPORT_MODE_PCECPEPP)){
-
-        DBG(DBG_LOW, "Attempting to set EPP from ECP mode.\n" );
-
-        a = _INB_ECTL(ps);  				/* get current ECR				*/
-		ps->IO.lastPortMode = a;	     	/* save it for restoring later	*/
-        a = (a & 0x1F) | 0x80;  	     	/* set to EPP					*/
-        _OUTB_ECTL(ps, a);					/* write it back				*/
-		_DO_UDELAY(1);
-
-		/*
-		 * It is probably unnecessary to
-		 * do this check but it makes me feel better
-		 */
-        b = _INB_ECTL(ps);					/* check to see if port set */
-        if( a == b ) {
-            DBG( DBG_LOW, "Port is set to (ECP) EPP mode.\n" );
-            ps->IO.portMode = _PORT_EPP;
-			return _OK;
-
-        } else {
-            DBG( DBG_LOW, "Port could not be set to (ECP) EPP mode. "
-														"Using SPP mode.\n" );
-            _OUTB_ECTL(ps,(Byte)ps->IO.lastPortMode); 		/* restore */
-			_DO_UDELAY(1);
-		    ps->IO.portMode = _PORT_SPP;
-
-			/* go ahead and try with other settings...*/
-        }
-    }
-
-	/* If port cannot be set to EPP, try PS2 */
-    if((port_feature & PARPORT_MODE_PCECR) &&
-									(port_feature & PARPORT_MODE_PCECPPS2)) {
-
-        DBG(DBG_LOW, "Attempting to set PS2 from ECPPS2 mode.\n" );
-
-        a = _INB_ECTL(ps);  				/* get current ECR				*/
-		ps->IO.lastPortMode = a;	     	/* save it for restoring later 	*/
-
-		/* set to Fast Centronics/bi-directional/PS2 */
-        a = (a & 0x1F) | 0x20;
-        _OUTB_ECTL(ps,a);					/* write it back */
-		_DO_UDELAY(1);
-
-		/*
-		 * It is probably unnecessary to do this check
-		 * but it makes me feel better
-		 */
-        b = _INB_ECTL(ps);					/* check to see if port set */
-        if (a == b) {
-            DBG(DBG_LOW, "Port is set to (ECP) PS2 bidirectional mode.\n");
-            ps->IO.portMode = _PORT_BIDI;
-			return _OK;
-        } else {
-        	DBG(DBG_LOW, "Port could not be set to (ECP) PS2 mode. "
-														"Using SPP mode.\n");
-			a = ps->IO.lastPortMode & 0x1F;
-            _OUTB_ECTL(ps, a);					/* set ECP ctrl to SPP */
-			_DO_UDELAY(1);
-		    ps->IO.portMode = _PORT_SPP;
-
-			/* next mode, last attempt... */
-        }
-	}
-
-	/*
-	 * Some BIOS/cards have only a Bi-directional/PS2 mode (no EPP).
-	 * Make one last attempt to set to PS2 mode.
-	 */
-	if ( port_feature & PARPORT_MODE_PCPS2 ){
-
-		DBG(DBG_LOW, "Attempting to set PS2 mode.\n" );
-
-		a = _INB_CTRL(ps); 		    /* get current setting of control register*/
-		ps->IO.lastPortMode = a;	/* save it for restoring later            */
-		a = a | 0x20;  			    /* set bit 5 of control reg              */
-		_OUTB_CTRL(ps,a); 		/* set to Fast Centronics/bi-directional/PS2 */
-		_DO_UDELAY(1);
-		a = 0;
-
-		_OUTB_DATA(ps,0x55);
-		_DO_UDELAY(1);
-		if ((sanei_inb(ps->IO.portBase)) != 0x55)	/* read data */
-			a++;
-
-		_OUTB_DATA(ps,0xAA);
-		_DO_UDELAY(1);
-
-		if (_INB_DATA(ps) != 0xAA)   /* read data */
-			a++;
-
-		if( 2 == a ) {
-			DBG(DBG_LOW, "Port is set to PS2 bidirectional mode.\n");
-			ps->IO.portMode = _PORT_BIDI;
-			return _OK;
-
-		} else {
-			DBG(DBG_LOW, "Port could not be set to PS2 mode. "
-														"Using SPP mode.\n");
-            _OUTB_CTRL(ps,(Byte)ps->IO.lastPortMode);		/* restore */
-			_DO_UDELAY(1);
-			ps->IO.portMode = _PORT_SPP;
-		}
-	}
-
-	/* reaching this point, we're back in SPP mode and there's no need
-	 * to restore at shutdown...
-	 */
-	ps->IO.lastPortMode = 0xFFFF;
-
-	return _OK;
-}
-
-/** check the state of the par-port and switch to EPP-mode if possible
- */
-static int miscSetPortMode( pScanData ps )
-{
-	/* try to detect the port settings, SPP seems to work in any case ! */
-	port_feature = initPortProbe( ps );
-
-#ifdef DEBUG
-	miscShowPortModes( port_feature );
-#endif
-
-	switch( ps->IO.forceMode ) {
-
-		case 1:
-			DBG( DBG_LOW, "Use of SPP-mode enforced\n" );
-			ps->IO.portMode = _PORT_SPP;
-			return _OK;
-			break;
-
-        case 2:
-	    	DBG( DBG_LOW, "Use of EPP-mode enforced\n" );
-	        ps->IO.portMode = _PORT_EPP;
-    		return _OK;
-            break;
-
-        default:
-            break;
-	}
-
-	if( !(port_feature & PARPORT_MODE_PCEPP)) {
-
-		if( !(port_feature & PARPORT_MODE_PCSPP )) {
-			_PRINT("\nThis Port supports not the  SPP- or EPP-Mode\n" );
-			_PRINT("Please activate SPP-Mode, EPP-Mode or\nEPP + ECP-Mode!\n");
-			return _E_NOSUPP;
-		} else {
-			DBG(DBG_LOW, "Using SPP-mode\n" );
-		    ps->IO.portMode = _PORT_SPP;
-		}
-    } else {
-		DBG(DBG_LOW, "Using EPP-mode\n" );
-	    ps->IO.portMode = _PORT_EPP;
-	}
-
-	/* else try to set to a faster mode than SPP */
-	return miscSetFastMode( ps );
-}
-#endif
 
 /** miscNextLongRand() -- generate 2**31-2 random numbers
 **
@@ -488,34 +183,6 @@ _LOC int MiscReinitStruct( pScanData ps )
  */
 _LOC int MiscInitPorts( pScanData ps, int port )
 {
-#ifdef __KERNEL__
-	int status;
-
-	if( NULL == ps )
-		return _E_NULLPTR;
-
-    /*
-     * Get access to the ports
-     */
-    ps->IO.portBase = (UShort)port;
-
-	status = miscSetPortMode(ps);
-
-	if( _OK != status ) {
-		ps->sCaps.wIOBase = _NO_BASE;
-		ps->IO.portBase = _NO_BASE;
-		return status;
-	}
-
-	/*
- 	 * the port settings
-	 */
-    ps->IO.pbSppDataPort = (UShort)port;
-    ps->IO.pbStatusPort  = (UShort)port+1;
-    ps->IO.pbControlPort = (UShort)port+2;
-    ps->IO.pbEppDataPort = (UShort)port+4;
-
-#else
 	int mode, mts;
 
 	if( NULL == ps )
@@ -560,7 +227,6 @@ _LOC int MiscInitPorts( pScanData ps, int port )
 
 	sanei_pp_setmode( ps->pardev, mts );
 	_VAR_NOT_USED( port );
-#endif
 	return _OK;
 }
 
@@ -568,11 +234,6 @@ _LOC int MiscInitPorts( pScanData ps, int port )
  */
 _LOC void MiscRestorePort( pScanData ps )
 {
-#ifdef __KERNEL__
-	if( 0 == ps->IO.pbSppDataPort )
-		return;
-#endif
-
     DBG(DBG_LOW,"MiscRestorePort()\n");
 
 	/* don't restore if not necessary */
@@ -582,19 +243,9 @@ _LOC void MiscRestorePort( pScanData ps )
 	}
 
     /*Restore Port-Mode*/
-#ifdef __KERNEL__
-	if( port_feature & PARPORT_MODE_PCECR ){
-		_OUTB_ECTL( ps, (Byte)ps->IO.lastPortMode );
-		_DO_UDELAY(1);
-    } else {
-		_OUTB_CTRL( ps, (Byte)ps->IO.lastPortMode );
-		_DO_UDELAY(1);
-    }
-#else
     if( port_feature & PPA_PROBE_ECR ){
 		_OUTB_ECTL(ps,ps->IO.lastPortMode);
     }
-#endif
 }
 
 /** Initializes a timer.
@@ -605,11 +256,7 @@ _LOC void MiscStartTimer( TimerDef *timer , unsigned long us)
 {
     struct timeval start_time;
 
-#ifdef __KERNEL__
-	_GET_TIME( &start_time );
-#else
 	gettimeofday(&start_time, NULL);
-#endif
 
     *timer = (TimerDef)start_time.tv_sec * 1000000 + (TimerDef)start_time.tv_usec + us;
 }
@@ -624,21 +271,14 @@ _LOC int MiscCheckTimer( TimerDef *timer )
 {
     struct timeval current_time;
 
-#ifdef __KERNEL__
-	_GET_TIME( &current_time );
-#else
 	gettimeofday(&current_time, NULL);
-#endif
 
     if ((TimerDef)current_time.tv_sec * 1000000 + (TimerDef)current_time.tv_usec > *timer) {
 		return _E_TIMEOUT;
     } else {
-#ifdef __KERNEL__
-		schedule();
 /*#else
 		sched_yield();
 */
-#endif
 		return _OK;
 	}
 }
@@ -673,65 +313,8 @@ _LOC Bool MiscAllPointersSet( pScanData ps )
  */
 _LOC int MiscRegisterPort( pScanData ps, int portAddr )
 {
-#ifndef __KERNEL__
 	DBG( DBG_LOW, "Assigning port handle %i\n", portAddr );
     ps->pardev = portAddr;
-#else
-
-#ifdef LINUX_26
-	__ps = ps;
-	__pa = portAddr;
-
-	DBG( DBG_LOW, "Requested port at 0x%02x\n", portAddr );
-
-	if( parport_register_driver(&pt_drv)) {
-		/* Failed; nothing we can do. */
-		return _E_REGISTER;
-	}
-
-#else
-	struct parport *pp = NULL;
-
-	DBG( DBG_LOW, "Requested port at 0x%02x\n", portAddr );
-
-	pp         = parport_enumerate();
-	ps->pardev = NULL;
-
-	if( NULL == pp ) {
-		return _E_PORTSEARCH;
-	}
-
-	/* go through the list
-	 */
-	for( ps->pp = NULL; NULL != pp; ) {
-
-		if( pp->base == (unsigned long)portAddr ) {
-			DBG( DBG_LOW, "Requested port (0x%02x) found\n", portAddr );
-			DBG( DBG_LOW, "Port mode reported: (0x%04x)\n",  pp->modes );
-			ps->pp = pp;
-			break;
-		}
-		pp = pp->next;
-	}
-#endif
-
-	if( NULL == ps->pp ) {
-		printk("PORT not found!!!\n");
-		return _E_NO_PORT;
-	}
-
-	/*
-	 * register this device
-	 */
-	ps->pardev = parport_register_device( ps->pp, "Plustek Driver",
-	                    miscPreemptionCallback, NULL, NULL, 0, (pVoid)ps );
-
-	if( NULL == ps->pardev ) {
-		return _E_REGISTER;
-	}
-
-	DBG( DBG_LOW, "Port for device %u registered\n", ps->devno );
-#endif
 
 	portIsClaimed[ps->devno] = 0;
 	return _OK;
@@ -741,17 +324,7 @@ _LOC int MiscRegisterPort( pScanData ps, int portAddr )
  */
 _LOC void MiscUnregisterPort( pScanData ps )
 {
-#ifdef __KERNEL__
-	if( NULL != ps->pardev ) {
-		DBG( DBG_LOW, "Port unregistered\n" );
-		parport_unregister_device( ps->pardev );
-	}
-#ifdef LINUX_26
-	parport_unregister_driver( &pt_drv );
-#endif
-#else
 	sanei_pp_close( ps->pardev );
-#endif
 }
 
 /** Try to claim the port
@@ -763,11 +336,7 @@ _LOC int MiscClaimPort( pScanData ps )
 	if( 0 == portIsClaimed[ps->devno] ) {
 
 		DBG( DBG_HIGH, "Try to claim the parport\n" );
-#ifdef __KERNEL__
-		if( 0 != parport_claim( ps->pardev )) {
-#else
 		if( SANE_STATUS_GOOD != sanei_pp_claim( ps->pardev )) {
-#endif
 			return _E_BUSY;
 		}
 	}
@@ -785,11 +354,7 @@ _LOC void MiscReleasePort( pScanData ps )
 
 		if( 0 == portIsClaimed[ps->devno] ) {
 			DBG( DBG_HIGH, "Releasing parport\n" );
-#ifdef __KERNEL__
-			parport_release( ps->pardev );
-#else
 			sanei_pp_release( ps->pardev );
-#endif
 		}
 	}
 }
