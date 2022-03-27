@@ -420,7 +420,7 @@ DOCUMENTATION
   "doc/descriptions-external" (for included and external backends).
 
 * "doc/descriptions.txt" describes the format of the ".desc" files. There is
-  also a template for new .desc files: "template.desc.". The format of the
+  also a template for new .desc files: "template.desc". The format of the
   files in the two directories is very similar.  If you'd like to try parsing
   your creation to recreate the sane-backends webpages, cd into "tools/" and
   enter "make sane-desc". You can either use sane-desc directly (try
