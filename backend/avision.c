@@ -7960,13 +7960,8 @@ reader_process (void *data)
 
       /* SOFTWARE SCALING WITH INTERPOLATION (IF NECESSARY) */
 
-      if (s->avdimen.hw_xres == s->avdimen.xres &&
-	  s->avdimen.hw_yres == s->avdimen.yres) /* No scaling */
-	{
-          fwrite (out_data, useful_bytes, 1, fp);
-          line += useful_bytes / s->avdimen.hw_bytes_per_line;
-	}
-      else /* Software scaling - watch out - this code bites back! */
+      if (s->avdimen.hw_xres != s->avdimen.xres ||
+	  s->avdimen.hw_yres != s->avdimen.yres) /* Software scaling */
 	{
 	  int x;
 	  /* for convenience in the 16bit code path */
@@ -8114,6 +8109,11 @@ reader_process (void *data)
 	  memcpy (ip_history,
 	          out_data + useful_bytes - s->avdimen.hw_bytes_per_line,
 		  s->avdimen.hw_bytes_per_line);
+	}
+      else /* No scaling */
+	{
+          fwrite (out_data, useful_bytes, 1, fp);
+          line += useful_bytes / s->avdimen.hw_bytes_per_line;
 	}
       }
 
