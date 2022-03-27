@@ -7534,18 +7534,15 @@ reader_process (void *data)
       if (!s->duplex_rear_valid) { /* create new file for writing */
 	DBG (3, "reader_process: opening duplex rear file for writing.\n");
 	rear_fp = fopen (s->duplex_rear_fname, "w");
-	if (! rear_fp) {
-	  fclose (fp);
-	  return SANE_STATUS_NO_MEM;
-	}
       }
       else { /* open saved rear data */
 	DBG (3, "reader_process: opening duplex rear file for reading.\n");
 	rear_fp = fopen (s->duplex_rear_fname, "r");
-	if (! rear_fp) {
-	  fclose (fp);
-	  return SANE_STATUS_IO_ERROR;
-	}
+      }
+      if (! rear_fp) {
+	fclose (fp);
+	fclose (fp_fd);
+	return SANE_STATUS_IO_ERROR;
       }
     }
 
