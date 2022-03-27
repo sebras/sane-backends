@@ -186,7 +186,7 @@ DESC_FILES = descriptions/abaton.desc descriptions/agfafocus.desc \
   descriptions/umax1220u.desc descriptions/umax.desc \
   descriptions/umax_pp.desc  descriptions/unsupported.desc \
   descriptions/v4l.desc descriptions/xerox_mfp.desc
-EXTRA_DIST += $(DESC_FILES) descriptions/template.desc.
+EXTRA_DIST += $(DESC_FILES) descriptions/template.desc
 
 DESC_EXT_FILES = descriptions-external/brother2.desc \
   descriptions-external/brother.desc \
@@ -210,7 +210,7 @@ DESC_EXT_FILES = descriptions-external/brother2.desc \
   descriptions-external/utsushi.desc \
   descriptions-external/v4l2.desc \
   descriptions-external/viceo.desc
-EXTRA_DIST += $(DESC_EXT_FILES) descriptions-external/template.desc.
+EXTRA_DIST += $(DESC_EXT_FILES) descriptions-external/template.desc
 
 install-data-local: install-beman5
 
