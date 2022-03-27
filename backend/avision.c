@@ -112,7 +112,7 @@
  *
  * . . - sane_cancel() : cancel operation, kill reader_process
  *
- * . - sane_close() : close opened scanner-device, do_cancel, free buffer and handle
+ * . - sane_close() : do_cancel, close opened scanner-device, free buffer and handle
  * - sane_exit() : terminate use of backend, free devicename and device-structure
  */
 
@@ -8719,22 +8719,14 @@ void
 sane_close (SANE_Handle handle)
 {
   Avision_Scanner* prev;
-  Avision_Scanner* s = handle;
+  Avision_Scanner* s;
   int i;
 
   DBG (3, "sane_close:\n");
 
-  /* close the device */
-  if (avision_is_open (&s->av_con) ) {
-    avision_close (&s->av_con);
-  }
-
-  /* remove handle from list of open handles: */
-  prev = 0;
-  for (s = first_handle; s; s = s->next) {
+  for (prev = 0, s = first_handle; s; prev = s, s = s->next) {
     if (s == handle)
       break;
-    prev = s;
   }
 
   /* a handle we know about ? */
@@ -8746,6 +8738,12 @@ sane_close (SANE_Handle handle)
   if (s->scanning)
     do_cancel (handle);
 
+  /* close the device */
+  if (avision_is_open(&s->av_con)) {
+    avision_close(&s->av_con);
+  }
+
+  /* remove handle from list of open handles */
   if (prev)
     prev->next = s->next;
   else
