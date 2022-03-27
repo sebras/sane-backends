@@ -7999,6 +7999,9 @@ reader_process (void *data)
 	      break;
 	    }
 
+	    DBG (8, "reader_process: out line: %d <- from: %d-%d\n",
+		 line, sy, syy);
+
 	    /* convert to offset in current stripe */
 	    sy -= hw_line;
 	    syy -= hw_line;
@@ -8007,9 +8010,6 @@ reader_process (void *data)
 	      DBG (1, "reader_process: need more history: %d???\n", sy);
 	      sy = -1;
 	    }
-
-	    DBG (8, "reader_process: out line: %d <- from: %d-%d\n",
-		 line, sy, syy);
 
 	    for (x = 0; x < s->params.pixels_per_line; ++x) {
 	      const double bx = (-1.0 + s->avdimen.hw_pixels_per_line) * x / s->params.pixels_per_line;
