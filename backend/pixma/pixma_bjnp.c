@@ -994,7 +994,7 @@ prepare_socket(const char *if_name, const bjnp_sockaddr_t *local_sa,
 
           /* send broadcasts to the broadcast address of the interface */
 
-          memcpy(dest_sa, broadcast_sa, sa_size(dest_sa) );
+          memcpy(dest_sa, broadcast_sa, sa_size(broadcast_sa) );
 
 	  /* we fill port when we send the broadcast */
           dest_sa -> ipv4.sin_port = htons(0);
