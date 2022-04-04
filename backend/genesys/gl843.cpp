@@ -1691,8 +1691,12 @@ void CommandSetGl843::update_hardware_sensors(Genesys_Scanner* s) const
             s->buttons[BUTTON_SCAN_SW].write((val & 0x02) == 0);
             s->buttons[BUTTON_FILE_SW].write((val & 0x04) == 0);
             s->buttons[BUTTON_EMAIL_SW].write((val & 0x08) == 0);
-          break;
+            break;
         case GpioId::CANON_4400F:
+            s->buttons[BUTTON_COPY_SW].write((val & 0x68) == 0x28);
+            s->buttons[BUTTON_TRANSP_SW].write((val & 0x68) == 0x20);
+            s->buttons[BUTTON_EMAIL_SW].write((val & 0x68) == 0x08);
+            break;
         default:
             break;
     }

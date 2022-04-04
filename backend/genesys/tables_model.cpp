@@ -447,7 +447,7 @@ void genesys_init_usb_device_tables()
                   ModelFlag::SHADING_REPARK |
                   ModelFlag::UTA_NO_SECONDARY_MOTOR;
 
-    model.buttons = GENESYS_HAS_SCAN_SW | GENESYS_HAS_FILE_SW | GENESYS_HAS_COPY_SW;
+    model.buttons = GENESYS_HAS_TRANSP_SW | GENESYS_HAS_EMAIL_SW | GENESYS_HAS_COPY_SW;
     model.search_lines = 100;
 
     s_usb_devices->emplace_back(0x04a9, 0x2228, model);
