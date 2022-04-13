@@ -4907,6 +4907,54 @@ static void init_options(Genesys_Scanner* s)
   else
     s->opt[OPT_TRANSP_SW].cap = SANE_CAP_INACTIVE;
 
+  /* PDF special function button 1 */
+  s->opt[OPT_PDF1_SW].name = "pdf1";
+  s->opt[OPT_PDF1_SW].title = SANE_I18N ("PDF function button 1");
+  s->opt[OPT_PDF1_SW].desc = SANE_I18N ("PDF function button 1");
+  s->opt[OPT_PDF1_SW].type = SANE_TYPE_BOOL;
+  s->opt[OPT_PDF1_SW].unit = SANE_UNIT_NONE;
+  if (model->buttons & GENESYS_HAS_PDF1_SW)
+    s->opt[OPT_PDF1_SW].cap =
+      SANE_CAP_SOFT_DETECT | SANE_CAP_HARD_SELECT | SANE_CAP_ADVANCED;
+  else
+    s->opt[OPT_PDF1_SW].cap = SANE_CAP_INACTIVE;
+
+  /* PDF special function button 2 */
+  s->opt[OPT_PDF2_SW].name = "pdf2";
+  s->opt[OPT_PDF2_SW].title = SANE_I18N ("PDF function button 2");
+  s->opt[OPT_PDF2_SW].desc = SANE_I18N ("PDF function button 2");
+  s->opt[OPT_PDF2_SW].type = SANE_TYPE_BOOL;
+  s->opt[OPT_PDF2_SW].unit = SANE_UNIT_NONE;
+  if (model->buttons & GENESYS_HAS_PDF2_SW)
+    s->opt[OPT_PDF2_SW].cap =
+      SANE_CAP_SOFT_DETECT | SANE_CAP_HARD_SELECT | SANE_CAP_ADVANCED;
+  else
+    s->opt[OPT_PDF2_SW].cap = SANE_CAP_INACTIVE;
+
+  /* PDF special function button 3 */
+  s->opt[OPT_PDF3_SW].name = "pdf3";
+  s->opt[OPT_PDF3_SW].title = SANE_I18N ("PDF function button 3");
+  s->opt[OPT_PDF3_SW].desc = SANE_I18N ("PDF function button 3");
+  s->opt[OPT_PDF3_SW].type = SANE_TYPE_BOOL;
+  s->opt[OPT_PDF3_SW].unit = SANE_UNIT_NONE;
+  if (model->buttons & GENESYS_HAS_PDF3_SW)
+    s->opt[OPT_PDF3_SW].cap =
+      SANE_CAP_SOFT_DETECT | SANE_CAP_HARD_SELECT | SANE_CAP_ADVANCED;
+  else
+    s->opt[OPT_PDF3_SW].cap = SANE_CAP_INACTIVE;
+
+  /* PDF special function button 4 */
+  s->opt[OPT_PDF4_SW].name = "pdf4";
+  s->opt[OPT_PDF4_SW].title = SANE_I18N ("PDF function button 4");
+  s->opt[OPT_PDF4_SW].desc = SANE_I18N ("PDF function button 4");
+  s->opt[OPT_PDF4_SW].type = SANE_TYPE_BOOL;
+  s->opt[OPT_PDF4_SW].unit = SANE_UNIT_NONE;
+  if (model->buttons & GENESYS_HAS_PDF4_SW)
+    s->opt[OPT_PDF4_SW].cap =
+      SANE_CAP_SOFT_DETECT | SANE_CAP_HARD_SELECT | SANE_CAP_ADVANCED;
+  else
+    s->opt[OPT_PDF4_SW].cap = SANE_CAP_INACTIVE;
+
   /* calibration needed */
   s->opt[OPT_NEED_CALIBRATION_SW].name = "need-calibration";
   s->opt[OPT_NEED_CALIBRATION_SW].title = SANE_I18N ("Needs calibration");
@@ -5726,6 +5774,10 @@ static void get_option_value(Genesys_Scanner* s, int option, void* val)
     case OPT_POWER_SW:
     case OPT_EXTRA_SW:
     case OPT_TRANSP_SW:
+    case OPT_PDF1_SW:
+    case OPT_PDF2_SW:
+    case OPT_PDF3_SW:
+    case OPT_PDF4_SW:
         s->dev->cmd_set->update_hardware_sensors(s);
         *reinterpret_cast<SANE_Bool*>(val) = s->buttons[genesys_option_to_button(option)].read();
         break;
@@ -6362,6 +6414,10 @@ GenesysButtonName genesys_option_to_button(int option)
     case OPT_POWER_SW: return BUTTON_POWER_SW;
     case OPT_EXTRA_SW: return BUTTON_EXTRA_SW;
     case OPT_TRANSP_SW: return BUTTON_TRANSP_SW;
+    case OPT_PDF1_SW: return BUTTON_PDF1_SW;
+    case OPT_PDF2_SW: return BUTTON_PDF2_SW;
+    case OPT_PDF3_SW: return BUTTON_PDF3_SW;
+    case OPT_PDF4_SW: return BUTTON_PDF4_SW;
     default: throw std::runtime_error("Unknown option to convert to button index");
     }
 }
