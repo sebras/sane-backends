@@ -74,7 +74,7 @@ get_TIFF_data(capabilities_t *scanner, int *width, int *height, int *bps)
     TIFFGetField(tif, TIFFTAG_IMAGELENGTH, &h);
     npixels = w * h;
     surface = (unsigned char*) malloc(npixels * sizeof (uint32_t));
-    if (surface != NULL)
+    if (surface == NULL)
     {
         DBG( 1, "Escl Tiff : raster Memory allocation problem.\n");
         status = SANE_STATUS_INVAL;
