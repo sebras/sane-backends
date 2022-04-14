@@ -129,6 +129,7 @@ BEDOCS += plustek/FAQ \
   plustek/Plustek-PARPORT.changes plustek/Plustek-PARPORT.txt \
   plustek/Plustek-USB-TODO.txt plustek/Plustek-USB.changes \
   plustek/Plustek-USB.txt
+BEDOCS += saned/saned.install.md
 BEDOCS += sceptre/s1200.txt
 BEDOCS += teco/teco1.txt teco/teco2.txt teco/teco3.txt
 BEDOCS += u12/U12.changes u12/U12.todo

@@ -44,5 +44,20 @@ tstbackend_LDADD += -lstdc++
 endif
 endif
 
-clean-local:
-	rm -f test tstbackend
+BUILT_SOURCES = saned@.service saned.xinetd.conf
+
+EXTRA_DIST = saned.socket saned@.service.in saned.xinetd.conf.in
+
+CLEANFILES = $(EXTRA_PROGRAMS) $(BUILT_SOURCES)
+
+SUFFIXES = .in
+.in:
+	$(AM_V_GEN)
+	@if $(AM_V_P); then echo Generating $@ from $^; fi
+	@sed -e 's|@DATADIR@|$(datadir)|g' \
+	     -e 's|@CONFIGDIR@|$(configdir)|g' \
+	     -e 's|@DOCDIR@|$(docdir)|g' \
+	     -e 's|@LIBDIR@|$(libdir)/sane|g' \
+	     -e 's|@BINDIR@|$(bindir)|g' \
+	     -e 's|@SBINDIR@|$(sbindir)|g' \
+	     -e 's|@PACKAGEVERSION@|$(PACKAGE_VERSION)|g' $? > $@
