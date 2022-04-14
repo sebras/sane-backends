@@ -119,20 +119,6 @@ debug output to stderr instead of the syslog default.
 displays a short help message.
 
 .SH CONFIGURATION
-First and foremost:
-.B saned
-is not intended to be exposed to the internet or other non-trusted
-networks. Make sure that access is limited by tcpwrappers and/or a firewall
-setup. Don't depend only on
-.BR saned 's
-own authentication. Don't run
-.B saned
-as root if it's not necessary. And do
-.B not
-install
-.B saned
-as setuid root.
-.PP
 The
 .I saned.conf
 configuration file contains both options for the daemon and the access
@@ -234,6 +220,21 @@ and
 being searched (in this order).
 
 .SH NOTES
+.B saned
+does
+.I not
+provide confidentiality when communicating with clients. If
+.B saned
+is exposed directly on the network, other users may be able to intercept
+scanned images, or learn passwords for connecting to
+.BR saned ,
+with little effort. Client systems should connect to
+.B saned
+through a secure tunnel to the server instead.
+.PP
+.B saned
+is not a trusted program and should not run with root privileges.
+.PP
 Refer to
 .I @DOCDIR@/saned/saned.install.md
 for details on configuring

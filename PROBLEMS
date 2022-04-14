@@ -1,5 +1,3 @@
-Last update: 2006-01-05
-
 - Avoiding damage on flatbed scanners
 
   Most flatbed scanners have no protection against exceeding the physical scan
@@ -15,8 +13,10 @@ Last update: 2006-01-05
 
 - Security problems with saned (SANE network scanning daemon)
 
-  saned is not intended to be exposed to the internet or other non-trusted
-  networks.  Make sure that access is limited by tcpwrappers and/or a firewall
-  setup. Don't depend only on saned's own authentication.  Don't run saned
-  as root if it's not necessary. And do not install saned as setuid root.
-  Read man saned(8) for details.
+  saned does not provide confidentiality when communicating with clients.
+  If saned is exposed directly on the network, other users may be able to
+  intercept scanned images, or learn passwords for connecting to saned,
+  with little effort.  Client systems should connect to saned through a
+  secure tunnel to the server instead.
+
+  saned is not a trusted program and should not run with root privileges.
