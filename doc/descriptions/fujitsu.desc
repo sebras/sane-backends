@@ -679,3 +679,8 @@
 :status :good
 :usbid "0x04c5" "0x1632"
 :comment "small, current, WiFi not supported."
+
+:model "ScanPartner SP30"
+:interface "USB"
+:status :good
+:usbid "0x04c5" "0x140a"
