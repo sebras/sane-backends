@@ -1089,26 +1089,46 @@ void CommandSetGl847::update_hardware_sensors(Genesys_Scanner* s) const
   /* do what is needed to get a new set of events, but try to not lose
      any of them.
    */
-    std::uint8_t scan, file, email, copy;
+    std::uint8_t val;
     switch(s->dev->model->gpio_id) {
     case GpioId::CANON_LIDE_700F:
-        scan=0x04;
-        file=0x02;
-        email=0x01;
-        copy=0x08;
-        break;
-    default:
-        scan=0x01;
-        file=0x02;
-        email=0x04;
-        copy=0x08;
-    }
-    std::uint8_t val = s->dev->interface->read_register(REG_0x6D);
+        val = s->dev->interface->read_register(REG_0x6D);
+        DBG(DBG_io, "%s: read buttons_gpio value=0x%x\n", __func__, (int)val);
 
-    s->buttons[BUTTON_SCAN_SW].write((val & scan) == 0);
-    s->buttons[BUTTON_FILE_SW].write((val & file) == 0);
-    s->buttons[BUTTON_EMAIL_SW].write((val & email) == 0);
-    s->buttons[BUTTON_COPY_SW].write((val & copy) == 0);
+        s->buttons[BUTTON_SCAN_SW].write((val & 0x04) == 0);
+        s->buttons[BUTTON_FILE_SW].write((val & 0x02) == 0);
+        s->buttons[BUTTON_EMAIL_SW].write((val & 0x01) == 0);
+        s->buttons[BUTTON_COPY_SW].write((val & 0x08) == 0);
+        break;
+
+    case GpioId::CANON_5600F:
+        val = s->dev->interface->read_register(REG_0x6D);
+        DBG(DBG_io, "%s: read buttons_gpio 0x6d value=0x%x\n", __func__, (int)val);
+        s->buttons[BUTTON_SCAN_SW].write((val & 0x02) == 0);
+        s->buttons[BUTTON_EMAIL_SW].write((val & 0x01) == 0);
+        s->buttons[BUTTON_COPY_SW].write((val & 0x08) == 0);
+        s->buttons[BUTTON_PDF4_SW].write((val & 0x04) == 0);
+
+        val = s->dev->interface->read_register(REG_0xA6);
+        DBG(DBG_io, "%s: read buttons_gpio 0xa6 value=0x%x\n", __func__, (int)val);
+        s->buttons[BUTTON_PDF1_SW].write((val & 0x03) == 0x01);
+        s->buttons[BUTTON_PDF2_SW].write((val & 0x03) == 0x02);
+
+        val = s->dev->interface->read_register(REG_0x6C);
+        DBG(DBG_io, "%s: read buttons_gpio 0x6c value=0x%x\n", __func__, (int)val);
+        s->buttons[BUTTON_PDF3_SW].write((val & 0x80) == 0x00);
+        break;
+
+    default:
+        val = s->dev->interface->read_register(REG_0x6D);
+        DBG(DBG_io, "%s: read buttons_gpio value=0x%x\n", __func__, (int)val);
+
+        s->buttons[BUTTON_SCAN_SW].write((val & 0x01) == 0);
+        s->buttons[BUTTON_FILE_SW].write((val & 0x02) == 0);
+        s->buttons[BUTTON_EMAIL_SW].write((val & 0x04) == 0);
+        s->buttons[BUTTON_COPY_SW].write((val & 0x08) == 0);
+        break;
+    }
 }
 
 void CommandSetGl847::update_home_sensor_gpio(Genesys_Device& dev) const
