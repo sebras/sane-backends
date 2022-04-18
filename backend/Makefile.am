@@ -1449,14 +1449,12 @@ libpixma_la_CPPFLAGS = $(AM_CPPFLAGS) $(XML_CFLAGS) -DBACKEND_NAME=pixma
 # The circular dependency means we cannot add it as a prerequisite
 # for the targets that build the options files.
 
-$(srcdir)/pixma/pixma.c: \
-	$(srcdir)/pixma/pixma_sane_options.h \
-	$(srcdir)/pixma/pixma_sane_options.c
+pixma/pixma.c: pixma/pixma_sane_options.h pixma/pixma_sane_options.c
 
-$(srcdir)/pixma/pixma_sane_options.h:
+pixma/pixma_sane_options.h:
 	@echo Generating $@ from $(@D)/pixma.c
 	@(cd $(@D); $(PYTHON) scripts/pixma_gen_options.py h < pixma.c > $(@F))
-$(srcdir)/pixma/pixma_sane_options.c:
+pixma/pixma_sane_options.c:
 	@echo Generating $@ from $(@D)/pixma.c
 	@(cd $(@D); $(PYTHON) scripts/pixma_gen_options.py   < pixma.c > $(@F))
 
