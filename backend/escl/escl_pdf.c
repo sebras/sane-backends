@@ -44,8 +44,9 @@
 
 #if HAVE_POPPLER_GLIB
 
-#define INPUT_BUFFER_SIZE 4096
+#define ESCL_PDF_USE_MAPPED_FILE POPPLER_CHECK_VERSION(0,82,0)
 
+#if ! ESCL_PDF_USE_MAPPED_FILE
 static unsigned char*
 set_file_in_buffer(FILE *fp, int *size)
 {
@@ -70,6 +71,7 @@ set_file_in_buffer(FILE *fp, int *size)
     *size = nx;
     return data;
 }
+#endif
 
 static unsigned char *
 cairo_surface_to_pixels (cairo_surface_t *surface, int bps)
@@ -109,28 +111,52 @@ get_PDF_data(capabilities_t *scanner, int *width, int *height, int *bps)
     PopplerPage *page;
     PopplerDocument   *doc;
     double dw, dh;
-    int w, h, size = 0;
-    char *data = NULL;
+    int w, h;
     unsigned char* surface = NULL;
     SANE_Status status = SANE_STATUS_GOOD;
 
+#if ESCL_PDF_USE_MAPPED_FILE
+    GMappedFile *file;
+    GBytes *bytes;
 
-    data = (char*)set_file_in_buffer(scanner->tmp, &size);
-    if (!data) {
-                DBG(1, "Error : poppler_document_new_from_data");
+    file = g_mapped_file_new_from_fd (fileno (scanner->tmp), 0, NULL);
+    if (!file) {
+                DBG(1, "Error : g_mapped_file_new_from_fd");
                 status =  SANE_STATUS_INVAL;
                 goto close_file;
         }
-    doc = poppler_document_new_from_data(data,
-                                       size,
-                                       NULL,
-                                       NULL);
 
-    if (!doc) {
-                DBG(1, "Error : poppler_document_new_from_data");
+    bytes = g_mapped_file_get_bytes (file);
+    if (!bytes) {
+                DBG(1, "Error : g_mapped_file_get_bytes");
                 status =  SANE_STATUS_INVAL;
                 goto free_file;
         }
+
+    doc = poppler_document_new_from_bytes (bytes, NULL, NULL);
+    if (!doc) {
+                DBG(1, "Error : poppler_document_new_from_bytes");
+                status =  SANE_STATUS_INVAL;
+                goto free_bytes;
+        }
+#else
+    int size = 0;
+    char *data = NULL;
+
+    data = (char*)set_file_in_buffer(scanner->tmp, &size);
+    if (!data) {
+                DBG(1, "Error : set_file_in_buffer");
+                status =  SANE_STATUS_INVAL;
+                goto close_file;
+        }
+
+    doc = poppler_document_new_from_data (data, size, NULL, NULL);
+    if (!doc) {
+                DBG(1, "Error : poppler_document_new_from_data");
+                status =  SANE_STATUS_INVAL;
+                goto free_data;
+        }
+#endif
 
     page = poppler_document_get_page (doc, 0);
     if (!page) {
@@ -201,8 +227,15 @@ free_page:
     g_object_unref (page);
 free_doc:
     g_object_unref (doc);
+#if ESCL_PDF_USE_MAPPED_FILE
+free_bytes:
+    g_bytes_unref (bytes);
 free_file:
+    g_mapped_file_unref (file);
+#else
+free_data:
     free(data);
+#endif
 close_file:
     if (scanner->tmp)
         fclose(scanner->tmp);
