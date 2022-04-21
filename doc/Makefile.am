@@ -95,7 +95,8 @@ MAN2HTML = nroff -c -man |\
 	  sed 's,<BODY>,<BODY BGCOLOR=\#FFFFFF TEXT=\#000000><H1 ALIGN=CENTER><IMG SRC="/images/sane.png" HEIGHT=117 WIDTH=346></H1>,'
 
 %.1 %.5 %.7 %.8: %.man
-	@echo "Generating manpage $@...";
+	$(AM_V_GEN)
+	@if $(AM_V_P); then echo "Generating manpage $@..."; fi
 	@sed -e 's|@DATADIR@|$(datadir)|g' \
 	  -e 's|@CONFIGDIR@|$(configdir)|g' \
 	  -e 's|@DOCDIR@|$(docdir)|g' \
