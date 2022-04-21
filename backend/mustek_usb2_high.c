@@ -204,13 +204,13 @@ MustScanner_Init ()
   DBG (DBG_FUNC, "MustScanner_Init: Call in\n");
 
   g_chip.firmwarestate = FS_NULL;
-  if (STATUS_GOOD != Asic_Open (&g_chip, g_pDeviceFile))
+  if (SANE_STATUS_GOOD != Asic_Open (&g_chip, g_pDeviceFile))
     {
       DBG (DBG_FUNC, "MustScanner_Init: Asic_Open return error\n");
       return FALSE;
     }
 
-  if (STATUS_GOOD != Asic_Initialize (&g_chip))
+  if (SANE_STATUS_GOOD != Asic_Initialize (&g_chip))
     {
       DBG (DBG_FUNC, "MustScanner_Init: Asic_Initialize return error\n");
       return FALSE;
@@ -263,7 +263,7 @@ static SANE_Bool
 MustScanner_GetScannerState ()
 {
 
-  if (STATUS_GOOD != Asic_Open (&g_chip, g_pDeviceFile))
+  if (SANE_STATUS_GOOD != Asic_Open (&g_chip, g_pDeviceFile))
     {
       DBG (DBG_FUNC, "MustScanner_GetScannerState: Asic_Open return error\n");
       return FALSE;
@@ -293,20 +293,20 @@ MustScanner_PowerControl (SANE_Bool isLampOn, SANE_Bool isTALampOn)
 {
   SANE_Bool hasTA;
   DBG (DBG_FUNC, "MustScanner_PowerControl: Call in\n");
-  if (STATUS_GOOD != Asic_Open (&g_chip, g_pDeviceFile))
+  if (SANE_STATUS_GOOD != Asic_Open (&g_chip, g_pDeviceFile))
     {
       DBG (DBG_FUNC, "MustScanner_PowerControl: Asic_Open return error\n");
       return FALSE;
     }
 
-  if (STATUS_GOOD != Asic_TurnLamp (&g_chip, isLampOn))
+  if (SANE_STATUS_GOOD != Asic_TurnLamp (&g_chip, isLampOn))
     {
       DBG (DBG_FUNC,
 	   "MustScanner_PowerControl: Asic_TurnLamp return error\n");
       return FALSE;
     }
 
-  if (STATUS_GOOD != Asic_IsTAConnected (&g_chip, &hasTA))
+  if (SANE_STATUS_GOOD != Asic_IsTAConnected (&g_chip, &hasTA))
     {
       DBG (DBG_FUNC,
 	   "MustScanner_PowerControl: Asic_IsTAConnected return error\n");
@@ -315,7 +315,7 @@ MustScanner_PowerControl (SANE_Bool isLampOn, SANE_Bool isTALampOn)
 
   if (hasTA)
     {
-      if (STATUS_GOOD != Asic_TurnTA (&g_chip, isTALampOn))
+      if (SANE_STATUS_GOOD != Asic_TurnTA (&g_chip, isTALampOn))
 	{
 	  DBG (DBG_FUNC,
 	       "MustScanner_PowerControl: Asic_TurnTA return error\n");
@@ -347,20 +347,20 @@ MustScanner_BackHome ()
 {
   DBG (DBG_FUNC, "MustScanner_BackHome: call in \n");
 
-  if (STATUS_GOOD != Asic_Open (&g_chip, g_pDeviceFile))
+  if (SANE_STATUS_GOOD != Asic_Open (&g_chip, g_pDeviceFile))
     {
       DBG (DBG_FUNC, "MustScanner_BackHome: Asic_Open return error\n");
       return FALSE;
     }
 
-  if (STATUS_GOOD != Asic_CarriageHome (&g_chip, FALSE))
+  if (SANE_STATUS_GOOD != Asic_CarriageHome (&g_chip, FALSE))
     {
       DBG (DBG_FUNC,
 	   "MustScanner_BackHome: Asic_CarriageHome return error\n");
       return FALSE;
     }
 
-  if (STATUS_GOOD != Asic_WaitUnitReady (&g_chip))
+  if (SANE_STATUS_GOOD != Asic_WaitUnitReady (&g_chip))
     {
       DBG (DBG_FUNC,
 	   "MustScanner_BackHome: Asic_WaitUnitReady return error\n");
@@ -390,14 +390,14 @@ MustScanner_Prepare (SANE_Byte bScanSource)
 {
   DBG (DBG_FUNC, "MustScanner_Prepare: call in\n");
 
-  if (STATUS_GOOD != Asic_Open (&g_chip, g_pDeviceFile))
+  if (SANE_STATUS_GOOD != Asic_Open (&g_chip, g_pDeviceFile))
 
 
     {
       DBG (DBG_FUNC, "MustScanner_Prepare: Asic_Open return error\n");
       return FALSE;
     }
-  if (STATUS_GOOD != Asic_WaitUnitReady (&g_chip))
+  if (SANE_STATUS_GOOD != Asic_WaitUnitReady (&g_chip))
     {
       DBG (DBG_FUNC,
 	   "MustScanner_Prepare: Asic_WaitUnitReady return error\n");
@@ -407,13 +407,13 @@ MustScanner_Prepare (SANE_Byte bScanSource)
   if (SS_Reflective == bScanSource)
     {
       DBG (DBG_FUNC, "MustScanner_Prepare:ScanSource is SS_Reflective\n");
-      if (STATUS_GOOD != Asic_TurnLamp (&g_chip, TRUE))
+      if (SANE_STATUS_GOOD != Asic_TurnLamp (&g_chip, TRUE))
 	{
 	  DBG (DBG_FUNC, "MustScanner_Prepare: Asic_TurnLamp return error\n");
 	  return FALSE;
 	}
 
-      if (STATUS_GOOD != Asic_SetSource (&g_chip, LS_REFLECTIVE))
+      if (SANE_STATUS_GOOD != Asic_SetSource (&g_chip, LS_REFLECTIVE))
 	{
 	  DBG (DBG_FUNC,
 	       "MustScanner_Prepare: Asic_SetSource return error\n");
@@ -423,12 +423,12 @@ MustScanner_Prepare (SANE_Byte bScanSource)
   else if (SS_Positive == bScanSource)
     {
       DBG (DBG_FUNC, "MustScanner_Prepare:ScanSource is SS_Positive\n");
-      if (STATUS_GOOD != Asic_TurnTA (&g_chip, TRUE))
+      if (SANE_STATUS_GOOD != Asic_TurnTA (&g_chip, TRUE))
 	{
 	  DBG (DBG_FUNC, "MustScanner_Prepare: Asic_TurnTA return error\n");
 	  return FALSE;
 	}
-      if (STATUS_GOOD != Asic_SetSource (&g_chip, LS_POSITIVE))
+      if (SANE_STATUS_GOOD != Asic_SetSource (&g_chip, LS_POSITIVE))
 	{
 	  DBG (DBG_FUNC,
 	       "MustScanner_Prepare: Asic_SetSource return error\n");
@@ -439,13 +439,13 @@ MustScanner_Prepare (SANE_Byte bScanSource)
     {
       DBG (DBG_FUNC, "MustScanner_Prepare:ScanSource is SS_Negative\n");
 
-      if (STATUS_GOOD != Asic_TurnTA (&g_chip, TRUE))
+      if (SANE_STATUS_GOOD != Asic_TurnTA (&g_chip, TRUE))
 	{
 	  DBG (DBG_FUNC, "MustScanner_Prepare: Asic_TurnTA return error\n");
 	  return FALSE;
 	}
 
-      if (STATUS_GOOD != Asic_SetSource (&g_chip, LS_NEGATIVE))
+      if (SANE_STATUS_GOOD != Asic_SetSource (&g_chip, LS_NEGATIVE))
 	{
 	  DBG (DBG_FUNC,
 	       "MustScanner_Prepare: Asic_SetSource return error\n");
@@ -3023,7 +3023,7 @@ MustScanner_ReadDataFromScanner (void * dummy)
 	       "MustScanner_ReadDataFromScanner: wScanLinesThisBlock=%d\n",
 	       wScanLinesThisBlock);
 
-	  if (STATUS_GOOD !=
+	  if (SANE_STATUS_GOOD !=
 	      Asic_ReadImage (&g_chip, lpReadImage, wScanLinesThisBlock))
 	    {
 	      DBG (DBG_FUNC,
