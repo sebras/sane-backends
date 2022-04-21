@@ -41,13 +41,26 @@ make-dist:
   - ./configure $CONFIGURE_OPTS
   - make -j2 -k $MAKE_FLAGS
 
-# In addition to the regular compile check, the full Debian oldstable
-# environment is used to keep some of the HTML documentation that's
-# available from our website up-to-date.
-# FIXME: Move this back to Debian stable once job failures are fixed.
-
 debian-10-full:
   image: $REGISTRY_HUB:debian-buster-full
+  variables:
+    CONFIGURE_OPTS: "$CONFIGURE_MINI $CONFIGURE_FULL"
+    MAKE_FLAGS: "CFLAGS=-Werror CXXFLAGS=-Werror"
+  <<: *compile_definition
+
+debian-11-mini:
+  image: $REGISTRY_HUB:debian-bullseye-mini
+  variables:
+    CONFIGURE_OPTS: "$CONFIGURE_MINI"
+    MAKE_FLAGS: "CFLAGS=-Werror CXXFLAGS=-Werror"
+  <<: *compile_definition
+
+# In addition to the regular compile check, the full Debian stable
+# environment is used to keep some of the HTML documentation that's
+# available from our website up-to-date.
+
+debian-11-full:
+  image: $REGISTRY_HUB:debian-bullseye-full
   variables:
     CONFIGURE_OPTS: "$CONFIGURE_MINI $CONFIGURE_FULL"
     MAKE_FLAGS: "CFLAGS=-Werror CXXFLAGS=-Werror"
@@ -62,22 +75,6 @@ debian-10-full:
     - lists
     - doc/sanei-html
     expire_in: 1 day
-
-debian-11-mini:
-  image: $REGISTRY_HUB:debian-bullseye-mini
-  variables:
-    CONFIGURE_OPTS: "$CONFIGURE_MINI"
-    MAKE_FLAGS: "CFLAGS=-Werror CXXFLAGS=-Werror"
-  <<: *compile_definition
-  allow_failure: true
-
-debian-11-full:
-  image: $REGISTRY_HUB:debian-bullseye-full
-  variables:
-    CONFIGURE_OPTS: "$CONFIGURE_MINI $CONFIGURE_FULL"
-    MAKE_FLAGS: "CFLAGS=-Werror CXXFLAGS=-Werror"
-  <<: *compile_definition
-  allow_failure: true
 
 fedora-35-clang:
   image: $REGISTRY_HUB:fedora-35-clang
@@ -110,15 +107,14 @@ ubuntu-20.04-lts:
 # snapshot.
 # Some HTML documentation derived from this project's source is also
 # uploaded for use by our website so it uses the latest information.
-# These artifacts come from the full compile job on Debian oldstable,
+# It gets these artifacts from the full compile job on Debian stable,
 # hence the dependency.
-# FIXME: Move this back to Debian stable once job failures are fixed.
 
 make-distcheck:
-  image: $REGISTRY_HUB:debian-buster-full
+  image: $REGISTRY_HUB:debian-bullseye-full
   stage: snapshot
   dependencies:
-  - debian-10-full
+  - debian-11-full
   script:
   - tar xzf sane-backends-*.tar.gz --strip-components=1
   - rm sane-backends-*.tar.gz
