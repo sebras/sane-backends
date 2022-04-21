@@ -54,7 +54,6 @@ debian-11-mini:
     CONFIGURE_OPTS: "$CONFIGURE_MINI"
     MAKE_FLAGS: "CFLAGS=-Werror CXXFLAGS=-Werror"
   <<: *compile_definition
-  allow_failure: true
 
 # In addition to the regular compile check, the full Debian stable
 # environment is used to keep some of the HTML documentation that's
@@ -76,7 +75,6 @@ debian-11-full:
     - lists
     - doc/sanei-html
     expire_in: 1 day
-  allow_failure: true
 
 fedora-35-clang:
   image: $REGISTRY_HUB:fedora-35-clang
