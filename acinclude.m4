@@ -322,10 +322,9 @@ AC_DEFUN([SANE_CHECK_PNG],
 ])
 
 #
-# Checks for pthread support
+# Checks for device locking support
 AC_DEFUN([SANE_CHECK_LOCKING],
 [
-  LOCKPATH_GROUP=uucp
   use_locking=yes
   case "${host_os}" in
     os2* )
@@ -346,23 +345,6 @@ AC_DEFUN([SANE_CHECK_LOCKING],
       fi
     ])
   if test $use_locking = yes ; then
-    AC_ARG_WITH([group],
-      AS_HELP_STRING([--with-group],
-                     [use the specified group for lock dir @<:@default=uucp@:>@]),
-        [LOCKPATH_GROUP="$withval"]
-    )
-    # check if the group does exist
-    lasterror=""
-    touch sanetest.file
-    chgrp $LOCKPATH_GROUP sanetest.file 2>/dev/null || lasterror=$?
-    rm -f sanetest.file
-    if test ! -z "$lasterror"; then
-      AC_MSG_WARN([Group $LOCKPATH_GROUP does not exist on this system.])
-      AC_MSG_WARN([Locking feature will be disabled.])
-      use_locking=no
-    fi
-  fi
-  if test $use_locking = yes ; then
     INSTALL_LOCKPATH=install-lockpath
     AC_DEFINE([ENABLE_LOCKING], 1,
               [Define to 1 if device locking should be enabled.])
@@ -371,11 +353,7 @@ AC_DEFUN([SANE_CHECK_LOCKING],
   fi
   AC_MSG_CHECKING([whether to enable device locking])
   AC_MSG_RESULT([$use_locking])
-  if test $use_locking = yes ; then
-    AC_MSG_NOTICE([Setting lockdir group to $LOCKPATH_GROUP])
-  fi
   AC_SUBST(INSTALL_LOCKPATH)
-  AC_SUBST(LOCKPATH_GROUP)
 ])
 
 dnl
