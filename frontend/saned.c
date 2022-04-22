@@ -84,8 +84,8 @@
 
 #include "lgetopt.h"
 
-#if defined(HAVE_SYS_POLL_H) && defined(HAVE_POLL)
-# include <sys/poll.h>
+#if defined(HAVE_POLL_H) && defined(HAVE_POLL)
+# include <poll.h>
 #else
 /*
  * This replacement poll() using select() is only designed to cover
