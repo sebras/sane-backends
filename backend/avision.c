@@ -112,7 +112,7 @@
  *
  * . . - sane_cancel() : cancel operation, kill reader_process
  *
- * . - sane_close() : close opened scanner-device, do_cancel, free buffer and handle
+ * . - sane_close() : do_cancel, close opened scanner-device, free buffer and handle
  * - sane_exit() : terminate use of backend, free devicename and device-structure
  */
 
@@ -7541,18 +7541,15 @@ reader_process (void *data)
       if (!s->duplex_rear_valid) { /* create new file for writing */
 	DBG (3, "reader_process: opening duplex rear file for writing.\n");
 	rear_fp = fopen (s->duplex_rear_fname, "w");
-	if (! rear_fp) {
-	  fclose (fp);
-	  return SANE_STATUS_NO_MEM;
-	}
       }
       else { /* open saved rear data */
 	DBG (3, "reader_process: opening duplex rear file for reading.\n");
 	rear_fp = fopen (s->duplex_rear_fname, "r");
-	if (! rear_fp) {
-	  fclose (fp);
-	  return SANE_STATUS_IO_ERROR;
-	}
+      }
+      if (! rear_fp) {
+	fclose (fp);
+	fclose (fp_fd);
+	return SANE_STATUS_IO_ERROR;
       }
     }
 
@@ -7970,13 +7967,8 @@ reader_process (void *data)
 
       /* SOFTWARE SCALING WITH INTERPOLATION (IF NECESSARY) */
 
-      if (s->avdimen.hw_xres == s->avdimen.xres &&
-	  s->avdimen.hw_yres == s->avdimen.yres) /* No scaling */
-	{
-          fwrite (out_data, useful_bytes, 1, fp);
-          line += useful_bytes / s->avdimen.hw_bytes_per_line;
-	}
-      else /* Software scaling - watch out - this code bites back! */
+      if (s->avdimen.hw_xres != s->avdimen.xres ||
+	  s->avdimen.hw_yres != s->avdimen.yres) /* Software scaling */
 	{
 	  int x;
 	  /* for convenience in the 16bit code path */
@@ -8009,6 +8001,9 @@ reader_process (void *data)
 	      break;
 	    }
 
+	    DBG (8, "reader_process: out line: %d <- from: %d-%d\n",
+		 line, sy, syy);
+
 	    /* convert to offset in current stripe */
 	    sy -= hw_line;
 	    syy -= hw_line;
@@ -8017,9 +8012,6 @@ reader_process (void *data)
 	      DBG (1, "reader_process: need more history: %d???\n", sy);
 	      sy = -1;
 	    }
-
-	    DBG (8, "reader_process: out line: %d <- from: %d-%d\n",
-		 line, sy, syy);
 
 	    for (x = 0; x < s->params.pixels_per_line; ++x) {
 	      const double bx = (-1.0 + s->avdimen.hw_pixels_per_line) * x / s->params.pixels_per_line;
@@ -8124,6 +8116,11 @@ reader_process (void *data)
 	  memcpy (ip_history,
 	          out_data + useful_bytes - s->avdimen.hw_bytes_per_line,
 		  s->avdimen.hw_bytes_per_line);
+	}
+      else /* No scaling */
+	{
+          fwrite (out_data, useful_bytes, 1, fp);
+          line += useful_bytes / s->avdimen.hw_bytes_per_line;
 	}
       }
 
@@ -8729,22 +8726,14 @@ void
 sane_close (SANE_Handle handle)
 {
   Avision_Scanner* prev;
-  Avision_Scanner* s = handle;
+  Avision_Scanner* s;
   int i;
 
   DBG (3, "sane_close:\n");
 
-  /* close the device */
-  if (avision_is_open (&s->av_con) ) {
-    avision_close (&s->av_con);
-  }
-
-  /* remove handle from list of open handles: */
-  prev = 0;
-  for (s = first_handle; s; s = s->next) {
+  for (prev = 0, s = first_handle; s; prev = s, s = s->next) {
     if (s == handle)
       break;
-    prev = s;
   }
 
   /* a handle we know about ? */
@@ -8756,6 +8745,12 @@ sane_close (SANE_Handle handle)
   if (s->scanning)
     do_cancel (handle);
 
+  /* close the device */
+  if (avision_is_open(&s->av_con)) {
+    avision_close(&s->av_con);
+  }
+
+  /* remove handle from list of open handles */
   if (prev)
     prev->next = s->next;
   else
