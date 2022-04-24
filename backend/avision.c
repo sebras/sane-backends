@@ -3347,6 +3347,7 @@ wait_4_light (Avision_Scanner* s)
     status = avision_cmd (&s->av_con, &rcmd, sizeof (rcmd), 0, 0, &result, &size);
 
     if (status != SANE_STATUS_GOOD || size != sizeof (result)) {
+      status = (status != SANE_STATUS_GOOD)? status: SANE_STATUS_IO_ERROR;
       DBG (1, "wait_4_light: read failed (%s)\n", sane_strstatus (status));
       return status;
     }
@@ -3441,6 +3442,7 @@ get_firmware_status (Avision_Connection* av_con)
 
   status = avision_cmd (av_con, &rcmd, sizeof (rcmd), 0, 0, &result, &size);
   if (status != SANE_STATUS_GOOD || size != sizeof (result)) {
+    status = (status != SANE_STATUS_GOOD)? status: SANE_STATUS_IO_ERROR;
     DBG (1, "get_firmware_status: read failed (%s)\n",
 	 sane_strstatus (status));
     return (status);
@@ -3478,6 +3480,7 @@ get_flash_ram_info (Avision_Connection* av_con)
 
   status = avision_cmd (av_con, &rcmd, sizeof (rcmd), 0, 0, result, &size);
   if (status != SANE_STATUS_GOOD || size != sizeof (result)) {
+    status = (status != SANE_STATUS_GOOD)? status: SANE_STATUS_IO_ERROR;
     DBG (1, "get_flash_ram_info: read failed (%s)\n",
 	 sane_strstatus (status));
     return (status);
@@ -3743,8 +3746,8 @@ adf_reset (Avision_Scanner* s)
     set_triple (rcmd.transferlen, size);
     status = avision_cmd (&s->av_con, &rcmd, sizeof (rcmd), 0, 0, payload, &size);
     if (status != SANE_STATUS_GOOD || size != (4-n)) {
-      DBG (1, "adf_reset: read %zu failed (%s)\n", (4-n),
-	 sane_strstatus (status));
+      status = (status != SANE_STATUS_GOOD)? status: SANE_STATUS_IO_ERROR;
+      DBG (1, "adf_reset: read %zu failed (%s)\n", (4-n), sane_strstatus (status));
       return (status);
     }
     debug_print_raw (3, "adf_reset: raw data:\n", payload, size);
@@ -3785,8 +3788,8 @@ get_accessories_info (Avision_Scanner* s)
 
   status = avision_cmd (&s->av_con, &rcmd, sizeof (rcmd), 0, 0, result, &size);
   if (status != SANE_STATUS_GOOD || size != sizeof (result)) {
-    DBG (1, "get_accessories_info: read failed (%s)\n",
-         sane_strstatus (status));
+    status = (status != SANE_STATUS_GOOD)? status: SANE_STATUS_IO_ERROR;
+    DBG (1, "get_accessories_info: read failed (%s)\n", sane_strstatus (status));
     return (status);
   }
 
@@ -3940,6 +3943,7 @@ get_button_status (Avision_Scanner* s)
       status = avision_cmd (&s->av_con, &rcmd, sizeof (rcmd), 0, 0,
 			    (uint8_t*)&result, &size);
       if (status != SANE_STATUS_GOOD || size != sizeof (result)) {
+	status = (status != SANE_STATUS_GOOD)? status: SANE_STATUS_IO_ERROR;
 	DBG (1, "get_button_status: read failed (%s)\n", sane_strstatus (status));
 	return status;
       }
@@ -4098,6 +4102,7 @@ get_frame_info (Avision_Scanner* s)
 
   status = avision_cmd (&s->av_con, &rcmd, sizeof (rcmd), 0, 0, result, &size);
   if (status != SANE_STATUS_GOOD || size != sizeof (result)) {
+    status = (status != SANE_STATUS_GOOD)? status: SANE_STATUS_IO_ERROR;
     DBG (1, "get_frame_info: read failed (%s)\n", sane_strstatus (status));
     return (status);
   }
@@ -4166,6 +4171,7 @@ get_duplex_info (Avision_Scanner* s)
   status = avision_cmd (&s->av_con, &rcmd, sizeof (rcmd), 0, 0,
 			&result, &size);
   if (status != SANE_STATUS_GOOD || size != sizeof (result)) {
+    status = (status != SANE_STATUS_GOOD)? status: SANE_STATUS_IO_ERROR;
     DBG (1, "get_duplex_info: read failed (%s)\n", sane_strstatus (status));
     return (status);
   }
@@ -5170,8 +5176,8 @@ get_calib_format (Avision_Scanner* s, struct calibration_format* format)
   DBG (3, "get_calib_format: read_data: %lu bytes\n", (u_long) size);
   status = avision_cmd (&s->av_con, &rcmd, sizeof (rcmd), 0, 0, result, &size);
   if (status != SANE_STATUS_GOOD || size != sizeof (result) ) {
-    DBG (1, "get_calib_format: read calib. info failed (%s)\n",
-	 sane_strstatus (status) );
+    status = (status != SANE_STATUS_GOOD)? status: SANE_STATUS_IO_ERROR;
+    DBG (1, "get_calib_format: read calib. info failed (%s)\n", sane_strstatus (status) );
     return status;
   }
 
@@ -6018,6 +6024,7 @@ get_acceleration_info (Avision_Scanner* s, struct acceleration_info* info)
   DBG (3, "get_acceleration_info: read_data: %lu bytes\n", (u_long) size);
   status = avision_cmd (&s->av_con, &rcmd, sizeof (rcmd), 0, 0, result, &size);
   if (status != SANE_STATUS_GOOD || size != sizeof (result) ) {
+    status = (status != SANE_STATUS_GOOD)? status: SANE_STATUS_IO_ERROR;
     DBG (1, "get_acceleration_info: read accel. info failed (%s)\n",
 	 sane_strstatus (status) );
     return status;
@@ -6537,8 +6544,8 @@ get_background_raster (Avision_Scanner* s)
       read_size = this_read;
       status = avision_cmd (&s->av_con, &rcmd, sizeof (rcmd), 0, 0, dst_raster, &read_size);
       if (status != SANE_STATUS_GOOD || read_size != this_read) {
-	DBG (1, "get_background_raster: read raster failed (%s)\n",
-	     sane_strstatus (status) );
+	status = (status != SANE_STATUS_GOOD)? status: SANE_STATUS_IO_ERROR;
+	DBG (1, "get_background_raster: read raster failed (%s)\n", sane_strstatus (status) );
 	return status;
       }
 
