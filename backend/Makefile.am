@@ -18,6 +18,8 @@ DIST_LIBS_LDFLAGS = $(AM_LDFLAGS) -rpath '$(libdir)' -version-number $(V_MAJOR):
 LIBTOOL += --silent
 FIRMWARE_DIRS = artec_eplus48u gt68xx snapscan epjitsu
 
+BUILT_SOURCES =
+
 # Needed by most backends as they add sane_strstatus.lo to their list
 # of libraries to link with via libsane_${BACKEND}_la_LIBADD.  Due to
 # the implicit dependency, automake does not notice the need to clean
@@ -1429,7 +1431,9 @@ libsane_pint_la_LIBADD = $(COMMON_LIBS) \
     ../sanei/sanei_config.lo \
     sane_strstatus.lo
 
-libpixma_la_SOURCES = pixma/pixma.c \
+libpixma_la_SOURCES = \
+	pixma/pixma_sane_options.h \
+	pixma/pixma.c \
 	pixma/pixma.h \
 	pixma/pixma_io_sanei.c \
 	pixma/pixma_io.h \
@@ -1446,26 +1450,25 @@ libpixma_la_SOURCES = pixma/pixma.c \
 	pixma/pixma_rename.h
 libpixma_la_CPPFLAGS = $(AM_CPPFLAGS) $(XML_CFLAGS) -DBACKEND_NAME=pixma
 
-# Generate options files included by pixma/pixma.c from said file.
-# The circular dependency means we cannot add it as a prerequisite
-# for the targets that build the options files.
+$(srcdir)/pixma/pixma_sane_options.h: $(srcdir)/pixma/pixma.c
+	@if $(AM_V_P); then \
+	echo "Generating pixma/$(@F) from pixma/$(^F)"; \
+	else \
+	echo "  GEN      pixma/$(@F)"; \
+	fi
+	@$(PYTHON) $(srcdir)/pixma/scripts/pixma_gen_options.py h < $^ > $@
+$(srcdir)/pixma/pixma_sane_options.c: $(srcdir)/pixma/pixma.c
+	@if $(AM_V_P); then \
+	echo "Generating pixma/$(@F) from pixma/$(^F)"; \
+	else \
+	echo "  GEN      pixma/$(@F)"; \
+	fi
+	@$(PYTHON) $(srcdir)/pixma/scripts/pixma_gen_options.py   < $^ > $@
 
-pixma/pixma.c: pixma/pixma_sane_options.h pixma/pixma_sane_options.c
-
-pixma/pixma_sane_options.h:
-	$(AM_V_GEN)
-	@if $(AM_V_P); then echo Generating $@ from $(@D)/pixma.c; fi
-	@(cd $(@D); $(PYTHON) scripts/pixma_gen_options.py h < pixma.c > $(@F))
-pixma/pixma_sane_options.c:
-	$(AM_V_GEN)
-	@if $(AM_V_P); then echo Generating $@ from $(@D)/pixma.c; fi
-	@(cd $(@D); $(PYTHON) scripts/pixma_gen_options.py   < pixma.c > $(@F))
-
+BUILT_SOURCES += pixma/pixma_sane_options.c
+BUILT_SOURCES += pixma/pixma_sane_options.h
 EXTRA_DIST += pixma/pixma_sane_options.c
-EXTRA_DIST += pixma/pixma_sane_options.h
 EXTRA_DIST += pixma/scripts/pixma_gen_options.py
-CLEANFILES += pixma/pixma_sane_options.c
-CLEANFILES += pixma/pixma_sane_options.h
 
 nodist_libsane_pixma_la_SOURCES = pixma-s.c
 libsane_pixma_la_CPPFLAGS = $(AM_CPPFLAGS) -DBACKEND_NAME=pixma
@@ -1959,6 +1962,7 @@ libsane_xerox_mfp_la_LIBADD = $(COMMON_LIBS) \
     $(MATH_LIB) $(SOCKET_LIBS) $(USB_LIBS) $(RESMGR_LIBS)
 EXTRA_DIST += xerox_mfp.conf.in
 
+nodist_libdll_preload_la_SOURCES = dll-preload.h
 libdll_preload_la_SOURCES =  dll.c
 libdll_preload_la_CPPFLAGS = $(AM_CPPFLAGS) -DBACKEND_NAME=dll -DENABLE_PRELOAD
 libdll_preload_la_LIBADD = ../sanei/sanei_usb.lo \
@@ -1967,7 +1971,7 @@ libdll_la_SOURCES =  dll.c
 libdll_la_CPPFLAGS = $(AM_CPPFLAGS) -DBACKEND_NAME=dll
 libdll_la_LIBADD = ../sanei/sanei_usb.lo \
      $(USB_LIBS) $(XML_LIBS)
-BUILT_SOURCES = dll-preload.h
+BUILT_SOURCES += dll-preload.h
 CLEANFILES += dll-preload.h
 
 nodist_libsane_dll_la_SOURCES =  dll-s.c
