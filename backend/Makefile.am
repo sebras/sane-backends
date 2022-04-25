@@ -1962,6 +1962,7 @@ libsane_xerox_mfp_la_LIBADD = $(COMMON_LIBS) \
     $(MATH_LIB) $(SOCKET_LIBS) $(USB_LIBS) $(RESMGR_LIBS)
 EXTRA_DIST += xerox_mfp.conf.in
 
+nodist_libdll_preload_la_SOURCES = dll-preload.h
 libdll_preload_la_SOURCES =  dll.c
 libdll_preload_la_CPPFLAGS = $(AM_CPPFLAGS) -DBACKEND_NAME=dll -DENABLE_PRELOAD
 libdll_preload_la_LIBADD = ../sanei/sanei_usb.lo \
