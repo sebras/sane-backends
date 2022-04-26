@@ -198,15 +198,6 @@ static const SANE_Byte scsi_inquiry[] = {
 static const SANE_Byte scsi_test_unit_ready[] = {
   MUSTEK_SCSI_TEST_UNIT_READY, 0x00, 0x00, 0x00, 0x00, 0x00
 };
-/* Remove #ifdef and this comment when this SCSI command is used for
-   something.  Keeping this definition around so we don't loose info
-   about the protocol.
- */
-#ifdef ENABLE_MUSTEK_SCSI_AREA_AND_WINDOWS
-static const SANE_Byte scsi_area_and_windows[] = {
-  MUSTEK_SCSI_AREA_AND_WINDOWS, 0x00, 0x00, 0x00, 0x09, 0x00
-};
-#endif
 static const SANE_Byte scsi_request_sense[] = {
   MUSTEK_SCSI_REQUEST_SENSE, 0x00, 0x00, 0x00, 0x04, 0x00
 };
@@ -219,28 +210,16 @@ static const SANE_Byte scsi_ccd_distance[] = {
 static const SANE_Byte scsi_get_image_status[] = {
   MUSTEK_SCSI_GET_IMAGE_STATUS, 0x00, 0x00, 0x00, 0x06, 0x00
 };
-static const SANE_Byte scsi_set_window[] = {
-  MUSTEK_SCSI_SET_WINDOW, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x30, 0x00
-};
 static const SANE_Byte scsi_get_window[] = {
   MUSTEK_SCSI_GET_WINDOW, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x30, 0x00
 };
-static const SANE_Byte scsi_read_data[] = {
-  MUSTEK_SCSI_READ_DATA, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
-};
-static const SANE_Byte scsi_send_data[] = {
-  MUSTEK_SCSI_SEND_DATA, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
-};
-/* Remove #ifdef and this comment when this SCSI command is used for
-   something.  Keeping this definition around so we don't loose info
-   about the protocol.
- */
-#ifdef ENABLE_MUSTEK_SCSI_LOOKUP_TABLE
-static const SANE_Byte scsi_lookup_table[] = {
-  MUSTEK_SCSI_LOOKUP_TABLE, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
-  0x00
-};
-#endif
+
+/* Sizes for fixed-length, non-vendor-specific CDB formats (others are 0) */
+#define CDB_SIZE(opcode)	((opcode) < 0x20 ? 6 : \
+				 (opcode) < 0x60 ? 10 : \
+				 (opcode) < 0x80 ? 0 : \
+				 (opcode) < 0xa0 ? 16 : \
+				 (opcode) < 0xc0 ? 12 : 0)
 
 /* prototypes */
 static SANE_Status area_and_windows (Mustek_Scanner * s);
@@ -1994,7 +1973,7 @@ set_window_se (Mustek_Scanner * s, SANE_Int lamp)
   /* setup SCSI command (except length): */
   memset (cmd, 0, sizeof (cmd));
   cmd[0] = MUSTEK_SCSI_SET_WINDOW;
-  cp = cmd + sizeof (scsi_set_window);	/* skip command block           */
+  cp = cmd + CDB_SIZE (MUSTEK_SCSI_SET_WINDOW);	/* skip command block   */
 
   if (s->mode & MUSTEK_MODE_COLOR)
     {
@@ -2093,7 +2072,7 @@ set_window_se (Mustek_Scanner * s, SANE_Int lamp)
     *cp++ = 0;
   cp += 5;			/* skip reserved bytes          */
 
-  cmd[8] = cp - cmd - sizeof (scsi_set_window);
+  cmd[8] = cp - cmd - CDB_SIZE (MUSTEK_SCSI_SET_WINDOW);
   return dev_cmd (s, cmd, (cp - cmd), 0, 0);
 }
 
@@ -2111,7 +2090,7 @@ set_window_pro (Mustek_Scanner * s)
   else
     cmd[8] = 0x0a;
 
-  cp = cmd + sizeof (scsi_set_window);	/* skip command block           */
+  cp = cmd + CDB_SIZE (MUSTEK_SCSI_SET_WINDOW);	/* skip command block   */
 
   *cp++ = 0;			/* what's this? */
   pixels_per_mm = SANE_UNFIX (s->hw->dpi_range.max) / MM_PER_INCH;
@@ -2174,7 +2153,7 @@ get_calibration_lines_pro (Mustek_Scanner * s)
 
   for (line = 0; line < s->hw->cal.lines; line++)
     {
-      status = dev_cmd (s, cmd, sizeof (scsi_read_data),
+      status = dev_cmd (s, cmd, CDB_SIZE (MUSTEK_SCSI_READ_DATA),
 			s->hw->cal.buffer + line * len, &len);
 
       if ((status != SANE_STATUS_GOOD)
@@ -2199,17 +2178,17 @@ send_calibration_lines_pro (Mustek_Scanner * s)
   DBG (5, "send_calibration_lines_pro\n");
 
   buf_size = s->hw->cal.bytes / 2;
-  cmd1 = (SANE_Byte *) malloc (buf_size + sizeof (scsi_send_data));
-  cmd2 = (SANE_Byte *) malloc (buf_size + sizeof (scsi_send_data));
+  cmd1 = (SANE_Byte *) malloc (buf_size + CDB_SIZE (MUSTEK_SCSI_SEND_DATA));
+  cmd2 = (SANE_Byte *) malloc (buf_size + CDB_SIZE (MUSTEK_SCSI_SEND_DATA));
   if (!cmd1 || !cmd2)
     {
-      DBG (1, "send_calibration_lines_pro: failed to malloc %ld bytes for "
+      DBG (1, "send_calibration_lines_pro: failed to malloc %zu bytes for "
 	   "sending lines\n",
-	   (long int) (buf_size + sizeof (scsi_send_data)));
+	   buf_size + CDB_SIZE (MUSTEK_SCSI_SEND_DATA));
       return SANE_STATUS_NO_MEM;
     }
-  memset (cmd1, 0, sizeof (scsi_send_data));
-  memset (cmd2, 0, sizeof (scsi_send_data));
+  memset (cmd1, 0, CDB_SIZE (MUSTEK_SCSI_SEND_DATA));
+  memset (cmd2, 0, CDB_SIZE (MUSTEK_SCSI_SEND_DATA));
 
   cmd1[0] = cmd2[0] = MUSTEK_SCSI_SEND_DATA;
   cmd1[6] = cmd2[6] = (buf_size >> 16) & 0xff;
@@ -2236,21 +2215,21 @@ send_calibration_lines_pro (Mustek_Scanner * s)
 	  calibration_word = (1024 * 65536 / calibration_word) - 1024;
 	  if (calibration_word > 1023)
 	    calibration_word = 1023;
-	  *(cmd1 + sizeof (scsi_send_data) + (buf_size / 3) * color + column)
-	    = calibration_word & 0xff;
-	  *(cmd2 + sizeof (scsi_send_data) + (buf_size / 3) * color + column)
-	    = (calibration_word >> 8) & 0xff;
+	  *(cmd1 + CDB_SIZE (MUSTEK_SCSI_SEND_DATA) + (buf_size / 3) * color
+	    + column) = calibration_word & 0xff;
+	  *(cmd2 + CDB_SIZE (MUSTEK_SCSI_SEND_DATA) + (buf_size / 3) * color
+	    + column) = (calibration_word >> 8) & 0xff;
 	}
     }
 
-  status = dev_cmd (s, cmd1, buf_size + sizeof (scsi_send_data), 0, 0);
+  status = dev_cmd (s, cmd1, buf_size + CDB_SIZE (MUSTEK_SCSI_SEND_DATA), 0, 0);
   if (status != SANE_STATUS_GOOD)
     {
       DBG (1, "send_calibration_lines_pro: send failed\n");
       return status;
     }
 
-  status = dev_cmd (s, cmd2, buf_size + sizeof (scsi_send_data), 0, 0);
+  status = dev_cmd (s, cmd2, buf_size + CDB_SIZE (MUSTEK_SCSI_SEND_DATA), 0, 0);
   if (status != SANE_STATUS_GOOD)
     {
       DBG (1, "send_calibration_lines_pro: send failed\n");
@@ -2328,7 +2307,8 @@ get_calibration_lines_se (Mustek_Scanner * s)
   cmd[7] = (lines >> 8) & 0xff;
   cmd[8] = (lines >> 0) & 0xff;
   len = lines * bytes_per_color;
-  status = dev_cmd (s, cmd, sizeof (scsi_read_data), s->hw->cal.buffer, &len);
+  status = dev_cmd (s, cmd, CDB_SIZE (MUSTEK_SCSI_READ_DATA),
+		    s->hw->cal.buffer, &len);
   if ((status != SANE_STATUS_GOOD)
       || (len != (unsigned int) (lines * bytes_per_color)))
     {
@@ -2361,15 +2341,15 @@ send_calibration_lines_se (Mustek_Scanner * s, SANE_Word color)
   DBG (5, "send_calibration_lines_se: %d bytes, color: %d\n",
        bytes_per_color, color + 1);
 
-  cmd = (SANE_Byte *) malloc (buf_size + sizeof (scsi_send_data));
+  cmd = (SANE_Byte *) malloc (buf_size + CDB_SIZE (MUSTEK_SCSI_SEND_DATA));
   if (!cmd)
     {
-      DBG (1, "send_calibration_lines_se: failed to malloc %ld bytes for "
+      DBG (1, "send_calibration_lines_se: failed to malloc %zu bytes for "
 	   "sending lines\n",
-	   (long int) (buf_size + sizeof (scsi_send_data)));
+	   buf_size + CDB_SIZE (MUSTEK_SCSI_SEND_DATA));
       return SANE_STATUS_NO_MEM;
     }
-  memset (cmd, 0, sizeof (scsi_send_data));
+  memset (cmd, 0, CDB_SIZE (MUSTEK_SCSI_SEND_DATA));
 
   for (column = 0; column < bytes_per_color; column++)
     {
@@ -2386,7 +2366,7 @@ send_calibration_lines_se (Mustek_Scanner * s, SANE_Word color)
       cali_word = 256 * s->hw->cal.lines * 255 / cali_word - 256;
       if (cali_word > 255)
 	cali_word = 255;
-      *(cmd + sizeof (scsi_send_data) + column) = cali_word;
+      *(cmd + CDB_SIZE (MUSTEK_SCSI_SEND_DATA) + column) = cali_word;
     }
 
   cmd[0] = MUSTEK_SCSI_SEND_DATA;
@@ -2395,7 +2375,7 @@ send_calibration_lines_se (Mustek_Scanner * s, SANE_Word color)
   cmd[7] = (buf_size >> 8) & 0xff;
   cmd[8] = (buf_size >> 0) & 0xff;
 
-  status = dev_cmd (s, cmd, buf_size + sizeof (scsi_send_data), 0, 0);
+  status = dev_cmd (s, cmd, buf_size + CDB_SIZE (MUSTEK_SCSI_SEND_DATA), 0, 0);
   if (status != SANE_STATUS_GOOD)
     {
       DBG (1, "send_calibration_lines_se: send failed\n");
@@ -2457,14 +2437,15 @@ send_gamma_table_se (Mustek_Scanner * s)
   SANE_Int i, j;
 # define CLIP(x)	((x) < 0 ? 0 : ((x) > 255 ? 255 : (x)))
 
-  memset (gamma, 0, sizeof (scsi_send_data));
+  memset (gamma, 0, CDB_SIZE (MUSTEK_SCSI_SEND_DATA));
 
   gamma[0] = MUSTEK_SCSI_SEND_DATA;
   gamma[2] = 0x03;		/* indicates gamma table */
 
   if ((s->mode & MUSTEK_MODE_GRAY) || (s->mode & MUSTEK_MODE_COLOR))
     {
-      if (s->hw->gamma_length + sizeof (scsi_send_data) > sizeof (gamma))
+      if ((size_t) s->hw->gamma_length + CDB_SIZE (MUSTEK_SCSI_SEND_DATA)
+	  > sizeof (gamma))
 	return SANE_STATUS_NO_MEM;
       gamma[7] = (s->hw->gamma_length >> 8) & 0xff;
       gamma[8] = (s->hw->gamma_length >> 0) & 0xff;
@@ -2491,7 +2472,7 @@ send_gamma_table_se (Mustek_Scanner * s)
 	  val_a = MAX (2 * val_b - val_a, 0);
 
 	  /* Interpolate first entries from 256 entry table  */
-	  cp = gamma + sizeof (scsi_send_data);
+	  cp = gamma + CDB_SIZE (MUSTEK_SCSI_SEND_DATA);
 	  for (j = 0; j < factor; j++)
 	    *cp++ = CLIP (((factor - j) * val_a + j * val_b
 			   + factor / 2) / factor);
@@ -2518,7 +2499,7 @@ send_gamma_table_se (Mustek_Scanner * s)
 
 	  DBG (5, "send_gamma_table_se: sending table for color %d\n",
 	       gamma[6]);
-	  status = dev_cmd (s, gamma, sizeof (scsi_send_data)
+	  status = dev_cmd (s, gamma, CDB_SIZE (MUSTEK_SCSI_SEND_DATA)
 			    + s->hw->gamma_length, 0, 0);
 	  ++color;
 	}
@@ -2535,7 +2516,7 @@ send_gamma_table_se (Mustek_Scanner * s)
 
       DBG (5, "send_gamma_table_se: sending lineart threshold %2X\n",
 	   gamma[8]);
-      return dev_cmd (s, gamma, sizeof (scsi_send_data), 0, 0);
+      return dev_cmd (s, gamma, CDB_SIZE (MUSTEK_SCSI_SEND_DATA), 0, 0);
     }
 }
 
