@@ -1895,6 +1895,11 @@ start_scan (BH_Scanner *s)
 		    {
 		      DBG(1, "sane_start: error opening barfile `%s'\n",
 			  s->barfname);
+		      if (fd !=-1)
+		        {
+		          close(fd);
+		          unlink(s->barfname);
+		        }
 		      status = SANE_STATUS_IO_ERROR;
 		    }
 		}
