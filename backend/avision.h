@@ -502,7 +502,6 @@ typedef struct Avision_Scanner
 
   /* Internal data for duplex scans */
   char duplex_rear_fname [PATH_MAX];
-  char duplex_offtmp_fname [PATH_MAX];
   SANE_Bool duplex_rear_valid;
 
   color_mode c_mode;

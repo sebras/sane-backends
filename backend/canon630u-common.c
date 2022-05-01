@@ -937,7 +937,10 @@ plugin_cal (CANON_Handle * s)
     {
       DBG (1, "No temp filename!\n");
       s->fname = strdup ("/tmp/cal.XXXXXX");
-      mkstemp (s->fname);
+
+      /* FIXME: we should be using fd, not discarding it, and also checking for error! */
+      int fd = mkstemp (s->fname);
+      close(fd);
     }
   s->width = 2551;
   s->height = 75;
@@ -1581,8 +1584,12 @@ CANON_start_scan (CANON_Handle * scanner)
 
   /* choose a temp file name for scan data */
   scanner->fname = strdup ("/tmp/scan.XXXXXX");
-  if (!mkstemp (scanner->fname))
+
+  /* FIXME: we should be using fd, not discarding it! */
+  int fd = mkstemp (scanner->fname);
+  if (fd == -1)
     return SANE_STATUS_IO_ERROR;
+  close(fd);
 
   /* calibrate if needed */
   rv = init (scanner->fd);

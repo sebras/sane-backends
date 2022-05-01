@@ -134,8 +134,7 @@ static char tty_name[PATH_MAX];
 #define DEF_TTY_NAME "/dev/ttyS0"
 
 static speed_t tty_baud = DEFAULT_TTY_BAUD;
-static char *tmpname;
-static char tmpnamebuf[] = "/tmp/dc25XXXXXX";
+#define TMPFILE_PATTERN "/tmp/dc25XXXXXX";
 
 static Dc20Info *dc20_info;
 static Dc20Info CameraInfo;
@@ -2007,16 +2006,6 @@ sane_open (SANE_String_Const devicename, SANE_Handle * handle)
       DBG (1, "No device info\n");
     }
 
-  if (tmpname == NULL)
-    {
-      tmpname = tmpnamebuf;
-      if (!mkstemp (tmpname))
-	{
-	  DBG (1, "Unable to make temp file %s\n", tmpname);
-	  return SANE_STATUS_INVAL;
-	}
-    }
-
   DBG (3, "sane_open: pictures taken=%d\n", dc20_info->pic_taken);
 
   return SANE_STATUS_GOOD;
@@ -2430,14 +2419,15 @@ sane_start (SANE_Handle handle)
        * port overruns on a 90MHz pentium until I used hdparm
        * to set the "-u1" flag on the system drives.
        */
-      int fd;
+      char tmpnamebuf[] = TMPFILE_PATTERN;
 
-      fd = open (tmpname, O_CREAT | O_EXCL | O_WRONLY, 0600);
+      int fd = mkstemp (tmpnamebuf);
       if (fd == -1)
-	{
-	  DBG (0, "Unable to open tmp file\n");
-	  return SANE_STATUS_INVAL;
-	}
+        {
+          DBG (0, "Unable to make temp file %s\n", tmpnamebuf);
+          return SANE_STATUS_INVAL;
+        }
+
       f = fdopen (fd, "wb");
       if (f == NULL)
 	{
@@ -2509,12 +2499,12 @@ sane_start (SANE_Handle handle)
       else
 	{
 	  fclose (f);
-	  if (convert_pic (tmpname, SAVE_ADJASPECT | SAVE_24BITS) == -1)
+	  if (convert_pic (tmpnamebuf, SAVE_ADJASPECT | SAVE_24BITS) == -1)
 	    {
 	      DBG (3, "sane_open: unable to convert\n");
 	      return SANE_STATUS_INVAL;
 	    }
-	  unlink (tmpname);
+	  unlink (tmpnamebuf);
 	  outbytes = 0;
 	}
     }

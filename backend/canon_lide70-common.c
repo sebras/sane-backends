@@ -3249,7 +3249,7 @@ CANON_start_scan (CANON_Handle * chndl)
   chndl->fname = strdup ("/tmp/scan.XXXXXX");
   fd = mkstemp (chndl->fname);
 
-  if (!fd)
+  if (fd == -1)
     {
       return SANE_STATUS_IO_ERROR;
     }

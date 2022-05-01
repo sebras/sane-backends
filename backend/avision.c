@@ -7488,11 +7488,27 @@ reader_process (void *data)
     return SANE_STATUS_NO_MEM;
 
   if (dev->adf_offset_compensation) {
+    char duplex_offtmp_fname [] = "/tmp/avision-offtmp-XXXXXX";
+
+    int fd = mkstemp(duplex_offtmp_fname);
+    if (fd == -1) {
+      DBG (1, "reader_process: failed to generate temporary fname for ADF offset compensation temp file\n");
+      return SANE_STATUS_NO_MEM;
+    }
+    DBG (1, "reader_process: temporary fname for ADF offset compensation temp file: %s\n",
+         duplex_offtmp_fname);
+
+    if (unlink(duplex_offtmp_fname) == -1) {
+      DBG(1, "reader_process: failed to delete temporary file prior to use: %s\n", duplex_offtmp_fname);
+      // continue though.
+    }
+
     DBG (3, "reader_process: redirecting output data to temp file for ADF offset compensation.\n");
     fp_fd = fp;
-    fp = fopen (s->duplex_offtmp_fname, "w+");
+    fp = fdopen (fd, "w+");
     if (!fp) {
       fclose(fp_fd);
+      close(fd);
       return SANE_STATUS_NO_MEM;
     }
   }
@@ -8653,33 +8669,21 @@ sane_open (SANE_String_Const devicename, SANE_Handle *handle)
        dev->hw->offset.duplex.rear.bottom != 0) )
     dev->adf_offset_compensation = SANE_TRUE;
 
-  if (dev->adf_offset_compensation) {
-    strncpy(s->duplex_offtmp_fname, "/tmp/avision-offtmp-XXXXXX", PATH_MAX);
-
-    if (! mktemp(s->duplex_offtmp_fname) ) {
-      DBG (1, "sane_open: failed to generate temporary fname for ADF offset compensation temp file\n");
-      return SANE_STATUS_NO_MEM;
-    }
-    else {
-      DBG (1, "sane_open: temporary fname for ADF offset compensation temp file: %s\n",
-	   s->duplex_offtmp_fname);
-    }
-  }
-
   if (dev->inquiry_duplex_interlaced || dev->scanner_type == AV_FILM ||
       dev->hw->feature_type & AV_ADF_FLIPPING_DUPLEX) {
     /* Might need at least *DOS (Windows flavour and OS/2) portability fix
        However, I was told Cygwin (et al.) takes care of it. */
+
+    /* Create the file but close the fd. It is not used to open the file later. :( */
     strncpy(s->duplex_rear_fname, "/tmp/avision-rear-XXXXXX", PATH_MAX);
 
-    if (! mkstemp(s->duplex_rear_fname) ) {
+    int fd = mkstemp(s->duplex_rear_fname);
+    if (fd == -1) {
       DBG (1, "sane_open: failed to generate temporary fname for duplex scans\n");
       return SANE_STATUS_NO_MEM;
     }
-    else {
-      DBG (1, "sane_open: temporary fname for duplex scans: %s\n",
-	   s->duplex_rear_fname);
-    }
+    DBG (1, "sane_open: temporary fname for duplex scans: %s\n", s->duplex_rear_fname);
+    close(fd);
   }
 
   /* calibrate film scanners, as this must be done without the
@@ -8773,11 +8777,6 @@ sane_close (SANE_Handle handle)
   if (*(s->duplex_rear_fname)) {
     unlink (s->duplex_rear_fname);
     *(s->duplex_rear_fname) = 0;
-  }
-
-  if (*(s->duplex_offtmp_fname)) {
-    unlink (s->duplex_offtmp_fname);
-    *(s->duplex_offtmp_fname) = 0;
   }
 
   free (handle);
