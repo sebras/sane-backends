@@ -6960,8 +6960,9 @@ init_options (Avision_Scanner* s)
     case AV_ASIC_C5:
       dev->dpi_range.min = 80;
       break;
-    case AV_ASIC_C6: /* TODO: AV610 in ADF mode does not scan less than 180 or so */
-      dev->dpi_range.min = 50;
+    case AV_ASIC_C6: /* TODO: AV610 in ADF mode does not scan less than 180 or so; */
+                     /* Scanjet 8250 does not work with 50 in normal mode */
+      dev->dpi_range.min = 60;
       break;
     case AV_ASIC_C7: /* AV610C2 empirically tested out */
       dev->dpi_range.min = 75;
