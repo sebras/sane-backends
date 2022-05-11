@@ -219,39 +219,51 @@ escl_newjob (capabilities_t *scanner, const ESCL_Device *device, SANE_Status *st
     char *source = (scanner->source == PLATEN ? "Platen" : "Feeder");
     if (scanner->use_threshold)
     {
-       char *tmp = add_support_option("ThresholdSupport", scanner->val_threshold);
-       if (support_options[0])
-          strcat(support_options, tmp);
-       else
-          strcpy(support_options, tmp);
-       free(tmp);
+       if (scanner->val_threshold != scanner->threshold->value)
+       {
+          char *tmp = add_support_option("ThresholdSupport", scanner->val_threshold);
+          if (support_options[0])
+             strcat(support_options, tmp);
+          else
+             strcpy(support_options, tmp);
+          free(tmp);
+       }
     }
     if (scanner->use_sharpen)
     {
-       char *tmp = add_support_option("SharpenSupport", scanner->val_sharpen);
-       if (support_options[0])
-          strcat(support_options, tmp);
-       else
-          strcpy(support_options, tmp);
-       free(tmp);
+       if (scanner->val_sharpen != scanner->sharpen->value)
+       {
+          char *tmp = add_support_option("SharpenSupport", scanner->val_sharpen);
+          if (support_options[0])
+             strcat(support_options, tmp);
+          else
+             strcpy(support_options, tmp);
+          free(tmp);
+       }
     }
     if (scanner->use_contrast)
     {
-       char *tmp = add_support_option("ContrastSupport", scanner->val_contrast);
-       if (support_options[0])
-          strcat(support_options, tmp);
-       else
-          strcpy(support_options, tmp);
-       free(tmp);
+       if (scanner->val_contrast != scanner->contrast->value)
+       {
+          char *tmp = add_support_option("ContrastSupport", scanner->val_contrast);
+          if (support_options[0])
+             strcat(support_options, tmp);
+          else
+             strcpy(support_options, tmp);
+          free(tmp);
+       }
     }
     if (scanner->use_brightness)
     {
-       char *tmp = add_support_option("BrightnessSupport", scanner->val_brightness);
-       if (support_options[0])
-          strcat(support_options, tmp);
-       else
-          strcpy(support_options, tmp);
-       free(tmp);
+       if (scanner->val_brightness != scanner->brightness->value)
+       {
+          char *tmp = add_support_option("BrightnessSupport", scanner->val_brightness);
+          if (support_options[0])
+             strcat(support_options, tmp);
+          else
+             strcpy(support_options, tmp);
+          free(tmp);
+       }
     }
     snprintf(cap_data, sizeof(cap_data), settings,
     		scanner->caps[scanner->source].height,
