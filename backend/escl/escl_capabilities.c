@@ -428,6 +428,9 @@ print_xml_c(xmlNode *node, ESCL_Device *device, capabilities_t *scanner, int typ
             if (find_nodes_c(node) && type != -1)
                 find_true_variables(node, scanner, type);
         }
+        if (!strcmp((const char *)node->name, "Version")){
+            device->version = atof ((const char *)xmlNodeGetContent(node));
+	}
         if (!strcmp((const char *)node->name, "MakeAndModel")){
             device->model_name = strdup((const char *)xmlNodeGetContent(node));
 	}

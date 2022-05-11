@@ -56,7 +56,6 @@ static const char settings[] =
     "          <pwg:YOffset>%d</pwg:YOffset>" \
     "      </pwg:ScanRegion>" \
     "   </pwg:ScanRegions>" \
-    "   <pwg:DocumentFormat>%s</pwg:DocumentFormat>" \
     "%s" \
     "   <scan:ColorMode>%s</scan:ColorMode>" \
     "   <scan:XResolution>%d</scan:XResolution>" \
@@ -137,8 +136,8 @@ escl_newjob (capabilities_t *scanner, const ESCL_Device *device, SANE_Status *st
     char *location = NULL;
     char *result = NULL;
     char *temporary = NULL;
-    char *f_ext = "";
     char *format_ext = NULL;
+    char f_ext_tmp[1024];
     char duplex_mode[1024] = { 0 };
     int wakup_count = 0;
 
@@ -188,16 +187,22 @@ escl_newjob (capabilities_t *scanner, const ESCL_Device *device, SANE_Status *st
 	    scanner->caps[scanner->source].default_format =
 		    strdup(scanner->caps[scanner->source].DocumentFormats[have_pdf]);
     }
-    if (scanner->caps[scanner->source].format_ext == 1)
+    if (device->version <= 2.0)
     {
-        char f_ext_tmp[1024];
+        // For eSCL 2.0 and older clients
+        snprintf(f_ext_tmp, sizeof(f_ext_tmp),
+			"   <pwg:DocumentFormat>%s</pwg:DocumentFormat>",
+    			scanner->caps[scanner->source].default_format);
+    }
+    else
+    {
+        // For eSCL 2.1 and newer clients
         snprintf(f_ext_tmp, sizeof(f_ext_tmp),
 			"   <scan:DocumentFormatExt>%s</scan:DocumentFormatExt>",
     			scanner->caps[scanner->source].default_format);
-        format_ext = f_ext_tmp;
     }
-    else
-      format_ext = f_ext;
+    format_ext = f_ext_tmp;
+
     if(scanner->source > PLATEN && scanner->Sources[ADFDUPLEX]) {
        snprintf(duplex_mode, sizeof(duplex_mode),
 		       "   <scan:Duplex>%s</scan:Duplex>",
@@ -253,7 +258,6 @@ escl_newjob (capabilities_t *scanner, const ESCL_Device *device, SANE_Status *st
     		scanner->caps[scanner->source].width,
     		off_x,
     		off_y,
-    		scanner->caps[scanner->source].default_format,
     		format_ext,
     		scanner->caps[scanner->source].default_color,
     		scanner->caps[scanner->source].default_resolution,
