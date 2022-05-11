@@ -148,6 +148,7 @@ typedef struct support
     int min;
     int max;
     int normal;
+    int value;
     int step;
 } support_t;
 
