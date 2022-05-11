@@ -62,7 +62,6 @@ static const char settings[] =
     "   <scan:XResolution>%d</scan:XResolution>" \
     "   <scan:YResolution>%d</scan:YResolution>" \
     "   <pwg:InputSource>%s</pwg:InputSource>" \
-    "   <scan:InputSource>%s</scan:InputSource>" \
     "%s" \
     "%s" \
     "</scan:ScanSettings>";
@@ -259,7 +258,6 @@ escl_newjob (capabilities_t *scanner, const ESCL_Device *device, SANE_Status *st
     		scanner->caps[scanner->source].default_color,
     		scanner->caps[scanner->source].default_resolution,
     		scanner->caps[scanner->source].default_resolution,
-    		source,
     		source,
     		duplex_mode[0] == 0 ? " " : duplex_mode,
                 support_options[0] == 0 ? " " : support_options);
