@@ -76,8 +76,8 @@ debian-11-full:
     - doc/sanei-html
     expire_in: 1 day
 
-fedora-35-clang:
-  image: $REGISTRY_HUB:fedora-35-clang
+fedora-36-clang:
+  image: $REGISTRY_HUB:fedora-36-clang
   variables:
     CONFIGURE_OPTS: "$CONFIGURE_MINI $CONFIGURE_FULL"
     MAKE_FLAGS: "CFLAGS=-Werror CXXFLAGS=-Werror"
@@ -91,8 +91,8 @@ alpine-3.15-musl:
   <<: *compile_definition
   allow_failure: true
 
-ubuntu-20.04-lts:
-  image: $REGISTRY_HUB:ubuntu-focal-dist
+ubuntu-22.04-lts:
+  image: $REGISTRY_HUB:ubuntu-jammy-dist
   variables:
     CONFIGURE_OPTS: "$CONFIGURE_MINI $CONFIGURE_FULL"
     MAKE_FLAGS: "CFLAGS=-Werror CXXFLAGS=-Werror"
