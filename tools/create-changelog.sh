@@ -5,13 +5,14 @@
 # License: GPL-3.0+
 
 git log --date=iso8601 --no-decorate --topo-order --abbrev=12 \
-        1.0.28..HEAD \
+        $(git describe --tags --abbrev=0)..HEAD \
     | sed 's/[[:space:]]*$//' \
     > ChangeLog
 
 cat << EOF >> ChangeLog
 
 ----------------------------------------------------------------------
-Older ChangeLog entries can be found in the ChangeLogs/ directory on a
-file per release basis.  Please note that version 1.0.26 was skipped.
+Older entries are located in the ChangeLogs/ directory, which contains
+a separate file for each release.  (Please note: 1.0.26 and 1.1.0 were
+skipped as release numbers.)
 EOF
