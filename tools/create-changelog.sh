@@ -4,8 +4,8 @@
 #
 # License: GPL-3.0+
 
-git log --date=iso8601 --decorate=short 1.0.28..HEAD \
-    | sed 's/^[ \t]*$//' \
+git log --date=iso8601 --no-decorate --abbrev=12 1.0.28..HEAD \
+    | sed 's/[[:space:]]*$//' \
     > ChangeLog
 
 cat << EOF >> ChangeLog
