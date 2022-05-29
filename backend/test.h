@@ -137,7 +137,7 @@ typedef struct Test_Device
   SANE_Word bytes_per_line;
   SANE_Word pixels_per_line;
   SANE_Word lines;
-  SANE_Int bytes_total;
+  size_t bytes_total;
   SANE_Bool open;
   SANE_Bool scanning;
   SANE_Bool cancelled;

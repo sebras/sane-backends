@@ -391,11 +391,11 @@ init_options (Test_Device * test_device)
   od->desc = SANE_DESC_SCAN_MODE;
   od->type = SANE_TYPE_STRING;
   od->unit = SANE_UNIT_NONE;
-  od->size = max_string_size (mode_list);
+  od->size = (SANE_Int) max_string_size (mode_list);
   od->cap = SANE_CAP_SOFT_DETECT | SANE_CAP_SOFT_SELECT;
   od->constraint_type = SANE_CONSTRAINT_STRING_LIST;
   od->constraint.string_list = mode_list;
-  test_device->val[opt_mode].s = malloc (od->size);
+  test_device->val[opt_mode].s = malloc ((size_t) od->size);
   if (!test_device->val[opt_mode].s)
     goto fail;
   strcpy (test_device->val[opt_mode].s, init_mode);
@@ -454,7 +454,7 @@ init_options (Test_Device * test_device)
   od->desc = SANE_I18N ("Set the order of frames in three-pass color mode.");
   od->type = SANE_TYPE_STRING;
   od->unit = SANE_UNIT_NONE;
-  od->size = max_string_size (order_list);
+  od->size = (SANE_Int) max_string_size (order_list);
   od->cap = SANE_CAP_SOFT_DETECT | SANE_CAP_SOFT_SELECT;
   if (strcmp (init_mode, SANE_VALUE_SCAN_MODE_COLOR) != 0)
     od->cap |= SANE_CAP_INACTIVE;
@@ -462,7 +462,7 @@ init_options (Test_Device * test_device)
     od->cap |= SANE_CAP_INACTIVE;
   od->constraint_type = SANE_CONSTRAINT_STRING_LIST;
   od->constraint.string_list = order_list;
-  test_device->val[opt_three_pass_order].s = malloc (od->size);
+  test_device->val[opt_three_pass_order].s = malloc ((size_t) od->size);
   if (!test_device->val[opt_three_pass_order].s)
     goto fail;
   strcpy (test_device->val[opt_three_pass_order].s, init_three_pass_order);
@@ -487,11 +487,11 @@ init_options (Test_Device * test_device)
   od->desc = SANE_I18N("If Automatic Document Feeder is selected, the feeder will be 'empty' after 10 scans.");
   od->type = SANE_TYPE_STRING;
   od->unit = SANE_UNIT_NONE;
-  od->size = max_string_size (source_list);
+  od->size = (SANE_Int) max_string_size (source_list);
   od->cap = SANE_CAP_SOFT_DETECT | SANE_CAP_SOFT_SELECT;
   od->constraint_type = SANE_CONSTRAINT_STRING_LIST;
   od->constraint.string_list = source_list;
-  test_device->val[opt_scan_source].s = malloc (od->size);
+  test_device->val[opt_scan_source].s = malloc ((size_t) od->size);
   if (!test_device->val[opt_scan_source].s)
     goto fail;
   strcpy (test_device->val[opt_scan_source].s, init_scan_source);
@@ -523,11 +523,11 @@ init_options (Test_Device * test_device)
 	       "height of 10 mm per square.");
   od->type = SANE_TYPE_STRING;
   od->unit = SANE_UNIT_NONE;
-  od->size = max_string_size (test_picture_list);
+  od->size = (SANE_Int) max_string_size (test_picture_list);
   od->cap = SANE_CAP_SOFT_DETECT | SANE_CAP_SOFT_SELECT;
   od->constraint_type = SANE_CONSTRAINT_STRING_LIST;
   od->constraint.string_list = test_picture_list;
-  test_device->val[opt_test_picture].s = malloc (od->size);
+  test_device->val[opt_test_picture].s = malloc ((size_t) od->size);
   if (!test_device->val[opt_test_picture].s)
     goto fail;
   strcpy (test_device->val[opt_test_picture].s, init_test_picture);
@@ -618,11 +618,11 @@ init_options (Test_Device * test_device)
 	       "codes are for testing how the frontend handles them.");
   od->type = SANE_TYPE_STRING;
   od->unit = SANE_UNIT_NONE;
-  od->size = max_string_size (read_status_code_list);
+  od->size = (SANE_Int) max_string_size (read_status_code_list);
   od->cap = SANE_CAP_SOFT_DETECT | SANE_CAP_SOFT_SELECT;
   od->constraint_type = SANE_CONSTRAINT_STRING_LIST;
   od->constraint.string_list = read_status_code_list;
-  test_device->val[opt_read_status_code].s = malloc (od->size);
+  test_device->val[opt_read_status_code].s = malloc ((size_t) od->size);
   if (!test_device->val[opt_read_status_code].s)
     goto fail;
   strcpy (test_device->val[opt_read_status_code].s, init_read_status_code);
@@ -1167,13 +1167,13 @@ init_options (Test_Device * test_device)
   od->desc = SANE_I18N ("(1/3) String test option without constraint.");
   od->type = SANE_TYPE_STRING;
   od->unit = SANE_UNIT_NONE;
-  od->size = strlen (init_string) + 1;
+  od->size = (SANE_Int) strlen (init_string) + 1;
   od->cap = SANE_CAP_SOFT_DETECT | SANE_CAP_SOFT_SELECT;
   if (init_enable_test_options == SANE_FALSE)
     od->cap |= SANE_CAP_INACTIVE;
   od->constraint_type = SANE_CONSTRAINT_NONE;
   od->constraint.string_list = 0;
-  test_device->val[opt_string].s = malloc (od->size);
+  test_device->val[opt_string].s = malloc ((size_t) od->size);
   if (!test_device->val[opt_string].s)
     goto fail;
   strcpy (test_device->val[opt_string].s, init_string);
@@ -1186,13 +1186,13 @@ init_options (Test_Device * test_device)
 			"constraint.");
   od->type = SANE_TYPE_STRING;
   od->unit = SANE_UNIT_NONE;
-  od->size = max_string_size (string_constraint_string_list);
+  od->size = (SANE_Int) max_string_size (string_constraint_string_list);
   od->cap = SANE_CAP_SOFT_DETECT | SANE_CAP_SOFT_SELECT;
   if (init_enable_test_options == SANE_FALSE)
     od->cap |= SANE_CAP_INACTIVE;
   od->constraint_type = SANE_CONSTRAINT_STRING_LIST;
   od->constraint.string_list = string_constraint_string_list;
-  test_device->val[opt_string_constraint_string_list].s = malloc (od->size);
+  test_device->val[opt_string_constraint_string_list].s = malloc ((size_t) od->size);
   if (!test_device->val[opt_string_constraint_string_list].s)
     goto fail;
   strcpy (test_device->val[opt_string_constraint_string_list].s,
@@ -1206,14 +1206,14 @@ init_options (Test_Device * test_device)
 			"constraint. Contains some more entries...");
   od->type = SANE_TYPE_STRING;
   od->unit = SANE_UNIT_NONE;
-  od->size = max_string_size (string_constraint_long_string_list);
+  od->size = (SANE_Int) max_string_size (string_constraint_long_string_list);
   od->cap = SANE_CAP_SOFT_DETECT | SANE_CAP_SOFT_SELECT;
   if (init_enable_test_options == SANE_FALSE)
     od->cap |= SANE_CAP_INACTIVE;
   od->constraint_type = SANE_CONSTRAINT_STRING_LIST;
   od->constraint.string_list = string_constraint_long_string_list;
   test_device->val[opt_string_constraint_long_string_list].s =
-    malloc (od->size);
+    malloc ((size_t) od->size);
   if (!test_device->val[opt_string_constraint_long_string_list].s)
     goto fail;
   strcpy (test_device->val[opt_string_constraint_long_string_list].s,
@@ -1436,7 +1436,8 @@ static SANE_Status
 reader_process (Test_Device * test_device, SANE_Int fd)
 {
   SANE_Status status;
-  SANE_Word byte_count = 0, bytes_total;
+  size_t byte_count = 0;
+  size_t bytes_total;
   SANE_Byte *buffer = 0;
   ssize_t bytes_written = 0;
   size_t buffer_size = 0, write_count = 0;
@@ -1444,7 +1445,7 @@ reader_process (Test_Device * test_device, SANE_Int fd)
   DBG (2, "(child) reader_process: test_device=%p, fd=%d\n",
        (void *) test_device, fd);
 
-  bytes_total = test_device->lines * test_device->bytes_per_line;
+  bytes_total = (size_t) test_device->lines * (size_t) test_device->bytes_per_line;
   status = init_picture_buffer (test_device, &buffer, &buffer_size);
   if (status != SANE_STATUS_GOOD)
     return status;
@@ -1457,11 +1458,11 @@ reader_process (Test_Device * test_device, SANE_Int fd)
       if (write_count == 0)
 	{
 	  write_count = buffer_size;
-	  if (byte_count + (SANE_Word) write_count > bytes_total)
-	    write_count = bytes_total - byte_count;
+	  if (byte_count + (size_t) write_count > bytes_total)
+	    write_count = (size_t) bytes_total - (size_t) byte_count;
 
 	  if (test_device->val[opt_read_delay].w == SANE_TRUE)
-	    usleep (test_device->val[opt_read_delay_duration].w);
+	    usleep ((__useconds_t) test_device->val[opt_read_delay_duration].w);
 	}
       bytes_written = write (fd, buffer, write_count);
       if (bytes_written < 0)
@@ -1470,17 +1471,17 @@ reader_process (Test_Device * test_device, SANE_Int fd)
 	       strerror (errno));
 	  return SANE_STATUS_IO_ERROR;
 	}
-      byte_count += bytes_written;
-      DBG (4, "(child) reader_process: wrote %ld bytes of %lu (%d total)\n",
-	   (long) bytes_written, (u_long) write_count, byte_count);
-      write_count -= bytes_written;
+      byte_count += (size_t) bytes_written;
+      DBG (4, "(child) reader_process: wrote %ld bytes of %lu (%zu total)\n",
+	   bytes_written, write_count, byte_count);
+      write_count -= (size_t) bytes_written;
     }
 
   free (buffer);
 
   if (sanei_thread_is_forked ())
     {
-	  DBG (4, "(child) reader_process: finished,  wrote %d bytes, expected %d "
+	  DBG (4, "(child) reader_process: finished,  wrote %zu bytes, expected %zu "
        "bytes, now waiting\n", byte_count, bytes_total);
 	  while (SANE_TRUE)
 	    sleep (10);
@@ -1489,7 +1490,7 @@ reader_process (Test_Device * test_device, SANE_Int fd)
     }
   else
     {
-	  DBG (4, "(child) reader_process: finished,  wrote %d bytes, expected %d "
+	  DBG (4, "(child) reader_process: finished,  wrote %zu bytes, expected %zu "
        "bytes\n", byte_count, bytes_total);
     }
   return SANE_STATUS_GOOD;
@@ -1841,7 +1842,7 @@ sane_init (SANE_Int * __sane_unused__ version_code, SANE_Auth_Callback __sane_un
 
   /* create devices */
   sane_device_list =
-    malloc ((init_number_of_devices + 1) * sizeof (sane_device));
+    malloc ((size_t) (init_number_of_devices + 1) * sizeof (sane_device));
   if (!sane_device_list)
     goto fail;
   for (num = 0; num < init_number_of_devices; num++)
@@ -1879,7 +1880,7 @@ sane_init (SANE_Int * __sane_unused__ version_code, SANE_Auth_Callback __sane_un
     }
   test_device->next = 0;
   sane_device_list[num] = 0;
-  srand (time (NULL));
+  srand ((unsigned int) time (NULL));
   random_factor = ((double) rand ()) / RAND_MAX + 0.5;
   inited = SANE_TRUE;
   return SANE_STATUS_GOOD;
@@ -2342,7 +2343,7 @@ sane_control_option (SANE_Handle handle, SANE_Int option, SANE_Action action,
 	case opt_gamma_all:
 	case opt_int_array_constraint_word_list:
 	  memcpy (test_device->val[option].wa, value,
-		  test_device->opt[option].size);
+		  (size_t) test_device->opt[option].size);
 	  DBG (4, "sane_control_option: set option %d (%s) to %p\n",
 	       option, test_device->opt[option].name, (void *) value);
 	  if (option == opt_gamma_all) {
@@ -2580,7 +2581,7 @@ sane_control_option (SANE_Handle handle, SANE_Int option, SANE_Action action,
 	case opt_gamma_all:
 	case opt_int_array_constraint_word_list:
 	  memcpy (value, test_device->val[option].wa,
-		  test_device->opt[option].size);
+		  (size_t) test_device->opt[option].size);
 	  DBG (4, "sane_control_option: get option %d (%s), value=%p\n",
 	       option, test_device->opt[option].name, (void *) value);
 	  break;
@@ -2670,7 +2671,7 @@ sane_get_parameters (SANE_Handle handle, SANE_Parameters * params)
       p->lines = test_device->lines;
       if (test_device->val[opt_fuzzy_parameters].w == SANE_TRUE
 	  && test_device->scanning == SANE_FALSE)
-	p->lines *= random_factor;
+	p->lines *= (SANE_Int) random_factor;
     }
 
   if (strcmp (mode, SANE_VALUE_SCAN_MODE_GRAY) == 0)
@@ -2705,7 +2706,7 @@ sane_get_parameters (SANE_Handle handle, SANE_Parameters * params)
   p->pixels_per_line = (SANE_Int) (res * (br_x - tl_x) / MM_PER_INCH);
   if (test_device->val[opt_fuzzy_parameters].w == SANE_TRUE
       && test_device->scanning == SANE_FALSE)
-    p->pixels_per_line *= random_factor;
+    p->pixels_per_line *= (SANE_Int) random_factor;
   if (p->pixels_per_line < 1)
     p->pixels_per_line = 1;
 
@@ -2873,7 +2874,7 @@ sane_read (SANE_Handle handle, SANE_Byte * data,
   SANE_Int max_scan_length;
   ssize_t bytes_read;
   size_t read_count;
-  SANE_Int bytes_total = test_device->lines * test_device->bytes_per_line;
+  size_t bytes_total = (size_t) test_device->lines * (size_t) test_device->bytes_per_line;
 
 
   DBG (4, "sane_read: handle=%p, data=%p, max_length = %d, length=%p\n",
@@ -2958,11 +2959,11 @@ sane_read (SANE_Handle handle, SANE_Byte * data,
       DBG (1, "sane_read: not scanning (call sane_start first)\n");
       return SANE_STATUS_INVAL;
     }
-  read_count = max_scan_length;
+  read_count = (size_t) max_scan_length;
 
   bytes_read = read (test_device->pipe, data, read_count);
   if (bytes_read == 0
-      || (bytes_read + test_device->bytes_total >= bytes_total))
+      || ((size_t) bytes_read + (size_t) test_device->bytes_total >= bytes_total))
     {
       SANE_Status status;
       DBG (2, "sane_read: EOF reached\n");
@@ -2997,11 +2998,11 @@ sane_read (SANE_Handle handle, SANE_Byte * data,
 	  return SANE_STATUS_IO_ERROR;
 	}
     }
-  *length = bytes_read;
-  test_device->bytes_total += bytes_read;
+  *length = (SANE_Int) bytes_read;
+  test_device->bytes_total += (size_t) bytes_read;
 
-  DBG (2, "sane_read: read %ld bytes of %d, total %d\n", (long) bytes_read,
-       max_scan_length, test_device->bytes_total);
+  DBG (2, "sane_read: read %zu bytes of %zu, total %zu\n", (size_t) bytes_read,
+       (size_t) max_scan_length, (size_t) test_device->bytes_total);
   return SANE_STATUS_GOOD;
 }
 
@@ -3082,6 +3083,7 @@ sane_set_io_mode (SANE_Handle handle, SANE_Bool non_blocking)
     }
   else
     {
+      DBG (1, "sane_set_io_mode: unsupported\n");
       if (non_blocking)
 	return SANE_STATUS_UNSUPPORTED;
     }
@@ -3120,5 +3122,6 @@ sane_get_select_fd (SANE_Handle handle, SANE_Int * fd)
       *fd = test_device->pipe;
       return SANE_STATUS_GOOD;
     }
+  DBG(1,"sane_get_select_fd: unsupported\n");
   return SANE_STATUS_UNSUPPORTED;
 }
