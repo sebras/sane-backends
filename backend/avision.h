@@ -794,17 +794,17 @@ typedef struct acceleration_info
 
 /* set/get SCSI highended (big-endian) variables. Declare them as an array
  * of chars endianness-safe, int-size safe ... */
-#define set_double(var,val) var[0] = ((val) >> 8) & 0xff;  \
-                            var[1] = ((val)     ) & 0xff
+#define set_double(var,val) var[0] = (uint8_t) (((val) >> 8) & 0xff);  \
+                            var[1] = (uint8_t) (((val)     ) & 0xff)
 
-#define set_triple(var,val) var[0] = ((val) >> 16) & 0xff; \
-                            var[1] = ((val) >> 8 ) & 0xff; \
-                            var[2] = ((val)      ) & 0xff
+#define set_triple(var,val) var[0] = (uint8_t) (((val) >> 16) & 0xff); \
+                            var[1] = (uint8_t) (((val) >> 8 ) & 0xff); \
+                            var[2] = (uint8_t) (((val)      ) & 0xff)
 
-#define set_quad(var,val)   var[0] = ((val) >> 24) & 0xff; \
-                            var[1] = ((val) >> 16) & 0xff; \
-                            var[2] = ((val) >> 8 ) & 0xff; \
-                            var[3] = ((val)      ) & 0xff
+#define set_quad(var,val)   var[0] = (uint8_t) (((val) >> 24) & 0xff); \
+                            var[1] = (uint8_t) (((val) >> 16) & 0xff); \
+                            var[2] = (uint8_t) (((val) >> 8 ) & 0xff); \
+                            var[3] = (uint8_t) (((val)      ) & 0xff)
 
 #define get_double(var) ((*var << 8) + *(var + 1))
 
@@ -816,10 +816,10 @@ typedef struct acceleration_info
                          (*(var + 2) << 8) + *(var + 3))
 
 /* set/get Avision lowended (little-endian) shading data */
-#define set_double_le(var,val) var[0] = ((val)     ) & 0xff;  \
-                               var[1] = ((val) >> 8) & 0xff
+#define set_double_le(var,val) var[0] = (uint8_t) (((val)     ) & 0xff);  \
+                               var[1] = (uint8_t) (((val) >> 8) & 0xff)
 
-#define get_double_le(var) ((*(var + 1) << 8) + *var)
+#define get_double_le(var) ((uint16_t) ((*(var + 1) << 8) + *(var)))
 
 #define BIT(n, p) ((n & (1 << p)) ? 1 : 0)
 
