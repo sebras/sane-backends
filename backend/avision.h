@@ -819,7 +819,7 @@ typedef struct acceleration_info
 #define set_double_le(var,val) var[0] = (uint8_t) (((val)     ) & 0xff);  \
                                var[1] = (uint8_t) (((val) >> 8) & 0xff)
 
-#define get_double_le(var) ((uint16_t) ((*(var + 1) << 8) + *var))
+#define get_double_le(var) ((uint16_t) ((*(var + 1) << 8) + *(var)))
 
 #define BIT(n, p) ((n & (1 << p)) ? 1 : 0)
 

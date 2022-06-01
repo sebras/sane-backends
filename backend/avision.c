@@ -1601,7 +1601,7 @@ Lexmark X4500 MFP
 	}\
 }\
 
-static int num_devices;
+static unsigned int num_devices;
 static Avision_Device* first_dev;
 static Avision_Scanner* first_handle;
 static const SANE_Device** devlist = 0;
@@ -3562,21 +3562,21 @@ get_nvram_data (Avision_Scanner* s, nvram_data* nvram)
 }
 
 static SANE_Status
-get_and_parse_nvram (Avision_Scanner* s, char* str, int n)
+get_and_parse_nvram (Avision_Scanner* s, char* str, size_t n)
 {
   SANE_Status status;
-  int i = 0;
+  size_t i = 0;
   int x;
   nvram_data nvram;
   uint8_t inquiry_result [AVISION_INQUIRY_SIZE_V1];
 
   status = inquiry (s->av_con, inquiry_result, sizeof(inquiry_result));
   if (status == SANE_STATUS_GOOD) {
-    i += snprintf (str+i, (size_t) (n-i), "Vendor: %.8s",
+    i += (size_t) snprintf (str+i, n-i, "Vendor: %.8s",
 		   inquiry_result+8);
-    i += snprintf (str+i, (size_t) (n-i), "\nModel: %.16s",
+    i += (size_t) snprintf (str+i, n-i, "\nModel: %.16s",
 		   inquiry_result+16);
-    i += snprintf (str+i, (size_t) (n-i), "\nFirmware: %.4s",
+    i += (size_t) snprintf (str+i, n-i, "\nFirmware: %.4s",
 		   inquiry_result+32);
   }
 
@@ -3587,32 +3587,32 @@ get_and_parse_nvram (Avision_Scanner* s, char* str, int n)
   if (status == SANE_STATUS_GOOD)
     {
       if (nvram.serial[0])
-	i += snprintf (str+i, (size_t) (n-i), "\nSerial: %.24s",
+	i += (size_t) snprintf (str+i, n-i, "\nSerial: %.24s",
 		       nvram.serial);
 
       if (get_double(nvram.born_year))
-	i += snprintf (str+i, (size_t) (n-i), "\nManufacturing date: %d-%d-%d",
+	i += (size_t) snprintf (str+i, n-i, "\nManufacturing date: %d-%d-%d",
 		       get_double(nvram.born_year),
 		       get_double(nvram.born_month),
 		       get_double(nvram.born_day));
       if (get_double(nvram.first_scan_year))
-	i += snprintf (str+i, (size_t) (n-i), "\nFirst scan date: %d-%d-%d",
+	i += (size_t) snprintf (str+i, n-i, "\nFirst scan date: %d-%d-%d",
 		       get_double(nvram.first_scan_year),
 		       get_double(nvram.first_scan_month),
 		       get_double(nvram.first_scan_day));
 
       x = get_quad (nvram.flatbed_scans);
       if (x)
-	i += snprintf (str+i, (size_t) (n-i), "\nFlatbed scans: %d", x);
+	i += (size_t) snprintf (str+i, n-i, "\nFlatbed scans: %d", x);
       x = get_quad (nvram.pad_scans);
       if (x)
-	i += snprintf (str+i, (size_t) (n-i), "\nPad scans: %d", x);
+	i += (size_t) snprintf (str+i, n-i, "\nPad scans: %d", x);
       x = get_quad (nvram.adf_simplex_scans);
       if (x)
-	i += snprintf (str+i, (size_t) (n-i), "\nADF simplex scans: %d", x);
+	i += (size_t) snprintf (str+i, n-i, "\nADF simplex scans: %d", x);
       x = get_quad (nvram.adf_duplex_scans);
       if (x)
-	i += snprintf (str+i, (size_t) (n-i), "\nADF duplex scans: %d", x);
+	i += (size_t) snprintf (str+i, n-i, "\nADF duplex scans: %d", x);
     }
 
   return status;
@@ -3715,7 +3715,7 @@ adf_reset (Avision_Scanner* s)
   uint8_t payload[4];
   size_t size;
   size_t n;
-  int i;
+  ssize_t i;
   DBG (3, "adf_reset\n");
 
   /* loop twice */
@@ -3731,11 +3731,11 @@ adf_reset (Avision_Scanner* s)
     payload[1] = (uint8_t) (0x10 * i);  /* write 0x10 the first time, 0x00 the second */
     status = avision_cmd (&s->av_con, &scmd, sizeof (scmd), payload, size, 0, 0);
     if (status != SANE_STATUS_GOOD) {
-      DBG (1, "adf_reset: write %d failed (%s)\n", (2-i),
+      DBG (1, "adf_reset: write %zu failed (%s)\n", (2-i),
 	 sane_strstatus (status));
       return (status);
     }
-    DBG (3, "adf_reset: write %d complete.\n", (2-i));
+    DBG (3, "adf_reset: write %zu complete.\n", (2-i));
 
     memset (&rcmd, 0, sizeof (rcmd));
     memset (&payload, 0, sizeof (payload));
@@ -3851,7 +3851,7 @@ get_accessories_info (Avision_Scanner* s)
 /* Returns a pointer to static char* strings or NULL for cancel (we do
    not want to start memcmp'ing for the cancel case). */
 static const char*
-string_for_button (Avision_Scanner* s, int button)
+string_for_button (Avision_Scanner* s, uint8_t button)
 {
   static char buffer [16];
   Avision_Device* dev = s->hw;
@@ -4054,14 +4054,14 @@ get_button_status (Avision_Scanner* s)
 	  }
 
 	for (i = 0; i < buttons_pressed; ++i) {
-	  const unsigned int button = result.buttons[i] - 1; /* 1 based ... */
+	  const uint8_t button = result.buttons[i] - 1; /* 1 based ... */
 	  DBG (3, "get_button_status: button %d pressed\n", button);
 	  if (button >= dev->inquiry_buttons) {
 	    DBG (1, "get_button_status: button %d not allocated as not indicated in inquiry\n",
 		 button);
 	  }
 	  else {
-	    const char* label = string_for_button (s, (int) button);
+	    const char* label = string_for_button (s, button);
 	    if (label)
 	      add_token ("%s", label);
 	    else
@@ -5276,7 +5276,7 @@ set_calib_data (Avision_Scanner* s, struct calibration_format* format,
 {
   Avision_Device* dev = s->hw;
 
-  const int elements_per_line = format->pixel_per_line * format->channels;
+  const size_t elements_per_line = format->pixel_per_line * format->channels;
 
   SANE_Status status;
 
@@ -5285,7 +5285,7 @@ set_calib_data (Avision_Scanner* s, struct calibration_format* format,
 
   struct command_send scmd;
 
-  int i;
+  size_t i;
 
   DBG (3, "set_calib_data:\n");
 
@@ -5316,7 +5316,7 @@ set_calib_data (Avision_Scanner* s, struct calibration_format* format,
       value_new &= 0xffc0;
       value_new |= (uint16_t) ((get_double_le (dark_data + i*2) >> 10) & 0x3f);
 
-      DBG (9, "set_calib_data: element %d, dark difference %d\n",
+      DBG (9, "set_calib_data: element %zu, dark difference %d\n",
 	   i, value_orig - value_new);
 
       set_double_le ((white_data + i*2), value_new);
@@ -5331,9 +5331,9 @@ set_calib_data (Avision_Scanner* s, struct calibration_format* format,
 	! (dev->hw->feature_type & AV_MULTI_CALIB_CMD) ) )
     /* one command (most scanners) */
     {
-      size_t send_size = (size_t) elements_per_line * 2;
+      size_t send_size = elements_per_line * 2;
       DBG (3, "set_calib_data: all channels in one command\n");
-      DBG (3, "set_calib_data: send_size: %lu\n", (u_long) send_size);
+      DBG (3, "set_calib_data: send_size: %zu\n", send_size);
 
       memset (&scmd, 0, sizeof (scmd) );
       scmd.opc = AVISION_SCSI_SEND;
@@ -5347,13 +5347,13 @@ set_calib_data (Avision_Scanner* s, struct calibration_format* format,
     }
   else /* send data channel by channel (some USB ones) */
     {
-      int conv_out_size = format->pixel_per_line * 2;
+      size_t conv_out_size = format->pixel_per_line * 2;
       uint16_t* conv_out_data; /* here it is save to use 16bit data
 				   since we only move whole words around */
 
       DBG (3, "set_calib_data: channels in single commands\n");
 
-      conv_out_data =  (uint16_t*) malloc ((size_t) conv_out_size);
+      conv_out_data =  (uint16_t*) malloc (conv_out_size);
       if (!conv_out_data) {
 	status = SANE_STATUS_NO_MEM;
       }
@@ -5371,7 +5371,7 @@ set_calib_data (Avision_Scanner* s, struct calibration_format* format,
 	    for (i = 0; i < format->pixel_per_line; ++ i)
 	      conv_out_data [i] = casted_avg_data [i * 3 + channel];
 
-	    DBG (3, "set_calib_data: sending %i bytes now\n",
+	    DBG (3, "set_calib_data: sending %zu bytes now\n",
 		 conv_out_size);
 
 	    memset (&scmd, 0, sizeof (scmd));
@@ -5381,7 +5381,7 @@ set_calib_data (Avision_Scanner* s, struct calibration_format* format,
 	    set_triple (scmd.transferlen, conv_out_size);
 
 	    status = avision_cmd (&s->av_con, &scmd, sizeof (scmd),
-				  conv_out_data, (size_t) conv_out_size, 0, 0);
+				  conv_out_data, conv_out_size, 0, 0);
 	    if (status != SANE_STATUS_GOOD) {
 	      DBG (3, "set_calib_data: send_data failed (%s)\n",
 		   sane_strstatus (status));
@@ -5408,9 +5408,9 @@ set_calib_data (Avision_Scanner* s, struct calibration_format* format,
 static uint8_t*
 sort_and_average (struct calibration_format* format, uint8_t* data)
 {
-  const int elements_per_line = format->pixel_per_line * format->channels;
-  const int stride = format->bytes_per_channel * elements_per_line;
-  int i, line;
+  const size_t elements_per_line = format->pixel_per_line * format->channels;
+  const size_t stride = format->bytes_per_channel * elements_per_line;
+  size_t i, line;
 
   uint8_t *sort_data, *avg_data;
 
@@ -5423,7 +5423,7 @@ sort_and_average (struct calibration_format* format, uint8_t* data)
   if (!sort_data)
     return NULL;
 
-  avg_data = malloc ((size_t) elements_per_line * 2);
+  avg_data = malloc (elements_per_line * 2);
   if (!avg_data) {
     free (sort_data);
     return NULL;
@@ -5597,7 +5597,8 @@ normal_calibration (Avision_Scanner* s)
 
   struct calibration_format calib_format;
 
-  int calib_data_size, calib_bytes_per_line;
+  size_t calib_data_size; 
+  int calib_bytes_per_line;
   uint8_t read_type;
   uint8_t *calib_tmp_data;
 
@@ -5619,9 +5620,9 @@ normal_calibration (Avision_Scanner* s)
   calib_bytes_per_line = calib_format.bytes_per_channel *
     calib_format.pixel_per_line * calib_format.channels;
 
-  calib_data_size = calib_format.lines * calib_bytes_per_line;
+  calib_data_size = (size_t) calib_format.lines * (size_t) calib_bytes_per_line;
 
-  calib_tmp_data = malloc ((size_t) calib_data_size);
+  calib_tmp_data = malloc (calib_data_size);
   if (!calib_tmp_data)
     return SANE_STATUS_NO_MEM;
 
@@ -5630,7 +5631,7 @@ normal_calibration (Avision_Scanner* s)
     {
       DBG (1, "normal_calibration: reading dark data\n");
       /* read dark calib data */
-      status = get_calib_data (s, 0x66, calib_tmp_data, (size_t) calib_data_size);
+      status = get_calib_data (s, 0x66, calib_tmp_data, calib_data_size);
 
       if (status != SANE_STATUS_GOOD) {
 	free (calib_tmp_data);
@@ -5662,7 +5663,7 @@ normal_calibration (Avision_Scanner* s)
   }
 
   /* do white calibration: read gray or color data */
-  status = get_calib_data (s, read_type, calib_tmp_data, (size_t) calib_data_size);
+  status = get_calib_data (s, read_type, calib_tmp_data, calib_data_size);
 
   if (status != SANE_STATUS_GOOD) {
     free (calib_tmp_data);
@@ -5677,7 +5678,7 @@ normal_calibration (Avision_Scanner* s)
 			calib_format.pixel_per_line,
 			calib_format.lines * calib_format.channels);
 
-      fwrite (calib_tmp_data, 1, (size_t) calib_data_size, f);
+      fwrite (calib_tmp_data, 1, calib_data_size, f);
       fclose (f);
     }
 
@@ -6138,16 +6139,16 @@ send_acceleration_table (Avision_Scanner* s)
 	int add_count;
 
 	/* count total steps in table */
-	int table_total = 0;
+	uint32_t table_total = 0;
 	for (i = 0; i < accel_info.total_steps; i++)
 	  table_total += table_data [i];
 
 	i = 0;
-	if ((((uint32_t) table_total * accel_info.table_units) % accel_info.base_units) == 0)
+	if (((table_total * accel_info.table_units) % accel_info.base_units) == 0)
 	  add_count = 0;
 	else
 	  add_count = (int) ((accel_info.base_units -
-                      (((uint32_t) table_total*accel_info.table_units) % accel_info.base_units))
+                      ((table_total*accel_info.table_units) % accel_info.base_units))
 	    / accel_info.table_units);
 
 	/* add_count should not be bigger than 255 */
@@ -6202,8 +6203,8 @@ set_window (Avision_Scanner* s)
   Avision_Device* dev = s->hw;
   SANE_Status status;
   int base_dpi_abs, base_dpi_rel;
-  int transferlen;
-  int paralen;
+  size_t transferlen;
+  size_t paralen;
 
   int bytes_per_line;
   int line_count;
@@ -6241,29 +6242,29 @@ set_window (Avision_Scanner* s)
   /* optional parameter length to use */
   paralen = sizeof (cmd.window.avision) - sizeof (cmd.window.avision.type);
 
-  DBG (2, "set_window: base paralen: %d\n", paralen);
+  DBG (2, "set_window: base paralen: %zu\n", paralen);
 
   if (dev->hw->feature_type & AV_FUJITSU)
-    paralen += (int) sizeof (cmd.window.avision.type.fujitsu);
+    paralen += sizeof (cmd.window.avision.type.fujitsu);
   else if (!dev->inquiry_new_protocol)
-    paralen += (int) sizeof (cmd.window.avision.type.old);
+    paralen += sizeof (cmd.window.avision.type.old);
   else if (dev->hw->feature_type & AV_MULTI_SHEET_SCAN)
-    paralen += (int) sizeof (cmd.window.avision.type.normal);
+    paralen += sizeof (cmd.window.avision.type.normal);
   else
-    paralen += (int) sizeof (cmd.window.avision.type.normal) - 1;
+    paralen += sizeof (cmd.window.avision.type.normal) - 1;
 
-  DBG (2, "set_window: final paralen: %d\n", paralen);
+  DBG (2, "set_window: final paralen: %zu\n", paralen);
 
   transferlen = sizeof (cmd.window)
-    - sizeof (cmd.window.avision) + (size_t) paralen;
+    - sizeof (cmd.window.avision) + paralen;
 
-  DBG (2, "set_window: transferlen: %d\n", transferlen);
+  DBG (2, "set_window: transferlen: %zu\n", transferlen);
 
   /* command setup */
   cmd.cmd.opc = AVISION_SCSI_SET_WINDOW;
   set_triple (cmd.cmd.transferlen, transferlen);
   set_double (cmd.window.header.desclen,
-	      sizeof (cmd.window.descriptor) + (size_t) paralen);
+	      sizeof (cmd.window.descriptor) + paralen);
 
   /* resolution parameters */
   set_double (cmd.window.descriptor.xres, s->avdimen.hw_xres);
@@ -6459,9 +6460,9 @@ set_window (Avision_Scanner* s)
 
   debug_print_window_descriptor (5, "set_window", &(cmd.window));
 
-  DBG (3, "set_window: sending command. Bytes: %d\n", transferlen);
+  DBG (3, "set_window: sending command. Bytes: %zu\n", transferlen);
   status = avision_cmd (&s->av_con, &cmd, sizeof (cmd.cmd),
-			&(cmd.window), (size_t) transferlen, 0, 0);
+			&(cmd.window), transferlen, 0, 0);
 
   return status;
 }
@@ -7843,16 +7844,16 @@ reader_process (void *data)
 	  else if (dev->inquiry_needs_line_pack) /* line-pack */
 	    {
 	      /* TODO: add 16bit per sample code? */
-	      int i = 0, l, p;
-	      const int lines = (int) useful_bytes / s->avdimen.hw_bytes_per_line;
+	      unsigned int i = 0, l, p;
+	      const unsigned int lines = useful_bytes / (unsigned int) s->avdimen.hw_bytes_per_line;
 
 	      for (l = 0; l < lines; ++l)
 		{
-		  uint8_t* r_ptr = stripe_data + (s->avdimen.hw_bytes_per_line * l);
+		  uint8_t* r_ptr = stripe_data + ((unsigned int) s->avdimen.hw_bytes_per_line * l);
 		  uint8_t* g_ptr = r_ptr + s->avdimen.hw_pixels_per_line;
 		  uint8_t* b_ptr = g_ptr + s->avdimen.hw_pixels_per_line;
 
-		  for (p = 0; p < s->avdimen.hw_pixels_per_line; ++p) {
+		  for (p = 0; p < (unsigned int) s->avdimen.hw_pixels_per_line; ++p) {
 		    out_data [i++] = *(r_ptr++);
 		    out_data [i++] = *(g_ptr++);
 		    out_data [i++] = *(b_ptr++);
@@ -7876,12 +7877,12 @@ reader_process (void *data)
 	    /* Mirroring with bgr -> rgb conversion: Just mirror the
 	     * whole line */
 
-	    int l;
-	    int lines = (int) useful_bytes / s->avdimen.hw_bytes_per_line;
+	    unsigned int l;
+	    unsigned int lines = useful_bytes / (unsigned int) s->avdimen.hw_bytes_per_line;
 
 	    for (l = 0; l < lines; ++l)
 	      {
-		uint8_t* begin_ptr = out_data + (l * s->avdimen.hw_bytes_per_line);
+		uint8_t* begin_ptr = out_data + (l * (unsigned int) s->avdimen.hw_bytes_per_line);
 		uint8_t* end_ptr = begin_ptr + s->avdimen.hw_bytes_per_line;
 
 		while (begin_ptr < end_ptr) {
@@ -7896,12 +7897,12 @@ reader_process (void *data)
 	  {
 	    /* Non-trivial Mirroring with element swapping */
 
-	    int l;
-	    int lines = (int) useful_bytes / s->avdimen.hw_bytes_per_line;
+	    unsigned int l;
+	    unsigned int lines = useful_bytes / (unsigned int) s->avdimen.hw_bytes_per_line;
 
 	    for (l = 0; l < lines; ++l)
 	      {
-		uint8_t* begin_ptr = out_data + (l * s->avdimen.hw_bytes_per_line);
+		uint8_t* begin_ptr = out_data + (l * (unsigned int) s->avdimen.hw_bytes_per_line);
 		uint8_t* end_ptr = begin_ptr + s->avdimen.hw_bytes_per_line - 3;
 
 		while (begin_ptr < end_ptr) {
@@ -7934,8 +7935,8 @@ reader_process (void *data)
           s->c_mode == AV_TRUECOLOR12 ||
           s->c_mode == AV_TRUECOLOR16) {
 
-	int l;
-	int lines = (int) useful_bytes / s->avdimen.hw_bytes_per_line;
+	unsigned int l;
+	unsigned int lines = useful_bytes / (unsigned int) s->avdimen.hw_bytes_per_line;
 
 	uint8_t* dark_avg_data = s->dark_avg_data;
 	uint8_t* white_avg_data = s->white_avg_data;
@@ -8519,7 +8520,7 @@ SANE_Status
 sane_get_devices (const SANE_Device*** device_list, SANE_Bool local_only)
 {
   Avision_Device* dev;
-  int i;
+  unsigned int i;
 
   (void) local_only; /* silence gcc */
 
@@ -8530,7 +8531,7 @@ sane_get_devices (const SANE_Device*** device_list, SANE_Bool local_only)
   if (devlist)
     free (devlist);
 
-  devlist = malloc (((size_t) num_devices + 1) * sizeof (devlist[0]));
+  devlist = malloc ((num_devices + 1) * sizeof (devlist[0]));
   if (!devlist)
     return SANE_STATUS_NO_MEM;
 
