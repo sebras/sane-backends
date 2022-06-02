@@ -5597,7 +5597,7 @@ normal_calibration (Avision_Scanner* s)
 
   struct calibration_format calib_format;
 
-  size_t calib_data_size; 
+  size_t calib_data_size;
   int calib_bytes_per_line;
   uint8_t read_type;
   uint8_t *calib_tmp_data;
