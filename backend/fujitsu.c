@@ -15,7 +15,7 @@
    Automatic length detection support funded by:
      Martin G. Miller, mgmiller at optonline.net
    Software image enhancement routines and recent scanner support funded by:
-     Fujitsu Computer Products of America, Inc. www.fcpa.com
+     PFU America, Inc., fujitsuscanners.com
 
    --------------------------------------------------------------------------
 
@@ -611,6 +611,8 @@
          - fix JPEG duplex memory corruption
          - change window_gamma init (fixes bright/contrast for iX1500)
          - only call send_lut after set_window (remove late_lut)
+      v138 2022-06-01, MAN
+         - minor updates to company name (FCPA -> PFU)
 
    SANE FLOW DIAGRAM
 
@@ -660,7 +662,7 @@
 #include "fujitsu.h"
 
 #define DEBUG 1
-#define BUILD 137
+#define BUILD 138
 
 /* values for SANE_DEBUG_FUJITSU env var:
  - errors           5

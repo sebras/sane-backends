@@ -11,16 +11,16 @@
 
 
 :backend "fujitsu"               ; name of backend
-:url "http://www.thebility.com/fujitsu/"
-:version "137"                   ; version of backend
+:version "138"                   ; version of backend
 :manpage "sane-fujitsu"          ; name of manpage (if it exists)
-:comment "Backend updated for SANE release 1.0.32, see sane-fujitsu manpage"
+:comment "Backend updated for SANE release 1.1.2, see sane-fujitsu manpage"
 :devicetype :scanner             ; start of a list of devices....
                                  ; other types:  :stillcam, :vidcam,
                                  ;               :meta, :api
 
 :mfg "Fujitsu"                   ; name a manufacturer
 :url "http://www.fujitsu.com/"
+:url "https://fujitsuscanners.com/"
 
 ;==================================================
 ; DISCONTINUED OLDER MODELS, SMALL
@@ -684,3 +684,10 @@
 :interface "USB"
 :status :good
 :usbid "0x04c5" "0x140a"
+
+:model "fi-7300NX"
+:interface "USB"
+:status :good
+:usbid "0x04c5" "0x1575"
+:comment "small, current, Ethernet and WiFi not supported."
+

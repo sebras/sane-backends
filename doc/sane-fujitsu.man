@@ -252,8 +252,8 @@ Automatic length detection support funded by:
 .I  mgmiller at optonline.net
 
 Hardware donated, software image enhancement and fi-6/7xxx support funded by:
-  Fujitsu Computer Products of America, Inc.
-.I  www.fcpa.com
+  PFU America, Inc.
+.I  fujitsuscanners.com
 
 iX500 support funded by:
   Prefix Computer Services
