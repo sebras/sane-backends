@@ -1462,7 +1462,7 @@ reader_process (Test_Device * test_device, SANE_Int fd)
 	    write_count = (size_t) bytes_total - (size_t) byte_count;
 
 	  if (test_device->val[opt_read_delay].w == SANE_TRUE)
-	    usleep ((__useconds_t) test_device->val[opt_read_delay_duration].w);
+	    usleep ((useconds_t) test_device->val[opt_read_delay_duration].w);
 	}
       bytes_written = write (fd, buffer, write_count);
       if (bytes_written < 0)
