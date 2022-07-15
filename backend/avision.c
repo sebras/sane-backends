@@ -159,6 +159,15 @@
 
 static Avision_HWEntry Avision_Device_List [] =
   {
+    { NULL, NULL,
+      0x0638, 0x2E59,
+      "Avision", "AD345F",
+      AV_INT_BUTTON | AV_CANCEL_BUTTON | AV_USE_GRAY_FILTER,
+      { 0, {0, 0}, {{0, 0}, {0, 0}} }
+    },
+    /* comment="duplex! sheetfed + flatbed scanner" */
+    /* status="basic" */
+
     { "AVISION", "AV100CS",
       0, 0,
       "Avision", "AV100CS",
