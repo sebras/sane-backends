@@ -11,8 +11,6 @@ bin_PROGRAMS = sane-find-scanner gamma4scanimage
 noinst_PROGRAMS = sane-desc
 if INSTALL_UMAX_PP_TOOLS
 bin_PROGRAMS += umax_pp
-else
-noinst_PROGRAMS += umax_pp
 endif
 
 if CROSS_COMPILING
