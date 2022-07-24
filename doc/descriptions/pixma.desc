@@ -1148,8 +1148,8 @@
 :model "PIXMA TS6400 Series"
 :interface "USB"
 :usbid "0x04a9" "0x18d3"
-:status :untested
-:comment "Testers needed!"
+:status :good
+:comment "All resolutions supported (up to 1200DPI). WiFi not tested by Pixma as yet."
 
 :model "PIXMA TS7330 Series"
 :interface "USB WiFi"
