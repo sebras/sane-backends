@@ -1013,6 +1013,18 @@
 :status :untested
 :comment "Testers needed!"
 
+:model "PIXMA TS2400 Series"
+:interface "USB WiFi"
+:usbid "0x04a9" "0x1108"
+:status :good
+:comment "All resolutions supported (up to 600DPI). WiFi not working."
+
+:model "PIXMA TS2600 Series"
+:interface "USB WiFi"
+:usbid "0x04a9" "0x1107"
+:status :good
+:comment "All resolutions supported (up to 600DPI). WiFi not working."
+
 :model "PIXMA TS3100 Series"
 :interface "USB WiFi"
 :usbid "0x04a9" "0x1827"
