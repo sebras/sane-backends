@@ -353,3 +353,8 @@
 :interface  "USB"
 :usbid      "0x04b8" "0x119b"
 :status     :complete
+
+:model      "XP-2200 Series"
+:interface  "USB"
+:usbid      "0x04b8" "0x11b1"
+:status     :complete
