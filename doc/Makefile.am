@@ -200,6 +200,7 @@ DESC_EXT_FILES = descriptions-external/brother2.desc \
   descriptions-external/hpaio.desc \
   descriptions-external/hpoj.desc \
   descriptions-external/kodak-twain.desc \
+  descriptions-external/kyocera.desc \
   descriptions-external/lhii.desc \
   descriptions-external/mustek_a3p1.desc \
   descriptions-external/panamfs.desc \
