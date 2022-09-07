@@ -690,4 +690,3 @@
 :status :good
 :usbid "0x04c5" "0x1575"
 :comment "small, current, Ethernet and WiFi not supported."
-
