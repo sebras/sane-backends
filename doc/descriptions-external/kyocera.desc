@@ -14,7 +14,7 @@
 ;:version ""                   ; version of backend (or "unmaintained")
 ;:manpage "sane-template"          ; name of manpage (if it exists)
 :url "https://www.kyoceradocumentsolutions.de/de/support/downloads.html" ; backend's web page
-:comment "External backend made by Kyocera. As this software contains non-free parts, it can't be included into SANE. If you can't find your model here, please have a look at the brother website which contains the latest list."
+:comment "External backend made by Kyocera. As this software contains non-free parts, it can't be included into SANE. If you can't find your model here, please have a look at the Kyocera website which contains the latest list."
                                   ; comment about the backend
 
 :devicetype :scanner              ; start of a list of devices....
