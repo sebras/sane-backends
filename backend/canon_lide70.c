@@ -819,8 +819,8 @@ sane_control_option (SANE_Handle handle, SANE_Int option, SANE_Action action,
 		 "sane_control_option: get option %d (%s), value=%.1f %s\n",
 		 option, chndl->opt[option].name,
 		 SANE_UNFIX (*(SANE_Fixed *) value),
-		 chndl->opt[option].unit ==
-		 SANE_UNIT_MM ? "mm" : SANE_UNIT_DPI ? "dpi" : "");
+		 chndl->opt[option].unit == SANE_UNIT_MM ? "mm" :
+                 (chndl->opt[option].unit == SANE_UNIT_DPI ? "dpi" : ""));
 	    break;
 	  }
 	case opt_non_blocking:
@@ -863,7 +863,7 @@ sane_get_parameters (SANE_Handle handle, SANE_Parameters * params)
   Canon_Scanner *hndl = handle;	/* Eliminate compiler warning */
   CANON_Handle *chndl = &hndl->scan;
 
-  int rc = SANE_STATUS_GOOD;
+  SANE_Status rc = SANE_STATUS_GOOD;
   int w = SANE_UNFIX (chndl->val[opt_br_x].w -
 		      chndl->val[opt_tl_x].w) / MM_IN_INCH *
     chndl->val[opt_resolution].w;
