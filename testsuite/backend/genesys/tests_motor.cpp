@@ -21,8 +21,8 @@
 #define DEBUG_DECLARE_ONLY
 
 #include "tests.h"
-#include "minigtest.h"
 #include "tests_printers.h"
+#include "minigtest.h"
 
 #include "../../../backend/genesys/low.h"
 #include "../../../backend/genesys/enums.h"
