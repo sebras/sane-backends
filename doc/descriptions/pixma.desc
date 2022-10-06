@@ -1757,6 +1757,12 @@
 :status :complete
 :comment "All resolutions supported (up to 600DPI). Identical with SmartBase MPC200 and PIXUS MP10."
 
+:model "imageRUNNER 1018/1022/1023"
+:interface "USB"
+:usbid "0x04a9" "0x269d"
+:status :complete
+:comment "Flatbed and ADF scan.  All resolutions supported (up to 600DPI)"
+
 :model "imageRUNNER 1020/1024/1025"
 :interface "USB"
 :usbid "0x04a9" "0x26e6"

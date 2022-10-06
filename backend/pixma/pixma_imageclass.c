@@ -77,6 +77,7 @@
 #define D420_PID   0x26ef
 #define MF3200_PID 0x2684
 #define MF6500_PID 0x2686
+#define IR1018_PID 0x269d
 /* generation 2 scanners (>=0x2707) */
 #define MF8300_PID 0x2708
 #define MF4500_PID 0x2736
@@ -241,6 +242,7 @@ activate (pixma_t * s, uint8_t x)
     case MF4360_PID:
     case MF4100_PID:
     case MF8300_PID:
+    case IR1018_PID:
       return iclass_exec (s, &mf->cb, 1);
       break;
     default:
@@ -273,6 +275,7 @@ select_source (pixma_t * s)
     case MF4360_PID:
     case MF4100_PID:
     case MF8300_PID:
+    case IR1018_PID:
       return iclass_exec (s, &mf->cb, 0);
       break;
     default:
@@ -308,6 +311,7 @@ send_scan_param (pixma_t * s)
     case MF4360_PID:
     case MF4100_PID:
     case MF8300_PID:
+    case IR1018_PID:
       return iclass_exec (s, &mf->cb, 0);
       break;
     default:
@@ -334,7 +338,8 @@ request_image_block (pixma_t * s, unsigned flag, uint8_t * info,
   expected_len = (mf->generation >= 2 ||
                   s->cfg->pid == MF4600_PID ||
                   s->cfg->pid == MF6500_PID ||
-                  s->cfg->pid == MF8030_PID) ? 512 : hlen;
+                  s->cfg->pid == MF8030_PID ||
+                  s->cfg->pid == IR1018_PID) ? 512 : hlen;
   mf->cb.reslen = pixma_cmd_transaction (s, mf->cb.buf, 11, mf->cb.buf, expected_len);
   if (mf->cb.reslen >= hlen)
     {
@@ -345,7 +350,8 @@ request_image_block (pixma_t * s, unsigned flag, uint8_t * info,
       if (mf->generation >= 2 ||
           s->cfg->pid == MF4600_PID ||
           s->cfg->pid == MF6500_PID ||
-          s->cfg->pid == MF8030_PID)
+          s->cfg->pid == MF8030_PID ||
+          s->cfg->pid == IR1018_PID)
         {                                         /* 32bit size */
           *datalen = mf->cb.reslen - hlen;
           *size = (*datalen + hlen == 512) ? pixma_get_be32 (mf->cb.buf + 4) - *datalen : *size;
@@ -370,7 +376,8 @@ read_image_block (pixma_t * s, uint8_t * data, unsigned size)
   maxchunksize = MAX_CHUNK_SIZE * ((mf->generation >= 2 ||
                                     s->cfg->pid == MF4600_PID ||
                                     s->cfg->pid == MF6500_PID ||
-                                    s->cfg->pid == MF8030_PID) ? 4 : 1);
+                                    s->cfg->pid == MF8030_PID ||
+                                    s->cfg->pid == IR1018_PID) ? 4 : 1);
   while (size)
     {
       if (size >= maxchunksize)
@@ -408,6 +415,7 @@ read_error_info (pixma_t * s, void *buf, unsigned size)
     case MF4360_PID:
     case MF4100_PID:
     case MF8300_PID:
+    case IR1018_PID:
       error = iclass_exec (s, &mf->cb, 0);
       break;
     default:
@@ -788,7 +796,8 @@ iclass_fill_buffer (pixma_t * s, pixma_imagebuf_t * ib)
                   mf->generation == 1 &&
 	          s->cfg->pid != MF4600_PID &&
 	          s->cfg->pid != MF6500_PID &&
-	          s->cfg->pid != MF8030_PID)
+	          s->cfg->pid != MF8030_PID &&
+	          s->cfg->pid != IR1018_PID)
             {
               /* color and not MF46xx or MF65xx */
               pack_rgb (mf->blkptr, n, mf->raw_width, mf->lineptr);
@@ -946,6 +955,7 @@ const pixma_config_t pixma_iclass_devices[] = {
   DEV ("Canon i-SENSYS MF8200C Series", "MF8200C", MF8200_PID, 600, 300, 640, 1050, PIXMA_CAP_ADF),
   DEV ("Canon i-SENSYS MF8300 Series", "MF8300", MF8300_PID, 600, 0, 640, 1050, PIXMA_CAP_ADF),
   DEV ("Canon imageCLASS D530", "D530", D530_PID, 600, 0, 640, 877, 0),
+  DEV ("Canon imageRUNNER 1018/1022/1023", "iR1018/1022/1023", IR1018_PID, 600, 0, 640, 877, PIXMA_CAP_ADFDUP),
   /* FIXME: the following capabilities all need updating/verifying */
   DEV ("Canon imageCLASS MF8170c", "MF8170c", MF8100_PID, 600, 0, 640, 877, PIXMA_CAP_ADF),
   DEV ("Canon imageClass MF8030", "MF8030", MF8030_PID, 600, 0, 640, 877, PIXMA_CAP_ADF),
