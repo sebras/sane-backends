@@ -625,10 +625,22 @@
 :usbid "0x04c5" "0x15fd"
 :comment "Ethernet not supported."
 
+:model "fi-8290"
+:interface "USB"
+:status :good
+:usbid "0x04c5" "0x15fe"
+:comment "Ethernet not supported."
+
 :model "fi-8170"
 :interface "USB"
 :status :good
 :usbid "0x04c5" "0x15ff"
+:comment "Ethernet not supported."
+
+:model "fi-8270"
+:interface "USB"
+:status :good
+:usbid "0x04c5" "0x1600"
 :comment "Ethernet not supported."
 
 :model "fi-8150"
@@ -636,3 +648,19 @@
 :status :good
 :usbid "0x04c5" "0x1601"
 :comment "Ethernet not supported."
+
+:model "fi-8250"
+:interface "USB"
+:status :good
+:usbid "0x04c5" "0x1602"
+:comment "Ethernet not supported."
+
+:model "fi-8150U"
+:interface "USB"
+:status :good
+:usbid "0x04c5" "0x162d"
+
+:model "fi-8250U"
+:interface "USB"
+:status :good
+:usbid "0x04c5" "0x162e"
