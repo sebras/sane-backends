@@ -325,7 +325,6 @@ struct fujitsu
   int jpeg_interlace;   /* different models interlace jpeg sides differently */
   int cropping_mode;    /* lower-end scanners don't crop from paper size      */
   int ghs_in_rs;
-  int window_gamma;
   int endorser_string_len;
   int has_pixelsize;
   int has_short_pixelsize; /* m3091/2 put weird stuff at end, ignore it */
@@ -520,6 +519,7 @@ struct fujitsu
   /* the user never directly modifies these */
 
   int s_mode; /*color,lineart,etc: sent to scanner*/
+  int window_gamma; /* depends on brightness/contrast and lut */
 
   /* this is defined in sane spec as a struct containing:
 	SANE_Frame format;

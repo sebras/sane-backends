@@ -6,7 +6,7 @@
    Copyright (C) 2000 Randolph Bentson
    Copyright (C) 2001 Frederik Ramm
    Copyright (C) 2001-2004 Oliver Schirrmeister
-   Copyright (C) 2003-2021 m. allan noah
+   Copyright (C) 2003-2022 m. allan noah
 
    JPEG output and low memory usage support funded by:
      Archivista GmbH, www.archivista.ch
@@ -613,6 +613,9 @@
          - only call send_lut after set_window (remove late_lut)
       v138 2022-06-01, MAN
          - minor updates to company name (FCPA -> PFU)
+      v139 2022-11-15, MAN
+         - move updated window_gamma logic to set_window
+         - use internal gamma table if possible (fixes #618)
 
    SANE FLOW DIAGRAM
 
@@ -662,7 +665,7 @@
 #include "fujitsu.h"
 
 #define DEBUG 1
-#define BUILD 138
+#define BUILD 139
 
 /* values for SANE_DEBUG_FUJITSU env var:
  - errors           5
@@ -2109,12 +2112,6 @@ init_model (struct fujitsu *s)
   s->ppl_mod_by_mode[MODE_GRAYSCALE] = 1;
   s->ppl_mod_by_mode[MODE_COLOR] = 1;
 
-  /* we prefer to use the downloaded (LUT) gamma table (0x80) if possible.
-   * but if scanner has only built-in gamma tables, we use the first one (0) */
-  if (s->num_download_gamma){
-    s->window_gamma = 0x80;
-  }
-
   /* endorser type tells string length (among other things) */
   if(s->has_endorser_b){
     /*old-style is 40 bytes*/
@@ -2208,7 +2205,10 @@ init_model (struct fujitsu *s)
     s->color_interlace = COLOR_INTERLACE_3091;
     s->duplex_interlace = DUPLEX_INTERLACE_3091;
     s->ghs_in_rs = 1;
-    s->window_gamma = 0;
+
+    /* might be inaccurate */
+    s->num_internal_gamma = 1;
+    s->num_download_gamma = 0;
 
     s->reverse_by_mode[MODE_LINEART] = 1;
     s->reverse_by_mode[MODE_HALFTONE] = 1;
@@ -7057,12 +7057,11 @@ sane_start (SANE_Handle handle)
         goto errors;
       }
 
-      /* send lut if scanner has no hardware brightness/contrast,
-       * or we are going to ask it to use a downloaded gamma table */
-      if (!s->brightness_steps || !s->contrast_steps || s->window_gamma & 0x80){
+      /* send lut if set_window said we would */
+      if ( s->window_gamma ){
         ret = send_lut(s);
         if (ret != SANE_STATUS_GOOD)
-          DBG (5, "sane_start: WARNING: cannot late send_lut %d\n", ret);
+          DBG (5, "sane_start: WARNING: cannot send_lut %d\n", ret);
       }
 
       /* some scanners need the q table sent, even when not scanning jpeg */
@@ -7615,6 +7614,23 @@ set_window (struct fujitsu *s)
 
   /* the remainder of the block varies based on model and mode,
    * except for gamma and paper size, those are in the same place */
+
+  /* determine if we need to send gamma LUT.
+   * send lut if scanner supports it and any of:
+   * has no hardware brightness but user changed it
+   * has no hardware contrast but user changed it
+   * has no internal gamma table */
+  if ( s->num_download_gamma && (
+       (!s->brightness_steps && s->brightness != 0)
+    || (!s->contrast_steps && s->contrast != 0 )
+    || !s->num_internal_gamma
+  ) ){
+    s->window_gamma = 0x80;
+  }
+  /* otherwise, use the internal table */
+  else{
+    s->window_gamma = 0;
+  }
 
   /*vuid c0*/
   if(s->has_vuid_3091){
