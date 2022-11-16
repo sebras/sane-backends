@@ -3,7 +3,7 @@
    This file implements a SANE backend for the Fujitsu fi-60F, the
    ScanSnap S300/S1300, and (hopefully) other Epson-based scanners.
 
-   Copyright 2007-2015 by m. allan noah <kitno455 at gmail dot com>
+   Copyright 2007-2022 by m. allan noah <kitno455 at gmail dot com>
    Copyright 2009 by Richard Goedeken <richard at fascinationsoftware dot com>
 
    Development funded by Microdea, Inc., TrueCheck, Inc. and Archivista, GmbH
@@ -155,6 +155,8 @@
       v31 2017-04-09, MAN
          - hardware gray support for fi-60F/65F (disabled pending calibration)
          - merge fi-60F/65F settings
+      v32 2022-11-15, MAN
+         - fix hanging scan when using source = ADF Back (fixes #601)
 
    SANE FLOW DIAGRAM
 
@@ -203,7 +205,7 @@
 #include "epjitsu-cmd.h"
 
 #define DEBUG 1
-#define BUILD 31
+#define BUILD 32
 
 #ifndef MIN
   #define MIN(a,b) ((a) < (b) ? (a) : (b))
@@ -4087,12 +4089,12 @@ sane_read (SANE_Handle handle, SANE_Byte * buf, SANE_Int max_len, SANE_Int * len
 
         memcpy(buf, page->image->buffer + page->bytes_read, *len);
         page->bytes_read += *len;
+    }
 
-        /* sent it all, return eof on next read */
-        if(page->bytes_read == page->bytes_scanned && s->fullscan.done){
-            DBG (10, "sane_read: side done\n");
-            page->done = 1;
-        }
+    /* sent it all, return eof on next read */
+    if(page->bytes_read == page->bytes_scanned && s->fullscan.done){
+        DBG (10, "sane_read: side done\n");
+        page->done = 1;
     }
 
     DBG (10, "sane_read: finish si:%d len:%d max:%d\n",s->side,*len,max_len);

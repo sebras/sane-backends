@@ -1,4 +1,4 @@
-.TH sane\-epjitsu 5 "11 Apr 2017" "@PACKAGEVERSION@" "SANE Scanner Access Now Easy"
+.TH sane\-epjitsu 5 "15 Nov 2022" "@PACKAGEVERSION@" "SANE Scanner Access Now Easy"
 .IX sane\-epjitsu
 
 .SH NAME
@@ -25,22 +25,23 @@ frontend to set resolution, color mode, and choose the ADF setting. The
 .B sane\-epjitsu
 backend supports the following basic options for most scanners:
 .PP
-.BR source s
+.B source s
 .RS
 Selects the source for the scan. Options may include "Flatbed", "ADF Front", "ADF Back", "ADF Duplex".
 .RE
 .PP
-.BR mode m
+.B mode m
 .RS
 Selects the mode for the scan. Options may include "Lineart", "Gray", "Color".
 .RE
 .PP
-.BR resolution , y\-resolution
+.B resolution, y\-resolution
 .RS
 Controls scan resolution. Setting
 .B \-\-resolution
 also sets
-.B \-\-y\-resolution, though this behavior is overridden by some frontends.
+.B \-\-y\-resolution,
+though this behavior is overridden by some frontends.
 .RE
 .PP
 Other options will be available based on the capabilities of the scanner. Use
