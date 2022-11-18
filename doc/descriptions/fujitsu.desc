@@ -608,6 +608,11 @@
 :usbid "0x04c5" "0x162c"
 :comment "WiFi not supported."
 
+:model "ScanSnap iX1400"
+:interface "USB"
+:status :untested
+:usbid "0x04c5" "0x1630"
+
 :model "ScanSnap iX1600"
 :interface "USB WiFi"
 :status :good
