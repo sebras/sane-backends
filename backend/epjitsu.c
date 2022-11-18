@@ -157,6 +157,8 @@
          - merge fi-60F/65F settings
       v32 2022-11-15, MAN
          - fix hanging scan when using source = ADF Back (fixes #601)
+      v33 2022-11-17, MAN
+         - S1300i: fix color plane offset at 225 and 330 dpi (fixes #538)
 
    SANE FLOW DIAGRAM
 
@@ -205,7 +207,7 @@
 #include "epjitsu-cmd.h"
 
 #define DEBUG 1
-#define BUILD 32
+#define BUILD 33
 
 #ifndef MIN
   #define MIN(a,b) ((a) < (b) ? (a) : (b))
@@ -4162,6 +4164,7 @@ descramble_raw(struct scanner *s, struct transfer * tp)
         for (j = 0; j < height; j++){             /* row (y)*/
           int curr_col = 0;
           int r=0, g=0, b=0, ppc=0;
+          int g_offset=0, b_offset=0;
 
           for (k = 0; k <= tp->plane_width; k++){  /* column (x) */
             int this_col = k*tp->image->x_res/tp->x_res;
@@ -4186,14 +4189,20 @@ descramble_raw(struct scanner *s, struct transfer * tp)
               break;
             }
 
+            /* if we're using an S1300i with scan resolution 225 or 300, on AC power, the color planes are shifted */
+            if(s->model == MODEL_S1300i && !s->usb_power && (tp->x_res == 225 || tp->x_res == 300) && tp != &s->cal_image && k + 2 <= tp->plane_width){
+              g_offset = 3;
+              b_offset = 6;
+            }
+
             /*red is first*/
             r += tp->raw_data[j*tp->line_stride + k*3 + i];
 
             /*green is second*/
-            g += tp->raw_data[j*tp->line_stride + tp->plane_stride + k*3 + i];
+            g += tp->raw_data[j*tp->line_stride + tp->plane_stride + k*3 + i + g_offset];
 
             /*blue is third*/
-            b += tp->raw_data[j*tp->line_stride + 2*tp->plane_stride + k*3 + i];
+            b += tp->raw_data[j*tp->line_stride + 2*tp->plane_stride + k*3 + i + b_offset];
 
             ppc++;
           }

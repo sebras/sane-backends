@@ -10,7 +10,7 @@
 ;
 
 :backend "epjitsu"               ; name of backend
-:version "32"                    ; version of backend
+:version "33"                    ; version of backend
 :manpage "sane-epjitsu"          ; name of manpage (if it exists)
 :comment "Backend updated for SANE release 1.1.2, see sane-epjitsu manpage"
 :devicetype :scanner             ; start of a list of devices....
