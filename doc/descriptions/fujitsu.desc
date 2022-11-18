@@ -602,6 +602,12 @@
 :status :good
 :usbid "0x04c5" "0x160b"
 
+:model "ScanSnap iX1300"
+:interface "USB WiFi"
+:status :good
+:usbid "0x04c5" "0x162c"
+:comment "WiFi not supported."
+
 :model "ScanSnap iX1600"
 :interface "USB WiFi"
 :status :good
@@ -612,6 +618,7 @@
 :interface "USB"
 :status :good
 :usbid "0x04c5" "0x140a"
+:comment "Reported to work, but that is questionable because other SP scanners are unsupported."
 
 :model "fi-7300NX"
 :interface "USB"
