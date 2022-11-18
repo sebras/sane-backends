@@ -1001,6 +1001,13 @@ attach_one (const char *device_name, int connType)
     return ret;
   }
 
+  /* enable/read the lifecycle counters */
+  ret = init_counters (s);
+  if (ret != SANE_STATUS_GOOD) {
+    DBG (5, "attach_one: unable to detect lifecycle counters, continuing\n");
+    return ret;
+  }
+
   /* sets SANE option 'values' to good defaults */
   ret = init_user (s);
   if (ret != SANE_STATUS_GOOD) {
@@ -1925,6 +1932,29 @@ init_panel (struct scanner *s)
   }
 
   DBG (10, "init_panel: finish\n");
+
+  return ret;
+}
+
+/*
+ * This function enables the lifecycle counters if available
+ */
+static SANE_Status
+init_counters (struct scanner *s)
+{
+  SANE_Status ret = SANE_STATUS_GOOD;
+
+  DBG (10, "init_counters: start\n");
+
+  ret = read_counters(s);
+  if(ret){
+    DBG (5, "init_counters: disabling lifecycle counters\n");
+    s->can_read_lifecycle_counters = 0;
+    return ret;
+  }
+
+  s->can_read_lifecycle_counters = 1;
+  DBG (10, "init_counters: finish\n");
 
   return ret;
 }
@@ -2859,6 +2889,34 @@ sane_get_option_descriptor (SANE_Handle handle, SANE_Int option)
       opt->cap = SANE_CAP_INACTIVE;
   }
 
+  if(option==OPT_ROLLERCOUNTER){
+    opt->name = "roller-counter";
+    opt->title = "Roller Counter";
+    opt->desc = "Scans since last roller replacement";
+    opt->type = SANE_TYPE_INT;
+    opt->unit = SANE_UNIT_NONE;
+    opt->constraint_type = SANE_CONSTRAINT_NONE;
+
+    if (s->can_read_lifecycle_counters)
+      opt->cap = SANE_CAP_SOFT_DETECT | SANE_CAP_HARD_SELECT | SANE_CAP_ADVANCED;
+    else
+      opt->cap = SANE_CAP_INACTIVE;
+  }
+
+  if(option==OPT_TOTALCOUNTER){
+    opt->name = "total-counter";
+    opt->title = "Total Counter";
+    opt->desc = "Total scan count of the device";
+    opt->type = SANE_TYPE_INT;
+    opt->unit = SANE_UNIT_NONE;
+    opt->constraint_type = SANE_CONSTRAINT_NONE;
+
+    if (s->can_read_lifecycle_counters)
+      opt->cap = SANE_CAP_SOFT_DETECT | SANE_CAP_HARD_SELECT | SANE_CAP_ADVANCED;
+    else
+      opt->cap = SANE_CAP_INACTIVE;
+  }
+
   if(option==OPT_ADF_LOADED){
     opt->name = "adf-loaded";
     opt->title = "ADF Loaded";
@@ -3171,6 +3229,16 @@ sane_control_option (SANE_Handle handle, SANE_Int option,
         case OPT_COUNTER:
           ret = read_panel(s,OPT_COUNTER);
           *val_p = s->panel_counter;
+          return ret;
+
+        case OPT_ROLLERCOUNTER:
+          ret = read_counters(s);
+          *val_p = s->roller_counter;
+          return ret;
+
+        case OPT_TOTALCOUNTER:
+          ret = read_counters(s);
+          *val_p = s->total_counter;
           return ret;
 
         case OPT_ADF_LOADED:
@@ -3921,6 +3989,45 @@ ssm_do (struct scanner *s)
   }
 
   DBG (10, "ssm_do: finish\n");
+
+  return ret;
+}
+
+static SANE_Status
+read_counters(struct scanner *s)
+{
+  SANE_Status ret = SANE_STATUS_GOOD;
+
+  unsigned char cmd[READ_len];
+  size_t cmdLen = READ_len;
+
+  unsigned char in[R_COUNTERS_len];
+  size_t inLen = R_COUNTERS_len;
+
+  DBG(10, "read_counters: start\n");
+
+  memset(cmd,0,cmdLen);
+  set_SCSI_opcode(cmd, READ_code);
+  set_R_datatype_code(cmd, SR_datatype_counters);
+  set_R_xfer_length(cmd, inLen);
+
+  ret = do_cmd(
+    s, 1, 0,
+    cmd, cmdLen,
+    NULL, 0,
+    in, &inLen
+  );
+
+  if (ret == SANE_STATUS_GOOD || ret == SANE_STATUS_EOF){
+
+    s->total_counter = get_R_COUNTERS_total(in);
+    s->roller_counter = s->total_counter - get_R_COUNTERS_last_srv(in);
+
+    DBG(10, "read_counters: total counter: %d roller_counter %d \n",s->total_counter,s->roller_counter);
+    ret = SANE_STATUS_GOOD;
+  }else{
+    DBG(10, "read_counters: ERROR: %d\n",ret);
+  }
 
   return ret;
 }

@@ -60,6 +60,8 @@ enum scanner_Option
   OPT_COUNTONLY,
   OPT_BYPASSMODE,
   OPT_COUNTER,
+  OPT_ROLLERCOUNTER,
+  OPT_TOTALCOUNTER,
   OPT_ADF_LOADED,
   OPT_CARD_LOADED,
 
@@ -207,6 +209,7 @@ struct scanner
   int can_read_sensors;
   int can_read_panel;
   int can_write_panel;
+  int can_read_lifecycle_counters;
   int rgb_format;       /* meaning unknown */
   int padding;          /* meaning unknown */
 
@@ -379,6 +382,8 @@ struct scanner
   int panel_counter;
   int sensor_adf_loaded;
   int sensor_card_loaded;
+  int roller_counter;
+  int total_counter;
 
   /* values which are used to track the frontend's access to sensors  */
   char panel_read[OPT_COUNTER - OPT_START + 1];
@@ -542,6 +547,7 @@ static SANE_Status init_inquire (struct scanner *s);
 static SANE_Status init_vpd (struct scanner *s);
 static SANE_Status init_model (struct scanner *s);
 static SANE_Status init_panel (struct scanner *s);
+static SANE_Status init_counters (struct scanner *s);
 static SANE_Status init_user (struct scanner *s);
 static SANE_Status init_options (struct scanner *s);
 
@@ -589,6 +595,7 @@ static SANE_Status update_params (struct scanner *s, int calib);
 static SANE_Status update_i_params (struct scanner *s);
 static SANE_Status clean_params (struct scanner *s);
 
+static SANE_Status read_counters(struct scanner *s);
 static SANE_Status read_sensors(struct scanner *s, SANE_Int option);
 static SANE_Status read_panel(struct scanner *s, SANE_Int option);
 static SANE_Status send_panel(struct scanner *s);
