@@ -3,7 +3,7 @@
    This file is part of the SANE package, and implements a SANE backend
    for various Canon DR-series scanners.
 
-   Copyright (C) 2008-2021 m. allan noah
+   Copyright (C) 2008-2022 m. allan noah
 
    Yabarana Corp. www.yabarana.com provided significant funding
    EvriChart, Inc. www.evrichart.com provided funding and loaned equipment
@@ -355,6 +355,8 @@
          - rewrite do_cmd() timeout handling
          - remove long timeout TUR from v61 (did not help)
          - allow config file to set initial tur timeout for DR-X10C (#142)
+      v63 2022-11-18, CQ, MAN
+         - add support for reading the total and roller counters
 
    SANE FLOW DIAGRAM
 
@@ -406,7 +408,7 @@
 #include "canon_dr.h"
 
 #define DEBUG 1
-#define BUILD 62
+#define BUILD 63
 
 /* values for SANE_DEBUG_CANON_DR env var:
  - errors           5
@@ -1396,8 +1398,9 @@ init_model (struct scanner *s)
   s->max_x_fb = s->max_x;
   s->max_y_fb = s->max_y;
 
-  /* missing from vpd- we will unset this for b&w machines below */
+  /* missing from vpd- we will unset these for some machines below */
   s->can_color = 1;
+  s->can_read_lifecycle_counters = 1;
 
   /* specific settings missing from vpd */
   if (strstr (s->model_name,"DR-9080")){
@@ -1937,7 +1940,7 @@ init_panel (struct scanner *s)
 }
 
 /*
- * This function enables the lifecycle counters if available
+ * This function disables the lifecycle counters if not available
  */
 static SANE_Status
 init_counters (struct scanner *s)
@@ -1953,7 +1956,6 @@ init_counters (struct scanner *s)
     return ret;
   }
 
-  s->can_read_lifecycle_counters = 1;
   DBG (10, "init_counters: finish\n");
 
   return ret;
@@ -4003,6 +4005,11 @@ read_counters(struct scanner *s)
 
   unsigned char in[R_COUNTERS_len];
   size_t inLen = R_COUNTERS_len;
+
+  if (!s->can_read_lifecycle_counters){
+    DBG(10, "read_counters: unsupported\n");
+    return ret;
+  }
 
   DBG(10, "read_counters: start\n");
 
