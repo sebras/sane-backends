@@ -226,8 +226,20 @@
 :status :untested
 :comment "Testers needed!"
 
+:model "PIXMA GX3000 Series"
+:interface "USB"
+:usbid "0x04a9" "0x18f1"
+:status :untested
+:comment "Testers needed!"
+
+:model "PIXMA GX4000"
+:interface "USB"
+:usbid "0x04a9" "0x18f2"
+:status :untested
+:comment "Testers needed!"
+
 :model "PIXMA GX6000 Series"
-:interface "USB Ethernet WiFi"
+:interface "USB"
 :usbid "0x04a9" "0x18a6"
 :status :untested
 :comment "Testers needed!"
@@ -1265,6 +1277,12 @@
 :status :untested
 :comment "Testers needed!"
 
+:model "PIXMA TS8630 Series"
+:interface "USB"
+:usbid "0x04a9" "0x18f8"
+:status :untested
+:comment "Testers needed!"
+
 :model "PIXMA TS9000 Series"
 :interface "USB WiFi"
 :usbid "0x04a9" "0x179f"
@@ -1334,6 +1352,12 @@
 :model "PIXUS XK100 Series"
 :interface "USB WiFi"
 :usbid "0x04a9" "0x18e2"
+:status :untested
+:comment "Testers needed!"
+
+:model "PIXUS XK110 Series"
+:interface "USB WiFi"
+:usbid "0x04a9" "0x18f9"
 :status :untested
 :comment "Testers needed!"
 

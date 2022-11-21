@@ -336,6 +336,10 @@
 #define TS2400_PID 0x1108
 #define TS2600_PID 0x1107
 
+#define TS8630_PID 0x18F8
+#define XK110_PID 0x18F9
+#define GX3000_PID 0x18F1
+#define GX4000_PID 0x18F2
 
 /* Generation 4 XML messages that encapsulates the Pixma protocol messages */
 #define XML_START_1   \
@@ -1965,6 +1969,10 @@ const pixma_config_t pixma_mp150_devices[] = {
   DEVICE ("Canon PIXMA TS5400 Series", "TS5400", TS5400_PID, 0, 1200, 0, 0, 638, 877, PIXMA_CAP_CIS),
   DEVICE ("Canon PIXMA TS2400 Series", "TS2400", TS2400_PID, 0, 600, 0, 0, 638, 877, PIXMA_CAP_CIS),
   DEVICE ("Canon PIXMA TS2600 Series", "TS2600", TS2600_PID, 0, 600, 0, 0, 638, 877, PIXMA_CAP_CIS),
+  DEVICE ("Canon PIXMA TS8630 Series", "TS8630", TS8630_PID, 0, 1200, 0, 0, 638, 877, PIXMA_CAP_CIS),
+  DEVICE ("Canon PIXUS XK110 Series", "XK110", XK110_PID, 0, 1200, 0, 0, 638, 877, PIXMA_CAP_CIS),
+  DEVICE ("Canon PIXMA GX3000 Series", "GX3000", GX3000_PID, 0, 1200, 0, 0, 638, 877, PIXMA_CAP_CIS | PIXMA_CAP_ADF),
+  DEVICE ("Canon PIXMA GX4000 Series", "GX4000", GX4000_PID, 0, 1200, 0, 0, 638, 877, PIXMA_CAP_CIS | PIXMA_CAP_ADF),
 
   END_OF_DEVICE_LIST
 };
