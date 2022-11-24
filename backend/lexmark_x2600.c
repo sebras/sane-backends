@@ -66,17 +66,17 @@ sane_get_select_fd (SANE_Handle __sane_unused__ h, SANE_Int __sane_unused__ *fdp
 void
 sane_cancel (SANE_Handle __sane_unused__ h)
 {
-  
+
 }
 
 void
 sane_close (SANE_Handle __sane_unused__ h)
 {
-  
+
 }
 
 void
 sane_exit (void)
 {
-  
+
 }
