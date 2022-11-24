@@ -645,7 +645,7 @@ ALL_BACKENDS="abaton agfafocus apple artec artec_eplus48u as6e \
         dell1600n_net dmc epjitsu epson epson2 epsonds escl fujitsu \
         genesys gphoto2 gt68xx hp hp3500 hp3900 hp4200 hp5400 \
         hp5590 hpsj5s hpljm1005 hs2p ibm kodak kodakaio kvs1025 kvs20xx \
-        kvs40xx leo lexmark ma1509 magicolor \
+        kvs40xx leo lexmark lexmark_x2600 ma1509 magicolor \
         matsushita microtek microtek2 mustek mustek_pp \
         mustek_usb mustek_usb2 nec net niash pie pieusb pint \
         pixma plustek plustek_pp qcam ricoh ricoh2 rts8891 s9036 \
@@ -706,6 +706,7 @@ done
 AC_SUBST(BACKEND_LIBS_ENABLED)
 AM_CONDITIONAL(WITH_GENESYS_TESTS, test xyes = x$with_genesys_tests)
 AM_CONDITIONAL(INSTALL_UMAX_PP_TOOLS, test xyes = x$install_umax_pp_tools)
+
 
 AC_ARG_VAR(PRELOADABLE_BACKENDS, [list of backends to preload into single DLL])
 if test "${enable_preload}" = "auto"; then
