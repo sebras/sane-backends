@@ -23,7 +23,7 @@ sane_open (SANE_String_Const __sane_unused__ name, SANE_Handle __sane_unused__ *
 const SANE_Option_Descriptor *
 sane_get_option_descriptor (SANE_Handle __sane_unused__ h, SANE_Int __sane_unused__ opt)
 {
-  return ENTRY(get_option_descriptor) (h, opt);
+  return NULL;
 }
 
 SANE_Status
