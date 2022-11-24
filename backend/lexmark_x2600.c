@@ -1,81 +1,82 @@
 #include "lexmark_x2600.h"
-#include "../include/sane/sanei_backend.h"
 
 SANE_Status
-sane_init (SANE_Int *vc, SANE_Auth_Callback cb)
+sane_init (SANE_Int __sane_unused__ *vc, SANE_Auth_Callback __sane_unused__ cb)
 {
-  return ENTRY(init) (vc, cb);
+  DBG_INIT ();
+  DBG (1, "SANE Lexmark_x2600 backend ");
+  return SANE_STATUS_GOOD;
 }
 
 SANE_Status
-sane_get_devices (const SANE_Device ***dl, SANE_Bool local)
+sane_get_devices (const SANE_Device __sane_unused__ ***dl, SANE_Bool __sane_unused__ local)
 {
-  return ENTRY(get_devices) (dl, local);
+  return SANE_STATUS_GOOD;
 }
 
 SANE_Status
-sane_open (SANE_String_Const name, SANE_Handle *h)
+sane_open (SANE_String_Const __sane_unused__ name, SANE_Handle __sane_unused__ *h)
 {
-  return ENTRY(open) (name, h);
+  return SANE_STATUS_GOOD;
 }
 
 const SANE_Option_Descriptor *
-sane_get_option_descriptor (SANE_Handle h, SANE_Int opt)
+sane_get_option_descriptor (SANE_Handle __sane_unused__ h, SANE_Int __sane_unused__ opt)
 {
   return ENTRY(get_option_descriptor) (h, opt);
 }
 
 SANE_Status
-sane_control_option (SANE_Handle h, SANE_Int opt, SANE_Action act,
-                     void *val, SANE_Word *info)
+sane_control_option (SANE_Handle __sane_unused__ h, SANE_Int __sane_unused__ opt, SANE_Action __sane_unused__ act,
+                     void __sane_unused__ *val, SANE_Word __sane_unused__ *info)
 {
-  return ENTRY(control_option) (h, opt, act, val, info);
+  return SANE_STATUS_GOOD;
 }
 
 SANE_Status
-sane_get_parameters (SANE_Handle h, SANE_Parameters *parms)
+sane_get_parameters (SANE_Handle __sane_unused__ h, SANE_Parameters __sane_unused__ *parms)
 {
-  return ENTRY(get_parameters) (h, parms);
+  return SANE_STATUS_GOOD;
 }
 
 SANE_Status
-sane_start (SANE_Handle h)
+sane_start (SANE_Handle __sane_unused__ h)
 {
-  return ENTRY(start) (h);
+  return SANE_STATUS_GOOD;
 }
 
 SANE_Status
-sane_read (SANE_Handle h, SANE_Byte *buf, SANE_Int maxlen, SANE_Int *lenp)
+sane_read (SANE_Handle __sane_unused__ h, SANE_Byte __sane_unused__ *buf, SANE_Int __sane_unused__ maxlen, SANE_Int __sane_unused__ *lenp)
 {
-  return ENTRY(read) (h, buf, maxlen, lenp);
+  return SANE_STATUS_GOOD;
 }
 
 SANE_Status
-sane_set_io_mode (SANE_Handle h, SANE_Bool non_blocking)
+sane_set_io_mode (SANE_Handle __sane_unused__ h, SANE_Bool __sane_unused__ non_blocking)
 {
-  return ENTRY(set_io_mode) (h, non_blocking);
+  return SANE_STATUS_GOOD;
 }
 
 SANE_Status
-sane_get_select_fd (SANE_Handle h, SANE_Int *fdp)
+sane_get_select_fd (SANE_Handle __sane_unused__ h, SANE_Int __sane_unused__ *fdp)
 {
-  return ENTRY(get_select_fd) (h, fdp);
+  return SANE_STATUS_GOOD;
 }
 
 void
-sane_cancel (SANE_Handle h)
+sane_cancel (SANE_Handle __sane_unused__ h)
 {
-  ENTRY(cancel) (h);
+  
 }
 
 void
-sane_close (SANE_Handle h)
+sane_close (SANE_Handle __sane_unused__ h)
 {
-  ENTRY(close) (h);
+  
 }
 
 void
 sane_exit (void)
 {
-  ENTRY(exit) ();
+  
 }
