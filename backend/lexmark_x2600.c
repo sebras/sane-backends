@@ -1,10 +1,21 @@
+#define BUILD 1
 #include "lexmark_x2600.h"
 
 SANE_Status
-sane_init (SANE_Int __sane_unused__ *vc, SANE_Auth_Callback __sane_unused__ cb)
+sane_init (SANE_Int *version_code, SANE_Auth_Callback __sane_unused__ authorize)
 {
   DBG_INIT ();
-  DBG (1, "SANE Lexmark_x2600 backend ");
+  DBG (2, "sane_init: version_code %s 0, authorize %s 0\n",
+       version_code == 0 ? "=" : "!=", authorize == 0 ? "=" : "!=");
+  DBG (1, "sane_init: SANE lexmark_x2600 backend version %d.%d.%d from %s\n",
+       SANE_CURRENT_MAJOR, SANE_CURRENT_MINOR, BUILD, PACKAGE_STRING);
+
+  if (version_code)
+    *version_code = SANE_VERSION_CODE (SANE_CURRENT_MAJOR, SANE_CURRENT_MINOR, BUILD);
+  
+  sanei_usb_init ();
+  
+  
   return SANE_STATUS_GOOD;
 }
 

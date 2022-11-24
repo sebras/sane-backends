@@ -1158,10 +1158,9 @@ libsane_lexmark_x2600_la_LIBADD = $(COMMON_LIBS) \
     ../sanei/sanei_init_debug.lo \
     ../sanei/sanei_constrain_value.lo \
     ../sanei/sanei_config.lo \
-    ../sanei/sanei_config2.lo \
     sane_strstatus.lo \
-    ../sanei/sanei_scsi.lo \
-    $(SCSI_LIBS) $(RESMGR_LIBS)
+    ../sanei/sanei_usb.lo \
+    $(USB_LIBS) $(RESMGR_LIBS)
 EXTRA_DIST += lexmark_x2600.conf.in
 
 libma1509_la_SOURCES = ma1509.c ma1509.h

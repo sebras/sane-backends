@@ -3,6 +3,7 @@
 
 #include "../include/sane/config.h"
 
+#include "../include/_stdint.h"
 #include "../include/sane/sane.h"
 #include "../include/sane/sanei.h"
 #include "../include/sane/saneopts.h"
