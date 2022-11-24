@@ -707,7 +707,6 @@ AC_SUBST(BACKEND_LIBS_ENABLED)
 AM_CONDITIONAL(WITH_GENESYS_TESTS, test xyes = x$with_genesys_tests)
 AM_CONDITIONAL(INSTALL_UMAX_PP_TOOLS, test xyes = x$install_umax_pp_tools)
 
-
 AC_ARG_VAR(PRELOADABLE_BACKENDS, [list of backends to preload into single DLL])
 if test "${enable_preload}" = "auto"; then
   if test "${enable_shared}" = "no" || test "${enable_dynamic}" != "yes"; then
