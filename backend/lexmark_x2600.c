@@ -15,8 +15,7 @@ sane_init (SANE_Int *version_code, SANE_Auth_Callback __sane_unused__ authorize)
   
   sanei_usb_init ();
   
-  
-  return SANE_STATUS_GOOD;
+  return probe_lexmark_devices ();
 }
 
 SANE_Status
@@ -90,4 +89,10 @@ void
 sane_exit (void)
 {
 
+}
+
+static SANE_Status
+probe_lexmark_devices (void)
+{
+  return SANE_STATUS_GOOD;
 }
