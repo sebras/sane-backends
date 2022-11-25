@@ -38,9 +38,9 @@ SANE_Status
 usb_write_then_read_twice (Lexmark_Device * dev, SANE_Byte * cmd, size_t cmd_size)
 {
   size_t buf_size;
-  SANE_Byte buf[3];
-  SANE_Status status;  
-    
+  SANE_Byte buf[128];
+  SANE_Status status;
+
   status = sanei_usb_write_bulk (dev->devnum, cmd, &cmd_size);
   if (status != SANE_STATUS_GOOD)
     {
@@ -228,14 +228,14 @@ attach_one (SANE_String_Const devname)
   lexmark_device->sane.vendor = "Lexmark";
   lexmark_device->sane.model = "X2600 series";
   lexmark_device->sane.type = "flat bed";
-    
+
   /* Make the pointer to the read buffer null here */
   lexmark_device->read_buffer = NULL;
   /* mark device as present */
   lexmark_device->missing = SANE_FALSE;
 
   sanei_usb_close (lexmark_device->devnum);
-  
+
   /* insert it a the start of the chained list */
   lexmark_device->next = first_device;
   first_device = lexmark_device;
@@ -250,7 +250,7 @@ sane_init (SANE_Int *version_code, SANE_Auth_Callback authorize)
   FILE *fp;
   SANE_Char config_line[PATH_MAX];
   const char *lp;
-  
+
   DBG_INIT ();
   DBG (2, "sane_init: version_code %s 0, authorize %s 0\n",
        version_code == 0 ? "=" : "!=", authorize == 0 ? "=" : "!=");
@@ -259,7 +259,7 @@ sane_init (SANE_Int *version_code, SANE_Auth_Callback authorize)
 
   if (version_code)
     *version_code = SANE_VERSION_CODE (SANE_CURRENT_MAJOR, SANE_CURRENT_MINOR, BUILD);
-  
+
   sanei_usb_init ();
 
   fp = sanei_config_open (LEXMARK_X2600_CONFIG_FILE);
@@ -276,11 +276,11 @@ sane_init (SANE_Int *version_code, SANE_Auth_Callback authorize)
       /* skip empty lines */
       if (*lp == 0)
 	continue;
-      
+
       DBG (4, "attach_matching_devices(%s)\n", config_line);
       sanei_usb_attach_matching_devices (config_line, attach_one);
     }
-  
+
   DBG (4, "finished reading configure file\n");
   fclose (fp);
   initialized = SANE_TRUE;
@@ -292,13 +292,13 @@ sane_get_devices (const SANE_Device ***device_list, SANE_Bool local_only)
 {
   SANE_Int index;
   Lexmark_Device *lexmark_device;
-  
+
   DBG (2, "sane_get_devices: device_list=%p, local_only=%d\n",
        (void *) device_list, local_only);
 
   if (devlist)
     free (devlist);
-  
+
   devlist = malloc ((num_devices + 1) * sizeof (devlist[0]));
   if (!devlist)
     return (SANE_STATUS_NO_MEM);
@@ -317,7 +317,7 @@ sane_get_devices (const SANE_Device ***device_list, SANE_Bool local_only)
   devlist[index] = 0;
 
   *device_list = devlist;
-  
+
   return SANE_STATUS_GOOD;
 }
 
@@ -343,13 +343,13 @@ sane_open (SANE_String_Const devicename, SANE_Handle * handle)
 	break;
     }
 
-  
+
   *handle = lexmark_device;
 
   status = init_options (lexmark_device);
   if (status != SANE_STATUS_GOOD)
     return status;
-  
+
   return status;
 }
 
@@ -376,7 +376,7 @@ sane_get_option_descriptor (SANE_Handle handle, SANE_Int option)
       DBG (2, "sane_get_option_descriptor: name=%s\n",
 	   lexmark_device->opt[option].name);
     }
-  
+
   return &(lexmark_device->opt[option]);
 }
 
@@ -398,7 +398,7 @@ sane_control_option (SANE_Handle handle, SANE_Int option, SANE_Action action,
 	break;
     }
 
-  
+
   if (value == NULL)
     return SANE_STATUS_INVAL;
 
@@ -475,7 +475,7 @@ sane_control_option (SANE_Handle handle, SANE_Int option, SANE_Action action,
 
       break;
     case SANE_ACTION_GET_VALUE:
-      
+
       switch (option)
 	{
 	case OPT_NUM_OPTS:
@@ -494,11 +494,11 @@ sane_control_option (SANE_Handle handle, SANE_Int option, SANE_Action action,
 	  break;
 	}
       break;
-      
+
     default:
       return SANE_STATUS_INVAL;
     }
-  
+
   return SANE_STATUS_GOOD;
 }
 
@@ -509,7 +509,7 @@ sane_get_parameters (SANE_Handle handle, SANE_Parameters * params)
   SANE_Parameters *device_params;
   SANE_Int res, width_px;
   SANE_Int channels, bitsperchannel;
-  
+
   DBG (2, "sane_get_parameters: handle=%p, params=%p\n", (void *) handle,
        (void *) params);
 
@@ -524,9 +524,9 @@ sane_get_parameters (SANE_Handle handle, SANE_Parameters * params)
     return SANE_STATUS_INVAL;
 
   res = lexmark_device->val[OPT_RESOLUTION].w;
-    
+
   device_params = &(lexmark_device->params);
-  
+
   /* 24 bit colour = 8 bits/channel for each of the RGB channels */
   channels = 3;
   bitsperchannel = 8;
@@ -540,18 +540,18 @@ sane_get_parameters (SANE_Handle handle, SANE_Parameters * params)
   DBG (7, "sane_get_parameters: tl=(%d,%d) br=(%d,%d)\n",
        lexmark_device->val[OPT_TL_X].w, lexmark_device->val[OPT_TL_Y].w,
        lexmark_device->val[OPT_BR_X].w, lexmark_device->val[OPT_BR_Y].w);
-  
+
   DBG (7, "sane_get_parameters: res=(%d)\n", res);
-  
+
   device_params->format = SANE_FRAME_RGB; // SANE_FRAME_GRAY
   if (channels == 1)
     device_params->format = SANE_FRAME_GRAY;
-  
+
   device_params->last_frame = SANE_TRUE;
   device_params->lines = -1;
   device_params->depth = bitsperchannel;
   device_params->pixels_per_line = width_px;
-  device_params->bytes_per_line = 
+  device_params->bytes_per_line =
 	(SANE_Int) ((7 + device_params->pixels_per_line) / 8);
 
   if (params != 0)
@@ -564,7 +564,7 @@ sane_get_parameters (SANE_Handle handle, SANE_Parameters * params)
       params->bytes_per_line = device_params->bytes_per_line;
     }
 
-  
+
   return SANE_STATUS_GOOD;
 }
 
@@ -588,13 +588,6 @@ sane_start (SANE_Handle handle)
 
   // launch scan commands
   static SANE_Byte cmd[] = { 0x80, 0x00, 0x00, 0xFF };
-  
-  status = usb_write_then_read_twice(lexmark_device, cmd, 4);
-  if (status != SANE_STATUS_GOOD)
-    {
-      DBG (1, "USB IO Error in sane_start, cannot launch scan");
-      return status;
-    }
 
   status = usb_write_then_read_twice(lexmark_device, cmd, 4);
   if (status != SANE_STATUS_GOOD)
@@ -609,7 +602,14 @@ sane_start (SANE_Handle handle)
       DBG (1, "USB IO Error in sane_start, cannot launch scan");
       return status;
     }
-    
+
+  status = usb_write_then_read_twice(lexmark_device, cmd, 4);
+  if (status != SANE_STATUS_GOOD)
+    {
+      DBG (1, "USB IO Error in sane_start, cannot launch scan");
+      return status;
+    }
+
   return SANE_STATUS_GOOD;
 }
 
@@ -619,7 +619,7 @@ sane_read (SANE_Handle handle, SANE_Byte * data,
 {
   DBG (2, "sane_read: handle=%p, data=%p, max_length = %d, length=%p\n",
        (void *) handle, (void *) data, max_length, (void *) length);
-  
+
   return SANE_STATUS_GOOD;
 }
 
@@ -637,7 +637,7 @@ sane_get_select_fd (SANE_Handle handle, SANE_Int * fd)
 {
   DBG (2, "sane_get_select_fd: handle = %p, fd %s 0\n", (void *) handle,
        fd ? "!=" : "=");
-  
+
   return SANE_STATUS_UNSUPPORTED;
 }
 
@@ -662,7 +662,7 @@ sane_exit (void)
 
   if (!initialized)
     return;
-  
+
   for (lexmark_device = first_device; lexmark_device;
        lexmark_device = next_lexmark_device)
     {
@@ -677,4 +677,3 @@ sane_exit (void)
   initialized = SANE_FALSE;
 
 }
-

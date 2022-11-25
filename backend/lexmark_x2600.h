@@ -56,7 +56,7 @@ typedef enum
   OPT_MODE,
   OPT_RESOLUTION,
   OPT_PREVIEW,
-  
+
   OPT_GEOMETRY_GROUP,
   OPT_TL_X,			/* top-left x */
   OPT_TL_Y,			/* top-left y */

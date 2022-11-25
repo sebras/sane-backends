@@ -827,7 +827,7 @@ sane_control_option (SANE_Handle handle, SANE_Int option, SANE_Action action,
       break;
 
     case SANE_ACTION_SET_VALUE:
-      
+
       if (!SANE_OPTION_IS_SETTABLE (lexmark_device->opt[option].cap))
         {
           return SANE_STATUS_INVAL;
