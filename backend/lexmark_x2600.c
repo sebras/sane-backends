@@ -21,17 +21,16 @@ static SANE_String_Const mode_list[] = {
 };
 
 static SANE_Range x_range = {
-  1,				/* minimum */
+  0,				/* minimum */
   5078,				/* maximum */
-  2				/* quantization : 16 is required so we
-				   never have an odd width */
+  1				/* quantization */
 };
 
 static SANE_Range y_range = {
-  1,				/* minimum */
+  0,				/* minimum */
   7015,				/* maximum */
   /* 7032, for X74 */
-  2				/* quantization */
+  1				/* quantization */
 };
 
 static SANE_Int command1_block_size = 28;
@@ -64,21 +63,29 @@ static SANE_Byte last_data_packet[] = {
   0x01};
 
 void
-clean_and_copy_data(SANE_Byte * source, size_t source_size,
+clean_and_copy_data(SANE_Byte * source, SANE_Int source_size,
                     SANE_Byte * destination, SANE_Int * destination_length)
 {
-  SANE_Int i = 0;
-  // 1b 53 02 00 c1 00 00 00 00  |   64 |   c1 ->   193 (segment length =   192)
-  // 1b 53 02 00 01 06 00 00 00  |  512 |  601 ->  1537 (segment length =  1536)
-  // 1b 53 02 00 99 3a 00 00 00  | 5000 | 3a99 -> 15001 (segment length = 15000)
+  SANE_Int i = 9;
+  SANE_Int bytes_written = 0;
+  // BW    1b 53 02 00 41 00 00 00 00  |   32 |   41 ->    65 (segment length =    64)
+  // COLOR 1b 53 02 00 c1 00 00 00 00  |   64 |   c1 ->   193 (segment length =   192)
+  // COLOR 1b 53 02 00 01 06 00 00 00  |  512 |  601 ->  1537 (segment length =  1536)
+  // COLOR 1b 53 02 00 99 3a 00 00 00  | 5000 | 3a99 -> 15001 (segment length = 15000)
   
-  // SANE_Int segment_length = 
+  SANE_Int segment_length = (source[4] + ((source[5] << 8) & 0xFF00)) - 1;
+  DBG (1, "clean_and_copy_data segment_length %d\n", segment_length);
   while (i < source_size)
     {
+      memcpy (destination + bytes_written, source + i, segment_length);
+      bytes_written += segment_length;
       
-      i++;
+      i += segment_length + 9;
+      DBG (2, "  i:%d bytes_written:%d\n", i, bytes_written);
     }
-  DBG (1, "clean_and_copy_data done\n");
+
+  *destination_length = bytes_written;
+  DBG (1, "clean_and_copy_data done %d\n", *destination_length);
   //memcpy (buffer, rb->readptr, available_bytes);
 }
 
@@ -432,6 +439,10 @@ sane_get_option_descriptor (SANE_Handle handle, SANE_Int option)
   DBG (2, "sane_get_option_descriptor: handle=%p, option = %d\n",
        (void *) handle, option);
 
+  /* Check for valid option number */
+  if ((option < 0) || (option >= NUM_OPTIONS))
+    return NULL;
+   
   for (lexmark_device = first_device; lexmark_device;
        lexmark_device = lexmark_device->next)
     {
@@ -441,7 +452,7 @@ sane_get_option_descriptor (SANE_Handle handle, SANE_Int option)
 
   if (!lexmark_device)
     return NULL;
-
+  
   if (lexmark_device->opt[option].name)
     {
       DBG (2, "sane_get_option_descriptor: name=%s\n",
@@ -578,8 +589,7 @@ sane_get_parameters (SANE_Handle handle, SANE_Parameters * params)
 {
   Lexmark_Device *lexmark_device;
   SANE_Parameters *device_params;
-  SANE_Int res, width_px;
-  SANE_Int channels, bitsperchannel;
+  SANE_Int width_px;
 
   DBG (2, "sane_get_parameters: handle=%p, params=%p\n", (void *) handle,
        (void *) params);
@@ -594,36 +604,30 @@ sane_get_parameters (SANE_Handle handle, SANE_Parameters * params)
   if (!lexmark_device)
     return SANE_STATUS_INVAL;
 
-  res = lexmark_device->val[OPT_RESOLUTION].w;
+  // res = lexmark_device->val[OPT_RESOLUTION].w;
 
   device_params = &(lexmark_device->params);
-
-  /* 24 bit colour = 8 bits/channel for each of the RGB channels */
-  channels = 3;
-  bitsperchannel = 8;
-  if (strcmp (lexmark_device->val[OPT_MODE].s, SANE_VALUE_SCAN_MODE_COLOR)
-      != 0)
-    channels = 1;
-
-  /* geometry in pixels */
   width_px =
     lexmark_device->val[OPT_BR_X].w - lexmark_device->val[OPT_TL_X].w;
-  DBG (7, "sane_get_parameters: tl=(%d,%d) br=(%d,%d)\n",
-       lexmark_device->val[OPT_TL_X].w, lexmark_device->val[OPT_TL_Y].w,
-       lexmark_device->val[OPT_BR_X].w, lexmark_device->val[OPT_BR_Y].w);
 
-  DBG (7, "sane_get_parameters: res=(%d)\n", res);
-
-  device_params->format = SANE_FRAME_RGB; // SANE_FRAME_GRAY
-  if (channels == 1)
-    device_params->format = SANE_FRAME_GRAY;
-
-  device_params->last_frame = SANE_TRUE;
-  device_params->lines = -1;
-  device_params->depth = bitsperchannel;
+  /* 24 bit colour = 8 bits/channel for each of the RGB channels */
   device_params->pixels_per_line = width_px;
+  device_params->format = SANE_FRAME_RGB; // SANE_FRAME_GRAY
+  device_params->depth = 8;
   device_params->bytes_per_line =
-	(SANE_Int) ((7 + device_params->pixels_per_line) / 8);
+    (SANE_Int) ((3 * (device_params->pixels_per_line + 1) * device_params->depth )/ 8);
+  
+  if (strcmp (lexmark_device->val[OPT_MODE].s, SANE_VALUE_SCAN_MODE_COLOR)
+      != 0)
+    {
+      device_params->format = SANE_FRAME_GRAY;
+        device_params->bytes_per_line =
+          (SANE_Int) ((device_params->pixels_per_line + 1)* device_params->depth / 8);
+    }
+
+  /* geometry in pixels */
+  device_params->last_frame = SANE_TRUE;
+  device_params->lines = lexmark_device->val[OPT_BR_Y].w;
 
   if (params != 0)
     {
@@ -686,8 +690,8 @@ sane_read (SANE_Handle handle, SANE_Byte * data,
   Lexmark_Device * lexmark_device;
   SANE_Status status;
   
-  DBG (2, "sane_read: handle=%p, data=%p, max_length = %d, length=%p\n",
-       (void *) handle, (void *) data, max_length, (void *) length);
+  DBG (2, "sane_read: handle=%p, data=%p, max_length = %d, length=%d\n",
+       (void *) handle, (void *) data, max_length, *length);
 
   for (lexmark_device = first_device; lexmark_device;
        lexmark_device = lexmark_device->next)
@@ -708,7 +712,10 @@ sane_read (SANE_Handle handle, SANE_Byte * data,
 
   // is last data packet ?
   if (memcmp(last_data_packet, buf, last_data_packet_size) == 0)
-    return SANE_STATUS_EOF;
+    {
+      length = 0;
+      return SANE_STATUS_EOF;
+    }
   
   clean_and_copy_data(buf, size, data, length);
   
