@@ -63,8 +63,8 @@ static SANE_Byte last_data_packet[] = {
   0x01};
 
 /* static SANE_Int empty_data_packet_size = 8; */
- static SANE_Byte empty_data_packet[] = { 
-   0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF}; 
+ static SANE_Byte empty_data_packet[] = {
+   0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
 
 void
 clean_and_copy_data(SANE_Byte * source, SANE_Int source_size,
@@ -86,7 +86,7 @@ clean_and_copy_data(SANE_Byte * source, SANE_Int source_size,
   /*     *destination_length = 0; */
   /*     return; */
   /*   } */
-  
+
   SANE_Int segment_length = (source[4] + ((source[5] << 8) & 0xFF00)) - 1;
   SANE_Byte tmp = 0;
   DBG (10, "clean_and_copy_data segment_length:%d mode:%d\n", segment_length, mode);
@@ -105,7 +105,7 @@ clean_and_copy_data(SANE_Byte * source, SANE_Int source_size,
               destination[j+2] = tmp;
             }
         }
-      
+
       bytes_written += segment_length;
       i += segment_length + 9;
       DBG (20, "  i:%d bytes_written:%d\n", i, bytes_written);
@@ -148,13 +148,13 @@ build_packet(Lexmark_Device * dev, SANE_Byte packet_id, SANE_Byte * buffer){
   memcpy(buffer, command_with_params_block, command_with_params_block_size);
   // protocole related... "ID?"
   buffer[14] = packet_id;
-  
+
   // mode
   if (memcmp(dev->val[OPT_MODE].s, "Color", 5) == 0 )
     buffer[20] = 0x03;
   else
     buffer[20] = 0x02;
-  
+
   // pixel width (swap lower byte -> higher byte)
   buffer[24] = dev->val[OPT_BR_X].w & 0xFF;
   buffer[25] = (dev->val[OPT_BR_X].w >> 8) & 0xFF;
@@ -166,7 +166,7 @@ build_packet(Lexmark_Device * dev, SANE_Byte packet_id, SANE_Byte * buffer){
   // dpi x (swap lower byte -> higher byte)
   buffer[40] = dev->val[OPT_RESOLUTION].w & 0xFF;
   buffer[41] = (dev->val[OPT_RESOLUTION].w >> 8) & 0xFF;
-  
+
   // dpi y (swap lower byte -> higher byte)
   buffer[42] = dev->val[OPT_RESOLUTION].w & 0xFF;
   buffer[43] = (dev->val[OPT_RESOLUTION].w >> 8) & 0xFF;
@@ -472,7 +472,7 @@ sane_get_option_descriptor (SANE_Handle handle, SANE_Int option)
   /* Check for valid option number */
   if ((option < 0) || (option >= NUM_OPTIONS))
     return NULL;
-   
+
   for (lexmark_device = first_device; lexmark_device;
        lexmark_device = lexmark_device->next)
     {
@@ -482,7 +482,7 @@ sane_get_option_descriptor (SANE_Handle handle, SANE_Int option)
 
   if (!lexmark_device)
     return NULL;
-  
+
   if (lexmark_device->opt[option].name)
     {
       DBG (2, "sane_get_option_descriptor: name=%s\n",
@@ -634,9 +634,9 @@ sane_get_parameters (SANE_Handle handle, SANE_Parameters * params)
   if (!lexmark_device)
     return SANE_STATUS_INVAL;
 
-  // res = lexmark_device->val[OPT_RESOLUTION].w; 
+  // res = lexmark_device->val[OPT_RESOLUTION].w;
   device_params = &(lexmark_device->params);
-      
+
   width_px =
     lexmark_device->val[OPT_BR_X].w - lexmark_device->val[OPT_TL_X].w;
 
@@ -682,7 +682,7 @@ sane_start (SANE_Handle handle)
   Lexmark_Device * lexmark_device;
   SANE_Status status;
   SANE_Byte * cmd = (SANE_Byte *) malloc (command_with_params_block_size * sizeof (SANE_Byte));;
-  
+
   DBG (2, "sane_start: handle=%p\n", (void *) handle);
 
   if (!initialized)
@@ -709,12 +709,12 @@ sane_start (SANE_Handle handle)
   status = usb_write_then_read(lexmark_device, cmd, command_with_params_block_size);
   if (status != SANE_STATUS_GOOD)
     return status;
-  
+
   build_packet(lexmark_device, 0x01, cmd);;
   status = usb_write_then_read(lexmark_device, cmd, command_with_params_block_size);
   if (status != SANE_STATUS_GOOD)
     return status;
-  
+
   return SANE_STATUS_GOOD;
 }
 
@@ -724,7 +724,7 @@ sane_read (SANE_Handle handle, SANE_Byte * data,
 {
   Lexmark_Device * lexmark_device;
   SANE_Status status;
-  
+
   DBG (20, "sane_read: handle=%p, data=%p, max_length = %d\n",
        (void *) handle, (void *) data, max_length);
 
@@ -752,9 +752,9 @@ sane_read (SANE_Handle handle, SANE_Byte * data,
       length = 0;
       return SANE_STATUS_EOF;
     }
-  
+
   clean_and_copy_data(buf, size, data, length, lexmark_device->params.format);
-  
+
   return SANE_STATUS_GOOD;
 }
 
@@ -763,10 +763,10 @@ sane_set_io_mode (SANE_Handle handle, SANE_Bool non_blocking)
 {
   DBG (2, "sane_set_io_mode: handle = %p, non_blocking = %d\n",
        (void *) handle, non_blocking);
-  
+
   if (non_blocking)
     return SANE_STATUS_UNSUPPORTED;
-  
+
   return SANE_STATUS_GOOD;
 }
 
@@ -791,7 +791,7 @@ sane_close (SANE_Handle handle)
   Lexmark_Device * lexmark_device;
 
   DBG (2, "sane_close: handle=%p\n", (void *) handle);
-  
+
   for (lexmark_device = first_device; lexmark_device;
        lexmark_device = lexmark_device->next)
     {
