@@ -58,6 +58,10 @@ static SANE_Byte command_with_params_block[] = {
   0xFF, 0xFF, 0xFF, 0xFF, 0xAA, 0xBB, 0xCC, 0xDD,
   0xAA, 0xBB, 0xCC, 0xDD};
 
+static SANE_Int last_data_packet_size = 9;
+static SANE_Byte last_data_packet[] = {
+  0x1b, 0x53, 0x02, 0x00, 0x01, 0x00, 0x00, 0x00,
+  0x01};
 
 SANE_Status
 usb_write_then_read (Lexmark_Device * dev, SANE_Byte * cmd, size_t cmd_size)
@@ -690,6 +694,9 @@ sane_read (SANE_Handle handle, SANE_Byte * data,
       DBG (1, "USB READ IO Error in usb_write_then_read, cannot launch scan\n");
       return status;
     }
+
+  if (memcmp(last_data_packet, buf, last_data_packet_size) == 0)
+    return SANE_STATUS_EOF;
   
   return SANE_STATUS_GOOD;
 }
