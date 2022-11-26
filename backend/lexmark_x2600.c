@@ -64,8 +64,10 @@ static SANE_Byte last_data_packet[] = {
   0x01};
 
 void
-clean_and_copy_data(SANE_Byte * buf, SANE_Byte * data, SANE_Int * length)
+clean_and_copy_data(SANE_Byte * source, size_t source_size, SANE_Byte * destination, SANE_Int * destination_length)
 {
+  
+  memcpy (buffer, rb->readptr, available_bytes);
 }
 
 SANE_Status
@@ -696,7 +698,7 @@ sane_read (SANE_Handle handle, SANE_Byte * data,
   if (memcmp(last_data_packet, buf, last_data_packet_size) == 0)
     return SANE_STATUS_EOF;
   
-  clean_and_copy_data(buf, data, length);
+  clean_and_copy_data(buf, size, data, length);
   
   return SANE_STATUS_GOOD;
 }
