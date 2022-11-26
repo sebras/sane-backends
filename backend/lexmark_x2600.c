@@ -64,10 +64,22 @@ static SANE_Byte last_data_packet[] = {
   0x01};
 
 void
-clean_and_copy_data(SANE_Byte * source, size_t source_size, SANE_Byte * destination, SANE_Int * destination_length)
+clean_and_copy_data(SANE_Byte * source, size_t source_size,
+                    SANE_Byte * destination, SANE_Int * destination_length)
 {
+  SANE_Int i = 0;
+  // 1b 53 02 00 c1 00 00 00 00  |   64 |   c1 ->   193 (segment length =   192)
+  // 1b 53 02 00 01 06 00 00 00  |  512 |  601 ->  1537 (segment length =  1536)
+  // 1b 53 02 00 99 3a 00 00 00  | 5000 | 3a99 -> 15001 (segment length = 15000)
   
-  memcpy (buffer, rb->readptr, available_bytes);
+  // SANE_Int segment_length = 
+  while (i < source_size)
+    {
+      
+      i++;
+    }
+  DBG (1, "clean_and_copy_data done\n");
+  //memcpy (buffer, rb->readptr, available_bytes);
 }
 
 SANE_Status
