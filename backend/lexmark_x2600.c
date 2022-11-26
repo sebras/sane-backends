@@ -63,14 +63,17 @@ static SANE_Byte last_data_packet[] = {
   0x1b, 0x53, 0x02, 0x00, 0x01, 0x00, 0x00, 0x00,
   0x01};
 
+void
+clean_and_copy_data(SANE_Byte * buf, SANE_Byte * data, SANE_Int * length)
+{
+}
+
 SANE_Status
 usb_write_then_read (Lexmark_Device * dev, SANE_Byte * cmd, size_t cmd_size)
 {
   size_t buf_size = 128;
   SANE_Byte buf[buf_size];
   SANE_Status status;
-
-  DBG (2, "USB WRITE device:%d size:%d cmd:%p\n", dev->devnum, cmd_size, cmd[0]);
 
   sanei_usb_set_endpoint(dev->devnum, USB_DIR_OUT|USB_ENDPOINT_TYPE_BULK, 0x02);
   status = sanei_usb_write_bulk (dev->devnum, cmd, &cmd_size);
@@ -250,8 +253,6 @@ static SANE_Status
 attach_one (SANE_String_Const devname)
 {
   Lexmark_Device *lexmark_device;
-  SANE_Int dn;
-  SANE_Status status;
 
   DBG (2, "attachLexmark: devname=%s\n", devname);
 
@@ -270,16 +271,6 @@ attach_one (SANE_String_Const devname)
   if (lexmark_device == NULL)
     return SANE_STATUS_NO_MEM;
 
-  /* status = sanei_usb_open (devname, &dn); */
-  /* if (status != SANE_STATUS_GOOD) */
-  /*   { */
-  /*     DBG (1, "attachLexmark: couldn't open device `%s': %s\n", devname, */
-  /*          sane_strstatus (status)); */
-  /*     return status; */
-  /*   } */
-  /* else */
-  /*   DBG (2, "attachLexmark: device `%s' successfully opened dn: %s\n", devname, dn); */
-
   lexmark_device->sane.name = strdup (devname);
   lexmark_device->sane.vendor = "Lexmark";
   lexmark_device->sane.model = "X2600 series";
@@ -290,14 +281,12 @@ attach_one (SANE_String_Const devname)
   /* mark device as present */
   lexmark_device->missing = SANE_FALSE;
 
-  //sanei_usb_close (lexmark_device->devnum);
-
   /* insert it a the start of the chained list */
   lexmark_device->next = first_device;
   first_device = lexmark_device;
   num_devices++;
 
-  return status;
+  return SANE_STATUS_GOOD;
 }
 
 SANE_Status
@@ -707,6 +696,8 @@ sane_read (SANE_Handle handle, SANE_Byte * data,
   if (memcmp(last_data_packet, buf, last_data_packet_size) == 0)
     return SANE_STATUS_EOF;
   
+  clean_and_copy_data(buf, data, length);
+  
   return SANE_STATUS_GOOD;
 }
 
@@ -715,7 +706,10 @@ sane_set_io_mode (SANE_Handle handle, SANE_Bool non_blocking)
 {
   DBG (2, "sane_set_io_mode: handle = %p, non_blocking = %d\n",
        (void *) handle, non_blocking);
-
+  
+  if (non_blocking)
+    return SANE_STATUS_UNSUPPORTED;
+  
   return SANE_STATUS_GOOD;
 }
 
