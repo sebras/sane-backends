@@ -34,32 +34,76 @@ static SANE_Range y_range = {
   2				/* quantization */
 };
 
+static SANE_Int command1_block_size = 28;
+static SANE_Byte command1_block[] = {
+  0xA5, 0x00, 0x19, 0x10, 0x01, 0x83, 0xAA, 0xBB,
+  0xCC, 0xDD, 0x02, 0x00, 0x1B, 0x53, 0x03, 0x00,
+  0x00, 0x00, 0x80, 0x00, 0xAA, 0xBB, 0xCC, 0xDD,
+  0xAA, 0xBB, 0xCC, 0xDD};
+
+static SANE_Int command2_block_size = 28;
+static SANE_Byte command2_block[] = {
+  0xA5, 0x00, 0x19, 0x10, 0x01, 0x83, 0xAA, 0xBB,
+  0xCC, 0xDD, 0x02, 0x00, 0x1B, 0x53, 0x04, 0x00,
+  0x00, 0x00, 0x80, 0x00, 0xAA, 0xBB, 0xCC, 0xDD,
+  0xAA, 0xBB, 0xCC, 0xDD};
+
+static SANE_Int command_with_params_block_size = 52;
+static SANE_Byte command_with_params_block[] = {
+  0xA5, 0x00, 0x31, 0x10, 0x01, 0x83, 0xAA, 0xBB,
+  0xCC, 0xDD, 0x02, 0x00, 0x1B, 0x53, 0x05, 0x00,
+  0x18, 0x00, 0x80, 0x00, 0xFF, 0x00, 0x00, 0x02,
+  0xFF, 0xFF, 0x00, 0x00, 0xFF, 0xFF, 0x00, 0x00,
+  0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+  0xFF, 0xFF, 0xFF, 0xFF, 0xAA, 0xBB, 0xCC, 0xDD,
+  0xAA, 0xBB, 0xCC, 0xDD};
+
+
 SANE_Status
-usb_write_then_read_twice (Lexmark_Device * dev, SANE_Byte * cmd, size_t cmd_size)
+usb_write_then_read (Lexmark_Device * dev, SANE_Byte * cmd, size_t cmd_size)
 {
-  size_t buf_size;
-  SANE_Byte buf[128];
+  size_t buf_size = 128;
+  SANE_Byte buf[buf_size];
   SANE_Status status;
 
+  DBG (2, "USB WRITE device:%d size:%d cmd:%p\n", dev->devnum, cmd_size, cmd[0]);
+
+  sanei_usb_set_endpoint(dev->devnum, USB_DIR_OUT|USB_ENDPOINT_TYPE_BULK, 0x02);
   status = sanei_usb_write_bulk (dev->devnum, cmd, &cmd_size);
   if (status != SANE_STATUS_GOOD)
     {
-      DBG (1, "USB IO Error in sane_start, cannot launch scan");
+      DBG (1, "USB WRITE IO Error in usb_write_then_read, cannot launch scan status: %d\n", status);
       return status;
     }
+  //sanei_usb_set_endpoint(dev->devnum, USB_DIR_IN|USB_ENDPOINT_TYPE_BULK , 0x01);
   status = sanei_usb_read_bulk (dev->devnum, buf, &buf_size);
-  if (status != SANE_STATUS_GOOD)
+  if (status != SANE_STATUS_GOOD && status != SANE_STATUS_EOF)
     {
-      DBG (1, "USB IO Error in sane_start, cannot launch scan");
+      DBG (1, "USB READ IO Error in usb_write_then_read, cannot launch scan\n");
       return status;
     }
-  status = sanei_usb_read_bulk (dev->devnum, buf, &buf_size);
-  if (status != SANE_STATUS_GOOD)
-    {
-      DBG (1, "USB IO Error in sane_start, cannot launch scan");
-      return status;
-    }
-  return status;
+  return SANE_STATUS_GOOD;
+}
+
+void
+build_packet(Lexmark_Device * dev, SANE_Byte packet_id, SANE_Byte * buffer){
+  memcpy(buffer, command_with_params_block, command_with_params_block_size);
+  // protocole related... "ID?"
+  buffer[14] = packet_id;
+  // mode
+  buffer[20] = 0x02;
+  // pixel width
+  buffer[24] = 0xF0;
+  buffer[25] = 0x00;
+  // pixel height
+  buffer[28] = 0xF0;
+  buffer[29] = 0x00;
+  // dpi x
+  buffer[40] = 0xC8;
+  buffer[41] = 0x00;
+  // dpi y  
+  buffer[42] = 0xC8;
+  buffer[43] = 0x00;
 }
 
 SANE_Status
@@ -170,7 +214,7 @@ init_options (Lexmark_Device * dev)
   od->unit = SANE_UNIT_PIXEL;
   od->constraint_type = SANE_CONSTRAINT_RANGE;
   od->constraint.range = &x_range;
-  dev->val[OPT_BR_X].w = 1700;
+  dev->val[OPT_BR_X].w = 1699;
 
   /* bottom-right y */
   od = &(dev->opt[OPT_BR_Y]);
@@ -183,7 +227,7 @@ init_options (Lexmark_Device * dev)
   od->unit = SANE_UNIT_PIXEL;
   od->constraint_type = SANE_CONSTRAINT_RANGE;
   od->constraint.range = &y_range;
-  dev->val[OPT_BR_Y].w = 2338;
+  dev->val[OPT_BR_Y].w = 2337;
 
   return SANE_STATUS_GOOD;
 }
@@ -214,15 +258,15 @@ attach_one (SANE_String_Const devname)
   if (lexmark_device == NULL)
     return SANE_STATUS_NO_MEM;
 
-  status = sanei_usb_open (devname, &dn);
-  if (status != SANE_STATUS_GOOD)
-    {
-      DBG (1, "attachLexmark: couldn't open device `%s': %s\n", devname,
-	   sane_strstatus (status));
-      return status;
-    }
-  else
-    DBG (2, "attachLexmark: device `%s' successfully opened\n", devname);
+  /* status = sanei_usb_open (devname, &dn); */
+  /* if (status != SANE_STATUS_GOOD) */
+  /*   { */
+  /*     DBG (1, "attachLexmark: couldn't open device `%s': %s\n", devname, */
+  /*          sane_strstatus (status)); */
+  /*     return status; */
+  /*   } */
+  /* else */
+  /*   DBG (2, "attachLexmark: device `%s' successfully opened dn: %s\n", devname, dn); */
 
   lexmark_device->sane.name = strdup (devname);
   lexmark_device->sane.vendor = "Lexmark";
@@ -234,7 +278,7 @@ attach_one (SANE_String_Const devname)
   /* mark device as present */
   lexmark_device->missing = SANE_FALSE;
 
-  sanei_usb_close (lexmark_device->devnum);
+  //sanei_usb_close (lexmark_device->devnum);
 
   /* insert it a the start of the chained list */
   lexmark_device->next = first_device;
@@ -343,12 +387,24 @@ sane_open (SANE_String_Const devicename, SANE_Handle * handle)
 	break;
     }
 
-
   *handle = lexmark_device;
 
   status = init_options (lexmark_device);
   if (status != SANE_STATUS_GOOD)
     return status;
+
+  DBG(2, "sane_open: device `%s' opening devnum: '%d'\n", lexmark_device->sane.name, lexmark_device->devnum);
+  status = sanei_usb_open (lexmark_device->sane.name, &(lexmark_device->devnum));
+  if (status != SANE_STATUS_GOOD)
+    {
+      DBG (1, "sane_open: couldn't open device `%s': %s\n", lexmark_device->sane.name,
+	   sane_strstatus (status));
+      return status;
+    }
+  else
+    {
+      DBG (2, "sane_open: device `%s' successfully opened devnum: '%d'\n", lexmark_device->sane.name, lexmark_device->devnum);
+    }
 
   return status;
 }
@@ -563,17 +619,16 @@ sane_get_parameters (SANE_Handle handle, SANE_Parameters * params)
       params->pixels_per_line = device_params->pixels_per_line;
       params->bytes_per_line = device_params->bytes_per_line;
     }
-
-
   return SANE_STATUS_GOOD;
 }
 
 SANE_Status
 sane_start (SANE_Handle handle)
 {
-  Lexmark_Device *lexmark_device;
+  Lexmark_Device * lexmark_device;
   SANE_Status status;
-
+  SANE_Byte * cmd = (SANE_Byte *) malloc (command_with_params_block_size * sizeof (SANE_Byte));;
+  
   DBG (2, "sane_start: handle=%p\n", (void *) handle);
 
   if (!initialized)
@@ -586,30 +641,25 @@ sane_start (SANE_Handle handle)
 	break;
     }
 
-  // launch scan commands
-  static SANE_Byte cmd[] = { 0x80, 0x00, 0x00, 0xFF };
-
-  status = usb_write_then_read_twice(lexmark_device, cmd, 4);
+  //launch scan commands
+  status = usb_write_then_read(lexmark_device, command1_block, command1_block_size);
   if (status != SANE_STATUS_GOOD)
-    {
-      DBG (1, "USB IO Error in sane_start, cannot launch scan");
-      return status;
-    }
+    return status;
 
-  status = usb_write_then_read_twice(lexmark_device, cmd, 4);
+  status = usb_write_then_read(lexmark_device, command2_block, command2_block_size);
   if (status != SANE_STATUS_GOOD)
-    {
-      DBG (1, "USB IO Error in sane_start, cannot launch scan");
-      return status;
-    }
+    return status;
 
-  status = usb_write_then_read_twice(lexmark_device, cmd, 4);
+  build_packet(lexmark_device, 0x05, cmd);
+  DBG (2, "sane_start: cmd=%p\n", cmd);
+  status = usb_write_then_read(lexmark_device, cmd, command_with_params_block_size);
   if (status != SANE_STATUS_GOOD)
-    {
-      DBG (1, "USB IO Error in sane_start, cannot launch scan");
-      return status;
-    }
-
+    return status;    
+  build_packet(lexmark_device, 0x01, cmd);;
+  status = usb_write_then_read(lexmark_device, cmd, command_with_params_block_size);
+  if (status != SANE_STATUS_GOOD)
+    return status;
+  
   return SANE_STATUS_GOOD;
 }
 
@@ -617,9 +667,30 @@ SANE_Status
 sane_read (SANE_Handle handle, SANE_Byte * data,
 	   SANE_Int max_length, SANE_Int * length)
 {
+  Lexmark_Device * lexmark_device;
+  SANE_Status status;
+  
   DBG (2, "sane_read: handle=%p, data=%p, max_length = %d, length=%p\n",
        (void *) handle, (void *) data, max_length, (void *) length);
 
+  for (lexmark_device = first_device; lexmark_device;
+       lexmark_device = lexmark_device->next)
+    {
+      if (lexmark_device == handle)
+	break;
+    }
+
+  size_t size = 256;
+  SANE_Byte buf[size];
+
+  //sanei_usb_set_endpoint(lexmark_device->devnum, USB_DIR_IN|USB_ENDPOINT_TYPE_BULK , 0x01);
+  status = sanei_usb_read_bulk (lexmark_device->devnum, buf, &size);
+  if (status != SANE_STATUS_GOOD && status != SANE_STATUS_EOF)
+    {
+      DBG (1, "USB READ IO Error in usb_write_then_read, cannot launch scan\n");
+      return status;
+    }
+  
   return SANE_STATUS_GOOD;
 }
 
@@ -650,7 +721,18 @@ sane_cancel (SANE_Handle handle)
 void
 sane_close (SANE_Handle handle)
 {
+  Lexmark_Device * lexmark_device;
+
   DBG (2, "sane_close: handle=%p\n", (void *) handle);
+  
+  for (lexmark_device = first_device; lexmark_device;
+       lexmark_device = lexmark_device->next)
+    {
+      if (lexmark_device == handle)
+	break;
+    }
+
+  sanei_usb_close (lexmark_device->devnum);
 }
 
 void
