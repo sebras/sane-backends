@@ -106,8 +106,8 @@ build_packet(Lexmark_Device * dev, SANE_Byte packet_id, SANE_Byte * buffer){
   buffer[25] = (dev->val[OPT_BR_X].w >> 8) & 0xFF;
 
   // pixel height (swap lower byte -> higher byte)
-  buffer[28] = dev->val[OPT_BR_X].w & 0xFF;
-  buffer[29] = (dev->val[OPT_BR_X].w >> 8) & 0xFF;
+  buffer[28] = dev->val[OPT_BR_Y].w & 0xFF;
+  buffer[29] = (dev->val[OPT_BR_Y].w >> 8) & 0xFF;
 
   // dpi x (swap lower byte -> higher byte)
   buffer[40] = dev->val[OPT_RESOLUTION].w & 0xFF;
@@ -693,10 +693,9 @@ sane_read (SANE_Handle handle, SANE_Byte * data,
 	break;
     }
 
-  size_t size = 256;
+  size_t size = max_length;
   SANE_Byte buf[size];
 
-  //sanei_usb_set_endpoint(lexmark_device->devnum, USB_DIR_IN|USB_ENDPOINT_TYPE_BULK , 0x01);
   status = sanei_usb_read_bulk (lexmark_device->devnum, buf, &size);
   if (status != SANE_STATUS_GOOD && status != SANE_STATUS_EOF)
     {
@@ -704,6 +703,7 @@ sane_read (SANE_Handle handle, SANE_Byte * data,
       return status;
     }
 
+  // is last data packet ?
   if (memcmp(last_data_packet, buf, last_data_packet_size) == 0)
     return SANE_STATUS_EOF;
   
