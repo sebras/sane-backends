@@ -62,31 +62,60 @@ static SANE_Byte last_data_packet[] = {
   0x1b, 0x53, 0x02, 0x00, 0x01, 0x00, 0x00, 0x00,
   0x01};
 
+/* static SANE_Int empty_data_packet_size = 8; */
+ static SANE_Byte empty_data_packet[] = { 
+   0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF}; 
+
 void
 clean_and_copy_data(SANE_Byte * source, SANE_Int source_size,
-                    SANE_Byte * destination, SANE_Int * destination_length)
+                    SANE_Byte * destination, SANE_Int * destination_length, SANE_Int mode)
 {
   SANE_Int i = 9;
   SANE_Int bytes_written = 0;
-  // BW    1b 53 02 00 41 00 00 00 00  |   32 |   41 ->    65 (segment length =    64)
+  // BW    1b 53 02 00 21 00 00 00 00  |   32 |   21 ->    33 (segment length =    32)
+  // BW    1b 53 02 00 41 00 00 00 00  |   64 |   41 ->    65 (segment length =    64)
   // COLOR 1b 53 02 00 c1 00 00 00 00  |   64 |   c1 ->   193 (segment length =   192)
   // COLOR 1b 53 02 00 01 06 00 00 00  |  512 |  601 ->  1537 (segment length =  1536)
   // COLOR 1b 53 02 00 99 3a 00 00 00  | 5000 | 3a99 -> 15001 (segment length = 15000)
+
+  /* DBG (2, "Empty packet? %p %p\n", source[9], source[10]); */
+  /* // buffer might contain only ff ff ff ... after data */
+  /* if (memcmp(source + 9, empty_data_packet, empty_data_packet_size) == 0 ) */
+  /*   { */
+  /*     DBG (2, "Empty packet\n"); */
+  /*     *destination_length = 0; */
+  /*     return; */
+  /*   } */
   
   SANE_Int segment_length = (source[4] + ((source[5] << 8) & 0xFF00)) - 1;
-  DBG (1, "clean_and_copy_data segment_length %d\n", segment_length);
+  SANE_Byte tmp = 0;
+  DBG (10, "clean_and_copy_data segment_length:%d mode:%d\n", segment_length, mode);
   while (i < source_size)
     {
+      if (memcmp(source + 9, empty_data_packet, 4) == 0 )
+        break;
       memcpy (destination + bytes_written, source + i, segment_length);
-      bytes_written += segment_length;
+      // swap RGB <- BGR
+      if (mode == SANE_FRAME_RGB)
+        {
+          for(SANE_Int j=bytes_written; j < bytes_written + segment_length; j += 3)
+            {
+              tmp = destination[j];
+              destination[j] = destination[j+2];
+              destination[j+2] = tmp;
+            }
+        }
       
+      bytes_written += segment_length;
       i += segment_length + 9;
-      DBG (2, "  i:%d bytes_written:%d\n", i, bytes_written);
+      DBG (20, "  i:%d bytes_written:%d\n", i, bytes_written);
     }
 
+  DBG (20, "    destination[] %d %d %d %d",
+       destination[bytes_written-4], destination[bytes_written-3], destination[bytes_written-2],
+       destination[bytes_written-1]);
   *destination_length = bytes_written;
-  DBG (1, "clean_and_copy_data done %d\n", *destination_length);
-  //memcpy (buffer, rb->readptr, available_bytes);
+  DBG (10, "clean_and_copy_data done %d\n", *destination_length);
 }
 
 SANE_Status
@@ -96,6 +125,7 @@ usb_write_then_read (Lexmark_Device * dev, SANE_Byte * cmd, size_t cmd_size)
   SANE_Byte buf[buf_size];
   SANE_Status status;
 
+  DBG (10, "usb_write_then_read: %d\n", dev->devnum);
   sanei_usb_set_endpoint(dev->devnum, USB_DIR_OUT|USB_ENDPOINT_TYPE_BULK, 0x02);
   status = sanei_usb_write_bulk (dev->devnum, cmd, &cmd_size);
   if (status != SANE_STATUS_GOOD)
@@ -107,7 +137,7 @@ usb_write_then_read (Lexmark_Device * dev, SANE_Byte * cmd, size_t cmd_size)
   status = sanei_usb_read_bulk (dev->devnum, buf, &buf_size);
   if (status != SANE_STATUS_GOOD && status != SANE_STATUS_EOF)
     {
-      DBG (1, "USB READ IO Error in usb_write_then_read, cannot launch scan\n");
+      DBG (1, "USB READ IO Error in usb_write_then_read, cannot launch scan devnum=%d\n", dev->devnum);
       return status;
     }
   return SANE_STATUS_GOOD;
@@ -604,9 +634,9 @@ sane_get_parameters (SANE_Handle handle, SANE_Parameters * params)
   if (!lexmark_device)
     return SANE_STATUS_INVAL;
 
-  // res = lexmark_device->val[OPT_RESOLUTION].w;
-
+  // res = lexmark_device->val[OPT_RESOLUTION].w; 
   device_params = &(lexmark_device->params);
+      
   width_px =
     lexmark_device->val[OPT_BR_X].w - lexmark_device->val[OPT_TL_X].w;
 
@@ -615,19 +645,24 @@ sane_get_parameters (SANE_Handle handle, SANE_Parameters * params)
   device_params->format = SANE_FRAME_RGB; // SANE_FRAME_GRAY
   device_params->depth = 8;
   device_params->bytes_per_line =
-    (SANE_Int) ((3 * (device_params->pixels_per_line + 1) * device_params->depth )/ 8);
-  
+    (SANE_Int) (3 * device_params->pixels_per_line);
+
   if (strcmp (lexmark_device->val[OPT_MODE].s, SANE_VALUE_SCAN_MODE_COLOR)
       != 0)
     {
       device_params->format = SANE_FRAME_GRAY;
-        device_params->bytes_per_line =
-          (SANE_Int) ((device_params->pixels_per_line + 1)* device_params->depth / 8);
+      device_params->bytes_per_line =
+        (SANE_Int) (device_params->pixels_per_line);
     }
 
   /* geometry in pixels */
   device_params->last_frame = SANE_TRUE;
   device_params->lines = lexmark_device->val[OPT_BR_Y].w;
+
+  DBG (2, "sane_get_parameters: device_params->pixels_per_line=%d\n",
+       device_params->pixels_per_line);
+  DBG (2, "sane_get_parameters: device_params->bytes_per_line=%d\n",
+       device_params->bytes_per_line);
 
   if (params != 0)
     {
@@ -690,8 +725,8 @@ sane_read (SANE_Handle handle, SANE_Byte * data,
   Lexmark_Device * lexmark_device;
   SANE_Status status;
   
-  DBG (2, "sane_read: handle=%p, data=%p, max_length = %d, length=%d\n",
-       (void *) handle, (void *) data, max_length, *length);
+  DBG (20, "sane_read: handle=%p, data=%p, max_length = %d\n",
+       (void *) handle, (void *) data, max_length);
 
   for (lexmark_device = first_device; lexmark_device;
        lexmark_device = lexmark_device->next)
@@ -706,7 +741,8 @@ sane_read (SANE_Handle handle, SANE_Byte * data,
   status = sanei_usb_read_bulk (lexmark_device->devnum, buf, &size);
   if (status != SANE_STATUS_GOOD && status != SANE_STATUS_EOF)
     {
-      DBG (1, "USB READ IO Error in usb_write_then_read, cannot launch scan\n");
+      DBG (1, "USB READ IO Error in usb_write_then_read, cannot read data devnum=%d\n",
+           lexmark_device->devnum);
       return status;
     }
 
@@ -717,7 +753,7 @@ sane_read (SANE_Handle handle, SANE_Byte * data,
       return SANE_STATUS_EOF;
     }
   
-  clean_and_copy_data(buf, size, data, length);
+  clean_and_copy_data(buf, size, data, length, lexmark_device->params.format);
   
   return SANE_STATUS_GOOD;
 }
