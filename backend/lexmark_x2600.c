@@ -94,20 +94,28 @@ build_packet(Lexmark_Device * dev, SANE_Byte packet_id, SANE_Byte * buffer){
   memcpy(buffer, command_with_params_block, command_with_params_block_size);
   // protocole related... "ID?"
   buffer[14] = packet_id;
+  
   // mode
-  buffer[20] = 0x02;
-  // pixel width
-  buffer[24] = 0xF0;
-  buffer[25] = 0x00;
-  // pixel height
-  buffer[28] = 0xF0;
-  buffer[29] = 0x00;
-  // dpi x
-  buffer[40] = 0xC8;
-  buffer[41] = 0x00;
-  // dpi y  
-  buffer[42] = 0xC8;
-  buffer[43] = 0x00;
+  if (memcmp(dev->val[OPT_MODE].s, "Color", 5) == 0 )
+    buffer[20] = 0x03;
+  else
+    buffer[20] = 0x02;
+  
+  // pixel width (swap lower byte -> higher byte)
+  buffer[24] = dev->val[OPT_BR_X].w & 0xFF;
+  buffer[25] = (dev->val[OPT_BR_X].w >> 8) & 0xFF;
+
+  // pixel height (swap lower byte -> higher byte)
+  buffer[28] = dev->val[OPT_BR_X].w & 0xFF;
+  buffer[29] = (dev->val[OPT_BR_X].w >> 8) & 0xFF;
+
+  // dpi x (swap lower byte -> higher byte)
+  buffer[40] = dev->val[OPT_RESOLUTION].w & 0xFF;
+  buffer[41] = (dev->val[OPT_RESOLUTION].w >> 8) & 0xFF;
+  
+  // dpi y (swap lower byte -> higher byte)
+  buffer[42] = dev->val[OPT_RESOLUTION].w & 0xFF;
+  buffer[43] = (dev->val[OPT_RESOLUTION].w >> 8) & 0xFF;
 }
 
 SANE_Status
@@ -658,7 +666,8 @@ sane_start (SANE_Handle handle)
   DBG (2, "sane_start: cmd=%p\n", cmd);
   status = usb_write_then_read(lexmark_device, cmd, command_with_params_block_size);
   if (status != SANE_STATUS_GOOD)
-    return status;    
+    return status;
+  
   build_packet(lexmark_device, 0x01, cmd);;
   status = usb_write_then_read(lexmark_device, cmd, command_with_params_block_size);
   if (status != SANE_STATUS_GOOD)
