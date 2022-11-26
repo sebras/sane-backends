@@ -1,6 +1,6 @@
 #ifndef LEXMARK_X2600_H
 #define LEXMARK_X2600_H
-
+#define BACKEND_NAME lexmark_x2600
 #include "../include/sane/config.h"
 
 #include <errno.h>
