@@ -116,7 +116,7 @@ clean_and_copy_data(SANE_Byte * source, SANE_Int source_size,
 SANE_Status
 usb_write_then_read (Lexmark_Device * dev, SANE_Byte * cmd, size_t cmd_size)
 {
-  size_t buf_size = 128;
+  size_t buf_size = 256;
   SANE_Byte buf[buf_size];
   SANE_Status status;
 
@@ -225,7 +225,7 @@ init_options (Lexmark_Device * dev)
   od->title = SANE_TITLE_PREVIEW;
   od->desc = SANE_DESC_PREVIEW;
   od->size = sizeof (SANE_Word);
-  od->cap = SANE_CAP_SOFT_DETECT | SANE_CAP_SOFT_SELECT;
+  od->cap = SANE_CAP_INACTIVE;
   od->type = SANE_TYPE_BOOL;
   od->constraint_type = SANE_CONSTRAINT_NONE;
   dev->val[OPT_PREVIEW].w = SANE_FALSE;
@@ -246,7 +246,7 @@ init_options (Lexmark_Device * dev)
   od->title = SANE_TITLE_SCAN_TL_X;
   od->desc = SANE_DESC_SCAN_TL_X;
   od->type = SANE_TYPE_INT;
-  od->cap = SANE_CAP_SOFT_DETECT | SANE_CAP_SOFT_SELECT;
+  od->cap = SANE_CAP_INACTIVE;
   od->size = sizeof (SANE_Word);
   od->unit = SANE_UNIT_PIXEL;
   od->constraint_type = SANE_CONSTRAINT_RANGE;
@@ -259,7 +259,7 @@ init_options (Lexmark_Device * dev)
   od->title = SANE_TITLE_SCAN_TL_Y;
   od->desc = SANE_DESC_SCAN_TL_Y;
   od->type = SANE_TYPE_INT;
-  od->cap = SANE_CAP_SOFT_DETECT | SANE_CAP_SOFT_SELECT;
+  od->cap = SANE_CAP_INACTIVE;
   od->size = sizeof (SANE_Word);
   od->unit = SANE_UNIT_PIXEL;
   od->constraint_type = SANE_CONSTRAINT_RANGE;
@@ -358,6 +358,7 @@ sane_init (SANE_Int *version_code, SANE_Auth_Callback authorize)
   fp = sanei_config_open (LEXMARK_X2600_CONFIG_FILE);
   if (!fp)
     {
+      DBG (2, "No config no prob...(%s)\n", LEXMARK_X2600_CONFIG_FILE);
       return SANE_STATUS_GOOD;
     }
   while (sanei_config_read (config_line, sizeof (config_line), fp))
@@ -389,6 +390,8 @@ sane_get_devices (const SANE_Device ***device_list, SANE_Bool local_only)
   DBG (2, "sane_get_devices: device_list=%p, local_only=%d\n",
        (void *) device_list, local_only);
 
+  sanei_usb_scan_devices ();
+
   if (devlist)
     free (devlist);
 
@@ -400,8 +403,11 @@ sane_get_devices (const SANE_Device ***device_list, SANE_Bool local_only)
   lexmark_device = first_device;
   while (lexmark_device != NULL)
     {
+      DBG (2, "sane_get_devices:   lexmark_device->missing:%d\n",
+           lexmark_device->missing);
       if (lexmark_device->missing == SANE_FALSE)
 	{
+
 	  devlist[index] = &(lexmark_device->sane);
 	  index++;
 	}
@@ -428,7 +434,7 @@ sane_open (SANE_String_Const devicename, SANE_Handle * handle)
   for (lexmark_device = first_device; lexmark_device;
        lexmark_device = lexmark_device->next)
     {
-      DBG (2, "sane_open: devname from list: %s\n",
+      DBG (10, "sane_open: devname from list: %s\n",
 	   lexmark_device->sane.name);
       if (strcmp (devicename, "") == 0
 	  || strcmp (devicename, "lexmark") == 0
@@ -663,6 +669,12 @@ sane_get_parameters (SANE_Handle handle, SANE_Parameters * params)
        device_params->pixels_per_line);
   DBG (2, "sane_get_parameters: device_params->bytes_per_line=%d\n",
        device_params->bytes_per_line);
+  DBG (2, "sane_get_parameters: device_params->format=%d\n",
+       device_params->format);
+  DBG (2, "    SANE_FRAME_GRAY: %d\n",
+       SANE_FRAME_GRAY);
+  DBG (2, "    SANE_FRAME_RGB: %d\n",
+       SANE_FRAME_RGB);
 
   if (params != 0)
     {
