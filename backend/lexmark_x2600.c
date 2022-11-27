@@ -56,17 +56,33 @@ static SANE_Byte command_with_params_block[] = {
   0xFF, 0xFF, 0xFF, 0xFF, 0xAA, 0xBB, 0xCC, 0xDD,
   0xAA, 0xBB, 0xCC, 0xDD};
 
+static SANE_Int command_cancel_size = 28;
+static SANE_Byte command_cancel1_block[] = {
+  0xa5, 0x00, 0x19, 0x10, 0x01, 0x83, 0xaa, 0xbb,
+  0xcc, 0xdd, 0x02, 0x00, 0x1b, 0x53, 0x0f, 0x00,
+  0x00, 0x00, 0x00, 0x00, 0xaa, 0xbb, 0xcc, 0xdd,
+  0xaa, 0xbb, 0xcc, 0xdd};
+static SANE_Byte command_cancel2_block[] = {
+  0xa5, 0x00, 0x19, 0x10, 0x01, 0x83, 0xaa, 0xbb,
+  0xcc, 0xdd, 0x02, 0x00, 0x1b, 0x53, 0x06, 0x00,
+  0x00, 0x00, 0x80, 0x00, 0xaa, 0xbb, 0xcc, 0xdd,
+  0xaa, 0xbb, 0xcc, 0xdd};
+
 static SANE_Int last_data_packet_size = 9;
 static SANE_Byte last_data_packet[] = {
   0x1b, 0x53, 0x02, 0x00, 0x01, 0x00, 0x00, 0x00,
   0x01};
+static SANE_Int cancel_packet_size = 9;
+static SANE_Byte cancel_packet[] = {
+  0x1b, 0x53, 0x02, 0x00, 0x01, 0x00, 0x00, 0x00,
+  0x03};
 
- static SANE_Byte empty_data_packet[8] = {0xFF};
+static SANE_Byte empty_data_packet[8] = {0xFF};
 
 void
 clean_and_copy_data(SANE_Byte * source, SANE_Int source_size,
                     SANE_Byte * destination, SANE_Int * destination_length,
-                    SANE_Int mode)
+                    SANE_Int mode, SANE_Int max_length)
 {
   SANE_Int i = 9;
   SANE_Int bytes_written = 0;
@@ -78,6 +94,10 @@ clean_and_copy_data(SANE_Byte * source, SANE_Int source_size,
 
 
   SANE_Int segment_length = (source[4] + ((source[5] << 8) & 0xFF00)) - 1;
+  // edge case segment doesn(t feet in the packet size
+  /* if(segment_length > source_size - 9) */
+  /*   segment_length = source_size - 9; */
+
   SANE_Byte tmp = 0;
   DBG (10, "clean_and_copy_data segment_length:%d mode:%d\n",
        segment_length, mode);
@@ -328,7 +348,7 @@ attach_one (SANE_String_Const devname)
   lexmark_device->read_buffer = NULL;
   /* mark device as present */
   lexmark_device->missing = SANE_FALSE;
-
+  lexmark_device->device_cancelled = SANE_FALSE;
   /* insert it a the start of the chained list */
   lexmark_device->next = first_device;
   first_device = lexmark_device;
@@ -663,7 +683,7 @@ sane_get_parameters (SANE_Handle handle, SANE_Parameters * params)
 
   /* geometry in pixels */
   device_params->last_frame = SANE_TRUE;
-  device_params->lines = lexmark_device->val[OPT_BR_Y].w;
+  device_params->lines = -1;//lexmark_device->val[OPT_BR_Y].w;
 
   DBG (2, "sane_get_parameters: device_params->pixels_per_line=%d\n",
        device_params->pixels_per_line);
@@ -740,6 +760,8 @@ sane_read (SANE_Handle handle, SANE_Byte * data,
 {
   Lexmark_Device * lexmark_device;
   SANE_Status status;
+  size_t size = max_length;
+  SANE_Byte buf[size];
 
   DBG (20, "sane_read: handle=%p, data=%p, max_length = %d\n",
        (void *) handle, (void *) data, max_length);
@@ -751,8 +773,26 @@ sane_read (SANE_Handle handle, SANE_Byte * data,
 	break;
     }
 
-  size_t size = max_length;
-  SANE_Byte buf[size];
+  if (lexmark_device->device_cancelled == SANE_TRUE) {
+      usb_write_then_read(lexmark_device, command_cancel1_block,
+                          command_cancel_size);
+      usb_write_then_read(lexmark_device, command_cancel2_block,
+                          command_cancel_size);
+      usb_write_then_read(lexmark_device, command_cancel1_block,
+                          command_cancel_size);
+      usb_write_then_read(lexmark_device, command_cancel2_block,
+                          command_cancel_size);
+      // to empty buffers
+      status = sanei_usb_read_bulk (lexmark_device->devnum, buf, &size);
+      DBG (10, "USB READ \n");
+      status = sanei_usb_read_bulk (lexmark_device->devnum, buf, &size);
+      DBG (10, "USB READ \n");
+      status = sanei_usb_read_bulk (lexmark_device->devnum, buf, &size);
+      DBG (10, "USB READ \n");
+      //status = sanei_usb_read_bulk (lexmark_device->devnum, buf, &size);
+      //DBG (10, "USB READ \n");
+      return SANE_STATUS_CANCELLED;//SANE_STATUS_GOOD; //;
+  }
 
   status = sanei_usb_read_bulk (lexmark_device->devnum, buf, &size);
   if (status != SANE_STATUS_GOOD && status != SANE_STATUS_EOF)
@@ -769,7 +809,15 @@ sane_read (SANE_Handle handle, SANE_Byte * data,
       return SANE_STATUS_EOF;
     }
 
-  clean_and_copy_data(buf, size, data, length, lexmark_device->params.format);
+  // cancel packet received?
+  if (memcmp(cancel_packet, buf, cancel_packet_size) == 0)
+    {
+      length = 0;
+      return SANE_STATUS_CANCELLED;
+    }
+
+  clean_and_copy_data(buf, size, data, length, lexmark_device->params.format,
+                      max_length);
 
   return SANE_STATUS_GOOD;
 }
@@ -798,7 +846,18 @@ sane_get_select_fd (SANE_Handle handle, SANE_Int * fd)
 void
 sane_cancel (SANE_Handle handle)
 {
+  Lexmark_Device * lexmark_device;
+
   DBG (2, "sane_cancel: handle = %p\n", (void *) handle);
+
+  for (lexmark_device = first_device; lexmark_device;
+       lexmark_device = lexmark_device->next)
+    {
+      if (lexmark_device == handle)
+	break;
+    }
+
+  lexmark_device->device_cancelled = SANE_TRUE;
 }
 
 void
