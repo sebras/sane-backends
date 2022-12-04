@@ -107,7 +107,7 @@ static struct option basic_options[] = {
   {"test", no_argument, NULL, 'T'},
   {"all-options", no_argument, NULL, 'A'},
   {"version", no_argument, NULL, 'V'},
-  {"buffer-size", optional_argument, NULL, 'B'},
+  {"buffer-size", required_argument, NULL, 'B'},
   {"batch", optional_argument, NULL, 'b'},
   {"batch-count", required_argument, NULL, OPTION_BATCH_COUNT},
   {"batch-start", required_argument, NULL, OPTION_BATCH_START_AT},
@@ -129,7 +129,7 @@ static struct option basic_options[] = {
 #define OUTPUT_JPEG     4
 #define OUTPUT_PDF      5
 
-#define BASE_OPTSTRING	"d:hi:Lf:o:B::nvVTAbp"
+#define BASE_OPTSTRING	"d:hi:Lf:o:B:nvVTAbp"
 #define STRIP_HEIGHT	256	/* # lines we increment image height */
 
 static struct option *all_options = NULL;
@@ -2085,7 +2085,7 @@ main (int argc, char **argv)
   void *pw = NULL;
   FILE *ofp = NULL;
 
-  buffer_size = (32 * 1024);	/* default size */
+  buffer_size = (1024 * 1024);	/* default size */
 
   prog_name = strrchr (argv[0], '/');
   if (prog_name)
@@ -2132,10 +2132,7 @@ main (int argc, char **argv)
           output_file = optarg;
           break;
 	case 'B':
-          if (optarg)
-	    buffer_size = 1024 * atoi(optarg);
-          else
-	    buffer_size = (1024 * 1024);
+          buffer_size = 1024 * atoi(optarg);
 	  break;
 	case 'T':
 	  test = 1;
