@@ -194,6 +194,11 @@
 :status :good
 :comment "All resolutions supported, Flatbed and ADF supported."
 
+:model "EcoTank L3160"
+:interface "WiFi"
+:status :good
+:comment "All resolutions supported."
+
 :model "XP-6100"
 :interface "WiFi"
 :status :good
