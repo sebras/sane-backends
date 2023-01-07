@@ -40,6 +40,10 @@
 #include <unistd.h>
 #include <stdarg.h>
 
+#ifdef __FreeBSD__
+#include <libgen.h>
+#endif
+
 #if defined (__APPLE__) && defined (__MACH__)
 #include <libgen.h>     // for basename()
 #endif
