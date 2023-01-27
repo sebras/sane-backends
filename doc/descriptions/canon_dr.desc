@@ -335,6 +335,12 @@
 :usbid "0x1083" "0x162c"
 :status :good
 
+:model "P-150"
+:interface "USB"
+:usbid "0x1083" "0x162d"
+:status :unsupported
+:comment "This is the same device as the 0x162c P-150, but the mode switch on the scanner is in the wrong position, you must move the switch."
+
 :model "P-201"
 :interface "USB"
 :usbid "0x1083" "0x1652"
@@ -355,7 +361,7 @@
 :model "P-208"
 :interface "USB"
 :usbid "0x1083" "0x164e"
-:status :basic
+:status :unsupported
 :comment "This is the same device as the 0x164c P-208, but the mode switch on the scanner is in the wrong position, you must move the switch."
 
 :model "DR-P208II"
@@ -372,7 +378,7 @@
 :model "P-208II"
 :interface "USB"
 :usbid "0x1083" "0x1660"
-:status :basic
+:status :unsupported
 :comment "This is the same device as the 0x165f P-208II, but the mode switch on the scanner is in the wrong position, you must move the switch."
 
 :model "DR-P215"
@@ -390,7 +396,7 @@
 :model "P-215"
 :interface "USB"
 :usbid "0x1083" "0x1647"
-:status :basic
+:status :unsupported
 :comment "This is the same device as the 0x1646 P-215, but the mode switch on the scanner is in the wrong position, you must move the switch."
 
 :model "DR-P215II"
