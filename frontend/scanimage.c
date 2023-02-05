@@ -926,7 +926,8 @@ fetch_options (SANE_Device * device)
 	}
 
       /* create command line option only for non-group options */
-      if (opt->type == SANE_TYPE_GROUP)
+      /* Also we sometimes see options with no name in rogue backends. */
+      if ((opt->type == SANE_TYPE_GROUP) || (opt->name == NULL))
         continue;
 
       option_number[option_count] = i;
@@ -2026,6 +2027,10 @@ static void print_options(SANE_Device * device, SANE_Int num_dev_options, SANE_B
 
       if (!opt)
 	opt = sane_get_option_descriptor (device, i);
+
+      /* Some options from rogue backends are empty. */
+      if (opt->name == NULL)
+        continue;
 
       if (ro || SANE_OPTION_IS_SETTABLE (opt->cap)
 	  || opt->type == SANE_TYPE_GROUP)
