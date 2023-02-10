@@ -39,6 +39,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <stdarg.h>
+#include <errno.h>
 
 #ifdef __FreeBSD__
 #include <libgen.h>
@@ -2087,8 +2088,6 @@ main (int argc, char **argv)
   const char *devname = 0;
   const char *defdevname = 0;
   const char *format = 0;
-  char readbuf[2];
-  char *readbuf2;
   int batch = 0;
   int batch_print = 0;
   int batch_prompt = 0;
@@ -2748,14 +2747,18 @@ List of available devices:", prog_name);
 	    {
 	      if (batch_prompt)
 		{
+		  int c;
+
 		  fprintf (stderr, "Place document no. %d on the scanner.\n",
 			   n);
 		  fprintf (stderr, "Press <RETURN> to continue.\n");
-		  fprintf (stderr, "Press Ctrl + D to terminate.\n");
-		  readbuf2 = fgets (readbuf, 2, stdin);
+		  fprintf (stderr, "Press Ctrl + D (EOF) to terminate.\n");
+		  while ((c = getchar()) != '\n' && c != EOF);
 
-		  if (readbuf2 == NULL)
+		  if (c == EOF)
 		    {
+		      if (ferror(stdin))
+			fprintf(stderr, "%s: stdin error: %s\n", prog_name, strerror(errno));
 		      if (ofp)
 			{
 #ifdef HAVE_LIBJPEG
