@@ -2094,6 +2094,7 @@ main (int argc, char **argv)
   int batch_count = BATCH_COUNT_UNLIMITED;
   int batch_start_at = 1;
   int batch_increment = 1;
+  int promptc;
   SANE_Status status;
   char *full_optstring;
   SANE_Int version_code;
@@ -2747,15 +2748,13 @@ List of available devices:", prog_name);
 	    {
 	      if (batch_prompt)
 		{
-		  int c;
-
 		  fprintf (stderr, "Place document no. %d on the scanner.\n",
 			   n);
 		  fprintf (stderr, "Press <RETURN> to continue.\n");
 		  fprintf (stderr, "Press Ctrl + D (EOF) to terminate.\n");
-		  while ((c = getchar()) != '\n' && c != EOF);
+		  while ((promptc = getchar()) != '\n' && promptc != EOF);
 
-		  if (c == EOF)
+		  if (promptc == EOF)
 		    {
 		      if (ferror(stdin))
 			fprintf(stderr, "%s: stdin error: %s\n", prog_name, strerror(errno));
