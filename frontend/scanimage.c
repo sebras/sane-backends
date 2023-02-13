@@ -39,15 +39,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <stdarg.h>
-
-#ifdef __FreeBSD__
-#include <libgen.h>
-#endif
-
-#if defined (__APPLE__) && defined (__MACH__)
 #include <libgen.h>     // for basename()
-#endif
-
 #include <sys/types.h>
 #include <sys/stat.h>
 
@@ -1260,7 +1252,21 @@ write_png_header (SANE_Frame format, int width, int height, int depth, int dpi, 
 	  if ((is_gray_profile && color_type == PNG_COLOR_TYPE_GRAY) ||
 	      (is_rgb_profile && color_type == PNG_COLOR_TYPE_RGB))
 	    {
-	      png_set_iCCP(*png_ptr, *info_ptr, basename(icc_profile), PNG_COMPRESSION_TYPE_BASE, icc_buffer, icc_size);
+	      char *icc_profile_cp = strdup(icc_profile);
+	      if (icc_profile_cp == NULL)
+	        {
+                  fprintf(stderr, "Memory allocation failure prevented the setting of PNG ICC profile.\n");
+	        }
+	      else
+	        {
+                  png_set_iCCP (*png_ptr,
+                                *info_ptr,
+                                basename (icc_profile_cp),
+                                PNG_COMPRESSION_TYPE_BASE,
+                                icc_buffer,
+                                icc_size);
+                  free(icc_profile_cp);
+	        }
 	    }
 	  else
 	    {
