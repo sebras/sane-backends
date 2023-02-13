@@ -39,6 +39,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <stdarg.h>
+#include <errno.h>
 #include <libgen.h>     // for basename()
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -2093,14 +2094,13 @@ main (int argc, char **argv)
   const char *devname = 0;
   const char *defdevname = 0;
   const char *format = 0;
-  char readbuf[2];
-  char *readbuf2;
   int batch = 0;
   int batch_print = 0;
   int batch_prompt = 0;
   int batch_count = BATCH_COUNT_UNLIMITED;
   int batch_start_at = 1;
   int batch_increment = 1;
+  int promptc;
   SANE_Status status;
   char *full_optstring;
   SANE_Int version_code;
@@ -2757,11 +2757,13 @@ List of available devices:", prog_name);
 		  fprintf (stderr, "Place document no. %d on the scanner.\n",
 			   n);
 		  fprintf (stderr, "Press <RETURN> to continue.\n");
-		  fprintf (stderr, "Press Ctrl + D to terminate.\n");
-		  readbuf2 = fgets (readbuf, 2, stdin);
+		  fprintf (stderr, "Press Ctrl + D (EOF) to terminate.\n");
+		  while ((promptc = getchar()) != '\n' && promptc != EOF);
 
-		  if (readbuf2 == NULL)
+		  if (promptc == EOF)
 		    {
+		      if (ferror(stdin))
+			fprintf(stderr, "%s: stdin error: %s\n", prog_name, strerror(errno));
 		      if (ofp)
 			{
 #ifdef HAVE_LIBJPEG
