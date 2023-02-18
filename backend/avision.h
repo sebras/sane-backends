@@ -398,8 +398,7 @@ typedef struct Avision_Device
   SANE_Bool inquiry_nvram_read;
   SANE_Bool inquiry_power_save_time;
 
-  SANE_Bool inquiry_light_box;
-  SANE_Bool inquiry_adf;
+  SANE_Bool inquiry_adf_capability;
   SANE_Bool inquiry_duplex;
   SANE_Bool inquiry_duplex_interlaced;
   SANE_Bool inquiry_paper_length;
@@ -418,6 +417,10 @@ typedef struct Avision_Device
   SANE_Bool inquiry_light_detect;
   SANE_Bool inquiry_light_control;
   SANE_Bool inquiry_exposure_control;
+
+  // Determines from accessories query.
+  SANE_Bool inquiry_light_box_present;
+  SANE_Bool inquiry_adf_present;
 
   int       inquiry_max_shading_target;
   SANE_Bool inquiry_button_control;

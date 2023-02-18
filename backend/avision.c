@@ -3769,7 +3769,7 @@ static SANE_Status
 get_accessories_info (Avision_Scanner* s)
 {
   Avision_Device* dev = s->hw;
-  int try = 3;
+  int try = 1;
 
   /* read stuff */
   struct command_read rcmd;
@@ -3811,47 +3811,84 @@ get_accessories_info (Avision_Scanner* s)
        result [2],
        adf_model[ (result[2] < adf_models) ? result[2] : adf_models ]);
 
-  dev->inquiry_adf |= result [0];
+  /*
+   * Cope with ADF presence flag being present but the device *not* reporting
+   * ADF capability. Maybe there are some devices that do that? [RL]
+   *
+   */
+  dev->inquiry_adf_present = result [0];
 
+  /*
+   * Note: this feature_type check is a bit of a hack.
+   * Only the HP Scanjet 8200 series supports this so it is code
+   * specific to this family of scanners. [RL]
+   *
+   */
   if (dev->hw->feature_type & AV_ADF_FLIPPING_DUPLEX)
-  {
-    if (result[0] == 1)
     {
-      dev->inquiry_duplex = 1;
-      dev->inquiry_duplex_interlaced = 0;
-    } else if (result[0] == 0 && result[2] != 0 && !skip_adf) {
-      /* Sometimes the scanner will report that there is no ADF attached, yet
-       * an ADF model number will still be reported.  This happens on the
-       * HP8200 series and possibly others.  In this case we need to reset the
-       * the adf and try reading it again.  Skip this if the configuration says
-       * to do so, so that we don't fail out the scanner as being broken and
-       * unsupported if there isn't actually an ADF present.
-       */
-      DBG (3, "get_accessories_info: Found ADF model number but the ADF-present flag is not set. Trying to recover...\n");
-      status = adf_reset (s);
-      if (status != SANE_STATUS_GOOD) {
-        DBG (3, "get_accessories_info: Failed to reset ADF: %s\n", sane_strstatus (status));
-        return status;
-      }
-      DBG (1, "get_accessories_info: Waiting while ADF firmware resets...\n");
-      sleep(3);
-      status = wait_ready (&s->av_con, 1);
-      if (status != SANE_STATUS_GOOD) {
-        DBG (1, "get_accessories_info: wait_ready() failed: %s\n", sane_strstatus (status));
-        return status;
-      }
-      if (try) {
-        try--;
-        goto RETRY;
-      }
-      DBG (1, "get_accessories_info: Maximum retries attempted, ADF unresponsive.\n");
-      return SANE_STATUS_UNSUPPORTED;
+      if (result[0] == 1)
+        {
+          dev->inquiry_duplex = 1;
+          dev->inquiry_duplex_interlaced = 0;
+        }
+      else if (result[0] == 0 && result[2] != 0 && !skip_adf)
+        {
+          /* Sometimes the scanner will report that there is no ADF attached, yet
+           * an ADF model number will still be reported.  This happens on the
+           * HP8200 series and possibly others.  In this case we need to reset the
+           * the adf and try reading it again.  Skip this if the configuration says
+           * to do so, so that we don't fail out the scanner as being broken and
+           * unsupported if there isn't actually an ADF present.
+           *
+           * Note further: Some models (like the ScanJet 8300) report that they have ADF
+           * *capability* in the INQUIRY response but that doesn't necessarily mean that
+           * an ADF is plugged in. In my case it has the lightbox accessory instead and
+           * result[0] == FALSE.
+           * Trying to reset the ADF 3 times is excessive and takes an unreasonable amount
+           * of time on the 8300 with no ADF plugged in, so let's do it just once and if
+           * it fails to report presence, then don't assume it is an error, just that
+           * there is no ADF. [RL]
+           *
+           */
+          if (!try)
+            {
+              DBG (
+                  1,
+                  "get_accessories_info: Maximum retries attempted, ADF unresponsive.\n");
+              dev->inquiry_adf_present = SANE_FALSE;
+              //return SANE_STATUS_UNSUPPORTED;
+            }
+          else
+            {
+              try--;
+
+              DBG(3,
+                  "get_accessories_info: Found ADF model number but the ADF-present flag is not set. "
+                  "Trying to reset the ADF just in case it is there but unresponsive...\n");
+              status = adf_reset (s);
+              if (status != SANE_STATUS_GOOD)
+                {
+                  DBG (3, "get_accessories_info: Failed to reset ADF: %s\n", sane_strstatus (status));
+                  return status;
+                }
+
+              DBG(1,"get_accessories_info: Waiting while ADF firmware resets...\n");
+              sleep (3);
+              status = wait_ready (&s->av_con, 1);
+              if (status != SANE_STATUS_GOOD)
+                {
+                  DBG (1, "get_accessories_info: wait_ready() failed: %s\n",
+                       sane_strstatus (status));
+                  return status;
+                }
+              goto RETRY;
+            }
+        }
     }
-  }
 
   /* only honor a 1, some scanner without adapter set 0xff */
   if (result[1] == 1)
-    dev->inquiry_light_box = 1;
+    dev->inquiry_light_box_present = 1;
 
   return SANE_STATUS_GOOD;
 }
@@ -4543,7 +4580,7 @@ get_double ( &(result[48] ) ));
   DBG (3, "attach: [62]    scanner type:%s%s%s%s%s%s\n",
        BIT(result[62],7)?" Flatbed":"",
        BIT(result[62],6)?" Roller (ADF)":"",
-       BIT(result[62],5)?" Flatbed (ADF)":"",
+       BIT(result[62],5)?" Flatbed (ADF/Lightbox)":"",
        BIT(result[62],4)?" Roller":"", /* does not feed multiple pages, AV25 */
        BIT(result[62],3)?" Film scanner":"",
        BIT(result[62],2)?" Duplex":"");
@@ -4643,7 +4680,7 @@ get_double ( &(result[48] ) ));
   dev->inquiry_nvram_read = BIT(result[52],0);
   dev->inquiry_power_save_time = BIT(result[52],1);
 
-  dev->inquiry_adf = BIT (result[62], 5);
+  dev->inquiry_adf_capability = BIT (result[62], 5);
   dev->inquiry_duplex = BIT (result[62], 2) || BIT (result[94], 5);
   dev->inquiry_duplex_interlaced = BIT(result[62],2) || BIT (result[94], 4);
   /* the first avision scanners (AV3200) do not set the interlaced bit */
@@ -5147,10 +5184,10 @@ additional_probe (Avision_Scanner* s)
     {
       add_source_mode (dev, AV_NORMAL, "Normal");
 
-      if (dev->inquiry_light_box)
+      if (dev->inquiry_light_box_present)
 	add_source_mode (dev, AV_TRANSPARENT, "Transparency");
 
-      if (dev->inquiry_adf)
+      if (dev->inquiry_adf_present)
         add_source_mode (dev, AV_ADF, "ADF Front");
     }
 
