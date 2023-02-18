@@ -4373,41 +4373,82 @@ attach (SANE_String_Const devname, Avision_ConnectionType con_type,
 
   model_num = 0;
   found = 0;
-  /* while not at at end of list NULL terminator */
-  while (Avision_Device_List[model_num].real_mfg != NULL ||
-         Avision_Device_List[model_num].scsi_mfg != NULL)
-  {
-    int matches = 0, match_count = 0; /* count number of matches */
-    DBG (1, "attach: Checking model: %d\n", model_num);
 
-    if (Avision_Device_List[model_num].scsi_mfg) {
-      ++match_count;
-      if (strcmp(mfg, Avision_Device_List[model_num].scsi_mfg) == 0)
-        ++matches;
-    }
-    if (Avision_Device_List[model_num].scsi_model) {
-      ++match_count;
-      if (strcmp(model, Avision_Device_List[model_num].scsi_model) == 0)
-        ++matches;
-    }
+  /*
+   * Search for a matching device in the device list.
+   * Primarily we need two matches for SCSI devices.
+   * However, multiple USB device entries share the same
+   * SCSI info. For USB devices, we will also do a mandatory
+   * USB Product/Vendor check to pick the right one. Otherwise
+   * at the very least the device name is incorrect.
+   *
+   */
+  SANE_Word usb_vendor = 0;
+  SANE_Word usb_product = 0;
 
-    /* we need 2 matches (mfg, model) for SCSI entries, or the ones available
-       for "we know what we are looking for" USB entries */
-    if ((attaching_hw == &(Avision_Device_List [model_num]) &&
-         matches == match_count) ||
-	matches == 2)
+  if (con_type == AV_USB)
     {
-      DBG (1, "attach: Scanner matched entry: %d: \"%s\", \"%s\", 0x%.4x, 0x%.4x\n",
-           model_num,
-	   Avision_Device_List[model_num].scsi_mfg,
-	   Avision_Device_List[model_num].scsi_model,
-	   Avision_Device_List[model_num].usb_vendor,
-	   Avision_Device_List[model_num].usb_product);
-      found = 1;
-      break;
+      status = sanei_usb_get_vendor_product_byname (devname, &usb_vendor, &usb_product);
+      if (status != SANE_STATUS_GOOD)
+        {
+          DBG (0, "attach: Could not retrieve USB vendor nor product for USB device.\n");
+          status = SANE_STATUS_INVAL;
+          goto close_scanner_and_return;
+        }
     }
-    ++model_num;
-  }
+
+  /* while not at at end of list NULL terminator */
+  while (Avision_Device_List[model_num].real_mfg != NULL
+      || Avision_Device_List[model_num].scsi_mfg != NULL)
+    {
+      int matches = 0, match_count = 0; /* count number of matches */
+      DBG (1, "attach: Checking model: %d\n", model_num);
+
+      if (Avision_Device_List[model_num].scsi_mfg)
+        {
+          ++match_count;
+          if (strcmp (mfg, Avision_Device_List[model_num].scsi_mfg) == 0)
+            ++matches;
+        }
+      if (Avision_Device_List[model_num].scsi_model)
+        {
+          ++match_count;
+          if (strcmp (model, Avision_Device_List[model_num].scsi_model) == 0)
+            ++matches;
+        }
+
+      /*
+       * Must match on USB vendor product also for USB devices.
+       * We will *always* know the vendor and product for USB devices.
+       *
+       */
+      if (con_type == AV_USB)
+        {
+          ++match_count;
+          if ((Avision_Device_List[model_num].usb_product == usb_product)
+              && (Avision_Device_List[model_num].usb_vendor == usb_vendor))
+            {
+              ++matches;
+            }
+        }
+
+      /* we need 2 matches (mfg, model) for SCSI entries, or the ones available
+       for "we know what we are looking for" USB entries */
+      if ((attaching_hw == &(Avision_Device_List[model_num]))
+          && (matches == match_count))
+        {
+          DBG (
+              1,
+              "attach: Scanner matched entry: %d: \"%s\", \"%s\", 0x%.4x, 0x%.4x\n",
+              model_num, Avision_Device_List[model_num].scsi_mfg,
+              Avision_Device_List[model_num].scsi_model,
+              Avision_Device_List[model_num].usb_vendor,
+              Avision_Device_List[model_num].usb_product);
+          found = 1;
+          break;
+        }
+      ++model_num;
+    }
 
   if (!found) {
     DBG (0, "attach: \"%s\" - \"%s\" not yet in whitelist!\n", mfg, model);
