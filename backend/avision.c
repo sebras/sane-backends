@@ -7034,10 +7034,18 @@ init_options (Avision_Scanner* s)
   memset (s->opt, 0, sizeof (s->opt));
   memset (s->val, 0, sizeof (s->val));
 
-  for (i = 0; i < NUM_OPTIONS; ++ i) {
-    s->opt[i].size = sizeof (SANE_Word);
-    s->opt[i].cap = SANE_CAP_SOFT_SELECT | SANE_CAP_SOFT_DETECT;
-  }
+  /*
+   * Set defaults for all the options.
+   *
+   */
+  for (i = 0; i < NUM_OPTIONS; ++i)
+    {
+      s->opt[i].name = "";
+      s->opt[i].desc = "";
+      s->opt[i].unit = SANE_UNIT_NONE;
+      s->opt[i].size = sizeof(SANE_Word);
+      s->opt[i].cap = SANE_CAP_SOFT_SELECT | SANE_CAP_SOFT_DETECT;
+    }
 
   /* Init the SANE option from the scanner inquiry data */
 
@@ -7067,9 +7075,7 @@ init_options (Avision_Scanner* s)
   dev->speed_range.max = (SANE_Int)4;
   dev->speed_range.quant = (SANE_Int)1;
 
-  s->opt[OPT_NUM_OPTS].name = "";
   s->opt[OPT_NUM_OPTS].title = SANE_TITLE_NUM_OPTIONS;
-  s->opt[OPT_NUM_OPTS].desc = "";
   s->opt[OPT_NUM_OPTS].cap = SANE_CAP_SOFT_DETECT;
   s->opt[OPT_NUM_OPTS].type = SANE_TYPE_INT;
   s->opt[OPT_NUM_OPTS].size = sizeof(SANE_TYPE_INT);
@@ -7077,7 +7083,6 @@ init_options (Avision_Scanner* s)
 
   /* "Mode" group: */
   s->opt[OPT_MODE_GROUP].title = SANE_TITLE_SCAN_MODE;
-  s->opt[OPT_MODE_GROUP].desc = ""; /* for groups only title and type are valid */
   s->opt[OPT_MODE_GROUP].type = SANE_TYPE_GROUP;
   s->opt[OPT_MODE_GROUP].cap = 0;
   s->opt[OPT_MODE_GROUP].size = 0;
@@ -7141,7 +7146,6 @@ init_options (Avision_Scanner* s)
 
   /* "Geometry" group: */
   s->opt[OPT_GEOMETRY_GROUP].title = "Geometry";
-  s->opt[OPT_GEOMETRY_GROUP].desc = ""; /* for groups only title and type are valid */
   s->opt[OPT_GEOMETRY_GROUP].type = SANE_TYPE_GROUP;
   s->opt[OPT_GEOMETRY_GROUP].cap = SANE_CAP_ADVANCED;
   s->opt[OPT_GEOMETRY_GROUP].size = 0;
@@ -7189,8 +7193,8 @@ init_options (Avision_Scanner* s)
 
   /* overscan top */
   s->opt[OPT_OVERSCAN_TOP].name = "overscan-top";
-  s->opt[OPT_OVERSCAN_TOP].title = "Overscan top";
-  s->opt[OPT_OVERSCAN_TOP].desc = "The top overscan controls the additional area to scan before the paper is detected.";
+  s->opt[OPT_OVERSCAN_TOP].title = SANE_TITLE_OVERSCAN_TOP;
+  s->opt[OPT_OVERSCAN_TOP].desc = SANE_DESC_OVERSCAN_TOP;
   s->opt[OPT_OVERSCAN_TOP].type = SANE_TYPE_FIXED;
   s->opt[OPT_OVERSCAN_TOP].unit = SANE_UNIT_MM;
   s->opt[OPT_OVERSCAN_TOP].constraint_type = SANE_CONSTRAINT_RANGE;
@@ -7199,8 +7203,8 @@ init_options (Avision_Scanner* s)
 
   /* overscan bottom */
   s->opt[OPT_OVERSCAN_BOTTOM].name = "overscan-bottom";
-  s->opt[OPT_OVERSCAN_BOTTOM].title = "Overscan bottom";
-  s->opt[OPT_OVERSCAN_BOTTOM].desc = "The bottom overscan controls the additional area to scan after the paper end is detected.";
+  s->opt[OPT_OVERSCAN_BOTTOM].title = SANE_TITLE_OVERSCAN_BOTTOM;
+  s->opt[OPT_OVERSCAN_BOTTOM].desc = SANE_DESC_OVERSCAN_BOTTOM;
   s->opt[OPT_OVERSCAN_BOTTOM].type = SANE_TYPE_FIXED;
   s->opt[OPT_OVERSCAN_BOTTOM].unit = SANE_UNIT_MM;
   s->opt[OPT_OVERSCAN_BOTTOM].constraint_type = SANE_CONSTRAINT_RANGE;
@@ -7214,8 +7218,8 @@ init_options (Avision_Scanner* s)
 
   /* background raster */
   s->opt[OPT_BACKGROUND].name = "background-lines";
-  s->opt[OPT_BACKGROUND].title = "Background raster lines";
-  s->opt[OPT_BACKGROUND].desc = "The background raster controls the additional background lines to scan before the paper is feed through the scanner.";
+  s->opt[OPT_BACKGROUND].title = SANE_TITLE_BACKGROUND_LINES;
+  s->opt[OPT_BACKGROUND].desc = SANE_DESC_BACKGROUND_LINES;
   s->opt[OPT_BACKGROUND].type = SANE_TYPE_INT;
   s->opt[OPT_BACKGROUND].unit = SANE_UNIT_PIXEL;
   s->opt[OPT_BACKGROUND].constraint_type = SANE_CONSTRAINT_RANGE;
@@ -7227,8 +7231,7 @@ init_options (Avision_Scanner* s)
   }
 
   /* "Enhancement" group: */
-  s->opt[OPT_ENHANCEMENT_GROUP].title = "Enhancement";
-  s->opt[OPT_ENHANCEMENT_GROUP].desc = ""; /* for groups only title and type are valid */
+  s->opt[OPT_ENHANCEMENT_GROUP].title = SANE_TITLE_ENHANCEMENT;
   s->opt[OPT_ENHANCEMENT_GROUP].type = SANE_TYPE_GROUP;
   s->opt[OPT_ENHANCEMENT_GROUP].cap = 0;
   s->opt[OPT_ENHANCEMENT_GROUP].size = 0;
@@ -7260,8 +7263,8 @@ init_options (Avision_Scanner* s)
 
   /* Quality Scan */
   s->opt[OPT_QSCAN].name   = "quality-scan";
-  s->opt[OPT_QSCAN].title  = "Quality scan";
-  s->opt[OPT_QSCAN].desc   = "Turn on quality scanning (slower but better).";
+  s->opt[OPT_QSCAN].title  = SANE_TITLE_QUALITY_SCAN;
+  s->opt[OPT_QSCAN].desc   = SANE_DESC_QUALITY_SCAN;
   s->opt[OPT_QSCAN].type   = SANE_TYPE_BOOL;
   s->opt[OPT_QSCAN].unit   = SANE_UNIT_NONE;
   s->val[OPT_QSCAN].w      = SANE_TRUE;
@@ -7340,8 +7343,8 @@ init_options (Avision_Scanner* s)
 
   /* exposure */
   s->opt[OPT_EXPOSURE].name = "exposure";
-  s->opt[OPT_EXPOSURE].title = "Exposure";
-  s->opt[OPT_EXPOSURE].desc = "Manual exposure adjustment.";
+  s->opt[OPT_EXPOSURE].title = SANE_TITLE_MANUAL_EXPOSURE;
+  s->opt[OPT_EXPOSURE].desc = SANE_DESC_MANUAL_EXPOSURE;
   s->opt[OPT_EXPOSURE].type = SANE_TYPE_INT;
   s->opt[OPT_EXPOSURE].unit = SANE_UNIT_PERCENT;
   s->opt[OPT_EXPOSURE].constraint_type = SANE_CONSTRAINT_RANGE;
@@ -7354,8 +7357,8 @@ init_options (Avision_Scanner* s)
 
   /* Multi sample */
   s->opt[OPT_MULTISAMPLE].name  = "multi-sample";
-  s->opt[OPT_MULTISAMPLE].title = "Multi-sample";
-  s->opt[OPT_MULTISAMPLE].desc  = "Enable multi-sample scan mode.";
+  s->opt[OPT_MULTISAMPLE].title = SANE_TITLE_MULTI_SAMPLE;
+  s->opt[OPT_MULTISAMPLE].desc  = SANE_DESC_MULTI_SAMPLE;
   s->opt[OPT_MULTISAMPLE].type  = SANE_TYPE_BOOL;
   s->opt[OPT_MULTISAMPLE].unit  = SANE_UNIT_NONE;
   s->val[OPT_MULTISAMPLE].w     = SANE_FALSE;
@@ -7367,9 +7370,9 @@ init_options (Avision_Scanner* s)
   }
 
   /* Infra-red */
-  s->opt[OPT_IR].name  = "infra-red";
-  s->opt[OPT_IR].title = "Infra-red";
-  s->opt[OPT_IR].desc  = "Enable infra-red scan mode.";
+  s->opt[OPT_IR].name  = SANE_NAME_INFRARED;
+  s->opt[OPT_IR].title = SANE_TITLE_INFRARED;
+  s->opt[OPT_IR].desc  = SANE_DESC_INFRARED;
   s->opt[OPT_IR].type  = SANE_TYPE_BOOL;
   s->opt[OPT_IR].unit  = SANE_UNIT_NONE;
   s->val[OPT_IR].w     = SANE_FALSE;
@@ -7381,16 +7384,13 @@ init_options (Avision_Scanner* s)
   }
 
   /* "MISC" group: */
-  s->opt[OPT_MISC_GROUP].title = SANE_TITLE_SCAN_MODE;
-  s->opt[OPT_MISC_GROUP].desc = ""; /* for groups only title and type are valid */
+  s->opt[OPT_MISC_GROUP].title = SANE_TITLE_MISC_GROUP;
   s->opt[OPT_MISC_GROUP].type = SANE_TYPE_GROUP;
   s->opt[OPT_MISC_GROUP].cap = 0;
   s->opt[OPT_MISC_GROUP].size = 0;
   s->opt[OPT_MISC_GROUP].constraint_type = SANE_CONSTRAINT_NONE;
 
   /* film holder control */
-  if (dev->scanner_type != AV_FILM)
-    s->opt[OPT_FRAME].cap |= SANE_CAP_INACTIVE;
   s->opt[OPT_FRAME].name = SANE_NAME_FRAME;
   s->opt[OPT_FRAME].title = SANE_TITLE_FRAME;
   s->opt[OPT_FRAME].desc = SANE_DESC_FRAME;
@@ -7399,22 +7399,24 @@ init_options (Avision_Scanner* s)
   s->opt[OPT_FRAME].constraint_type = SANE_CONSTRAINT_RANGE;
   s->opt[OPT_FRAME].constraint.range = &dev->frame_range;
   s->val[OPT_FRAME].w = dev->current_frame;
+  if (dev->scanner_type != AV_FILM)
+    s->opt[OPT_FRAME].cap |= SANE_CAP_INACTIVE;
 
   /* power save time */
-  if (!dev->inquiry_power_save_time)
-    s->opt[OPT_POWER_SAVE_TIME].cap |= SANE_CAP_INACTIVE;
   s->opt[OPT_POWER_SAVE_TIME].name = "power-save-time";
-  s->opt[OPT_POWER_SAVE_TIME].title = "Power save timer control";
-  s->opt[OPT_POWER_SAVE_TIME].desc = "Allows control of the scanner's power save timer, dimming or turning off the light.";
+  s->opt[OPT_POWER_SAVE_TIME].title = SANE_TITLE_POWER_SAVE_TIME;
+  s->opt[OPT_POWER_SAVE_TIME].desc = SANE_DESC_POWER_SAVE_TIME;
   s->opt[OPT_POWER_SAVE_TIME].type = SANE_TYPE_INT;
   s->opt[OPT_POWER_SAVE_TIME].unit = SANE_UNIT_NONE;
   s->opt[OPT_POWER_SAVE_TIME].constraint_type = SANE_CONSTRAINT_NONE;
   s->val[OPT_POWER_SAVE_TIME].w = 0;
+  if (!dev->inquiry_power_save_time)
+    s->opt[OPT_POWER_SAVE_TIME].cap |= SANE_CAP_INACTIVE;
 
   /* message, like options set on the scanner, LED no. & co */
   s->opt[OPT_MESSAGE].name = "message";
-  s->opt[OPT_MESSAGE].title = "message text from the scanner";
-  s->opt[OPT_MESSAGE].desc = "This text contains device specific options controlled by the user on the scanner hardware.";
+  s->opt[OPT_MESSAGE].title = SANE_TITLE_OPTIONS_MSG;
+  s->opt[OPT_MESSAGE].desc = SANE_DESC_OPTIONS_MSG;
   s->opt[OPT_MESSAGE].type = SANE_TYPE_STRING;
   s->opt[OPT_MESSAGE].cap = SANE_CAP_SOFT_DETECT | SANE_CAP_ADVANCED;
   s->opt[OPT_MESSAGE].size = 129;
@@ -7423,44 +7425,73 @@ init_options (Avision_Scanner* s)
   s->val[OPT_MESSAGE].s[0] = 0;
 
   /* NVRAM */
-  s->opt[OPT_NVRAM].cap = SANE_CAP_SOFT_DETECT | SANE_CAP_ADVANCED;
-  if (!dev->inquiry_nvram_read)
-    s->opt[OPT_NVRAM].cap |= SANE_CAP_INACTIVE;
   s->opt[OPT_NVRAM].name = "nvram-values";
-  s->opt[OPT_NVRAM].title = "Obtain NVRAM values";
-  s->opt[OPT_NVRAM].desc = "Allows access obtaining the scanner's NVRAM values as pretty printed text.";
+  s->opt[OPT_NVRAM].title = SANE_TITLE_NVRAM;
+  s->opt[OPT_NVRAM].desc = SANE_DESC_NVRAM;
   s->opt[OPT_NVRAM].type = SANE_TYPE_STRING;
   s->opt[OPT_NVRAM].unit = SANE_UNIT_NONE;
   s->opt[OPT_NVRAM].size = 1024;
   s->opt[OPT_NVRAM].constraint_type = SANE_CONSTRAINT_NONE;
   s->val[OPT_NVRAM].s = malloc((size_t) s->opt[OPT_NVRAM].size);
   s->val[OPT_NVRAM].s[0] = 0;
+  s->opt[OPT_NVRAM].cap = SANE_CAP_SOFT_DETECT | SANE_CAP_ADVANCED;
+  if (!dev->inquiry_nvram_read)
+    s->opt[OPT_NVRAM].cap |= SANE_CAP_INACTIVE;
 
   /* paper_length */
-  s->opt[OPT_PAPERLEN].cap = SANE_CAP_SOFT_SELECT | SANE_CAP_SOFT_DETECT | SANE_CAP_ADVANCED;
-  if (!dev->inquiry_paper_length)
-    s->opt[OPT_PAPERLEN].cap |= SANE_CAP_INACTIVE;
   s->opt[OPT_PAPERLEN].name  = "paper-length";
-  s->opt[OPT_PAPERLEN].title = "Use paper length";
-  s->opt[OPT_PAPERLEN].desc  = "Newer scanners can utilize this paper length to detect double feeds.  However some others (DM152) can get confused during media flush if it is set.";
+  s->opt[OPT_PAPERLEN].title = SANE_TITLE_PAPER_LENGTH;
+  s->opt[OPT_PAPERLEN].desc  = SANE_DESC_PAPER_LENGTH;
   s->opt[OPT_PAPERLEN].type  = SANE_TYPE_BOOL;
   s->opt[OPT_PAPERLEN].unit  = SANE_UNIT_NONE;
   s->opt[OPT_PAPERLEN].size = sizeof(SANE_Word);
   s->opt[OPT_PAPERLEN].constraint_type = SANE_CONSTRAINT_NONE;
   s->val[OPT_PAPERLEN].w     = SANE_FALSE;
+  s->opt[OPT_PAPERLEN].cap = SANE_CAP_SOFT_SELECT | SANE_CAP_SOFT_DETECT | SANE_CAP_ADVANCED;
+  if (!dev->inquiry_paper_length)
+    s->opt[OPT_PAPERLEN].cap |= SANE_CAP_INACTIVE;
 
   /* ADF page flipping */
-  s->opt[OPT_ADF_FLIP].cap = SANE_CAP_SOFT_SELECT | SANE_CAP_SOFT_DETECT | SANE_CAP_AUTOMATIC | SANE_CAP_ADVANCED;
-  if (!(s->hw->hw->feature_type & AV_ADF_FLIPPING_DUPLEX && s->source_mode == AV_ADF_DUPLEX))
-    s->opt[OPT_ADF_FLIP].cap |= SANE_CAP_INACTIVE;
   s->opt[OPT_ADF_FLIP].name = "flip-page";
-  s->opt[OPT_ADF_FLIP].title = "Flip document after duplex scanning";
-  s->opt[OPT_ADF_FLIP].desc = "Tells page-flipping document scanners to flip the paper back to its original orientation before dropping it in the output tray.  Turning this off might make scanning a little faster if you don't care about manually flipping the pages afterwards.";
+  s->opt[OPT_ADF_FLIP].title = SANE_TITLE_FLIP_PAGE;
+  s->opt[OPT_ADF_FLIP].desc = SANE_DESC_FLIP_PAGE;
   s->opt[OPT_ADF_FLIP].type = SANE_TYPE_BOOL;
   s->opt[OPT_ADF_FLIP].unit = SANE_UNIT_NONE;
   s->opt[OPT_ADF_FLIP].size = sizeof(SANE_Word);
   s->opt[OPT_ADF_FLIP].constraint_type = SANE_CONSTRAINT_NONE;
   s->val[OPT_ADF_FLIP].w = SANE_TRUE;
+  s->opt[OPT_ADF_FLIP].cap = SANE_CAP_SOFT_SELECT | SANE_CAP_SOFT_DETECT | SANE_CAP_AUTOMATIC | SANE_CAP_ADVANCED;
+  if (!((s->hw->hw->feature_type & AV_ADF_FLIPPING_DUPLEX) && (s->source_mode == AV_ADF_DUPLEX)))
+    s->opt[OPT_ADF_FLIP].cap |= SANE_CAP_INACTIVE;
+
+  /* "Options" group: */
+  s->opt[OPT_OPTIONS_GROUP].title = SANE_TITLE_INSTALLED_OPTS_GROUP;
+  s->opt[OPT_OPTIONS_GROUP].type = SANE_TYPE_GROUP;
+  s->opt[OPT_OPTIONS_GROUP].cap = 0;
+  s->opt[OPT_OPTIONS_GROUP].size = 0;
+  s->opt[OPT_OPTIONS_GROUP].constraint_type = SANE_CONSTRAINT_NONE;
+
+  /* ADF Installed */
+  s->opt[OPT_OPTION_ADF].name = "adf-installed";
+  s->opt[OPT_OPTION_ADF].title = SANE_TITLE_ADF_INSTALLED;
+  s->opt[OPT_OPTION_ADF].desc = SANE_DESC_ADF_INSTALLED;
+  s->opt[OPT_OPTION_ADF].type = SANE_TYPE_BOOL;
+  s->opt[OPT_OPTION_ADF].unit = SANE_UNIT_NONE;
+  s->opt[OPT_OPTION_ADF].size = sizeof(SANE_Word);
+  s->opt[OPT_OPTION_ADF].constraint_type = SANE_CONSTRAINT_NONE;
+  s->val[OPT_OPTION_ADF].w = dev->inquiry_adf_present;
+  s->opt[OPT_OPTION_ADF].cap =  SANE_CAP_SOFT_DETECT | SANE_CAP_ADVANCED;
+
+  /* Lightbox Installed */
+  s->opt[OPT_OPTION_LIGHTBOX].name = "lightbox-installed";
+  s->opt[OPT_OPTION_LIGHTBOX].title = SANE_TITLE_LIGHTBOX_INSTALLED;
+  s->opt[OPT_OPTION_LIGHTBOX].desc = SANE_DESC_LIGHTBOX_INSTALLED;
+  s->opt[OPT_OPTION_LIGHTBOX].type = SANE_TYPE_BOOL;
+  s->opt[OPT_OPTION_LIGHTBOX].unit = SANE_UNIT_NONE;
+  s->opt[OPT_OPTION_LIGHTBOX].size = sizeof(SANE_Word);
+  s->opt[OPT_OPTION_LIGHTBOX].constraint_type = SANE_CONSTRAINT_NONE;
+  s->val[OPT_OPTION_LIGHTBOX].w = dev->inquiry_light_box_present;
+  s->opt[OPT_OPTION_LIGHTBOX].cap =  SANE_CAP_SOFT_DETECT | SANE_CAP_ADVANCED;
 
   return SANE_STATUS_GOOD;
 }
@@ -8985,6 +9016,12 @@ sane_control_option (SANE_Handle handle, SANE_Int option,
 
 	  strcpy (val, s->val[option].s);
 	  return SANE_STATUS_GOOD;
+
+	  /* Boolean options. */
+        case OPT_OPTION_ADF:
+        case OPT_OPTION_LIGHTBOX:
+          *(SANE_Bool*) val = s->val[option].b;
+          return SANE_STATUS_GOOD;
 
 	} /* end switch option */
     } /* end if GET_ACTION_GET_VALUE */

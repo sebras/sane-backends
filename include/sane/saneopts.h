@@ -141,7 +141,8 @@
 #define SANE_NAME_SELECT_LAMP_DENSITY	"select-lamp-density"
 #define SANE_NAME_LAMP_OFF_AT_EXIT	"lamp-off-at-exit"
 #define SANE_NAME_FOCUS			"focus"
-#define SANE_NAME_AUTOFOCUS		"autofocus"
+#define SANE_NAME_AUTOFOCUS             "autofocus"
+#define SANE_NAME_INFRARED              "infra-red"
 
 /* well known options from 'SENSORS' group*/
 #define SANE_NAME_SCAN			"scan"
@@ -233,6 +234,8 @@
 #define SANE_TITLE_LAMP_OFF_AT_EXIT	SANE_I18N("Lamp off at exit")
 #define SANE_TITLE_FOCUS		SANE_I18N("Focus position")
 #define SANE_TITLE_AUTOFOCUS		SANE_I18N("Autofocus")
+#define SANE_TITLE_INFRARED             SANE_I18N("Infrared scan")
+
 
 /* well known options from 'SENSORS' group*/
 #define SANE_TITLE_SCAN			"Scan button"
@@ -447,6 +450,9 @@ SANE_I18N("Turn off lamp when program exits")
 SANE_I18N("Focus position for manual focus")
 #define SANE_DESC_AUTOFOCUS \
 SANE_I18N("Perform autofocus before scan")
+#define SANE_DESC_INFRARED \
+SANE_I18N("Perform infrared scan")
+
 
 /* well known options from 'SENSORS' group*/
 #define SANE_DESC_SCAN		SANE_I18N("Scan button")
