@@ -3769,7 +3769,7 @@ static SANE_Status
 get_accessories_info (Avision_Scanner* s)
 {
   Avision_Device* dev = s->hw;
-  int try = 3;
+  int try = 1;
 
   /* read stuff */
   struct command_read rcmd;
@@ -3811,47 +3811,84 @@ get_accessories_info (Avision_Scanner* s)
        result [2],
        adf_model[ (result[2] < adf_models) ? result[2] : adf_models ]);
 
-  dev->inquiry_adf |= result [0];
+  /*
+   * Cope with ADF presence flag being present but the device *not* reporting
+   * ADF capability. Maybe there are some devices that do that? [RL]
+   *
+   */
+  dev->inquiry_adf_present = result [0];
 
+  /*
+   * Note: this feature_type check is a bit of a hack.
+   * Only the HP Scanjet 8200 series supports this so it is code
+   * specific to this family of scanners. [RL]
+   *
+   */
   if (dev->hw->feature_type & AV_ADF_FLIPPING_DUPLEX)
-  {
-    if (result[0] == 1)
     {
-      dev->inquiry_duplex = 1;
-      dev->inquiry_duplex_interlaced = 0;
-    } else if (result[0] == 0 && result[2] != 0 && !skip_adf) {
-      /* Sometimes the scanner will report that there is no ADF attached, yet
-       * an ADF model number will still be reported.  This happens on the
-       * HP8200 series and possibly others.  In this case we need to reset the
-       * the adf and try reading it again.  Skip this if the configuration says
-       * to do so, so that we don't fail out the scanner as being broken and
-       * unsupported if there isn't actually an ADF present.
-       */
-      DBG (3, "get_accessories_info: Found ADF model number but the ADF-present flag is not set. Trying to recover...\n");
-      status = adf_reset (s);
-      if (status != SANE_STATUS_GOOD) {
-        DBG (3, "get_accessories_info: Failed to reset ADF: %s\n", sane_strstatus (status));
-        return status;
-      }
-      DBG (1, "get_accessories_info: Waiting while ADF firmware resets...\n");
-      sleep(3);
-      status = wait_ready (&s->av_con, 1);
-      if (status != SANE_STATUS_GOOD) {
-        DBG (1, "get_accessories_info: wait_ready() failed: %s\n", sane_strstatus (status));
-        return status;
-      }
-      if (try) {
-        try--;
-        goto RETRY;
-      }
-      DBG (1, "get_accessories_info: Maximum retries attempted, ADF unresponsive.\n");
-      return SANE_STATUS_UNSUPPORTED;
+      if (result[0] == 1)
+        {
+          dev->inquiry_duplex = 1;
+          dev->inquiry_duplex_interlaced = 0;
+        }
+      else if (result[0] == 0 && result[2] != 0 && !skip_adf)
+        {
+          /* Sometimes the scanner will report that there is no ADF attached, yet
+           * an ADF model number will still be reported.  This happens on the
+           * HP8200 series and possibly others.  In this case we need to reset the
+           * the adf and try reading it again.  Skip this if the configuration says
+           * to do so, so that we don't fail out the scanner as being broken and
+           * unsupported if there isn't actually an ADF present.
+           *
+           * Note further: Some models (like the ScanJet 8300) report that they have ADF
+           * *capability* in the INQUIRY response but that doesn't necessarily mean that
+           * an ADF is plugged in. In my case it has the lightbox accessory instead and
+           * result[0] == FALSE.
+           * Trying to reset the ADF 3 times is excessive and takes an unreasonable amount
+           * of time on the 8300 with no ADF plugged in, so let's do it just once and if
+           * it fails to report presence, then don't assume it is an error, just that
+           * there is no ADF. [RL]
+           *
+           */
+          if (!try)
+            {
+              DBG (
+                  1,
+                  "get_accessories_info: Maximum retries attempted, ADF unresponsive.\n");
+              dev->inquiry_adf_present = SANE_FALSE;
+              //return SANE_STATUS_UNSUPPORTED;
+            }
+          else
+            {
+              try--;
+
+              DBG(3,
+                  "get_accessories_info: Found ADF model number but the ADF-present flag is not set. "
+                  "Trying to reset the ADF just in case it is there but unresponsive...\n");
+              status = adf_reset (s);
+              if (status != SANE_STATUS_GOOD)
+                {
+                  DBG (3, "get_accessories_info: Failed to reset ADF: %s\n", sane_strstatus (status));
+                  return status;
+                }
+
+              DBG(1,"get_accessories_info: Waiting while ADF firmware resets...\n");
+              sleep (3);
+              status = wait_ready (&s->av_con, 1);
+              if (status != SANE_STATUS_GOOD)
+                {
+                  DBG (1, "get_accessories_info: wait_ready() failed: %s\n",
+                       sane_strstatus (status));
+                  return status;
+                }
+              goto RETRY;
+            }
+        }
     }
-  }
 
   /* only honor a 1, some scanner without adapter set 0xff */
   if (result[1] == 1)
-    dev->inquiry_light_box = 1;
+    dev->inquiry_light_box_present = 1;
 
   return SANE_STATUS_GOOD;
 }
@@ -4336,41 +4373,82 @@ attach (SANE_String_Const devname, Avision_ConnectionType con_type,
 
   model_num = 0;
   found = 0;
-  /* while not at at end of list NULL terminator */
-  while (Avision_Device_List[model_num].real_mfg != NULL ||
-         Avision_Device_List[model_num].scsi_mfg != NULL)
-  {
-    int matches = 0, match_count = 0; /* count number of matches */
-    DBG (1, "attach: Checking model: %d\n", model_num);
 
-    if (Avision_Device_List[model_num].scsi_mfg) {
-      ++match_count;
-      if (strcmp(mfg, Avision_Device_List[model_num].scsi_mfg) == 0)
-        ++matches;
-    }
-    if (Avision_Device_List[model_num].scsi_model) {
-      ++match_count;
-      if (strcmp(model, Avision_Device_List[model_num].scsi_model) == 0)
-        ++matches;
-    }
+  /*
+   * Search for a matching device in the device list.
+   * Primarily we need two matches for SCSI devices.
+   * However, multiple USB device entries share the same
+   * SCSI info. For USB devices, we will also do a mandatory
+   * USB Product/Vendor check to pick the right one. Otherwise
+   * at the very least the device name is incorrect.
+   *
+   */
+  SANE_Word usb_vendor = 0;
+  SANE_Word usb_product = 0;
 
-    /* we need 2 matches (mfg, model) for SCSI entries, or the ones available
-       for "we know what we are looking for" USB entries */
-    if ((attaching_hw == &(Avision_Device_List [model_num]) &&
-         matches == match_count) ||
-	matches == 2)
+  if (con_type == AV_USB)
     {
-      DBG (1, "attach: Scanner matched entry: %d: \"%s\", \"%s\", 0x%.4x, 0x%.4x\n",
-           model_num,
-	   Avision_Device_List[model_num].scsi_mfg,
-	   Avision_Device_List[model_num].scsi_model,
-	   Avision_Device_List[model_num].usb_vendor,
-	   Avision_Device_List[model_num].usb_product);
-      found = 1;
-      break;
+      status = sanei_usb_get_vendor_product_byname (devname, &usb_vendor, &usb_product);
+      if (status != SANE_STATUS_GOOD)
+        {
+          DBG (0, "attach: Could not retrieve USB vendor nor product for USB device.\n");
+          status = SANE_STATUS_INVAL;
+          goto close_scanner_and_return;
+        }
     }
-    ++model_num;
-  }
+
+  /* while not at at end of list NULL terminator */
+  while (Avision_Device_List[model_num].real_mfg != NULL
+      || Avision_Device_List[model_num].scsi_mfg != NULL)
+    {
+      int matches = 0, match_count = 0; /* count number of matches */
+      DBG (1, "attach: Checking model: %d\n", model_num);
+
+      if (Avision_Device_List[model_num].scsi_mfg)
+        {
+          ++match_count;
+          if (strcmp (mfg, Avision_Device_List[model_num].scsi_mfg) == 0)
+            ++matches;
+        }
+      if (Avision_Device_List[model_num].scsi_model)
+        {
+          ++match_count;
+          if (strcmp (model, Avision_Device_List[model_num].scsi_model) == 0)
+            ++matches;
+        }
+
+      /*
+       * Must match on USB vendor product also for USB devices.
+       * We will *always* know the vendor and product for USB devices.
+       *
+       */
+      if (con_type == AV_USB)
+        {
+          ++match_count;
+          if ((Avision_Device_List[model_num].usb_product == usb_product)
+              && (Avision_Device_List[model_num].usb_vendor == usb_vendor))
+            {
+              ++matches;
+            }
+        }
+
+      /* we need 2 matches (mfg, model) for SCSI entries, or the ones available
+       for "we know what we are looking for" USB entries */
+      if ((attaching_hw == &(Avision_Device_List[model_num]))
+          && (matches == match_count))
+        {
+          DBG (
+              1,
+              "attach: Scanner matched entry: %d: \"%s\", \"%s\", 0x%.4x, 0x%.4x\n",
+              model_num, Avision_Device_List[model_num].scsi_mfg,
+              Avision_Device_List[model_num].scsi_model,
+              Avision_Device_List[model_num].usb_vendor,
+              Avision_Device_List[model_num].usb_product);
+          found = 1;
+          break;
+        }
+      ++model_num;
+    }
 
   if (!found) {
     DBG (0, "attach: \"%s\" - \"%s\" not yet in whitelist!\n", mfg, model);
@@ -4543,7 +4621,7 @@ get_double ( &(result[48] ) ));
   DBG (3, "attach: [62]    scanner type:%s%s%s%s%s%s\n",
        BIT(result[62],7)?" Flatbed":"",
        BIT(result[62],6)?" Roller (ADF)":"",
-       BIT(result[62],5)?" Flatbed (ADF)":"",
+       BIT(result[62],5)?" Flatbed (ADF/Lightbox)":"",
        BIT(result[62],4)?" Roller":"", /* does not feed multiple pages, AV25 */
        BIT(result[62],3)?" Film scanner":"",
        BIT(result[62],2)?" Duplex":"");
@@ -4643,7 +4721,7 @@ get_double ( &(result[48] ) ));
   dev->inquiry_nvram_read = BIT(result[52],0);
   dev->inquiry_power_save_time = BIT(result[52],1);
 
-  dev->inquiry_adf = BIT (result[62], 5);
+  dev->inquiry_adf_capability = BIT (result[62], 5);
   dev->inquiry_duplex = BIT (result[62], 2) || BIT (result[94], 5);
   dev->inquiry_duplex_interlaced = BIT(result[62],2) || BIT (result[94], 4);
   /* the first avision scanners (AV3200) do not set the interlaced bit */
@@ -5147,10 +5225,10 @@ additional_probe (Avision_Scanner* s)
     {
       add_source_mode (dev, AV_NORMAL, "Normal");
 
-      if (dev->inquiry_light_box)
+      if (dev->inquiry_light_box_present)
 	add_source_mode (dev, AV_TRANSPARENT, "Transparency");
 
-      if (dev->inquiry_adf)
+      if (dev->inquiry_adf_present)
         add_source_mode (dev, AV_ADF, "ADF Front");
     }
 
@@ -6956,10 +7034,18 @@ init_options (Avision_Scanner* s)
   memset (s->opt, 0, sizeof (s->opt));
   memset (s->val, 0, sizeof (s->val));
 
-  for (i = 0; i < NUM_OPTIONS; ++ i) {
-    s->opt[i].size = sizeof (SANE_Word);
-    s->opt[i].cap = SANE_CAP_SOFT_SELECT | SANE_CAP_SOFT_DETECT;
-  }
+  /*
+   * Set defaults for all the options.
+   *
+   */
+  for (i = 0; i < NUM_OPTIONS; ++i)
+    {
+      s->opt[i].name = "";
+      s->opt[i].desc = "";
+      s->opt[i].unit = SANE_UNIT_NONE;
+      s->opt[i].size = sizeof(SANE_Word);
+      s->opt[i].cap = SANE_CAP_SOFT_SELECT | SANE_CAP_SOFT_DETECT;
+    }
 
   /* Init the SANE option from the scanner inquiry data */
 
@@ -6989,9 +7075,7 @@ init_options (Avision_Scanner* s)
   dev->speed_range.max = (SANE_Int)4;
   dev->speed_range.quant = (SANE_Int)1;
 
-  s->opt[OPT_NUM_OPTS].name = "";
   s->opt[OPT_NUM_OPTS].title = SANE_TITLE_NUM_OPTIONS;
-  s->opt[OPT_NUM_OPTS].desc = "";
   s->opt[OPT_NUM_OPTS].cap = SANE_CAP_SOFT_DETECT;
   s->opt[OPT_NUM_OPTS].type = SANE_TYPE_INT;
   s->opt[OPT_NUM_OPTS].size = sizeof(SANE_TYPE_INT);
@@ -6999,7 +7083,6 @@ init_options (Avision_Scanner* s)
 
   /* "Mode" group: */
   s->opt[OPT_MODE_GROUP].title = SANE_TITLE_SCAN_MODE;
-  s->opt[OPT_MODE_GROUP].desc = ""; /* for groups only title and type are valid */
   s->opt[OPT_MODE_GROUP].type = SANE_TYPE_GROUP;
   s->opt[OPT_MODE_GROUP].cap = 0;
   s->opt[OPT_MODE_GROUP].size = 0;
@@ -7063,7 +7146,6 @@ init_options (Avision_Scanner* s)
 
   /* "Geometry" group: */
   s->opt[OPT_GEOMETRY_GROUP].title = "Geometry";
-  s->opt[OPT_GEOMETRY_GROUP].desc = ""; /* for groups only title and type are valid */
   s->opt[OPT_GEOMETRY_GROUP].type = SANE_TYPE_GROUP;
   s->opt[OPT_GEOMETRY_GROUP].cap = SANE_CAP_ADVANCED;
   s->opt[OPT_GEOMETRY_GROUP].size = 0;
@@ -7111,8 +7193,8 @@ init_options (Avision_Scanner* s)
 
   /* overscan top */
   s->opt[OPT_OVERSCAN_TOP].name = "overscan-top";
-  s->opt[OPT_OVERSCAN_TOP].title = "Overscan top";
-  s->opt[OPT_OVERSCAN_TOP].desc = "The top overscan controls the additional area to scan before the paper is detected.";
+  s->opt[OPT_OVERSCAN_TOP].title = SANE_TITLE_OVERSCAN_TOP;
+  s->opt[OPT_OVERSCAN_TOP].desc = SANE_DESC_OVERSCAN_TOP;
   s->opt[OPT_OVERSCAN_TOP].type = SANE_TYPE_FIXED;
   s->opt[OPT_OVERSCAN_TOP].unit = SANE_UNIT_MM;
   s->opt[OPT_OVERSCAN_TOP].constraint_type = SANE_CONSTRAINT_RANGE;
@@ -7121,8 +7203,8 @@ init_options (Avision_Scanner* s)
 
   /* overscan bottom */
   s->opt[OPT_OVERSCAN_BOTTOM].name = "overscan-bottom";
-  s->opt[OPT_OVERSCAN_BOTTOM].title = "Overscan bottom";
-  s->opt[OPT_OVERSCAN_BOTTOM].desc = "The bottom overscan controls the additional area to scan after the paper end is detected.";
+  s->opt[OPT_OVERSCAN_BOTTOM].title = SANE_TITLE_OVERSCAN_BOTTOM;
+  s->opt[OPT_OVERSCAN_BOTTOM].desc = SANE_DESC_OVERSCAN_BOTTOM;
   s->opt[OPT_OVERSCAN_BOTTOM].type = SANE_TYPE_FIXED;
   s->opt[OPT_OVERSCAN_BOTTOM].unit = SANE_UNIT_MM;
   s->opt[OPT_OVERSCAN_BOTTOM].constraint_type = SANE_CONSTRAINT_RANGE;
@@ -7136,8 +7218,8 @@ init_options (Avision_Scanner* s)
 
   /* background raster */
   s->opt[OPT_BACKGROUND].name = "background-lines";
-  s->opt[OPT_BACKGROUND].title = "Background raster lines";
-  s->opt[OPT_BACKGROUND].desc = "The background raster controls the additional background lines to scan before the paper is feed through the scanner.";
+  s->opt[OPT_BACKGROUND].title = SANE_TITLE_BACKGROUND_LINES;
+  s->opt[OPT_BACKGROUND].desc = SANE_DESC_BACKGROUND_LINES;
   s->opt[OPT_BACKGROUND].type = SANE_TYPE_INT;
   s->opt[OPT_BACKGROUND].unit = SANE_UNIT_PIXEL;
   s->opt[OPT_BACKGROUND].constraint_type = SANE_CONSTRAINT_RANGE;
@@ -7149,8 +7231,7 @@ init_options (Avision_Scanner* s)
   }
 
   /* "Enhancement" group: */
-  s->opt[OPT_ENHANCEMENT_GROUP].title = "Enhancement";
-  s->opt[OPT_ENHANCEMENT_GROUP].desc = ""; /* for groups only title and type are valid */
+  s->opt[OPT_ENHANCEMENT_GROUP].title = SANE_TITLE_ENHANCEMENT;
   s->opt[OPT_ENHANCEMENT_GROUP].type = SANE_TYPE_GROUP;
   s->opt[OPT_ENHANCEMENT_GROUP].cap = 0;
   s->opt[OPT_ENHANCEMENT_GROUP].size = 0;
@@ -7182,8 +7263,8 @@ init_options (Avision_Scanner* s)
 
   /* Quality Scan */
   s->opt[OPT_QSCAN].name   = "quality-scan";
-  s->opt[OPT_QSCAN].title  = "Quality scan";
-  s->opt[OPT_QSCAN].desc   = "Turn on quality scanning (slower but better).";
+  s->opt[OPT_QSCAN].title  = SANE_TITLE_QUALITY_SCAN;
+  s->opt[OPT_QSCAN].desc   = SANE_DESC_QUALITY_SCAN;
   s->opt[OPT_QSCAN].type   = SANE_TYPE_BOOL;
   s->opt[OPT_QSCAN].unit   = SANE_UNIT_NONE;
   s->val[OPT_QSCAN].w      = SANE_TRUE;
@@ -7262,8 +7343,8 @@ init_options (Avision_Scanner* s)
 
   /* exposure */
   s->opt[OPT_EXPOSURE].name = "exposure";
-  s->opt[OPT_EXPOSURE].title = "Exposure";
-  s->opt[OPT_EXPOSURE].desc = "Manual exposure adjustment.";
+  s->opt[OPT_EXPOSURE].title = SANE_TITLE_MANUAL_EXPOSURE;
+  s->opt[OPT_EXPOSURE].desc = SANE_DESC_MANUAL_EXPOSURE;
   s->opt[OPT_EXPOSURE].type = SANE_TYPE_INT;
   s->opt[OPT_EXPOSURE].unit = SANE_UNIT_PERCENT;
   s->opt[OPT_EXPOSURE].constraint_type = SANE_CONSTRAINT_RANGE;
@@ -7276,8 +7357,8 @@ init_options (Avision_Scanner* s)
 
   /* Multi sample */
   s->opt[OPT_MULTISAMPLE].name  = "multi-sample";
-  s->opt[OPT_MULTISAMPLE].title = "Multi-sample";
-  s->opt[OPT_MULTISAMPLE].desc  = "Enable multi-sample scan mode.";
+  s->opt[OPT_MULTISAMPLE].title = SANE_TITLE_MULTI_SAMPLE;
+  s->opt[OPT_MULTISAMPLE].desc  = SANE_DESC_MULTI_SAMPLE;
   s->opt[OPT_MULTISAMPLE].type  = SANE_TYPE_BOOL;
   s->opt[OPT_MULTISAMPLE].unit  = SANE_UNIT_NONE;
   s->val[OPT_MULTISAMPLE].w     = SANE_FALSE;
@@ -7289,9 +7370,9 @@ init_options (Avision_Scanner* s)
   }
 
   /* Infra-red */
-  s->opt[OPT_IR].name  = "infra-red";
-  s->opt[OPT_IR].title = "Infra-red";
-  s->opt[OPT_IR].desc  = "Enable infra-red scan mode.";
+  s->opt[OPT_IR].name  = SANE_NAME_INFRARED;
+  s->opt[OPT_IR].title = SANE_TITLE_INFRARED;
+  s->opt[OPT_IR].desc  = SANE_DESC_INFRARED;
   s->opt[OPT_IR].type  = SANE_TYPE_BOOL;
   s->opt[OPT_IR].unit  = SANE_UNIT_NONE;
   s->val[OPT_IR].w     = SANE_FALSE;
@@ -7303,16 +7384,13 @@ init_options (Avision_Scanner* s)
   }
 
   /* "MISC" group: */
-  s->opt[OPT_MISC_GROUP].title = SANE_TITLE_SCAN_MODE;
-  s->opt[OPT_MISC_GROUP].desc = ""; /* for groups only title and type are valid */
+  s->opt[OPT_MISC_GROUP].title = SANE_TITLE_MISC_GROUP;
   s->opt[OPT_MISC_GROUP].type = SANE_TYPE_GROUP;
   s->opt[OPT_MISC_GROUP].cap = 0;
   s->opt[OPT_MISC_GROUP].size = 0;
   s->opt[OPT_MISC_GROUP].constraint_type = SANE_CONSTRAINT_NONE;
 
   /* film holder control */
-  if (dev->scanner_type != AV_FILM)
-    s->opt[OPT_FRAME].cap |= SANE_CAP_INACTIVE;
   s->opt[OPT_FRAME].name = SANE_NAME_FRAME;
   s->opt[OPT_FRAME].title = SANE_TITLE_FRAME;
   s->opt[OPT_FRAME].desc = SANE_DESC_FRAME;
@@ -7321,22 +7399,24 @@ init_options (Avision_Scanner* s)
   s->opt[OPT_FRAME].constraint_type = SANE_CONSTRAINT_RANGE;
   s->opt[OPT_FRAME].constraint.range = &dev->frame_range;
   s->val[OPT_FRAME].w = dev->current_frame;
+  if (dev->scanner_type != AV_FILM)
+    s->opt[OPT_FRAME].cap |= SANE_CAP_INACTIVE;
 
   /* power save time */
-  if (!dev->inquiry_power_save_time)
-    s->opt[OPT_POWER_SAVE_TIME].cap |= SANE_CAP_INACTIVE;
   s->opt[OPT_POWER_SAVE_TIME].name = "power-save-time";
-  s->opt[OPT_POWER_SAVE_TIME].title = "Power save timer control";
-  s->opt[OPT_POWER_SAVE_TIME].desc = "Allows control of the scanner's power save timer, dimming or turning off the light.";
+  s->opt[OPT_POWER_SAVE_TIME].title = SANE_TITLE_POWER_SAVE_TIME;
+  s->opt[OPT_POWER_SAVE_TIME].desc = SANE_DESC_POWER_SAVE_TIME;
   s->opt[OPT_POWER_SAVE_TIME].type = SANE_TYPE_INT;
   s->opt[OPT_POWER_SAVE_TIME].unit = SANE_UNIT_NONE;
   s->opt[OPT_POWER_SAVE_TIME].constraint_type = SANE_CONSTRAINT_NONE;
   s->val[OPT_POWER_SAVE_TIME].w = 0;
+  if (!dev->inquiry_power_save_time)
+    s->opt[OPT_POWER_SAVE_TIME].cap |= SANE_CAP_INACTIVE;
 
   /* message, like options set on the scanner, LED no. & co */
   s->opt[OPT_MESSAGE].name = "message";
-  s->opt[OPT_MESSAGE].title = "message text from the scanner";
-  s->opt[OPT_MESSAGE].desc = "This text contains device specific options controlled by the user on the scanner hardware.";
+  s->opt[OPT_MESSAGE].title = SANE_TITLE_OPTIONS_MSG;
+  s->opt[OPT_MESSAGE].desc = SANE_DESC_OPTIONS_MSG;
   s->opt[OPT_MESSAGE].type = SANE_TYPE_STRING;
   s->opt[OPT_MESSAGE].cap = SANE_CAP_SOFT_DETECT | SANE_CAP_ADVANCED;
   s->opt[OPT_MESSAGE].size = 129;
@@ -7345,44 +7425,73 @@ init_options (Avision_Scanner* s)
   s->val[OPT_MESSAGE].s[0] = 0;
 
   /* NVRAM */
-  s->opt[OPT_NVRAM].cap = SANE_CAP_SOFT_DETECT | SANE_CAP_ADVANCED;
-  if (!dev->inquiry_nvram_read)
-    s->opt[OPT_NVRAM].cap |= SANE_CAP_INACTIVE;
   s->opt[OPT_NVRAM].name = "nvram-values";
-  s->opt[OPT_NVRAM].title = "Obtain NVRAM values";
-  s->opt[OPT_NVRAM].desc = "Allows access obtaining the scanner's NVRAM values as pretty printed text.";
+  s->opt[OPT_NVRAM].title = SANE_TITLE_NVRAM;
+  s->opt[OPT_NVRAM].desc = SANE_DESC_NVRAM;
   s->opt[OPT_NVRAM].type = SANE_TYPE_STRING;
   s->opt[OPT_NVRAM].unit = SANE_UNIT_NONE;
   s->opt[OPT_NVRAM].size = 1024;
   s->opt[OPT_NVRAM].constraint_type = SANE_CONSTRAINT_NONE;
   s->val[OPT_NVRAM].s = malloc((size_t) s->opt[OPT_NVRAM].size);
   s->val[OPT_NVRAM].s[0] = 0;
+  s->opt[OPT_NVRAM].cap = SANE_CAP_SOFT_DETECT | SANE_CAP_ADVANCED;
+  if (!dev->inquiry_nvram_read)
+    s->opt[OPT_NVRAM].cap |= SANE_CAP_INACTIVE;
 
   /* paper_length */
-  s->opt[OPT_PAPERLEN].cap = SANE_CAP_SOFT_SELECT | SANE_CAP_SOFT_DETECT | SANE_CAP_ADVANCED;
-  if (!dev->inquiry_paper_length)
-    s->opt[OPT_PAPERLEN].cap |= SANE_CAP_INACTIVE;
   s->opt[OPT_PAPERLEN].name  = "paper-length";
-  s->opt[OPT_PAPERLEN].title = "Use paper length";
-  s->opt[OPT_PAPERLEN].desc  = "Newer scanners can utilize this paper length to detect double feeds.  However some others (DM152) can get confused during media flush if it is set.";
+  s->opt[OPT_PAPERLEN].title = SANE_TITLE_PAPER_LENGTH;
+  s->opt[OPT_PAPERLEN].desc  = SANE_DESC_PAPER_LENGTH;
   s->opt[OPT_PAPERLEN].type  = SANE_TYPE_BOOL;
   s->opt[OPT_PAPERLEN].unit  = SANE_UNIT_NONE;
   s->opt[OPT_PAPERLEN].size = sizeof(SANE_Word);
   s->opt[OPT_PAPERLEN].constraint_type = SANE_CONSTRAINT_NONE;
   s->val[OPT_PAPERLEN].w     = SANE_FALSE;
+  s->opt[OPT_PAPERLEN].cap = SANE_CAP_SOFT_SELECT | SANE_CAP_SOFT_DETECT | SANE_CAP_ADVANCED;
+  if (!dev->inquiry_paper_length)
+    s->opt[OPT_PAPERLEN].cap |= SANE_CAP_INACTIVE;
 
   /* ADF page flipping */
-  s->opt[OPT_ADF_FLIP].cap = SANE_CAP_SOFT_SELECT | SANE_CAP_SOFT_DETECT | SANE_CAP_AUTOMATIC | SANE_CAP_ADVANCED;
-  if (!(s->hw->hw->feature_type & AV_ADF_FLIPPING_DUPLEX && s->source_mode == AV_ADF_DUPLEX))
-    s->opt[OPT_ADF_FLIP].cap |= SANE_CAP_INACTIVE;
   s->opt[OPT_ADF_FLIP].name = "flip-page";
-  s->opt[OPT_ADF_FLIP].title = "Flip document after duplex scanning";
-  s->opt[OPT_ADF_FLIP].desc = "Tells page-flipping document scanners to flip the paper back to its original orientation before dropping it in the output tray.  Turning this off might make scanning a little faster if you don't care about manually flipping the pages afterwards.";
+  s->opt[OPT_ADF_FLIP].title = SANE_TITLE_FLIP_PAGE;
+  s->opt[OPT_ADF_FLIP].desc = SANE_DESC_FLIP_PAGE;
   s->opt[OPT_ADF_FLIP].type = SANE_TYPE_BOOL;
   s->opt[OPT_ADF_FLIP].unit = SANE_UNIT_NONE;
   s->opt[OPT_ADF_FLIP].size = sizeof(SANE_Word);
   s->opt[OPT_ADF_FLIP].constraint_type = SANE_CONSTRAINT_NONE;
   s->val[OPT_ADF_FLIP].w = SANE_TRUE;
+  s->opt[OPT_ADF_FLIP].cap = SANE_CAP_SOFT_SELECT | SANE_CAP_SOFT_DETECT | SANE_CAP_AUTOMATIC | SANE_CAP_ADVANCED;
+  if (!((s->hw->hw->feature_type & AV_ADF_FLIPPING_DUPLEX) && (s->source_mode == AV_ADF_DUPLEX)))
+    s->opt[OPT_ADF_FLIP].cap |= SANE_CAP_INACTIVE;
+
+  /* "Options" group: */
+  s->opt[OPT_OPTIONS_GROUP].title = SANE_TITLE_INSTALLED_OPTS_GROUP;
+  s->opt[OPT_OPTIONS_GROUP].type = SANE_TYPE_GROUP;
+  s->opt[OPT_OPTIONS_GROUP].cap = 0;
+  s->opt[OPT_OPTIONS_GROUP].size = 0;
+  s->opt[OPT_OPTIONS_GROUP].constraint_type = SANE_CONSTRAINT_NONE;
+
+  /* ADF Installed */
+  s->opt[OPT_OPTION_ADF].name = "adf-installed";
+  s->opt[OPT_OPTION_ADF].title = SANE_TITLE_ADF_INSTALLED;
+  s->opt[OPT_OPTION_ADF].desc = SANE_DESC_ADF_INSTALLED;
+  s->opt[OPT_OPTION_ADF].type = SANE_TYPE_BOOL;
+  s->opt[OPT_OPTION_ADF].unit = SANE_UNIT_NONE;
+  s->opt[OPT_OPTION_ADF].size = sizeof(SANE_Word);
+  s->opt[OPT_OPTION_ADF].constraint_type = SANE_CONSTRAINT_NONE;
+  s->val[OPT_OPTION_ADF].w = dev->inquiry_adf_present;
+  s->opt[OPT_OPTION_ADF].cap =  SANE_CAP_SOFT_DETECT | SANE_CAP_ADVANCED;
+
+  /* Lightbox Installed */
+  s->opt[OPT_OPTION_LIGHTBOX].name = "lightbox-installed";
+  s->opt[OPT_OPTION_LIGHTBOX].title = SANE_TITLE_LIGHTBOX_INSTALLED;
+  s->opt[OPT_OPTION_LIGHTBOX].desc = SANE_DESC_LIGHTBOX_INSTALLED;
+  s->opt[OPT_OPTION_LIGHTBOX].type = SANE_TYPE_BOOL;
+  s->opt[OPT_OPTION_LIGHTBOX].unit = SANE_UNIT_NONE;
+  s->opt[OPT_OPTION_LIGHTBOX].size = sizeof(SANE_Word);
+  s->opt[OPT_OPTION_LIGHTBOX].constraint_type = SANE_CONSTRAINT_NONE;
+  s->val[OPT_OPTION_LIGHTBOX].w = dev->inquiry_light_box_present;
+  s->opt[OPT_OPTION_LIGHTBOX].cap =  SANE_CAP_SOFT_DETECT | SANE_CAP_ADVANCED;
 
   return SANE_STATUS_GOOD;
 }
@@ -8907,6 +9016,12 @@ sane_control_option (SANE_Handle handle, SANE_Int option,
 
 	  strcpy (val, s->val[option].s);
 	  return SANE_STATUS_GOOD;
+
+	  /* Boolean options. */
+        case OPT_OPTION_ADF:
+        case OPT_OPTION_LIGHTBOX:
+          *(SANE_Bool*) val = s->val[option].b;
+          return SANE_STATUS_GOOD;
 
 	} /* end switch option */
     } /* end if GET_ACTION_GET_VALUE */

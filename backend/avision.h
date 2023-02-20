@@ -66,6 +66,65 @@ typedef enum Avision_ConnectionType {
   AV_USB
 } Avision_ConnectionType;
 
+/*
+ * Translatable custom options text.
+ *
+ */
+#define SANE_TITLE_MISC_GROUP             SANE_I18N("Miscellaneous")
+#define SANE_TITLE_INSTALLED_OPTS_GROUP   SANE_I18N("Installed options")
+
+#define SANE_TITLE_OVERSCAN_TOP           SANE_I18N("Overscan top")
+#define SANE_TITLE_OVERSCAN_BOTTOM        SANE_I18N("Overscan bottom")
+#define SANE_TITLE_BACKGROUND_LINES       SANE_I18N("Background raster lines")
+#define SANE_TITLE_QUALITY_SCAN           SANE_I18N("Quality scan")
+#define SANE_TITLE_MANUAL_EXPOSURE        SANE_I18N("Exposure")
+#define SANE_TITLE_MULTI_SAMPLE           SANE_I18N("Multi-sample")
+#define SANE_TITLE_POWER_SAVE_TIME        SANE_I18N("Power save timer control")
+#define SANE_TITLE_OPTIONS_MSG            SANE_I18N("Message text from the scanner")
+#define SANE_TITLE_NVRAM                  SANE_I18N("Obtain NVRAM values")
+#define SANE_TITLE_PAPER_LENGTH           SANE_I18N("Use paper length")
+#define SANE_TITLE_FLIP_PAGE              SANE_I18N("Flip document after duplex scanning")
+#define SANE_TITLE_ADF_INSTALLED          SANE_I18N("ADF installed")
+#define SANE_TITLE_LIGHTBOX_INSTALLED     SANE_I18N("Lightbox installed")
+
+#define SANE_DESC_OVERSCAN_TOP            \
+SANE_I18N("The top overscan controls the additional area to scan before the "\
+          "paper is detected.")
+#define SANE_DESC_OVERSCAN_BOTTOM         \
+SANE_I18N("The bottom overscan controls the additional area to scan after "\
+          "the paper end is detected.")
+#define SANE_DESC_BACKGROUND_LINES        \
+SANE_I18N("The background raster controls the additional background lines to "\
+          "scan before the paper is feed through the scanner.")
+#define SANE_DESC_QUALITY_SCAN            \
+SANE_I18N("Turn on quality scanning (slower but better).")
+#define SANE_DESC_MANUAL_EXPOSURE         \
+SANE_I18N("Manual exposure adjustment.")
+#define SANE_DESC_MULTI_SAMPLE            \
+SANE_I18N("Enable multi-sample scan mode.")
+#define SANE_DESC_POWER_SAVE_TIME         \
+SANE_I18N("Allows control of the scanner's power save timer, dimming or "\
+          "turning off the light.")
+#define SANE_DESC_OPTIONS_MSG             \
+SANE_I18N("This text contains device specific options controlled by the "\
+          "user on the scanner hardware.")
+#define SANE_DESC_NVRAM                   \
+SANE_I18N("Allows access obtaining the scanner's NVRAM values as pretty "\
+          "printed text.")
+#define SANE_DESC_PAPER_LENGTH            \
+SANE_I18N("Newer scanners can utilize this paper length to detect double feeds. "\
+          "However some others (DM152) can get confused during media flush if it is set.")
+#define SANE_DESC_FLIP_PAGE               \
+SANE_I18N("Tells page-flipping document scanners to flip the paper back to its "\
+          "original orientation before dropping it in the output tray.  "\
+          "Turning this off might make scanning a little faster if you don't "\
+          "care about manually flipping the pages afterwards.")
+#define SANE_DESC_ADF_INSTALLED           \
+SANE_I18N("ADF option is detected as installed.")
+#define SANE_DESC_LIGHTBOX_INSTALLED      \
+SANE_I18N("Lightbox option is detected as installed.")
+
+
 /* information needed for device access */
 typedef struct Avision_Connection {
   Avision_ConnectionType connection_type;
@@ -336,6 +395,10 @@ enum Avision_Option
   OPT_PAPERLEN,          /* Use paper_length field to detect double feeds */
   OPT_ADF_FLIP,          /* For flipping duplex, reflip the document */
 
+  OPT_OPTIONS_GROUP,
+  OPT_OPTION_ADF,       // ADF installed/detected?
+  OPT_OPTION_LIGHTBOX,   // LightBox installed/detected?
+
   NUM_OPTIONS            /* must come last */
 };
 
@@ -398,8 +461,7 @@ typedef struct Avision_Device
   SANE_Bool inquiry_nvram_read;
   SANE_Bool inquiry_power_save_time;
 
-  SANE_Bool inquiry_light_box;
-  SANE_Bool inquiry_adf;
+  SANE_Bool inquiry_adf_capability;
   SANE_Bool inquiry_duplex;
   SANE_Bool inquiry_duplex_interlaced;
   SANE_Bool inquiry_paper_length;
@@ -418,6 +480,10 @@ typedef struct Avision_Device
   SANE_Bool inquiry_light_detect;
   SANE_Bool inquiry_light_control;
   SANE_Bool inquiry_exposure_control;
+
+  // Determines from accessories query.
+  SANE_Bool inquiry_light_box_present;
+  SANE_Bool inquiry_adf_present;
 
   int       inquiry_max_shading_target;
   SANE_Bool inquiry_button_control;
