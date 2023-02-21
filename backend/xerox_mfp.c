@@ -209,14 +209,15 @@ static int isSupportedDevice(struct device __sane_unused__ *dev)
 #ifdef HAVE_LIBJPEG
     /* Checking device which supports JPEG Lossy compression for color scanning*/
     if (dev->compressionTypes & (1 << 6)) {
-	/* blacklist malfunctioning device(s) */
-	if (!strncmp(dev->sane.model, "SCX-4500W", 9) ||
-            !strncmp(dev->sane.model, "C460", 4) ||
-	    !!strstr(dev->sane.model, "CLX-3170") ||
-            !!strstr(dev->sane.model, "4x24") ||
-            !!strstr(dev->sane.model, "4x28") ||
-	    !strncmp(dev->sane.model, "M288x", 5))
-	    return 0;
+        /* blacklist malfunctioning device(s) */
+        if (!strncmp (dev->sane.model, "SCX-4500W", 9)
+            || !strncmp (dev->sane.model, "C460", 4)
+            || !!strstr (dev->sane.model, "WorkCentre 3225")
+            || !!strstr (dev->sane.model, "CLX-3170")
+            || !!strstr (dev->sane.model, "4x24")
+            || !!strstr (dev->sane.model, "4x28")
+            || !strncmp (dev->sane.model, "M288x", 5))
+            return 0;
         return 1;
     } else
         return 0;
