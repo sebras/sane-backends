@@ -2,7 +2,7 @@
 .IX sane\-epjitsu
 
 .SH NAME
-sane\-epjitsu \- SANE backend for Epson-based Fujitsu USB scanners.
+sane\-epjitsu \- SANE backend for Epson-based Fujitsu USB scanners
 
 .SH DESCRIPTION
 The
@@ -35,12 +35,12 @@ Selects the source for the scan. Options may include "Flatbed", "ADF Front", "AD
 Selects the mode for the scan. Options may include "Lineart", "Gray", "Color".
 .RE
 .PP
-.B resolution, y\-resolution
+.BR resolution , " y\-resolution"
 .RS
 Controls scan resolution. Setting
 .B \-\-resolution
 also sets
-.B \-\-y\-resolution,
+.BR \-\-y\-resolution ,
 though this behavior is overridden by some frontends.
 .RE
 .PP

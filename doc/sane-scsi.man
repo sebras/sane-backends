@@ -44,7 +44,7 @@ is the SCSI vendor string,
 .I MODEL
 is the SCSI model string,
 .I TYPE
-is type SCSI device type string,
+is the SCSI device type string,
 .I BUS
 is the SCSI bus number (named "host" in
 .IR /proc/scsi/scsi ),
@@ -195,7 +195,7 @@ maximum buffer size can be changed at program run time, and there is no restrict
 version 2.2.7 on. If the new SG driver is available some backends
 (e.g.
 .BR sane\-umax (5),
-.BR sane\-mustek (5) ,
+.BR sane\-mustek (5),
 .BR sane\-sharp (5))
 automatically request larger SCSI
 buffers. If a backend does not automatically request a larger SCSI buffer, set
@@ -204,9 +204,9 @@ the environment variable
 to the desired buffer size in bytes. It is not recommended to use more
 than 1 MB, because for large values the probability increases that the
 SG driver cannot allocate the necessary buffer(s). For ISA cards, even
-1 MB might be a too large value. For a detailed discussion of memory
-issues of the SG driver, see
-.I http://www.torque.net/sg.
+1 MB might be a too large value.
+For a detailed discussion of the Linux SG SCSI driver see:
+.IR https://tldp.org/HOWTO/SCSI-Generic-HOWTO .
 .PP
 For Linux kernels before version 2.2.7 the size of the buffer is only 32KB.
 This works, but for many cheaper scanners this causes scanning to be slower by
@@ -299,7 +299,7 @@ of the form ``restart (ncr dead ?)'' in your
 .I /var/log/messages
 file or on the system console, it's an indication that the timeout is too short.
 In this case, find the line ``if (np->latetime>10)'' in file
-.I ncr53c8xx.
+.I ncr53c8xx.c
 (normally in directory
 .IR /usr/src/linux/drivers/scsi )
 and change the constant 10 to, say, 60 (one minute).
@@ -329,7 +329,7 @@ and with target-id 0 would be called
 .IR /dev/sg0a ,
 and the device with target-id 1 on that same bus would be
 called
-.IR /dev/sg0b,
+.IR /dev/sg0b ,
 and so on.
 
 .SH ENVIRONMENT

@@ -32,7 +32,7 @@ through the gphoto2 interface.  Valid ports and cameras can be obtained
 by
 .I "gphoto2 \-\-list\-cameras"
 and
-.I "gphoto2 \-\-list\-ports".
+.IR "gphoto2 \-\-list\-ports" .
 .PP
 The
 .B dumpinquiry
@@ -122,9 +122,9 @@ Set to 1, 2, or 3, to enable various levels of debugging within the
 gphoto2 libraries.
 
 .SH "SEE ALSO"
-.BR sane (7) ,
-.BR scanimage (1) ,
-.BR xscanimage (1) ,
+.BR sane (7),
+.BR scanimage (1),
+.BR xscanimage (1),
 .BR libgphoto2 (3)
 
 .SH AUTHOR

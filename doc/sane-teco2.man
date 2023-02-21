@@ -94,7 +94,7 @@ For
 a restricted set of resolutions are available.
 
 .B Note:
-All values with ydpi > 300 (300 x 600) or 600 (600 x 1200) result in
+All values with vertical resolution in dpi > 300 (300 x 600) or 600 (600 x 1200) result in
 a wrong proportion for the scan. The proportion can be adjusted with
 the following
 .BR convert (1)

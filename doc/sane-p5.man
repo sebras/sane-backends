@@ -28,7 +28,7 @@ This backend expects device names of the form:
 .RE
 .PP
 Where
-\fBvalue\fR is :
+\fBvalue\fR is:
 
 .RS
 .TP
@@ -151,7 +151,9 @@ your
 .IR @CONFIGDIR@/dll.conf .
 If your scanner isn't detected, make sure you've defined the right port address, or the
 correct device
-in your p5.conf.
+in your
+.I p5.conf
+file.
 .TP
 .I the name of your scanner/vendor
 also a worthy information. Please also include the optical resolution and lamp type of your

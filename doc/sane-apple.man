@@ -84,7 +84,7 @@ support dynamic loading).
 .SH ENVIRONMENT
 .TP
 .B SANE_CONFIG_DIR
-This environment variable is list of directories where SANE looks
+This environment variable is a list of directories where SANE looks
 for the configuration file.  On *NIX systems, directory names are
 separated by a colon (`:'), under OS/2 by a semi-colon (`;').
 If SANE_CONFIG_DIR is not set, SANE defaults to
@@ -177,7 +177,6 @@ bugs.
 We know we have a GUI bug when a parameter is not showing up when it
 should (active) or vice versa. Finding out which parameters are active
 across various Apple modes and models from the documentation
-.I ftp://ftpdev.info.apple.com/devworld/Technical_Documentation/Peripherals_Documentation/
 is an interesting exercise. I may have missed some dependencies. For example
 of the threshold parameter the Apple Scanners Programming Guide says
 nothing. I had to assume it is valid only in LineArt mode.
@@ -238,7 +237,8 @@ looks like, goto to
 .I apple.h
 and #define the
 .B NEUTRALIZE_BACKEND
-macro. You can select the scanner model through the APPLE_MODEL_SELECT
+macro. You can select the scanner model through the
+.B APPLE_MODEL_SELECT
 macro. Available options are
 .BR APPLESCANNER ,
 .BR ONESCANNER ,
@@ -246,7 +246,9 @@ and
 .BR COLORONESCANNER .
 .PP
 If you encounter a SCSI bus error or trimmed and/or displaced images please
-set the environment variable SANE_DEBUG_SANEI_SCSI to 255 before sending me
+set the environment variable
+.B SANE_DEBUG_SANEI_SCSI
+to 255 before sending me
 the report.
 
 .SH TODO
@@ -257,12 +259,12 @@ Make
 a non blocking backend. Properly support
 .BR sane_set_io_mode ()
 and
-.BR sane_get_select_fd ()
+.BR sane_get_select_fd ().
 .TP
 .B Scan
 Make scanning possible for all models in all supported modes.
 .PP
-Add other missing functionality
+Add other missing functionality.
 
 .SH "SEE ALSO"
 .BR sane (7),
@@ -274,4 +276,4 @@ The
 backend was written not entirely from scratch by
 Milon Firikis. It is mostly based on the
 .BR sane\-mustek (5)
-backend from David Mosberger and Andreas Czechanowski
+backend from David Mosberger and Andreas Czechanowski.

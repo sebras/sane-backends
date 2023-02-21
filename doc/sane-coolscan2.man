@@ -123,9 +123,9 @@ Eject the film strip or mounted slide when using the slide loader.
 .TP
 .B \-\-reset
 Reset scanner. The scanner will perform the same action as when power is
-turned on: it will eject the film strip (with the SF\-200 bulk feeder)
+turned on: it will eject the slide (with the SF\-200 bulk feeder)
 and calibrate itself. Use this whenever the scanner refuses to load
-a film strip properly, as a result of
+a slide properly, as a result of
 which
 .B \-\-eject
 does not work.

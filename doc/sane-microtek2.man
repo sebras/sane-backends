@@ -7,9 +7,7 @@ The
 library implements a SANE (Scanner Access Now Easy) backend that
 provides access to Microtek scanners with a SCSI-2 command set.
 This backend can be considered alpha to beta. Some scanner models are reported
-to work well, others not. New development versions of this backend can be
-obtained from
-.IR http://karstenfestag.gmxhome.de .
+to work well, others not.
 .PP
 There exists a different backend for Microtek scanners with SCSI-1 command
 set.
@@ -17,7 +15,7 @@ Refer to
 .BR sane\-microtek (5)
 for details.
 .PP
-And there is work in progress for the ScanMaker 3600.
+And there is partial progress for the ScanMaker 3600.
 See
 .IR http://sourceforge.net/projects/sm3600 .
 .PP
@@ -155,7 +153,9 @@ The configuration file may also contain options. Global options that are valid
 for all devices are placed above the device names. Device-specific options
 are
 placed under the device name. Note that, except for option dump <n> and
-option strip-height <n>, the entry in the microtek2.conf file only enables
+option strip-height <n>, the entry in the
+.I microtek2.conf
+file only enables
 the corresponding option for being showed in the frontend. There, in the
 frontend, you can switch the options on and off.
 Currently the following options are supported:

@@ -235,7 +235,7 @@ constraint.  Minimum is 4, maximum 192, and quant is 2.
 .PP
 Option
 .B int\-constraint\-array\-constraint\-word\-list
-(6/7) is an int test option with unit percent and using an array a word list
+(6/7) is an int test option with unit percent and using an array or word list
 constraint.
 .PP
 Option
@@ -258,7 +258,7 @@ set. Minimum is \-42.17, maximum 32767.9999, and quant is 2.0.
 .PP
 Option
 .B fixed\-constraint\-word\-list
-(3/3) is a Fixed test option with no unit and constraint word list set.
+(3/3) is a fixed test option with no unit and constraint word list set.
 .PP
 
 .SH STRING TEST OPTIONS

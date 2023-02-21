@@ -48,7 +48,8 @@ GL841, GL843, GL847 or GL124 chipset, you can try to add it to the backend.
 .SH "CALIBRATION"
 To give correct image quality, sheet fed scanners need to be calibrated using the
 calibration sheet sold with the scanner. To do calibration, you must insert this target
-in the feeder then start calibration either by passing the \-\-calibrate option to scanimage
+in the feeder then start calibration either by passing the \-\-calibrate option to
+.BR scanimage (1)
 or by clicking on the available 'calibrate' button in the 'advanced options' in a graphical
 frontend. The result of the calibration is stored in a file in the home directory of the user doing it.
 If you plug the scanner in another machine or use it with another account, calibration
@@ -100,7 +101,7 @@ Disable use of a software adaptive algorithm to generate lineart and rely on har
 .TP
 .B \-\-color-filter None|Red|Green|Blue
 When using gray or lineart this option selects the used color. Using a color filter
-will give a monochrome scan. CIS based scanners can to true gray when no filter (None value) is
+will give a monochrome scan. CIS based scanners can do true gray when no filter (None value) is
 selected.
 
 .TP
@@ -123,7 +124,7 @@ users.
 .B \-\-expiration\-time
 Specify the time (in minutes) a cached calibration is considered valid. If older than the given value, a new
 calibration is done. A value of -1 means no expiration and cached value are kept forever unless cleared by
-userwith the calibration clear option. A value of 0 means cache is disabled.
+user with the calibration clear option. A value of 0 means cache is disabled.
 
 .PP
 Additionally, several 'software' options are exposed by the backend. These
@@ -248,9 +249,7 @@ Syscan/Ambir DocketPORT 467/485/487/665/685
 Xerox Travel Scanner 100, Onetouch 2400
 .RE
 .TP
-cncsolutions
-.RI ( http://www.cncsolutions.com.br )
-sponsored and supported the work on the Panasonic KV-SS080.
+cncsolutions sponsored and supported the work on the Panasonic KV-SS080.
 .br
 .TP
 Brian Paavo from Benthic Science Limited for donating a Canoscan LiDE 700F.
@@ -298,7 +297,8 @@ due to the way image sensors are built.
 .PP
 This backend will be much slower if not using libusb\-1.0. So be sure that sane\-backends is built with
 the
-.B \-\-enable-libusb_1_0 option.
+.B \-\-enable-libusb_1_0
+option.
 
 .SH "BUGS"
 For the LiDE 200, the scanned data at 4800 dpi is obtained "as is" from sensor.

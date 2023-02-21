@@ -92,9 +92,9 @@ control of the backend code.
 
 .PP
 Parameters are separated by a blank from single-character options (e.g.
-.BI "\-d " epson )
+.BI "\-d " epson \fR)
 and by a "=" from multi-character options (e.g.
-.BR \-\-device\-name =\fIepson\FR ).
+.BR \-\-device\-name =\fIepson \fR).
 
 .TP
 .BR \-d "\fI dev\fR, " \-\-device\-name =\fIdev\fR
@@ -228,7 +228,7 @@ is a specific command provided to aid this.
 .B \-\-batch\-double
 will automatically set the increment to 2.
 Equivalent to
-.BR \-\-batch\-increment =2
+.BR \-\-batch\-increment =2.
 
 .TP
 .B \-\-batch\-prompt
@@ -297,7 +297,7 @@ standard output and no scan will be performed.
 .TP
 .BR \-v ", " \-\-verbose
 increases the verbosity of the output of
-.B scanimage.
+.BR scanimage .
 The option may be specified repeatedly, each time increasing the verbosity
 level.
 
@@ -319,7 +319,7 @@ loads. If more information about the version
 numbers of the backends are necessary, the
 .B DEBUG
 variable for the dll layer can be used. Example:
-.I "SANE_DEBUG_DLL=3 scanimage \-L" .
+.IR "SANE_DEBUG_DLL=3 scanimage \-L" .
 .PP
 As you might imagine, much of the power of
 .B scanimage
@@ -501,8 +501,8 @@ to 127 characters.
 .BR sane (7),
 .BR gamma4scanimage (1),
 .BR xscanimage (1),
-.BR xcam (1) ,
-.BR xsane (1) ,
+.BR xcam (1),
+.BR xsane (1),
 .BR scanadf (1),
 .BR sane\-dll (5),
 .BR sane\-net (5),

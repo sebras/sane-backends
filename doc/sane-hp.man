@@ -45,19 +45,18 @@ and
 .IR http://penguin-breeder.org/kernel/download/ .
 
 .PP
-Support for models 5200C/62X0C/63X0C connected to the USB require
-the kernel scanner driver or libusb. See
+Support for models 5200C/62X0C/63X0C connected to USB requires
+libusb. See
 .BR sane\-usb (5)
 for more details.
 .PP
 The
 .B sane\-hp
 backend no longer supports OfficeJet multi-function peripherals.
-For these devices use the external "hpoj" backend in version 0.90 and later of
-the "HP OfficeJet Linux driver", available at
-.br
-.IR http://hpoj.sourceforge.net
-.
+For these devices use the external "hplip" packages available at:
+.IR https://developers.hp.com/hp\-linux\-imaging\-and\-printing/ .
+For information about the previous hpoj driver, see:
+.IR http://hpoj.sourceforge.net/ .
 .PP
 Because Hewlett-Packard does no longer produce scanners that support
 SCL (beside the OfficeJets), the above list of supported scanners is
@@ -70,7 +69,7 @@ You can also watch the sane\-devel mailing list at
 .IR http://www.sane\-project.org/mailing\-lists.html .
 .PP
 More details about the hp backend can be found on its homepage
-.IR http://www.kirchgessner.net/sane.html .
+.IR http://web.archive.org/web/20070206115546/http://www.kirchgessner.net/sane.html .
 .PP
 .SH "DEVICE NAMES"
 This backend expects device names of the form:
@@ -220,8 +219,9 @@ levels reduce verbosity.
 .TP
 .B SANE_HOME_HP
 Only used for OS/2 and along with use of HP PhotoSmart PhotoScanner.
-Must be set to the directory where the directory .sane is located.
-Is used to save and read the calibration file.
+Must be set to the directory where the directory
+.I .sane
+is located. Is used to save and read the calibration file.
 .TP
 .B SANE_HP_KEEPOPEN_SCSI
 .TP

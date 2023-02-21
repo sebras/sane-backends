@@ -68,30 +68,28 @@ The supported options are currently
 and
 .BR force_nibble
 
-Option
-.B ieee1284
-.IR port-name
-defines which port to use.  The format of port-name is OS dependent, based on
-the names presented by libieee1284.  Please only have one of these lines, or
+.TP
+.B ieee1284 port-name
+Defines which port to use.  The format of port-name is OS dependent, based on
+the names presented by
+.BR libieee1284 (3).
+Please only have one of these lines, or
 all but one will be ignored.
 
-Option
-.B calibrate
-.IR cal-file
-.IR [port-name]
-defines which calibration file to use on a per-port basis.  If you only have
+.TP
+.B calibrate cal-file [port-name]
+Defines which calibration file to use on a per-port basis.  If you only have
 one parport, the port-name argument may be omitted \- but be careful as this
 will cause problems on multi-scanner systems.  You may have as many of these
 lines as you like, as long as each has a unique port name.  The tilde (`~')
-character is acceptable and will be expanded to the value of the HOME
-environment.
+character is acceptable and will be expanded to the value of the
+.B HOME
+environment variable.
 
-Option
-.B init_mode
-.IR <AUTO|FB620P|FB630P>
-.IR [portname]
-defines which initialisation (wake-up) mode to use on a per-port basis.
-If you only have one parport, the portname argument may be omitted \- but
+.TP
+.B init_mode <AUTO|FB620P|FB630P> [port-name]
+Defines which initialisation (wake-up) mode to use on a per-port basis.
+If you only have one parport, the port-name argument may be omitted \- but
 be careful as this may cause problems on multi-scanner systems.
 You may have as many of these lines as you like, as long as each has a unique
 port name.  The valid initialisation modes are FB620P (which strobes 10101010
@@ -100,10 +98,11 @@ on the data pins) and AUTO, which will try FB630P mode first then FB620P mode
 second.  The FB620P mode is also used by the FB320P.  The FB630P mode is used
 by the FB330P, N340P, and N640P.
 
-Option
+.TP
 .B force_nibble
-forces the driver to use nibble mode even if ECP mode is reported to work by
-libieee1284.  This works-around the rare issue of ECP mode being reported to
+Forces the driver to use nibble mode even if ECP mode is reported to work by
+.BR libieee1284 (3).
+This works-around the rare issue of ECP mode being reported to
 work by the library, then not working.
 
 .SH TIPS
@@ -174,7 +173,9 @@ one returned during calibration) will be loaded.
 .PP
 .B Communication Problems
 .PP
-ECP mode in libieee1284 doesn't always work properly, even with new hardware.
+ECP mode in
+.BR libieee1284 (3)
+doesn't always work properly, even with new hardware.
 We believe that this is a ppdev problem.  If you change the configuration file
 to include
 .B force_nibble

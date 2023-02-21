@@ -291,21 +291,18 @@ Please send any information and bug-reports to:
 .br
 .B SANE Mailing List
 .PP
-Additional info and hints can be obtained from our
-.br
-Mailing-List archive at:
-.br
-.I http://www.sane\-project.org/mailing\-lists.html
+Additional info and hints can be obtained from our mailing-List archive at:
+.IR http://www.sane\-project.org/mailing\-lists.html .
 .PP
 To obtain debug messages from the backend, please set the
 environment-variable
 .B SANE_DEBUG_PLUSTEK_PP
-before calling your favorite scan-frontend (i.e.
-.BR xscanimage (1)), i.e.:
-.br
+before calling your favorite SANE frontend (e.g.
+.BR xscanimage (1)):
+.PP
 .I export SANE_DEBUG_PLUSTEK_PP=20 ; xscanimage
 .PP
-The value controls the verbosity of the backend.
+The value controls the verbosity of the output.
 .PP
 
 .SH "KNOWN BUGS & RESTRICTIONS"
