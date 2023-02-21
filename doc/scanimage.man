@@ -4,36 +4,32 @@
 scanimage \- scan an image
 .SH SYNOPSIS
 .B scanimage
-.RB [ \-d | \-\-device\-name
+.RB [ \-d
 .IR dev ]
-.RB [ \-\-format
-.IR format ]
-.RB [ \-i | \-\-icc\-profile
+.RB [ \-\-format\fI=output-format ]
+.RB [ \-i
 .IR profile ]
-.RB [ \-L | \-\-list\-devices ]
-.RB [ \-f | \-\-formatted\-device\-list
-.IR format ]
-.RB [ \-b | \-\-batch
+.RB [ \-L ]
+.RB [ \-f
+.IR device-format ]
+.RB [ \-b
 .RI [ format ]]
-.RB [ \-\-batch\-start
-.IR start ]
-.RB [ \-\-batch\-count
-.IR count ]
-.RB [ \-\-batch\-increment
-.IR increment ]
+.RB [ \-\-batch\-start\fI=start ]
+.RB [ \-\-batch\-count\fI=count ]
+.RB [ \-\-batch\-increment\fI=increment ]
 .RB [ \-\-batch\-double ]
 .RB [ \-\-accept\-md5\-only ]
-.RB [ \-p | \-\-progress ]
-.RB [ \-o | \-\-output-file
+.RB [ \-p]
+.RB [ \-o
 .IR path ]
-.RB [ \-n | \-\-dont\-scan ]
-.RB [ \-T | \-\-test ]
-.RB [ \-A | \-\-all-options ]
-.RB [ \-h | \-\-help ]
-.RB [ \-v | \-\-verbose ]
-.RB [ \-B | \-\-buffer-size
-.RI [= size ]]
-.RB [ \-V | \-\-version ]
+.RB [ \-n ]
+.RB [ \-T ]
+.RB [ \-A ]
+.RB [ \-h ]
+.RB [ \-v ]
+.RB [ \-B
+.RI size ]
+.RB [ \-V ]
 .RI [ device\-specific\-options ]
 .SH DESCRIPTION
 .B scanimage
@@ -117,12 +113,12 @@ If this variable is not set,
 will attempt to open the first available device.
 
 .TP
-.BR \-\-format =\fIformat\fR
+.BR \-\-format =\fIoutput-format\fR
 selects how image data is written to standard output or the file specified by
 the
 .B \-\-output\-file
 option.
-.I format
+.I output-format
 can be
 .BR pnm ,
 .BR tiff ,
@@ -150,8 +146,8 @@ by its full device name.  You may need to consult your system administrator to
 find out the names of such devices.
 
 .TP
-.BR \-f "\fI format\fR, " \-\-formatted\-device\-list =\fIformat\fR
-works similar to
+.BR \-f "\fI format\fR, " \-\-formatted\-device\-list =\fIdevice-format\fR
+works similarly to
 .BR \-\-list\-devices ,
 but requires a format string.
 .B scanimage
@@ -306,12 +302,10 @@ The option may be specified repeatedly, each time increasing the verbosity
 level.
 
 .TP
-.BR \-B " [\fIsize\fR], " \-\-buffer\-size =[\fIsize\fR]
-changes input buffer size from the default of 32KB to
+.BR \-B " [\fIsize\fR], " \-\-buffer\-size =\fIsize
+changes input buffer size from the default of 1MB to
 .I size
-KB. If
-.I size
-is not specified then the buffer is set to 1 MB.
+KB.
 
 .TP
 .BR \-V ", " \-\-version

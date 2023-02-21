@@ -95,7 +95,11 @@
 #define GENESYS_HAS_POWER_SW         (1 << 6)       /**< scanner has power button */
 #define GENESYS_HAS_CALIBRATE        (1 << 7)       /**< scanner has 'calibrate' software button to start calibration */
 #define GENESYS_HAS_EXTRA_SW         (1 << 8)       /**< scanner has extra function button */
-#define GENESYS_HAS_TRANSP_SW        (1 << 9)       /**< scanner has TRANSPARCY/SCAN_FILM button */
+#define GENESYS_HAS_TRANSP_SW        (1 << 9)       /**< scanner has TRANSPARENCY/SCAN_FILM button */
+#define GENESYS_HAS_PDF1_SW          (1 << 10)      /**< scanner has special PDF button 1 */
+#define GENESYS_HAS_PDF2_SW          (1 << 11)      /**< scanner has special PDF button 2 */
+#define GENESYS_HAS_PDF3_SW          (1 << 12)      /**< scanner has special PDF button 3 */
+#define GENESYS_HAS_PDF4_SW          (1 << 13)      /**< scanner has special PDF button 4 */
 
 /* USB control message values */
 #define REQUEST_TYPE_IN		(USB_TYPE_VENDOR | USB_DIR_IN)

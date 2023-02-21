@@ -27,8 +27,8 @@ sanei_epson2_scsi_sense_handler(int scsi_fd,
 	unsigned char *result, void *arg)
 {
 	/* to get rid of warnings */
-	scsi_fd = scsi_fd;
-	arg = arg;
+	(void) scsi_fd;
+	(void) arg;
 
 	if (result[0] && result[0] != 0x70) {
 		DBG(2, "%s: sense code = 0x%02x\n",

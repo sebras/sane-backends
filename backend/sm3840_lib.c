@@ -64,8 +64,8 @@ my_usb_bulk_write (p_usb_dev_handle dev, int ep,
   SANE_Status status;
   size_t my_size;
 
-  timeout = timeout;
-  ep = ep;
+  (void) timeout;
+  (void) ep;
   my_size = size;
   status =
     sanei_usb_write_bulk ((SANE_Int) dev, (SANE_Byte *) bytes, &my_size);
@@ -81,8 +81,8 @@ my_usb_bulk_read (p_usb_dev_handle dev, int ep,
   SANE_Status status;
   size_t my_size;
 
-  timeout = timeout;
-  ep = ep;
+  (void) timeout;
+  (void) ep;
   my_size = size;
   status =
     sanei_usb_read_bulk ((SANE_Int) dev, (SANE_Byte *) bytes, &my_size);
@@ -98,7 +98,7 @@ my_usb_control_msg (p_usb_dev_handle dev, int requesttype,
 {
   SANE_Status status;
 
-  timeout = timeout;
+  (void) timeout;
   status = sanei_usb_control_msg ((SANE_Int) dev, (SANE_Int) requesttype,
 				  (SANE_Int) request, (SANE_Int) value,
 				  (SANE_Int) index, (SANE_Int) size,
@@ -200,9 +200,8 @@ idle_ab (p_usb_dev_handle udev)
 
 /* CW: 40 04 00b0 0000 <len> :  <reg1> <value1> <reg2> <value2> ... */
 static void
-write_regs (p_usb_dev_handle udev, int regs, unsigned char reg1,
-	    unsigned char val1,
-	    ... /*unsigned char reg, unsigned char val, ... */ )
+write_regs (p_usb_dev_handle udev, int regs, int reg1, int val1,
+	    ... /* int reg, int val, ... */ )
 {
   unsigned char buff[512];
   va_list marker;

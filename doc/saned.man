@@ -24,6 +24,9 @@ saned \- SANE network daemon
 .B ]
 .B [ \-e ]
 .B [ \-h ]
+.B [ \-B
+.I buffer-size
+.B ]
 
 .SH DESCRIPTION
 .B saned
@@ -113,6 +116,11 @@ output at all.  The default value is 2.
 will divert
 .B saned
 debug output to stderr instead of the syslog default.
+
+.TP
+.BR \-B ", " \-\-buffer-size=\fIbuffer\-size\fR
+specifies the size of the read buffer used for communication with the backend in KB.
+Default value is 1MB.
 
 .TP
 .BR \-h ", " \-\-help

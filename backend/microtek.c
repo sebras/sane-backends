@@ -1502,14 +1502,10 @@ parse_inquiry(Microtek_Info *mi, unsigned char *result)
   };
 #endif
   DBG(15, "parse_inquiry...\n");
-  strncpy(mi->vendor_id, (char *)&result[8], 8);
-  strncpy(mi->model_name, (char *)&result[16], 16);
-  strncpy(mi->revision_num, (char *)&result[32], 4);
-  strncpy(mi->vendor_string, (char *)&result[36], 20);
-  mi->vendor_id[8]   = 0;
-  mi->model_name[16] = 0;
-  mi->revision_num[4] = 0;
-  mi->vendor_string[20] = 0;
+  snprintf(mi->vendor_id,      8 + 1, "%.*s",  8, (char *)&result[8]);
+  snprintf(mi->model_name,    16 + 1, "%.*s", 16, (char *)&result[16]);
+  snprintf(mi->revision_num,   4 + 1, "%.*s",  4, (char *)&result[32]);
+  snprintf(mi->vendor_string, 20 + 1, "%.*s", 20, (char *)&result[36]);
 
   mi->device_type                = (SANE_Byte)(result[0] & 0x1f);
   mi->SCSI_firmware_ver_major    = (SANE_Byte)((result[1] & 0xf0) >> 4);
@@ -1925,7 +1921,7 @@ static SANE_Status
 dump_suspect_inquiry(unsigned char *result)
 {
   int i;
-  char vendor_id[64], model_name[64], revision_num[16];
+  char vendor_id[9], model_name[17], revision_num[5];
   SANE_Byte device_type, model_code;
   SANE_Byte SCSI_firmware_ver_major, SCSI_firmware_ver_minor;
   SANE_Byte scanner_firmware_ver_major, scanner_firmware_ver_minor;
@@ -1947,12 +1943,9 @@ dump_suspect_inquiry(unsigned char *result)
   }
   fprintf(stderr, "\n\n");
 #endif
-  strncpy(vendor_id, (char *)&result[8], 8);
-  strncpy(model_name, (char *)&result[16], 16);
-  strncpy(revision_num, (char *)&result[32], 4);
-  vendor_id[8]    = 0;
-  model_name[16]  = 0;
-  revision_num[5] = 0;
+  snprintf(vendor_id,     8 + 1, "%.*s",  8, (char *)&result[8]);
+  snprintf(model_name,   16 + 1, "%.*s", 16, (char *)&result[16]);
+  snprintf(revision_num,  4 + 1, "%.*s",  4, (char *)&result[32]);
   device_type                = (SANE_Byte)(result[0] & 0x1f);
   SCSI_firmware_ver_major    = (SANE_Byte)((result[1] & 0xf0) >> 4);
   SCSI_firmware_ver_minor    = (SANE_Byte)(result[1] & 0x0f);
@@ -2356,7 +2349,8 @@ static SANE_Status do_real_calibrate(Microtek_Scanner *s)
   input = calloc(STRIPS * 3 * linewidth, sizeof(input[0]));
   combuff = calloc(linewidth + 6, sizeof(combuff[0]));
   if ((input == NULL) || (combuff == NULL)) {
-    DBG(23, "do_real_cal:  bad calloc %p %p\n", input, combuff);
+    DBG(23, "do_real_cal:  bad calloc %p %p\n",
+        (void *) input, (void *) combuff);
     free(input);
     free(combuff);
     return SANE_STATUS_NO_MEM;
@@ -2370,7 +2364,7 @@ static SANE_Status do_real_calibrate(Microtek_Scanner *s)
     ntoget = (nleft > nmax) ? nmax : nleft;
     buffsize = ntoget * 3 * linewidth;
     DBG(23, "...nleft %d  toget %d  size %lu  spot %d  input+spot %p\n",
-	nleft, ntoget, (u_long) buffsize, spot, input+spot);
+        nleft, ntoget, (u_long) buffsize, spot, (void *) (input+spot));
     if ((statusA = read_scan_data(s, ntoget, input+spot, &buffsize))
 	!= SANE_STATUS_GOOD) {
       DBG(23, "...read scan failed\n");
@@ -3060,7 +3054,7 @@ sane_init(SANE_Int *version_code, SANE_Auth_Callback authorize)
   size_t len;
   FILE *fp;
 
-  authorize = authorize;
+  (void) authorize;
   DBG_INIT();
   DBG(1, "sane_init:  MICROTEK says hello! (v%d.%d.%d)\n",
       MICROTEK_MAJOR, MICROTEK_MINOR, MICROTEK_PATCH);
@@ -3111,7 +3105,7 @@ sane_get_devices(const SANE_Device ***device_list,
   Microtek_Device *dev;
   int i;
 
-  local_only = local_only;
+  (void) local_only;
   DBG(10, "sane_get_devices\n");
   /* we keep an internal copy */
   if (devlist)
@@ -4166,7 +4160,7 @@ SANE_Status
 sane_set_io_mode (SANE_Handle handle, SANE_Bool non_blocking)
 {
   DBG(10, "sane_set_io_mode...\n");
-  handle = handle;
+  (void) handle;
   if (non_blocking)
     return SANE_STATUS_UNSUPPORTED;
   else
@@ -4182,6 +4176,6 @@ SANE_Status
 sane_get_select_fd (SANE_Handle handle, SANE_Int * fd)
 {
   DBG(10, "sane_get_select_fd...\n");
-  handle = handle, fd = fd;
+  (void) handle, (void) fd;
   return SANE_STATUS_UNSUPPORTED;
 }

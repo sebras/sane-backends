@@ -53,6 +53,7 @@
 #include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdint.h>
 #include <string.h>
 #include <syslog.h>
 #include <time.h>
@@ -84,8 +85,8 @@
 
 #include "lgetopt.h"
 
-#if defined(HAVE_SYS_POLL_H) && defined(HAVE_POLL)
-# include <sys/poll.h>
+#if defined(HAVE_POLL_H) && defined(HAVE_POLL)
+# include <poll.h>
 #else
 /*
  * This replacement poll() using select() is only designed to cover
@@ -257,6 +258,7 @@ static int data_connect_timeout = 4000;
 static Handle *handle;
 static char *bind_addr;
 static short bind_port = -1;
+static size_t buffer_size = (1 * 1024 * 1024);
 static union
 {
   int w;
@@ -1651,168 +1653,186 @@ store_reclen (SANE_Byte * buf, size_t buf_size, int i, size_t reclen)
 static void
 do_scan (Wire * w, int h, int data_fd)
 {
-  int num_fds, be_fd = -1, reader, writer, bytes_in_buf, status_dirty = 0;
+  int num_fds, be_fd = -1, reader, bytes_in_buf, status_dirty = 0;
+  size_t writer;
   SANE_Handle be_handle = handle[h].handle;
   struct timeval tv, *timeout = 0;
   fd_set rd_set, rd_mask, wr_set, wr_mask;
-  SANE_Byte buf[8192];
+  SANE_Byte *buf = NULL;
   SANE_Status status;
-  long int nwritten;
+  ssize_t nwritten;
   SANE_Int length;
   size_t nbytes;
 
   DBG (3, "do_scan: start\n");
 
-  FD_ZERO (&rd_mask);
-  FD_SET (w->io.fd, &rd_mask);
-  num_fds = w->io.fd + 1;
-
-  FD_ZERO (&wr_mask);
-  FD_SET (data_fd, &wr_mask);
-  if (data_fd >= num_fds)
-    num_fds = data_fd + 1;
-
-  sane_set_io_mode (be_handle, SANE_TRUE);
-  if (sane_get_select_fd (be_handle, &be_fd) == SANE_STATUS_GOOD)
+  /*
+   * Allocate the read buffer.
+   *
+   */
+  buf = malloc (buffer_size);
+  if (!buf)
     {
-      FD_SET (be_fd, &rd_mask);
-      if (be_fd >= num_fds)
-	num_fds = be_fd + 1;
+      status = SANE_STATUS_NO_MEM;
+      DBG (DBG_ERR, "do_scan: failed to allocate read buffer (%zu bytes)\n",
+           buffer_size);
     }
   else
     {
-      memset (&tv, 0, sizeof (tv));
-      timeout = &tv;
+      FD_ZERO(&rd_mask);
+      FD_SET(w->io.fd, &rd_mask);
+      num_fds = w->io.fd + 1;
+
+      FD_ZERO(&wr_mask);
+      FD_SET(data_fd, &wr_mask);
+      if (data_fd >= num_fds)
+        num_fds = data_fd + 1;
+
+      sane_set_io_mode (be_handle, SANE_TRUE);
+      if (sane_get_select_fd (be_handle, &be_fd) == SANE_STATUS_GOOD)
+        {
+          FD_SET(be_fd, &rd_mask);
+          if (be_fd >= num_fds)
+            num_fds = be_fd + 1;
+        }
+      else
+        {
+          memset (&tv, 0, sizeof(tv));
+          timeout = &tv;
+        }
+
+      status = SANE_STATUS_GOOD;
+      reader = writer = bytes_in_buf = 0;
+      do
+        {
+          rd_set = rd_mask;
+          wr_set = wr_mask;
+          if (select (num_fds, &rd_set, &wr_set, 0, timeout) < 0)
+            {
+              if (be_fd >= 0 && errno == EBADF)
+                {
+                  /* This normally happens when a backend closes a select
+                   filedescriptor when reaching the end of file.  So
+                   pass back this status to the client: */
+                  FD_CLR(be_fd, &rd_mask);
+                  be_fd = -1;
+                  /* only set status_dirty if EOF hasn't been already detected */
+                  if (status == SANE_STATUS_GOOD)
+                    status_dirty = 1;
+                  status = SANE_STATUS_EOF;
+                  DBG (DBG_INFO, "do_scan: select_fd was closed --> EOF\n");
+                  continue;
+                }
+              else
+                {
+                  status = SANE_STATUS_IO_ERROR;
+                  DBG (DBG_ERR, "do_scan: select failed (%s)\n",
+                       strerror (errno));
+                  break;
+                }
+            }
+
+          if (bytes_in_buf)
+            {
+              if (FD_ISSET(data_fd, &wr_set))
+                {
+                  if (bytes_in_buf > 0)
+                    {
+                      /* write more input data */
+                      nbytes = bytes_in_buf;
+                      if (writer + nbytes > buffer_size)
+                        nbytes = buffer_size - writer;
+                      DBG (DBG_INFO,
+                           "do_scan: trying to write %d bytes to client\n",
+                           nbytes);
+                      nwritten = write (data_fd, buf + writer, nbytes);
+                      DBG (DBG_INFO, "do_scan: wrote %ld bytes to client\n",
+                           nwritten);
+                      if (nwritten < 0)
+                        {
+                          DBG (DBG_ERR, "do_scan: write failed (%s)\n",
+                               strerror (errno));
+                          status = SANE_STATUS_CANCELLED;
+                          handle[h].docancel = 1;
+                          break;
+                        }
+                      bytes_in_buf -= (size_t) nwritten;
+                      writer += (size_t) nwritten;
+                      if (writer == buffer_size)
+                        writer = 0;
+                    }
+                }
+            }
+          else if (status == SANE_STATUS_GOOD
+              && (timeout || FD_ISSET(be_fd, &rd_set)))
+            {
+              int i;
+
+              /* get more input data */
+
+              /* reserve 4 bytes to store the length of the data record: */
+              i = reader;
+              reader += 4;
+              if (reader >= (int) buffer_size)
+                reader -= buffer_size;
+
+              assert(bytes_in_buf == 0);
+              nbytes = buffer_size - 4;
+              if (reader + nbytes > buffer_size)
+                nbytes = buffer_size - reader;
+
+              DBG (DBG_INFO, "do_scan: trying to read %d bytes from scanner\n",
+                   nbytes);
+              status = sane_read (be_handle, buf + reader, nbytes, &length);
+              DBG (DBG_INFO, "do_scan: read %d bytes from scanner\n", length);
+
+              reset_watchdog ();
+
+              reader += length;
+              if (reader >= (int) buffer_size)
+                reader = 0;
+              bytes_in_buf += length + 4;
+
+              if (status != SANE_STATUS_GOOD)
+                {
+                  reader = i; /* restore reader index */
+                  status_dirty = 1;
+                  DBG (DBG_MSG, "do_scan: status = `%s'\n",
+                       sane_strstatus (status));
+                }
+              else
+                store_reclen (buf, buffer_size, i, length);
+            }
+
+          if (status_dirty && buffer_size - bytes_in_buf >= 5)
+            {
+              status_dirty = 0;
+              reader = store_reclen (buf, buffer_size, reader, 0xffffffff);
+              buf[reader] = status;
+              bytes_in_buf += 5;
+              DBG (DBG_MSG, "do_scan: statuscode `%s' was added to buffer\n",
+                   sane_strstatus (status));
+            }
+
+          if (FD_ISSET(w->io.fd, &rd_set))
+            {
+              DBG (DBG_MSG, "do_scan: processing RPC request on fd %d\n",
+                   w->io.fd);
+              if (process_request (w) < 0)
+                handle[h].docancel = 1;
+
+              if (handle[h].docancel)
+                break;
+            }
+        }
+      while (status == SANE_STATUS_GOOD || bytes_in_buf > 0 || status_dirty);
+      DBG (DBG_MSG, "do_scan: done, status=%s\n", sane_strstatus (status));
+
+      free (buf);
+      buf = NULL;
     }
 
-  status = SANE_STATUS_GOOD;
-  reader = writer = bytes_in_buf = 0;
-  do
-    {
-      rd_set = rd_mask;
-      wr_set = wr_mask;
-      if (select (num_fds, &rd_set, &wr_set, 0, timeout) < 0)
-	{
-	  if (be_fd >= 0 && errno == EBADF)
-	    {
-	      /* This normally happens when a backend closes a select
-		 filedescriptor when reaching the end of file.  So
-		 pass back this status to the client: */
-	      FD_CLR (be_fd, &rd_mask);
-	      be_fd = -1;
-	      /* only set status_dirty if EOF hasn't been already detected */
-	      if (status == SANE_STATUS_GOOD)
-		status_dirty = 1;
-	      status = SANE_STATUS_EOF;
-	      DBG (DBG_INFO, "do_scan: select_fd was closed --> EOF\n");
-	      continue;
-	    }
-	  else
-	    {
-	      status = SANE_STATUS_IO_ERROR;
-	      DBG (DBG_ERR, "do_scan: select failed (%s)\n", strerror (errno));
-	      break;
-	    }
-	}
-
-      if (bytes_in_buf)
-	{
-	  if (FD_ISSET (data_fd, &wr_set))
-	    {
-	      if (bytes_in_buf > 0)
-		{
-		  /* write more input data */
-		  nbytes = bytes_in_buf;
-		  if (writer + nbytes > sizeof (buf))
-		    nbytes = sizeof (buf) - writer;
-		  DBG (DBG_INFO,
-		       "do_scan: trying to write %d bytes to client\n",
-		       nbytes);
-		  nwritten = write (data_fd, buf + writer, nbytes);
-		  DBG (DBG_INFO,
-		       "do_scan: wrote %ld bytes to client\n", nwritten);
-		  if (nwritten < 0)
-		    {
-		      DBG (DBG_ERR, "do_scan: write failed (%s)\n",
-			   strerror (errno));
-		      status = SANE_STATUS_CANCELLED;
-	              handle[h].docancel = 1;
-		      break;
-		    }
-		  bytes_in_buf -= nwritten;
-		  writer += nwritten;
-		  if (writer == sizeof (buf))
-		    writer = 0;
-		}
-	    }
-	}
-      else if (status == SANE_STATUS_GOOD
-	       && (timeout || FD_ISSET (be_fd, &rd_set)))
-	{
-	  int i;
-
-	  /* get more input data */
-
-	  /* reserve 4 bytes to store the length of the data record: */
-	  i = reader;
-	  reader += 4;
-	  if (reader >= (int) sizeof (buf))
-	    reader -= sizeof(buf);
-
-	  assert (bytes_in_buf == 0);
-	  nbytes = sizeof (buf) - 4;
-	  if (reader + nbytes > sizeof (buf))
-	    nbytes = sizeof (buf) - reader;
-
-	  DBG (DBG_INFO,
-	       "do_scan: trying to read %d bytes from scanner\n", nbytes);
-	  status = sane_read (be_handle, buf + reader, nbytes, &length);
-	  DBG (DBG_INFO,
-	       "do_scan: read %d bytes from scanner\n", length);
-
-	  reset_watchdog ();
-
-	  reader += length;
-	  if (reader >= (int) sizeof (buf))
-	    reader = 0;
-	  bytes_in_buf += length + 4;
-
-	  if (status != SANE_STATUS_GOOD)
-	    {
-	      reader = i;	/* restore reader index */
-	      status_dirty = 1;
-	      DBG (DBG_MSG,
-		   "do_scan: status = `%s'\n", sane_strstatus(status));
-	    }
-	  else
-	    store_reclen (buf, sizeof (buf), i, length);
-	}
-
-      if (status_dirty && sizeof (buf) - bytes_in_buf >= 5)
-	{
-	  status_dirty = 0;
-	  reader = store_reclen (buf, sizeof (buf), reader, 0xffffffff);
-	  buf[reader] = status;
-	  bytes_in_buf += 5;
-	  DBG (DBG_MSG, "do_scan: statuscode `%s' was added to buffer\n",
-	       sane_strstatus(status));
-	}
-
-      if (FD_ISSET (w->io.fd, &rd_set))
-	{
-	  DBG (DBG_MSG,
-	       "do_scan: processing RPC request on fd %d\n", w->io.fd);
-	  if(process_request (w) < 0)
-	    handle[h].docancel = 1;
-
-	  if (handle[h].docancel)
-	    break;
-	}
-    }
-  while (status == SANE_STATUS_GOOD || bytes_in_buf > 0 || status_dirty);
-  DBG (DBG_MSG, "do_scan: done, status=%s\n", sane_strstatus (status));
-
-  if(handle[h].docancel)
+  if (handle[h].docancel)
     sane_cancel (handle[h].handle);
 
   handle[h].docancel = 0;
@@ -2449,7 +2469,7 @@ void
 sig_int_term_handler (int signum)
 {
   /* unused */
-  signum = signum;
+  (void) signum;
 
   signal (SIGINT, NULL);
   signal (SIGTERM, NULL);
@@ -2543,7 +2563,7 @@ saned_avahi_group_callback (AvahiEntryGroup *g, AvahiEntryGroupState state, void
   char *n;
 
   /* unused */
-  userdata = userdata;
+  (void) userdata;
 
   if ((!g) || (g != avahi_group))
     return;
@@ -2657,7 +2677,7 @@ saned_avahi_callback (AvahiClient *c, AvahiClientState state, void *userdata)
   int error;
 
   /* unused */
-  userdata = userdata;
+  (void) userdata;
 
   if (!c)
     return;
@@ -3413,16 +3433,17 @@ static void usage(char *me, int err)
   fprintf (stderr,
        "Usage: %s [OPTIONS]\n\n"
        " Options:\n\n"
-       "  -a, --alone[=user]	equal to `-l -D -u user'\n"
-       "  -l, --listen		run in standalone mode (listen for connection)\n"
-       "  -u, --user=user	run as `user'\n"
-       "  -D, --daemonize	run in background\n"
-       "  -o, --once		exit after first client disconnects\n"
-       "  -d, --debug=level	set debug level `level' (default is 2)\n"
-       "  -e, --stderr		output to stderr\n"
-       "  -b, --bind=addr	bind address `addr' (default all interfaces)\n"
-       "  -p, --port=port	bind port `port` (default sane-port or 6566)\n"
-       "  -h, --help		show this help message and exit\n", me);
+       "  -a, --alone[=user]	        equal to `-l -D -u user'\n"
+       "  -l, --listen		        run in standalone mode (listen for connection)\n"
+       "  -u, --user=user	        run as `user'\n"
+       "  -D, --daemonize	        run in background\n"
+       "  -o, --once		        exit after first client disconnects\n"
+       "  -d, --debug=level	        set debug level `level' (default is 2)\n"
+       "  -e, --stderr		        output to stderr\n"
+       "  -b, --bind=addr	        bind address `addr' (default all interfaces)\n"
+       "  -p, --port=port               bind port `port` (default sane-port or 6566)\n"
+       "  -B, --buffer-size=size        set size of read buffer in KB (default: 1024)\n"
+       "  -h, --help		        show this help message and exit\n", me);
 
   exit(err);
 }
@@ -3432,17 +3453,18 @@ static int debug;
 static struct option long_options[] =
 {
 /* These options set a flag. */
-  {"help",	no_argument,		0, 'h'},
-  {"alone",	optional_argument,	0, 'a'},
-  {"listen",	no_argument,		0, 'l'},
-  {"user",	required_argument,	0, 'u'},
-  {"daemonize", no_argument,		0, 'D'},
-  {"once",	no_argument,		0, 'o'},
-  {"debug",	required_argument,	0, 'd'},
-  {"stderr",	no_argument,		0, 'e'},
-  {"bind",	required_argument,	0, 'b'},
-  {"port",	required_argument,	0, 'p'},
-  {0,		0,			0,  0 }
+  {"help",              no_argument,            0, 'h'},
+  {"alone",             optional_argument,      0, 'a'},
+  {"listen",            no_argument,            0, 'l'},
+  {"user",              required_argument,      0, 'u'},
+  {"daemonize",         no_argument,            0, 'D'},
+  {"once",              no_argument,            0, 'o'},
+  {"debug",             required_argument,      0, 'd'},
+  {"stderr",            no_argument,            0, 'e'},
+  {"bind",              required_argument,      0, 'b'},
+  {"port",              required_argument,      0, 'p'},
+  {"buffer-size",       required_argument,      0, 'B'},
+  {0,                   0,                      0,  0 }
 };
 
 int
@@ -3467,7 +3489,7 @@ main (int argc, char *argv[])
   run_foreground = SANE_TRUE;
   run_once = SANE_FALSE;
 
-  while((c = getopt_long(argc, argv,"ha::lu:Dod:eb:p:", long_options, &long_index )) != -1)
+  while((c = getopt_long(argc, argv,"ha::lu:Dod:eb:p:B:", long_options, &long_index )) != -1)
     {
       switch(c) {
       case 'a':
@@ -3498,8 +3520,25 @@ main (int argc, char *argv[])
 	bind_addr = optarg;
 	break;
       case 'p':
-	bind_port = atoi(optarg);
-	break;
+        bind_port = atoi(optarg);
+        break;
+      case 'B':
+        {
+          int buffer_arg = atoi(optarg);
+
+          if ((buffer_arg < 0) || ((size_t)buffer_arg > (SIZE_MAX / 1024)))
+            {
+              DBG (
+                  DBG_ERR,
+                  "saned: specified buffer size in KB is invalid. Default of %zuKB will be substituted.\n",
+                  buffer_size / 1024);
+            }
+          else
+            {
+              buffer_size = 1024 * (size_t)buffer_arg;
+            }
+          break;
+        }
       case 'h':
 	usage(argv[0], EXIT_SUCCESS);
 	break;

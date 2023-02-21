@@ -46,7 +46,7 @@ struct downloading
 static const char settings[] =
     "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"                        \
     "<scan:ScanSettings xmlns:pwg=\"http://www.pwg.org/schemas/2010/12/sm\" xmlns:scan=\"http://schemas.hp.com/imaging/escl/2011/05/03\">" \
-    "   <pwg:Version>2.0</pwg:Version>" \
+    "   <pwg:Version>%.2f</pwg:Version>" \
     "   <pwg:ScanRegions>" \
     "      <pwg:ScanRegion>" \
     "          <pwg:ContentRegionUnits>escl:ThreeHundredthsOfInches</pwg:ContentRegionUnits>" \
@@ -56,13 +56,11 @@ static const char settings[] =
     "          <pwg:YOffset>%d</pwg:YOffset>" \
     "      </pwg:ScanRegion>" \
     "   </pwg:ScanRegions>" \
-    "   <pwg:DocumentFormat>%s</pwg:DocumentFormat>" \
     "%s" \
     "   <scan:ColorMode>%s</scan:ColorMode>" \
     "   <scan:XResolution>%d</scan:XResolution>" \
     "   <scan:YResolution>%d</scan:YResolution>" \
     "   <pwg:InputSource>%s</pwg:InputSource>" \
-    "   <scan:InputSource>%s</scan:InputSource>" \
     "%s" \
     "%s" \
     "</scan:ScanSettings>";
@@ -138,8 +136,8 @@ escl_newjob (capabilities_t *scanner, const ESCL_Device *device, SANE_Status *st
     char *location = NULL;
     char *result = NULL;
     char *temporary = NULL;
-    char *f_ext = "";
     char *format_ext = NULL;
+    char f_ext_tmp[1024];
     char duplex_mode[1024] = { 0 };
     int wakup_count = 0;
 
@@ -189,16 +187,22 @@ escl_newjob (capabilities_t *scanner, const ESCL_Device *device, SANE_Status *st
 	    scanner->caps[scanner->source].default_format =
 		    strdup(scanner->caps[scanner->source].DocumentFormats[have_pdf]);
     }
-    if (scanner->caps[scanner->source].format_ext == 1)
+    if (device->version <= 2.0)
     {
-        char f_ext_tmp[1024];
+        // For eSCL 2.0 and older clients
+        snprintf(f_ext_tmp, sizeof(f_ext_tmp),
+			"   <pwg:DocumentFormat>%s</pwg:DocumentFormat>",
+    			scanner->caps[scanner->source].default_format);
+    }
+    else
+    {
+        // For eSCL 2.1 and newer clients
         snprintf(f_ext_tmp, sizeof(f_ext_tmp),
 			"   <scan:DocumentFormatExt>%s</scan:DocumentFormatExt>",
     			scanner->caps[scanner->source].default_format);
-        format_ext = f_ext_tmp;
     }
-    else
-      format_ext = f_ext;
+    format_ext = f_ext_tmp;
+
     if(scanner->source > PLATEN && scanner->Sources[ADFDUPLEX]) {
        snprintf(duplex_mode, sizeof(duplex_mode),
 		       "   <scan:Duplex>%s</scan:Duplex>",
@@ -215,51 +219,62 @@ escl_newjob (capabilities_t *scanner, const ESCL_Device *device, SANE_Status *st
     char *source = (scanner->source == PLATEN ? "Platen" : "Feeder");
     if (scanner->use_threshold)
     {
-       char *tmp = add_support_option("ThresholdSupport", scanner->val_threshold);
-       if (support_options[0])
-          strcat(support_options, tmp);
-       else
-          strcpy(support_options, tmp);
-       free(tmp);
+       if (scanner->val_threshold != scanner->threshold->value)
+       {
+          char *tmp = add_support_option("ThresholdSupport", scanner->val_threshold);
+          if (support_options[0])
+             strcat(support_options, tmp);
+          else
+             strcpy(support_options, tmp);
+          free(tmp);
+       }
     }
     if (scanner->use_sharpen)
     {
-       char *tmp = add_support_option("SharpenSupport", scanner->val_sharpen);
-       if (support_options[0])
-          strcat(support_options, tmp);
-       else
-          strcpy(support_options, tmp);
-       free(tmp);
+       if (scanner->val_sharpen != scanner->sharpen->value)
+       {
+          char *tmp = add_support_option("SharpenSupport", scanner->val_sharpen);
+          if (support_options[0])
+             strcat(support_options, tmp);
+          else
+             strcpy(support_options, tmp);
+          free(tmp);
+       }
     }
     if (scanner->use_contrast)
     {
-       char *tmp = add_support_option("ContrastSupport", scanner->val_contrast);
-       if (support_options[0])
-          strcat(support_options, tmp);
-       else
-          strcpy(support_options, tmp);
-       free(tmp);
+       if (scanner->val_contrast != scanner->contrast->value)
+       {
+          char *tmp = add_support_option("ContrastSupport", scanner->val_contrast);
+          if (support_options[0])
+             strcat(support_options, tmp);
+          else
+             strcpy(support_options, tmp);
+          free(tmp);
+       }
     }
     if (scanner->use_brightness)
     {
-       char *tmp = add_support_option("BrightnessSupport", scanner->val_brightness);
-       if (support_options[0])
-          strcat(support_options, tmp);
-       else
-          strcpy(support_options, tmp);
-       free(tmp);
+       if (scanner->val_brightness != scanner->brightness->value)
+       {
+          char *tmp = add_support_option("BrightnessSupport", scanner->val_brightness);
+          if (support_options[0])
+             strcat(support_options, tmp);
+          else
+             strcpy(support_options, tmp);
+          free(tmp);
+       }
     }
     snprintf(cap_data, sizeof(cap_data), settings,
+    		device->version,
     		scanner->caps[scanner->source].height,
     		scanner->caps[scanner->source].width,
     		off_x,
     		off_y,
-    		scanner->caps[scanner->source].default_format,
     		format_ext,
     		scanner->caps[scanner->source].default_color,
     		scanner->caps[scanner->source].default_resolution,
     		scanner->caps[scanner->source].default_resolution,
-    		source,
     		source,
     		duplex_mode[0] == 0 ? " " : duplex_mode,
                 support_options[0] == 0 ? " " : support_options);

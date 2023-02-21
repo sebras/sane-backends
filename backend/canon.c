@@ -817,14 +817,12 @@ attach (const char *devnam, CANON_Device ** devp)
 
   dev->sane.name = strdup (devnam);
   dev->sane.vendor = "CANON";
-  if ((str = calloc (16 + 1, 1)) == NULL)
+  if ((str = strndup ((char *) ibuf + 16, 16)) == NULL)
     {
       sanei_scsi_close (fd);
       fd = -1;
       return (SANE_STATUS_NO_MEM);
     }
-  strncpy (str, (char *) (ibuf + 16), 16);
-  dev->sane.model = str;
 
   /* Register the fixed properties of the scanner below:
      - whether it is a film scanner or a flatbed scanner
@@ -842,6 +840,7 @@ attach (const char *devnam, CANON_Device ** devp)
   if (!strncmp (str, "IX-27015", 8))		/* FS2700S */
     {
       dev->info.model = CS2700;
+      dev->sane.model = strdup("FS2700S");
       dev->sane.type = SANE_I18N("film scanner");
       dev->adf.Status = ADF_STAT_NONE;
       dev->tpu.Status = TPU_STAT_NONE;
@@ -857,6 +856,7 @@ attach (const char *devnam, CANON_Device ** devp)
   else if (!strncmp (str, "IX-27025E", 9))	/* FS2710S */
     {
       dev->info.model = FS2710;
+      dev->sane.model = strdup("FS2710S");
       dev->sane.type = SANE_I18N("film scanner");
       dev->adf.Status = ADF_STAT_NONE;
       dev->tpu.Status = TPU_STAT_NONE;
@@ -872,6 +872,7 @@ attach (const char *devnam, CANON_Device ** devp)
   else if (!strncmp (str, "IX-06035E", 9))	/* FB620S */
     {
       dev->info.model = FB620;
+      dev->sane.model = strdup("FB620S");
       dev->sane.type = SANE_I18N("flatbed scanner");
       dev->adf.Status = ADF_STAT_NONE;
       dev->tpu.Status = TPU_STAT_NONE;
@@ -887,6 +888,7 @@ attach (const char *devnam, CANON_Device ** devp)
   else if (!strncmp (str, "IX-12015E", 9))	/* FB1200S */
     {
       dev->info.model = FB1200;
+      dev->sane.model = strdup("FB1200S");
       dev->sane.type = SANE_I18N("flatbed scanner");
       dev->adf.Status = ADF_STAT_INACTIVE;
       dev->tpu.Status = TPU_STAT_INACTIVE;
@@ -929,6 +931,20 @@ attach (const char *devnam, CANON_Device ** devp)
       dev->info.is_filmscanner = SANE_FALSE;
       dev->info.has_fixed_resolutions = SANE_FALSE;
     }
+
+  /*
+   * Use the model from the device if we don't have more
+   * common model name for the device, otherwise free the
+   * string with internal model name.
+   *
+   * Please keep the memory allocation source consistent
+   * for model string - allocate on the heap via dynamic
+   * allocation.
+   */
+  if (dev->sane.model == NULL)
+    dev->sane.model = str;
+  else
+    free(str);
 
   DBG (5, "dev->sane.name = '%s'\n", dev->sane.name);
   DBG (5, "dev->sane.vendor = '%s'\n", dev->sane.vendor);

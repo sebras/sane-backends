@@ -134,8 +134,7 @@ static char tty_name[PATH_MAX];
 #define DEF_TTY_NAME "/dev/ttyS0"
 
 static speed_t tty_baud = DEFAULT_TTY_BAUD;
-static char *tmpname;
-static char tmpnamebuf[] = "/tmp/dc25XXXXXX";
+#define TMPFILE_PATTERN "/tmp/dc25XXXXXX";
 
 static Dc20Info *dc20_info;
 static Dc20Info CameraInfo;
@@ -925,7 +924,6 @@ adjust_color_and_saturation (short red[], short green[], short blue[])
   int line, column;
   int r_min = SMAX, g_min = SMAX, b_min = SMAX;
   int r_max = 0, g_max = 0, b_max = 0;
-  int r_sum = 0, g_sum = 0, b_sum = 0;
   float sqr_saturation = sqrt (saturation);
   for (line = TOP_MARGIN; line < HEIGHT - BOTTOM_MARGIN; line++)
     {
@@ -1008,9 +1006,6 @@ adjust_color_and_saturation (short red[], short green[], short blue[])
 	    g_max = g;
 	  if (b_max < b)
 	    b_max = b;
-	  r_sum += r;
-	  g_sum += g;
-	  b_sum += b;
 	  BIDIM_ARRAY (red, column, line, columns) = r;
 	  BIDIM_ARRAY (green, column, line, columns) = g;
 	  BIDIM_ARRAY (blue, column, line, columns) = b;
@@ -1153,7 +1148,6 @@ output_rgb (const short red[],
 {
   int r_min = 255, g_min = 255, b_min = 255;
   int r_max = 0, g_max = 0, b_max = 0;
-  int r_sum = 0, g_sum = 0, b_sum = 0;
   int column, line;
   unsigned char *gamma_table = make_gamma_table (high_i - low_i);
 
@@ -1202,19 +1196,9 @@ output_rgb (const short red[],
 	    g_max = g;
 	  if (b_max < b)
 	    b_max = b;
-	  r_sum += r;
-	  g_sum += g;
-	  b_sum += b;
 	}
     }
   free (gamma_table);
-/*
-	{
-		fprintf (stderr, "%s: output_rgb: r: min = %d, max = %d, ave = %d\n", __progname, r_min, r_max, r_sum / NET_PIXELS);
-		fprintf (stderr, "%s: output_rgb: g: min = %d, max = %d, ave = %d\n", __progname, g_min, g_max, g_sum / NET_PIXELS);
-		fprintf (stderr, "%s: output_rgb: b: min = %d, max = %d, ave = %d\n", __progname, b_min, b_max, b_sum / NET_PIXELS);
-	}
-*/
   return 0;
 }
 
@@ -2022,16 +2006,6 @@ sane_open (SANE_String_Const devicename, SANE_Handle * handle)
       DBG (1, "No device info\n");
     }
 
-  if (tmpname == NULL)
-    {
-      tmpname = tmpnamebuf;
-      if (!mkstemp (tmpname))
-	{
-	  DBG (1, "Unable to make temp file %s\n", tmpname);
-	  return SANE_STATUS_INVAL;
-	}
-    }
-
   DBG (3, "sane_open: pictures taken=%d\n", dc20_info->pic_taken);
 
   return SANE_STATUS_GOOD;
@@ -2445,14 +2419,15 @@ sane_start (SANE_Handle handle)
        * port overruns on a 90MHz pentium until I used hdparm
        * to set the "-u1" flag on the system drives.
        */
-      int fd;
+      char tmpnamebuf[] = TMPFILE_PATTERN;
 
-      fd = open (tmpname, O_CREAT | O_EXCL | O_WRONLY, 0600);
+      int fd = mkstemp (tmpnamebuf);
       if (fd == -1)
-	{
-	  DBG (0, "Unable to open tmp file\n");
-	  return SANE_STATUS_INVAL;
-	}
+        {
+          DBG (0, "Unable to make temp file %s\n", tmpnamebuf);
+          return SANE_STATUS_INVAL;
+        }
+
       f = fdopen (fd, "wb");
       if (f == NULL)
 	{
@@ -2524,12 +2499,12 @@ sane_start (SANE_Handle handle)
       else
 	{
 	  fclose (f);
-	  if (convert_pic (tmpname, SAVE_ADJASPECT | SAVE_24BITS) == -1)
+	  if (convert_pic (tmpnamebuf, SAVE_ADJASPECT | SAVE_24BITS) == -1)
 	    {
 	      DBG (3, "sane_open: unable to convert\n");
 	      return SANE_STATUS_INVAL;
 	    }
-	  unlink (tmpname);
+	  unlink (tmpnamebuf);
 	  outbytes = 0;
 	}
     }

@@ -1895,6 +1895,11 @@ start_scan (BH_Scanner *s)
 		    {
 		      DBG(1, "sane_start: error opening barfile `%s'\n",
 			  s->barfname);
+		      if (fd !=-1)
+		        {
+		          close(fd);
+		          unlink(s->barfname);
+		        }
 		      status = SANE_STATUS_IO_ERROR;
 		    }
 		}
@@ -1979,7 +1984,7 @@ sense_handler (int scsi_fd, u_char *result, void *arg)
   SANE_Status status = SANE_STATUS_INVAL;
   SANE_Char print_sense[(16 * 3) + 1];
 
-  scsi_fd = scsi_fd; /* get rid of compiler warning */
+  (void) scsi_fd; /* get rid of compiler warning */
   ErrorCode = result[0] & 0x7F;
   ValidData = (result[0] & 0x80) != 0;
   sense = result[2] & 0x0f; /* Key */
@@ -3145,7 +3150,7 @@ sane_init (SANE_Int *version_code, SANE_Auth_Callback authorize)
     char devnam[PATH_MAX] = "/dev/scanner";
     FILE *fp;
 
-    authorize = authorize; /* get rid of compiler warning */
+    (void) authorize; /* get rid of compiler warning */
 
     DBG_INIT();
     DBG(3, "sane_init called\n");
@@ -3233,7 +3238,7 @@ sane_get_devices (const SANE_Device ***device_list, SANE_Bool local)
     int i;
     DBG(3, "sane_get_devices called\n");
 
-    local = local; /* get rid of compiler warning */
+    (void) local; /* get rid of compiler warning */
     if (devlist)
 	free (devlist);
     devlist = malloc ((num_devices + 1) * sizeof (devlist[0]));
@@ -3806,7 +3811,7 @@ sane_set_io_mode (SANE_Handle handle, SANE_Bool non_blocking)
 
  return SANE_STATUS_GOOD;
 #else
- handle = handle; /* get rid of compiler warning */
+ (void) handle; /* get rid of compiler warning */
  return (non_blocking == 1) ? SANE_STATUS_UNSUPPORTED : SANE_STATUS_GOOD;
 #endif
 }
@@ -3828,7 +3833,7 @@ sane_get_select_fd (SANE_Handle handle, SANE_Int *fd)
 
   return SANE_STATUS_GOOD;
 #else
-  handle = handle; fd = fd; /* get rid of compiler warning */
+  (void) handle; (void) fd; /* get rid of compiler warning */
   return SANE_STATUS_UNSUPPORTED;
 #endif
 }

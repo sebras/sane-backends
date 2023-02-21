@@ -818,7 +818,8 @@ void CommandSetGl646::init_regs_for_scan_session(Genesys_Device* dev, const Gene
     dev->session = session;
 
     dev->total_bytes_read = 0;
-    dev->total_bytes_to_read = session.output_line_bytes_requested * session.params.lines;
+    dev->total_bytes_to_read = (size_t) session.output_line_bytes_requested
+          * (size_t) session.params.lines;
 
     /* select color filter based on settings */
     regs->find_reg(0x04).value &= ~REG_0x04_FILTER;

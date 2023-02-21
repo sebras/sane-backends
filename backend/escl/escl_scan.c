@@ -84,6 +84,7 @@ escl_scan(capabilities_t *scanner, const ESCL_Device *device, char *scanJob, cha
             CURLcode res = curl_easy_perform(curl_handle);
             if (res != CURLE_OK) {
                 DBG( 1, "Unable to scan: %s\n", curl_easy_strerror(res));
+                scanner->real_read = 0;
                 fclose(scanner->tmp);
                 scanner->tmp = NULL;
                 status = SANE_STATUS_INVAL;

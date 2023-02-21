@@ -56,6 +56,11 @@
 :usbid "0x413c" "0x5310"
 :status :good
 
+:model "Dell 1135n"
+:interface "USB Ethernet"
+:usbid "0x413c" "0x5318"
+:status :good
+
 :mfg "Samsung"
 :url "http://www.samsung.com"
 

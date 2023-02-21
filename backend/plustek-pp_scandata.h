@@ -143,17 +143,7 @@ typedef struct {
  */
 typedef struct scandata
 {
-#ifdef __KERNEL__
-	UInt	flags;          	/* as follows:  */
-#define	_PTDRV_INITALIZED	0x00000001
-#define	_PTDRV_OPEN		    0x00000002
-
-	struct pardevice *pardev;	/* for accessing parport... */
-	struct parport   *pp;
-	ProcDirDef		  procDir;
-#else
 	int pardev;                 /* parport handle in user-space */
-#endif
 
 	/*
 	 * device control

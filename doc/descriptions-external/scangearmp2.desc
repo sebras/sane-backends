@@ -11,7 +11,7 @@
 
 :backend "canon_pixma"                 ; name of backend
 ;:version "(external)"             ; version of backend
-:url "https://github.com/Ordissimo/libmfp2-canon/blob/master/README.md"     ; backend's web page
+:url "https://github.com/Ordissimo/scangearmp2/blob/master/README.md"     ; backend's web page
 :comment "External binary-only backend for Linux i386 and x86_64?. See the website for the latest release."
 
 
@@ -28,70 +28,85 @@
 ; Canon MFP2 conf file
 ;
 
+; ---- V440 --------------------------
+
+:model "TS2400 series"
+:interface "USB WiFi"
+:usbid "0x04a9" "0x1108"
+:status :untested
+:comment "Testers needed!"
+
+:model "TS2600 series"
+:interface "USB WiFi"
+:usbid "0x04a9" "0x1107"
+:status :untested
+:comment "Testers needed!"
+
+
 ; ---- V420 --------------------------
 :model "TS5350i series"
 :interface "USB WiFi"
-:usbid "0x04A9" "0x18D9"
+:usbid "0x04a9" "0x18d9"
 :status :untested
 :comment "Testers needed!"
 
 :model "G600 series"
 :interface "USB WiFi"
-:usbid "0x04A9" "0x18D5"
+:usbid "0x04a9" "0x18d5"
 :status :untested
 :comment "Testers needed!"
 
 :model "TS3500 series"
 :interface "USB WiFi"
-:usbid "0x04A9" "0x18D4"
+:usbid "0x04a9" "0x18d4"
 :status :untested
 :comment "Testers needed!"
 
 :model "TR4600 series"
 :interface "USB WiFi"
-:usbid "0x04A9" "0x18DA"
+:usbid "0x04a9" "0x18da"
 :status :untested
 :comment "Testers needed!"
 
 :model "E4500 series"
 :interface "USB WiFi"
-:usbid "0x04A9" "0x18DB"
+:usbid "0x04a9" "0x18db"
 :status :untested
 :comment "Testers needed!"
 
 :model "TR4700 series"
 :interface "USB WiFi"
-:usbid "0x04A9" "0x18DC"
+:usbid "0x04a9" "0x18dc"
 :status :untested
 :comment "Testers needed!"
 
 :model "XK500 series"
 :interface "USB WiFi"
-:usbid "0x04A9" "0x18DF"
+:usbid "0x04a9" "0x18df"
 :status :untested
 :comment "Testers needed!"
 
 :model "TS8530 series"
 :interface "USB WiFi"
-:usbid "0x04A9" "0x18E0"
+:usbid "0x04a9" "0x18e0"
 :status :untested
 :comment "Testers needed!"
 
 :model "XK100 series"
 :interface "USB WiFi"
-:usbid "0x04a9" "0x18E2"
+:usbid "0x04a9" "0x18e2"
 :status :untested
 :comment "Testers needed!"
 
 :model "TS7530 series"
 :interface "USB WiFi"
-:usbid "0x04a9" "0x18E1"
+:usbid "0x04a9" "0x18e1"
 :status :untested
 :comment "Testers needed!"
 
 :model "TS7450i series"
 :interface "USB WiFi"
-:usbid "0x04a9" "0x18F7"
+:usbid "0x04a9" "0x18f7"
 :status :untested
 :comment "Testers needed!"
 
@@ -115,62 +130,62 @@
 ; ---- V410 --------------------------
 :model "TS3400 series"
 :interface "USB WiFi"
-:usbid "0x04a9" "0x18B7"
+:usbid "0x04a9" "0x18b7"
 :status :good
 
 :model "E3400 series"
 :interface "USB WiFi"
-:usbid "0x04a9" "0x18B8"
+:usbid "0x04a9" "0x18b8"
 :status :good
 
 :model "TR7000 series"
 :interface "USB WiFi"
-:usbid "0x04a9" "0x18B9"
+:usbid "0x04a9" "0x18b9"
 :status :good
 
 :model "G2020 series"
 :interface "USB WiFi"
-:usbid "0x04A9" "0x18BD"
+:usbid "0x04a9" "0x18bd"
 :status :good
 
 :model "G3060 series"
 :interface "USB WiFi"
-:usbid "0x04A9" "0x18C3"
+:usbid "0x04a9" "0x18c3"
 :status :good
 
 :model "G2060 series"
 :interface "USB WiFi"
-:usbid "0x04A9" "0x18C1"
+:usbid "0x04a9" "0x18c1"
 :status :good
 
 :model "G3020 series"
 :interface "USB WiFi"
-:usbid "0x04A9" "0x18BF"
+:usbid "0x04a9" "0x18bf"
 :status :good
 
 :model "TS7430 series"
 :interface "USB WiFi"
-:usbid "0x04A9" "0x18B2"
+:usbid "0x04a9" "0x18b2"
 :status :good
 
 :model "XK90 series"
 :interface "USB WiFi"
-:usbid "0x04A9" "0x18B6"
+:usbid "0x04a9" "0x18b6"
 :status :good
 
 :model "TS8430 series"
 :interface "USB WiFi"
-:usbid "0x04A9" "0x18B5"
+:usbid "0x04a9" "0x18b5"
 :status :good
 
 :model "TR7600 series"
 :interface "USB WiFi"
-:usbid "0x04A9" "0x18AA"
+:usbid "0x04a9" "0x18aa"
 :status :good
 
 :model "TR8600 series"
 :interface "USB WiFi"
-:usbid "0x04A9" "0x18AD"
+:usbid "0x04a9" "0x18ad"
 :status :good
 
 :model "TR8630 series"

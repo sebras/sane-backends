@@ -3125,7 +3125,7 @@ sane_start (SANE_Handle handle)	/* begin scanning */
 	       sane_strstatus (status));
 	  return (status);
 	}
-      if ((s->data.adf_status & 0x00) == 0x01)
+      if ((s->data.adf_status & 0x01) == 0x01)
 	{
 	  DBG (DBG_warning, "sane_start: No document on ADF\n");
 	  return (SANE_STATUS_NO_DOCS);
@@ -3322,8 +3322,8 @@ sane_get_select_fd (SANE_Handle handle, SANE_Int * fd)
   *fd = s->fd;
   return SANE_STATUS_GOOD;
 #else
-  handle = handle;
-  fd = fd;			/* get rid of compiler warning */
+  (void) handle;
+  (void) fd;			/* get rid of compiler warning */
   DBG (DBG_proc, "<< sane_get_select_fd\n");
   return SANE_STATUS_UNSUPPORTED;
 #endif

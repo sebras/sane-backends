@@ -182,8 +182,8 @@ wait_ready (int fd)
 static SANE_Status
 sense_handler (int scsi_fd, u_char *result, void *arg)
 {
-  scsi_fd = scsi_fd;
-  arg = arg; /* silence compilation warnings */
+  (void) scsi_fd;
+  (void) arg; /* silence compilation warnings */
 
   switch (result[0])
     {
@@ -909,7 +909,7 @@ sane_init (SANE_Int *version_code, SANE_Auth_Callback authorize)
   size_t len;
   FILE *fp;
 
-  authorize = authorize; /* silence compilation warnings */
+  (void) authorize; /* silence compilation warnings */
 
   DBG_INIT();
 
@@ -962,7 +962,7 @@ sane_get_devices (const SANE_Device ***device_list, SANE_Bool local_only)
   Tamarack_Device *dev;
   int i;
 
-  local_only = local_only; /* silence compilation warnings */
+  (void) local_only; /* silence compilation warnings */
 
   if (devlist)
     free (devlist);

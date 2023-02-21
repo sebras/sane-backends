@@ -92,6 +92,7 @@ typedef struct {
 typedef struct ESCL_Device {
     struct ESCL_Device *next;
 
+    double    version;
     char     *model_name;
     int       port_nb;
     char     *ip_address;
@@ -147,6 +148,7 @@ typedef struct support
     int min;
     int max;
     int normal;
+    int value;
     int step;
 } support_t;
 

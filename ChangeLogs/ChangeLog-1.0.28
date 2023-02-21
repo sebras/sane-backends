@@ -1,4 +1,4 @@
-commit 5aa523289f82d1c7f01dde601356214920646542 (HEAD, tag: 1.0.28, origin/master)
+commit 5aa523289f82d1c7f01dde601356214920646542
 Author: Olaf Meeuwissen <paddy-hack@member.fsf.org>
 Date:   2019-07-31 20:39:43 +0900
 
@@ -19,7 +19,7 @@ Date:   2019-07-29 22:34:13 +0200
     https://alioth-lists.debian.net/pipermail/sane-devel/2019-July/036877.html
 
 commit 9dce0eaf74facef88fae83ba4d7f9fe886307d4c
-Merge: 05bdcbd8 a4e122ad
+Merge: 05bdcbd81a5a a4e122add55e
 Author: Rolf Bensch <rolf@bensch-online.de>
 Date:   2019-07-29 17:27:07 +0200
 
@@ -38,7 +38,7 @@ Date:   2019-07-27 13:11:28 +0200
     1st bunch of updated German translation
 
 commit 05bdcbd81a5a92da12e1d4e1559d3f7faf7782ac
-Merge: 8eb5850f d4164a73
+Merge: 8eb5850f2749 d4164a7320e3
 Author: Olaf Meeuwissen <paddy-hack@member.fsf.org>
 Date:   2019-07-27 06:49:23 +0000
 
@@ -75,7 +75,7 @@ Date:   2019-07-23 21:15:24 +0900
     po/*.po: Sync with latest source
 
 commit 97f04e16e462f61cb87a0acc19868c3357c259eb
-Merge: 8ae2569a a8a5f58f
+Merge: 8ae2569a879c a8a5f58f2155
 Author: Povilas Kanapickas <povilas@radix.lt>
 Date:   2019-07-22 23:13:51 +0000
 
@@ -144,7 +144,7 @@ Date:   2019-07-10 22:58:40 +0900
     utsushi.desc: Sync with upstream
 
 commit 7b2d2cd0b3b6a2052635a35bdf4d0eeab10a3b5d
-Merge: 6f6a4928 4742f213
+Merge: 6f6a4928741c 4742f213185c
 Author: Olaf Meeuwissen <paddy-hack@member.fsf.org>
 Date:   2019-07-07 02:16:49 +0000
 
@@ -189,7 +189,7 @@ Date:   2019-06-30 17:48:34 +0900
     because it is a non-generated file.
 
 commit 2f14ac2fcc6124c7170fdc2bbb868813c5bdfeb7
-Merge: 72d68c73 640fa9db
+Merge: 72d68c7367e4 640fa9dbbaaa
 Author: Povilas Kanapickas <povilas@radix.lt>
 Date:   2019-07-05 23:39:04 +0000
 
@@ -236,7 +236,7 @@ Date:   2019-07-06 02:10:03 +0300
     genesys: Support message argument to exceptions
 
 commit 72d68c7367e4713a340ea1ab109360ce9788266d
-Merge: ec8017a8 14bbe802
+Merge: ec8017a8c023 14bbe802dbdd
 Author: Povilas Kanapickas <povilas@radix.lt>
 Date:   2019-06-30 23:16:47 +0000
 
@@ -245,16 +245,6 @@ Date:   2019-06-30 23:16:47 +0000
     genesys: Preparation for infrared channel support on 8600F (part 2)
 
     See merge request sane-project/backends!84
-
-commit ec8017a8c0238ba319b87d94fa7214cd2cb92c86
-Author: Alex Belkin <abc@telekom.ru>
-Date:   2019-06-30 18:54:46 +0300
-
-    xerox_mfp: Mark SCX-4x16 as unsupported
-
-    As reported by Andrew Sotnikov in issue #95 Samsung SCX-4216F is not
-    really supported. Change SCX-4x16 status from untested to unsupported.
-    Closes #95.
 
 commit 14bbe802dbdd748d439bb54c62800ad73141880f
 Author: Povilas Kanapickas <povilas@radix.lt>
@@ -346,6 +336,16 @@ Date:   2019-06-30 14:05:15 +0300
 
     genesys: Return void out of *_calculate_current_setup()
 
+commit ec8017a8c0238ba319b87d94fa7214cd2cb92c86
+Author: Alex Belkin <abc@telekom.ru>
+Date:   2019-06-30 18:54:46 +0300
+
+    xerox_mfp: Mark SCX-4x16 as unsupported
+
+    As reported by Andrew Sotnikov in issue #95 Samsung SCX-4216F is not
+    really supported. Change SCX-4x16 status from untested to unsupported.
+    Closes #95.
+
 commit 7a07f47b4796f4d4c4f853b8bf76edd5c424f291
 Author: Olaf Meeuwissen <paddy-hack@member.fsf.org>
 Date:   2019-06-30 14:53:00 +0900
@@ -413,7 +413,7 @@ Date:   2019-06-29 15:57:04 +0900
     Include an up-to-date ChangeLog with every build
 
 commit 8b2fa76497f195208623298d129a2c3fd7917c1b
-Merge: bf00b9f4 0dd1feec
+Merge: bf00b9f49c1e 0dd1feec2d62
 Author: Olaf Meeuwissen <paddy-hack@member.fsf.org>
 Date:   2019-06-27 20:00:38 +0900
 
@@ -463,7 +463,7 @@ Date:   2019-06-20 19:47:32 +0900
     if configure was not created in the current working directory.
 
 commit ec1a614d6b73214a3510e9654c0f33d4a876bc3e
-Merge: f901462f 9173e5db
+Merge: f901462f9937 9173e5dbddf5
 Author: Povilas Kanapickas <povilas@radix.lt>
 Date:   2019-06-20 08:58:33 +0000
 
@@ -472,87 +472,6 @@ Date:   2019-06-20 08:58:33 +0000
     genesys: Preparation for infrared channel support on 8600F
 
     See merge request sane-project/backends!82
-
-commit f901462f9937e884c4da7bfe9e96f6d12dfdccf1
-Author: Olaf Meeuwissen <paddy-hack@member.fsf.org>
-Date:   2019-06-19 21:12:51 +0900
-
-    Fix AS_CASE clause matching
-
-    See https://alioth-lists.debian.net/pipermail/sane-devel/2019-June/036809.html
-
-commit 46e98476acc831c43cc60fb82756aad19b214e5d
-Merge: 6d95bc19 8aa5318f
-Author: Povilas Kanapickas <povilas@radix.lt>
-Date:   2019-06-16 15:40:29 +0000
-
-    Merge branch 'genesys-canoscan-8600f' into 'master'
-
-    genesys: Add initial support for 2400 and 4800 dpi transparency scanning on CanoScan 8600F
-
-    See merge request sane-project/backends!81
-
-commit 6d95bc191f796eef07da3f5334d840e8b31bf4cf
-Author: Olaf Meeuwissen <paddy-hack@member.fsf.org>
-Date:   2019-06-16 21:40:39 +0900
-
-    Drop unneeded C++ compiler flag additions to AM_CXXFLAGS.  Re #92
-
-    The AX_CXX_COMPILE_STDCXX_11 macro takes care of doing so if needed
-    already.
-
-commit a4862d8526ca238fb667658a4bcd83de27915cb8
-Author: Olaf Meeuwissen <paddy-hack@member.fsf.org>
-Date:   2019-06-16 21:39:45 +0900
-
-    Predicate genesys compilation on documented variable.  Re #92
-
-commit 424bb7d923965327a28e303d1c424d5fc00e977c
-Author: Rolf Bensch <rolf@bensch-online.de>
-Date:   2019-06-16 13:13:48 +0200
-
-    INSTALL.linux: add missing development environment packages
-
-commit 4c05fb474282c64c8e700ab9852b465eda32617e
-Merge: cadf5a9b f111032e
-Author: Olaf Meeuwissen <paddy-hack@member.fsf.org>
-Date:   2019-06-15 06:50:27 +0000
-
-    Merge branch 'backend/as6e' into 'master'
-
-    as6e: Avoid out of bound access
-
-    See merge request sane-project/backends!31
-
-commit cadf5a9b1a9e62829fe630b474d91c5a94c4e68a
-Author: Olaf Meeuwissen <paddy-hack@member.fsf.org>
-Date:   2019-06-15 14:45:36 +0900
-
-    Prevent segfault in case strndup cannot allocate memory
-
-    This complements 18f9e5598c224e90554d333b7f9f05ba8fa14ad0
-
-commit f9eb32317abf2f109fe21478358e637750df7f32
-Merge: d22516c7 0b5ab0b5
-Author: Olaf Meeuwissen <paddy-hack@member.fsf.org>
-Date:   2019-06-15 05:43:06 +0000
-
-    Merge branch 'sanei-usb-testing-mode-prep' into 'master'
-
-    sanei: Preparation to support capture and replay of USB data for testing
-
-    See merge request sane-project/backends!74
-
-commit d22516c76ac52c3b5208b62fc82312b223efc7ad
-Merge: 767cbfaa 9c42d6ac
-Author: Olaf Meeuwissen <paddy-hack@member.fsf.org>
-Date:   2019-06-12 10:48:14 +0000
-
-    Merge branch 'remove-autoconf-generated-files' into 'master'
-
-    Remove autoconf generated files
-
-    See merge request sane-project/backends!72
 
 commit 9173e5dbddf5f616ae2343222315310edfad2ccf
 Author: Povilas Kanapickas <povilas@radix.lt>
@@ -821,117 +740,24 @@ Date:   2019-06-08 14:03:47 +0300
 
     genesys: Simplify sensor handling
 
-commit 9c42d6ac11fc0ef71d4712607381d19636829d9c
+commit f901462f9937e884c4da7bfe9e96f6d12dfdccf1
 Author: Olaf Meeuwissen <paddy-hack@member.fsf.org>
-Date:   2019-06-08 13:00:25 +0900
+Date:   2019-06-19 21:12:51 +0900
 
-    Check AX_CXX_COMPILE_STDCXX macro expansion in configure
+    Fix AS_CASE clause matching
 
-    If not expanded, the user is informed how to deal with this.
+    See https://alioth-lists.debian.net/pipermail/sane-devel/2019-June/036809.html
 
-commit c0b07792d948e46ef9cde8910a5b78f5f9e958fc
-Author: Olaf Meeuwissen <paddy-hack@member.fsf.org>
-Date:   2019-06-08 12:37:49 +0900
+commit 46e98476acc831c43cc60fb82756aad19b214e5d
+Merge: 6d95bc191f79 8aa5318f90a0
+Author: Povilas Kanapickas <povilas@radix.lt>
+Date:   2019-06-16 15:40:29 +0000
 
-    Ignore harmless patch backups
+    Merge branch 'genesys-canoscan-8600f' into 'master'
 
-    When patching `ltmain.sh` the `patch` utility creates this file if the
-    patch did not apply cleanly, e.g. when it applied with an offset.  Any
-    hunks that *failed* to apply end up in `ltmain.sh.rej`.  This file you
-    probably want to see in `git status` so it is not ignored.
-    It should not be committed, of course.
+    genesys: Add initial support for 2400 and 4800 dpi transparency scanning on CanoScan 8600F
 
-commit 8b51e449f67aa220b515364bceae960e8b1090e8
-Author: Olaf Meeuwissen <paddy-hack@member.fsf.org>
-Date:   2019-06-08 12:36:06 +0900
-
-    Add ignore patterns
-
-    These files were removed in 1c143f630e3c8ef4b649a369260eebebf10c869c.
-
-commit b35e0184027c36e51fd73e1f52f8705f525cc4d8
-Author: Olaf Meeuwissen <paddy-hack@member.fsf.org>
-Date:   2019-06-08 12:34:58 +0900
-
-    Remove files provided/created by Gettext.  Re !72
-
-commit ee604e33653537db8825e76bcc8560dd8cb53910
-Author: Olaf Meeuwissen <paddy-hack@member.fsf.org>
-Date:   2019-06-07 20:48:40 +0900
-
-    Update autotools related information.  Re !72
-
-commit 165aad31bcc115013658683a53195279122c0800
-Author: Olaf Meeuwissen <paddy-hack@member.fsf.org>
-Date:   2019-06-06 20:50:29 +0900
-
-    Make tar invocation work with Busybox tar version
-
-commit 03591a4c4a1014cac0cd39aff3daf8dde927563a
-Author: Olaf Meeuwissen <paddy-hack@member.fsf.org>
-Date:   2019-06-06 20:37:08 +0900
-
-    Fix current working directory assumptions
-
-commit 103be60e24a07e14b3c8bd98e53472f3822d8a16
-Author: Olaf Meeuwissen <paddy-hack@member.fsf.org>
-Date:   2019-06-05 23:44:43 +0900
-
-    Really make it a no-op script.  Re !72
-
-commit a367df0994ec7fb1e43a0e6e191096bca71d143a
-Author: Olaf Meeuwissen <paddy-hack@member.fsf.org>
-Date:   2019-06-05 23:39:44 +0900
-
-    Add no-op script to satisfy GitLab CI requirements.  Re !72
-
-commit 4ddd89dc16700cbe968c7627870be583bf6264d5
-Author: Olaf Meeuwissen <paddy-hack@member.fsf.org>
-Date:   2019-06-05 23:34:56 +0900
-
-    Move source tarball creation to prepare stage.  Re !72
-
-    The build jobs use this tarball to exercise the build and only if all
-    builds pass will it be "archived".
-
-commit b6f8053af8f2c2ef301c23fbf9e24fe75b4463d7
-Author: Olaf Meeuwissen <paddy-hack@member.fsf.org>
-Date:   2019-06-04 18:18:59 +0900
-
-    Carry forward configure.ac tweak only.  Re !72
-
-commit 767cbfaa7f8d190648345a97637d76120f3aa1c9
-Merge: 1f847e41 1f383b37
-Author: Ilia Sotnikov <hostcc@gmail.com>
-Date:   2019-06-03 06:10:26 +0000
-
-    Merge branch 'hp5590-devel' into 'master'
-
-    HP5590: Add options for reading out user settings from scanner panel.
-
-    See merge request sane-project/backends!66
-
-commit 1f383b379540bc8a4b2300b066fe9ed6cfc7f550
-Author: Bernard B Badeer <bb3138@live.de>
-Date:   2019-06-03 06:10:26 +0000
-
-    Add options for reading LCD counter and LED indicator.
-
-    * Add command line parameters for readling LCD counter and LED indicator.
-    * Code refactoring: Use static parameter strings instead of dynamically
-    allocated string in order to avoid memory leak.
-
-commit 1c143f630e3c8ef4b649a369260eebebf10c869c
-Author: Olaf Meeuwissen <paddy-hack@member.fsf.org>
-Date:   2019-06-02 21:33:22 +0900
-
-    Remove more generated files.  Re !72
-
-commit 93be23ccf5b0a29024d619f6cc13191c9088b32b
-Author: Olaf Meeuwissen <paddy-hack@member.fsf.org>
-Date:   2019-06-02 21:21:42 +0900
-
-    Fix libtool requirement for autogen.sh.  Re !72
+    See merge request sane-project/backends!81
 
 commit 8aa5318f90a084ae7fb0c27258a456723540f552
 Author: Povilas Kanapickas <povilas@radix.lt>
@@ -1174,11 +1000,193 @@ Date:   2019-06-02 11:47:26 +0300
 
     genesys: Improve type safety of Genesys_Register_Set
 
-commit 1f847e4128a3f1f2d425b5ebb5509f64f2d32f2b
-Author: Rolf Bensch <rolf@bensch-online.de>
-Date:   2019-06-01 18:23:41 +0200
+commit 6d95bc191f796eef07da3f5334d840e8b31bf4cf
+Author: Olaf Meeuwissen <paddy-hack@member.fsf.org>
+Date:   2019-06-16 21:40:39 +0900
 
-    INSTALL.linux: add missing development package
+    Drop unneeded C++ compiler flag additions to AM_CXXFLAGS.  Re #92
+
+    The AX_CXX_COMPILE_STDCXX_11 macro takes care of doing so if needed
+    already.
+
+commit a4862d8526ca238fb667658a4bcd83de27915cb8
+Author: Olaf Meeuwissen <paddy-hack@member.fsf.org>
+Date:   2019-06-16 21:39:45 +0900
+
+    Predicate genesys compilation on documented variable.  Re #92
+
+commit 424bb7d923965327a28e303d1c424d5fc00e977c
+Author: Rolf Bensch <rolf@bensch-online.de>
+Date:   2019-06-16 13:13:48 +0200
+
+    INSTALL.linux: add missing development environment packages
+
+commit 4c05fb474282c64c8e700ab9852b465eda32617e
+Merge: cadf5a9b1a9e f111032e7f05
+Author: Olaf Meeuwissen <paddy-hack@member.fsf.org>
+Date:   2019-06-15 06:50:27 +0000
+
+    Merge branch 'backend/as6e' into 'master'
+
+    as6e: Avoid out of bound access
+
+    See merge request sane-project/backends!31
+
+commit f111032e7f05e735422d02a88b1d04cb7b5da1c2
+Author: Martin Güthle <mguethle@xunit.de>
+Date:   2018-10-25 08:53:58 +0200
+
+    as6e: Avoid out of bound access
+
+    This fixes a crash due to a stack corruption.
+    To reproduce the bug, set a path within the PATH variable, to something,
+    which exceeds 128 chars. Maybe more chars are needed, to reach the stack
+    corruption.
+
+commit cadf5a9b1a9e62829fe630b474d91c5a94c4e68a
+Author: Olaf Meeuwissen <paddy-hack@member.fsf.org>
+Date:   2019-06-15 14:45:36 +0900
+
+    Prevent segfault in case strndup cannot allocate memory
+
+    This complements 18f9e5598c224e90554d333b7f9f05ba8fa14ad0
+
+commit f9eb32317abf2f109fe21478358e637750df7f32
+Merge: d22516c76ac5 0b5ab0b5e47f
+Author: Olaf Meeuwissen <paddy-hack@member.fsf.org>
+Date:   2019-06-15 05:43:06 +0000
+
+    Merge branch 'sanei-usb-testing-mode-prep' into 'master'
+
+    sanei: Preparation to support capture and replay of USB data for testing
+
+    See merge request sane-project/backends!74
+
+commit 0b5ab0b5e47f74ddf7e6a609bf91c3f4b36c0369
+Author: Povilas Kanapickas <povilas@radix.lt>
+Date:   2019-04-27 12:16:10 +0300
+
+    sanei_usb: Fall through to the end of sanei_usb_get_descriptor()
+
+commit 422e0831757681e1ff3cd6d6c93b80c38a8d1e67
+Author: Povilas Kanapickas <povilas@radix.lt>
+Date:   2019-04-27 12:16:09 +0300
+
+    sanei_usb: Fall through the end in sanei_usb_control_msg()
+
+commit d865705ef13a5d9f261abf1ed39b02319d414004
+Author: Povilas Kanapickas <povilas@radix.lt>
+Date:   2019-04-27 12:16:08 +0300
+
+    sanei_usb: Don't change input size variable in USBCALLS bulk code paths
+
+commit 18f9e5598c224e90554d333b7f9f05ba8fa14ad0
+Author: Povilas Kanapickas <povilas@radix.lt>
+Date:   2019-04-27 12:16:07 +0300
+
+    dll: Don't unnecessarily use alloca
+
+commit d22516c76ac52c3b5208b62fc82312b223efc7ad
+Merge: 767cbfaa7f8d 9c42d6ac11fc
+Author: Olaf Meeuwissen <paddy-hack@member.fsf.org>
+Date:   2019-06-12 10:48:14 +0000
+
+    Merge branch 'remove-autoconf-generated-files' into 'master'
+
+    Remove autoconf generated files
+
+    See merge request sane-project/backends!72
+
+commit 9c42d6ac11fc0ef71d4712607381d19636829d9c
+Author: Olaf Meeuwissen <paddy-hack@member.fsf.org>
+Date:   2019-06-08 13:00:25 +0900
+
+    Check AX_CXX_COMPILE_STDCXX macro expansion in configure
+
+    If not expanded, the user is informed how to deal with this.
+
+commit c0b07792d948e46ef9cde8910a5b78f5f9e958fc
+Author: Olaf Meeuwissen <paddy-hack@member.fsf.org>
+Date:   2019-06-08 12:37:49 +0900
+
+    Ignore harmless patch backups
+
+    When patching `ltmain.sh` the `patch` utility creates this file if the
+    patch did not apply cleanly, e.g. when it applied with an offset.  Any
+    hunks that *failed* to apply end up in `ltmain.sh.rej`.  This file you
+    probably want to see in `git status` so it is not ignored.
+    It should not be committed, of course.
+
+commit 8b51e449f67aa220b515364bceae960e8b1090e8
+Author: Olaf Meeuwissen <paddy-hack@member.fsf.org>
+Date:   2019-06-08 12:36:06 +0900
+
+    Add ignore patterns
+
+    These files were removed in 1c143f630e3c8ef4b649a369260eebebf10c869c.
+
+commit b35e0184027c36e51fd73e1f52f8705f525cc4d8
+Author: Olaf Meeuwissen <paddy-hack@member.fsf.org>
+Date:   2019-06-08 12:34:58 +0900
+
+    Remove files provided/created by Gettext.  Re !72
+
+commit ee604e33653537db8825e76bcc8560dd8cb53910
+Author: Olaf Meeuwissen <paddy-hack@member.fsf.org>
+Date:   2019-06-07 20:48:40 +0900
+
+    Update autotools related information.  Re !72
+
+commit 165aad31bcc115013658683a53195279122c0800
+Author: Olaf Meeuwissen <paddy-hack@member.fsf.org>
+Date:   2019-06-06 20:50:29 +0900
+
+    Make tar invocation work with Busybox tar version
+
+commit 03591a4c4a1014cac0cd39aff3daf8dde927563a
+Author: Olaf Meeuwissen <paddy-hack@member.fsf.org>
+Date:   2019-06-06 20:37:08 +0900
+
+    Fix current working directory assumptions
+
+commit 103be60e24a07e14b3c8bd98e53472f3822d8a16
+Author: Olaf Meeuwissen <paddy-hack@member.fsf.org>
+Date:   2019-06-05 23:44:43 +0900
+
+    Really make it a no-op script.  Re !72
+
+commit a367df0994ec7fb1e43a0e6e191096bca71d143a
+Author: Olaf Meeuwissen <paddy-hack@member.fsf.org>
+Date:   2019-06-05 23:39:44 +0900
+
+    Add no-op script to satisfy GitLab CI requirements.  Re !72
+
+commit 4ddd89dc16700cbe968c7627870be583bf6264d5
+Author: Olaf Meeuwissen <paddy-hack@member.fsf.org>
+Date:   2019-06-05 23:34:56 +0900
+
+    Move source tarball creation to prepare stage.  Re !72
+
+    The build jobs use this tarball to exercise the build and only if all
+    builds pass will it be "archived".
+
+commit b6f8053af8f2c2ef301c23fbf9e24fe75b4463d7
+Author: Olaf Meeuwissen <paddy-hack@member.fsf.org>
+Date:   2019-06-04 18:18:59 +0900
+
+    Carry forward configure.ac tweak only.  Re !72
+
+commit 1c143f630e3c8ef4b649a369260eebebf10c869c
+Author: Olaf Meeuwissen <paddy-hack@member.fsf.org>
+Date:   2019-06-02 21:33:22 +0900
+
+    Remove more generated files.  Re !72
+
+commit 93be23ccf5b0a29024d619f6cc13191c9088b32b
+Author: Olaf Meeuwissen <paddy-hack@member.fsf.org>
+Date:   2019-06-02 21:21:42 +0900
+
+    Fix libtool requirement for autogen.sh.  Re !72
 
 commit 3b2ecec808b54543ec341a8028055b36d650e17e
 Author: Povilas Kanapickas <povilas@radix.lt>
@@ -1210,8 +1218,35 @@ Date:   2019-05-25 09:12:15 +0300
 
     autotools: Remove files generated by autotools from version control
 
+commit 767cbfaa7f8d190648345a97637d76120f3aa1c9
+Merge: 1f847e4128a3 1f383b379540
+Author: Ilia Sotnikov <hostcc@gmail.com>
+Date:   2019-06-03 06:10:26 +0000
+
+    Merge branch 'hp5590-devel' into 'master'
+
+    HP5590: Add options for reading out user settings from scanner panel.
+
+    See merge request sane-project/backends!66
+
+commit 1f383b379540bc8a4b2300b066fe9ed6cfc7f550
+Author: Bernard B Badeer <bb3138@live.de>
+Date:   2019-06-03 06:10:26 +0000
+
+    Add options for reading LCD counter and LED indicator.
+
+    * Add command line parameters for readling LCD counter and LED indicator.
+    * Code refactoring: Use static parameter strings instead of dynamically
+    allocated string in order to avoid memory leak.
+
+commit 1f847e4128a3f1f2d425b5ebb5509f64f2d32f2b
+Author: Rolf Bensch <rolf@bensch-online.de>
+Date:   2019-06-01 18:23:41 +0200
+
+    INSTALL.linux: add missing development package
+
 commit 6b4759252043534f74caa18918ce6f2d91b52651
-Merge: 26b3d8aa 916d4e0d
+Merge: 26b3d8aaa085 916d4e0db9e6
 Author: Povilas Kanapickas <povilas@radix.lt>
 Date:   2019-06-01 02:40:24 +0000
 
@@ -1233,7 +1268,7 @@ Date:   2019-06-01 05:24:58 +0300
     question not do anything in most scenarios.
 
 commit 26b3d8aaa0854f87dd39dce1dbe5af3ae1adbfcc
-Merge: ceec219c 1df69527
+Merge: ceec219cecb4 1df6952788f1
 Author: Povilas Kanapickas <povilas@radix.lt>
 Date:   2019-05-30 21:17:10 +0000
 
@@ -1248,356 +1283,6 @@ Author: Povilas Kanapickas <povilas@radix.lt>
 Date:   2019-05-31 00:07:44 +0300
 
     doc: Update description for CanoScan 8600F
-
-commit ceec219cecb467e9d2cd082f88096f0a1686200b
-Merge: dc42318d aeefb370
-Author: Povilas Kanapickas <povilas@radix.lt>
-Date:   2019-05-30 20:51:27 +0000
-
-    Merge branch 'genesys-fix-gl843-calib-pixel-count' into 'master'
-
-    genesys: Fix read pixel count calculation during calibration on GL843
-
-    See merge request sane-project/backends!78
-
-commit aeefb370724cd0bfa085f728d3bf7132a9134863
-Author: Povilas Kanapickas <povilas@radix.lt>
-Date:   2019-05-30 23:33:13 +0300
-
-    genesys: Fix read pixel count calc during calibration on GL843
-
-commit dc42318d905e35f09a5e5d0a9560d296eb43cf06
-Merge: 9f461060 50b27fe8
-Author: Povilas Kanapickas <povilas@radix.lt>
-Date:   2019-05-29 21:28:43 +0000
-
-    Merge branch 'genesys-use-containers' into 'master'
-
-    genesys: Use C++ containers to remove chances of memory leaks
-
-    See merge request sane-project/backends!76
-
-commit 9f461060aac2c6517e471699a7efa7e254b8048d
-Merge: 5d7fc4e0 896385a0
-Author: Povilas Kanapickas <povilas@radix.lt>
-Date:   2019-05-28 01:21:44 +0000
-
-    Merge branch 'genesys-catch-exceptions' into 'master'
-
-    genesys: Catch C++ exceptions when returning to C code
-
-    See merge request sane-project/backends!75
-
-commit 0b5ab0b5e47f74ddf7e6a609bf91c3f4b36c0369
-Author: Povilas Kanapickas <povilas@radix.lt>
-Date:   2019-04-27 12:16:10 +0300
-
-    sanei_usb: Fall through to the end of sanei_usb_get_descriptor()
-
-commit 422e0831757681e1ff3cd6d6c93b80c38a8d1e67
-Author: Povilas Kanapickas <povilas@radix.lt>
-Date:   2019-04-27 12:16:09 +0300
-
-    sanei_usb: Fall through the end in sanei_usb_control_msg()
-
-commit d865705ef13a5d9f261abf1ed39b02319d414004
-Author: Povilas Kanapickas <povilas@radix.lt>
-Date:   2019-04-27 12:16:08 +0300
-
-    sanei_usb: Don't change input size variable in USBCALLS bulk code paths
-
-commit 18f9e5598c224e90554d333b7f9f05ba8fa14ad0
-Author: Povilas Kanapickas <povilas@radix.lt>
-Date:   2019-04-27 12:16:07 +0300
-
-    dll: Don't unnecessarily use alloca
-
-commit 50b27fe8367cbe5f1e426d709be00aae478c6b15
-Author: Povilas Kanapickas <povilas@radix.lt>
-Date:   2019-05-25 11:15:42 +0300
-
-    genesys: Use std::string for Genesys_Device::calib_file
-
-commit 38986c2c6f39da0f326c922b3607b78c1591b5e9
-Author: Povilas Kanapickas <povilas@radix.lt>
-Date:   2019-05-25 11:15:41 +0300
-
-    genesys: Use std::vector for Genesys_Device::img_buffer
-
-commit eb93267fa9af5632d1cff5cf221b3ea2916c69d0
-Author: Povilas Kanapickas <povilas@radix.lt>
-Date:   2019-05-25 11:15:40 +0300
-
-    genesys: Use std::vector instead of custom vector implementation
-
-commit 69485e9f11963cee51ff10fd63d069bd2fea06a8
-Author: Povilas Kanapickas <povilas@radix.lt>
-Date:   2019-05-25 11:15:39 +0300
-
-    genesys: Remove unused new device list
-
-commit 3096dcee0ee25ea93123801e56a1d75cd153aca1
-Author: Povilas Kanapickas <povilas@radix.lt>
-Date:   2019-05-25 11:15:38 +0300
-
-    genesys: Use s_devices.size() for num_devices
-
-commit 9c2fdeeb3d91d581d55fa8972b583e7d7cb8b765
-Author: Povilas Kanapickas <povilas@radix.lt>
-Date:   2019-05-25 11:15:37 +0300
-
-    genesys: Use proper containers for device lists
-
-commit 5a90b7bb8fb72ba9fed235d2ff974c8e26dfba30
-Author: Povilas Kanapickas <povilas@radix.lt>
-Date:   2019-05-25 11:15:36 +0300
-
-    genesys: Convert Genesys_Buffer to C++ class
-
-commit 247658f23ed81be58a5bfea6f62f9d229b163ff4
-Author: Povilas Kanapickas <povilas@radix.lt>
-Date:   2019-05-25 11:15:35 +0300
-
-    genesys: Return std::vector from GL646 simple_scan()
-
-commit e48b6c4e2dc7065ead61015673fed89d16f1c81a
-Author: Povilas Kanapickas <povilas@radix.lt>
-Date:   2019-05-25 11:15:34 +0300
-
-    genesys: Store global Genesys_Scanner instances in std::list
-
-commit 15b373a5cc388aed628d5514e00f979cf8df6222
-Author: Povilas Kanapickas <povilas@radix.lt>
-Date:   2019-05-25 11:15:33 +0300
-
-    genesys: Use std::vector for calibration cache average data
-
-commit 64ca298d02d03dbd2818d8c887f7c94c350ac42e
-Author: Povilas Kanapickas <povilas@radix.lt>
-Date:   2019-05-25 11:15:32 +0300
-
-    genesys: Store calibration class using std::list
-
-commit 52b1989edaa99dea1d1ab6bbcc9486d64ae28360
-Author: Povilas Kanapickas <povilas@radix.lt>
-Date:   2019-05-25 11:15:31 +0300
-
-    genesys: Remove no longer used RIEF and RIEF2 macros
-
-commit 3d44c89f1e7a3ef548275730127d956c415773ba
-Author: Povilas Kanapickas <povilas@radix.lt>
-Date:   2019-05-25 11:15:30 +0300
-
-    genesys: Use std::vector for Genesys_Device::{dark,white}_average_data
-
-commit 2dc4e5d1fc3c48cf1cd7ae1010dd5cc3328754dc
-Author: Povilas Kanapickas <povilas@radix.lt>
-Date:   2019-05-25 11:15:29 +0300
-
-    genesys: Use std::vector for Genesys_Sensor::gamma_table
-
-commit 555be1c3eb5e3becac770170687713d73756511b
-Author: Povilas Kanapickas <povilas@radix.lt>
-Date:   2019-05-25 11:15:28 +0300
-
-    genesys: Use Genesys_Device as C++ class
-
-commit cb189cfe2d9ec1004e83c285612f6ee386f44100
-Author: Povilas Kanapickas <povilas@radix.lt>
-Date:   2019-05-25 11:15:27 +0300
-
-    genesys: Rewrite sensor table to use std::vector
-
-commit e5eff5d76f98170d6b583aa19e9c6ebd58407eb4
-Author: Povilas Kanapickas <povilas@radix.lt>
-Date:   2019-05-25 11:15:26 +0300
-
-    genesys: Add facility for auto releasing static data on backend exit
-
-commit 9cea33b53c4fb351e8983c0a1f6e2694220f8127
-Author: Povilas Kanapickas <povilas@radix.lt>
-Date:   2019-05-25 11:15:25 +0300
-
-    genesys: Use std::vector instead of malloc for local allocations
-
-commit 896385a082f0d44a4fa4abb21c4c5fd110d51d8e
-Author: Povilas Kanapickas <povilas@radix.lt>
-Date:   2019-05-25 10:03:15 +0300
-
-    genesys: Ensure that functions passed to C API don't throw
-
-commit 23f3ebf612456f3328c925764abfcaaa31c80e39
-Author: Povilas Kanapickas <povilas@radix.lt>
-Date:   2019-05-25 10:03:14 +0300
-
-    genesys: Wrap exported functions to always catch exceptions
-
-commit 5d7fc4e0ed3489982082be3c1845fa3f2eba42d9
-Merge: 216e8b28 58ee13d0
-Author: Povilas Kanapickas <povilas@radix.lt>
-Date:   2019-05-24 18:25:58 +0000
-
-    Merge branch 'genesys-fix-warning' into 'master'
-
-    genesys: Fix warning
-
-    See merge request sane-project/backends!71
-
-commit 58ee13d057f0db1c07edb6627aaf973e6a3d6566
-Author: Povilas Kanapickas <povilas@radix.lt>
-Date:   2019-05-24 21:13:37 +0300
-
-    genesys: Fix warning
-
-commit 216e8b28a0b792276ede8a46618a713ad5ef4b9d
-Author: Olaf Meeuwissen <paddy-hack@member.fsf.org>
-Date:   2019-05-22 21:48:32 +0900
-
-    Turn C++ compiler warning into error on the right job.  Re #85
-
-    Fixes 8d67531c70e8cc346d8705477ac9c53d0a4571d8 where the flags were
-    set for a job that runs in an environment *without* a C++ compiler.
-
-commit 199a685d0b174ce618d23decd0565b591be67b91
-Author: Olaf Meeuwissen <paddy-hack@member.fsf.org>
-Date:   2019-05-22 21:35:08 +0900
-
-    Restore availability of config.status for archive stage.  Re #85
-
-commit 8d67531c70e8cc346d8705477ac9c53d0a4571d8
-Author: Olaf Meeuwissen <paddy-hack@member.fsf.org>
-Date:   2019-05-22 21:31:13 +0900
-
-    Turn C++ compiler warnings into errors.  See #85
-
-commit 57ee89a6760621d92fa8564bdc066c36c17618d7
-Author: Olaf Meeuwissen <paddy-hack@member.fsf.org>
-Date:   2019-05-22 21:19:54 +0900
-
-    Drop caching of untracked files.  Re #85
-
-commit be9736020f48119a1060088d95ec1ac8eef8ac07
-Author: Olaf Meeuwissen <paddy-hack@member.fsf.org>
-Date:   2019-05-21 22:11:50 +0900
-
-    autofoo: Sync generated files
-
-    The AX_CXX_COMPILE_STDCXX* macros that were embedded in aclocal.m4
-    have been replaced with the versions found in the autoconf-archive
-    package from Debian 9.
-
-commit e2d89c1ab3b06cb81634a869ed94620d91af6d68
-Author: Olaf Meeuwissen <paddy-hack@member.fsf.org>
-Date:   2019-05-21 22:10:12 +0900
-
-    Expand AM_CXXFLAGS in our Makefiles.  Fixes #84
-
-commit 16a3945ce6b585c97a90461419b573a2d389d58f
-Merge: f498e5fa 0a66ed1d
-Author: Povilas Kanapickas <povilas@radix.lt>
-Date:   2019-05-20 09:47:38 +0000
-
-    Merge branch 'genesys-sleep' into 'master'
-
-    genesys: Add wrapper for sleep that can be turned off when testing
-
-    See merge request sane-project/backends!70
-
-commit f498e5fa66718a76adbcd60be8228a50cc903ab1
-Author: Olaf Meeuwissen <paddy-hack@member.fsf.org>
-Date:   2019-05-20 18:32:48 +0900
-
-    genesys: Add missing pointer cast on malloc call
-
-    Fixes build on Fedora 29 and 30.
-
-commit 2bb5ed655ade84281435d80cf133403f8e11bb29
-Merge: 2a116229 185303a1
-Author: Olaf Meeuwissen <paddy-hack@member.fsf.org>
-Date:   2019-05-20 09:10:53 +0000
-
-    Merge branch 'genesys-enable-cxx' into 'master'
-
-    Use C++ for the genesys backend
-
-    See merge request sane-project/backends!61
-
-commit 2a11622967ff2f5f09d4b47ffc3e1817645f814a
-Merge: 75855385 7a8ae928
-Author: Stanislav Yuzvinsky <yu-stas@yandex.ru>
-Date:   2019-05-19 18:18:57 +0000
-
-    Merge branch 'teardown' into 'master'
-
-    ricoh2: Rearrange init/deinit code of ricoh2 to correctly support "code flow"
-
-    See merge request sane-project/backends!65
-
-commit 758553859589a1c5ec0a7ff688fe4621e81b62db
-Author: Olaf Meeuwissen <paddy-hack@member.fsf.org>
-Date:   2019-05-19 21:41:16 +0900
-
-    epson2: Add XP-255 as supported.  Fixes #81
-
-commit 71bf2daec6584db1228975c88cb737375244e57e
-Merge: 8cdd5ae2 a4ab6937
-Author: Povilas Kanapickas <povilas@radix.lt>
-Date:   2019-05-19 12:02:50 +0000
-
-    Merge branch 'genesys-remove-static' into 'master'
-
-    genesys: Remove uses of GENESYS_STATIC
-
-    See merge request sane-project/backends!68
-
-commit 8cdd5ae22e3ac4c3b059edba56e174eafcfc404d
-Merge: e13b80fa 4c2c4eb6
-Author: Povilas Kanapickas <povilas@radix.lt>
-Date:   2019-05-19 11:56:38 +0000
-
-    Merge branch 'genesys-debug-cleanup' into 'master'
-
-    genesys: Use the same debug identifier for the whole backend
-
-    See merge request sane-project/backends!67
-
-commit a4ab69376c3f05a37d51953776a938731c277683
-Author: Povilas Kanapickas <povilas@radix.lt>
-Date:   2019-05-19 14:49:44 +0300
-
-    genesys: Remove uses of GENESYS_STATIC
-
-commit 4c2c4eb6397b974c90a20c1f4f355730b700be27
-Author: Povilas Kanapickas <povilas@radix.lt>
-Date:   2019-05-19 14:46:46 +0300
-
-    genesys: Remove duplicate definition of DBGSTART and DBGCOMPLETED
-
-commit 6f617e9889be1c35f5960b2a00dcc702aa3787f2
-Author: Povilas Kanapickas <povilas@radix.lt>
-Date:   2019-05-19 14:46:45 +0300
-
-    genesys: Don't define different backend names in source files
-
-commit 873e82c0a06a6a240cdb8e0178f4bc6f5d87c1c2
-Author: Povilas Kanapickas <povilas@radix.lt>
-Date:   2019-05-19 14:46:44 +0300
-
-    genesys: Remove logging of the build number
-
-    A git commit would be much more useful in log messages
-
-commit 185303a18d18e855df38b85a0647d595a1c0462f
-Author: Povilas Kanapickas <povilas@radix.lt>
-Date:   2019-05-19 13:50:11 +0300
-
-    Enable warnings in C++ source
-
-commit 42fb5a3e038d1344534e5ff1b175dc4c7125ff0d
-Author: Povilas Kanapickas <povilas@radix.lt>
-Date:   2019-05-19 13:39:42 +0300
-
-    Don't compile genesys backend when C++11 is not available
 
 commit c536f3cf7094a597fe389cfdb1acf2c7753522f2
 Author: Povilas Kanapickas <povilas@radix.lt>
@@ -1709,6 +1394,320 @@ Date:   2019-05-18 14:55:56 +0300
 
     genesys: Improve documentations for registers in various places
 
+commit ceec219cecb467e9d2cd082f88096f0a1686200b
+Merge: dc42318d905e aeefb370724c
+Author: Povilas Kanapickas <povilas@radix.lt>
+Date:   2019-05-30 20:51:27 +0000
+
+    Merge branch 'genesys-fix-gl843-calib-pixel-count' into 'master'
+
+    genesys: Fix read pixel count calculation during calibration on GL843
+
+    See merge request sane-project/backends!78
+
+commit aeefb370724cd0bfa085f728d3bf7132a9134863
+Author: Povilas Kanapickas <povilas@radix.lt>
+Date:   2019-05-30 23:33:13 +0300
+
+    genesys: Fix read pixel count calc during calibration on GL843
+
+commit dc42318d905e35f09a5e5d0a9560d296eb43cf06
+Merge: 9f461060aac2 50b27fe8367c
+Author: Povilas Kanapickas <povilas@radix.lt>
+Date:   2019-05-29 21:28:43 +0000
+
+    Merge branch 'genesys-use-containers' into 'master'
+
+    genesys: Use C++ containers to remove chances of memory leaks
+
+    See merge request sane-project/backends!76
+
+commit 50b27fe8367cbe5f1e426d709be00aae478c6b15
+Author: Povilas Kanapickas <povilas@radix.lt>
+Date:   2019-05-25 11:15:42 +0300
+
+    genesys: Use std::string for Genesys_Device::calib_file
+
+commit 38986c2c6f39da0f326c922b3607b78c1591b5e9
+Author: Povilas Kanapickas <povilas@radix.lt>
+Date:   2019-05-25 11:15:41 +0300
+
+    genesys: Use std::vector for Genesys_Device::img_buffer
+
+commit eb93267fa9af5632d1cff5cf221b3ea2916c69d0
+Author: Povilas Kanapickas <povilas@radix.lt>
+Date:   2019-05-25 11:15:40 +0300
+
+    genesys: Use std::vector instead of custom vector implementation
+
+commit 69485e9f11963cee51ff10fd63d069bd2fea06a8
+Author: Povilas Kanapickas <povilas@radix.lt>
+Date:   2019-05-25 11:15:39 +0300
+
+    genesys: Remove unused new device list
+
+commit 3096dcee0ee25ea93123801e56a1d75cd153aca1
+Author: Povilas Kanapickas <povilas@radix.lt>
+Date:   2019-05-25 11:15:38 +0300
+
+    genesys: Use s_devices.size() for num_devices
+
+commit 9c2fdeeb3d91d581d55fa8972b583e7d7cb8b765
+Author: Povilas Kanapickas <povilas@radix.lt>
+Date:   2019-05-25 11:15:37 +0300
+
+    genesys: Use proper containers for device lists
+
+commit 5a90b7bb8fb72ba9fed235d2ff974c8e26dfba30
+Author: Povilas Kanapickas <povilas@radix.lt>
+Date:   2019-05-25 11:15:36 +0300
+
+    genesys: Convert Genesys_Buffer to C++ class
+
+commit 247658f23ed81be58a5bfea6f62f9d229b163ff4
+Author: Povilas Kanapickas <povilas@radix.lt>
+Date:   2019-05-25 11:15:35 +0300
+
+    genesys: Return std::vector from GL646 simple_scan()
+
+commit e48b6c4e2dc7065ead61015673fed89d16f1c81a
+Author: Povilas Kanapickas <povilas@radix.lt>
+Date:   2019-05-25 11:15:34 +0300
+
+    genesys: Store global Genesys_Scanner instances in std::list
+
+commit 15b373a5cc388aed628d5514e00f979cf8df6222
+Author: Povilas Kanapickas <povilas@radix.lt>
+Date:   2019-05-25 11:15:33 +0300
+
+    genesys: Use std::vector for calibration cache average data
+
+commit 64ca298d02d03dbd2818d8c887f7c94c350ac42e
+Author: Povilas Kanapickas <povilas@radix.lt>
+Date:   2019-05-25 11:15:32 +0300
+
+    genesys: Store calibration class using std::list
+
+commit 52b1989edaa99dea1d1ab6bbcc9486d64ae28360
+Author: Povilas Kanapickas <povilas@radix.lt>
+Date:   2019-05-25 11:15:31 +0300
+
+    genesys: Remove no longer used RIEF and RIEF2 macros
+
+commit 3d44c89f1e7a3ef548275730127d956c415773ba
+Author: Povilas Kanapickas <povilas@radix.lt>
+Date:   2019-05-25 11:15:30 +0300
+
+    genesys: Use std::vector for Genesys_Device::{dark,white}_average_data
+
+commit 2dc4e5d1fc3c48cf1cd7ae1010dd5cc3328754dc
+Author: Povilas Kanapickas <povilas@radix.lt>
+Date:   2019-05-25 11:15:29 +0300
+
+    genesys: Use std::vector for Genesys_Sensor::gamma_table
+
+commit 555be1c3eb5e3becac770170687713d73756511b
+Author: Povilas Kanapickas <povilas@radix.lt>
+Date:   2019-05-25 11:15:28 +0300
+
+    genesys: Use Genesys_Device as C++ class
+
+commit cb189cfe2d9ec1004e83c285612f6ee386f44100
+Author: Povilas Kanapickas <povilas@radix.lt>
+Date:   2019-05-25 11:15:27 +0300
+
+    genesys: Rewrite sensor table to use std::vector
+
+commit e5eff5d76f98170d6b583aa19e9c6ebd58407eb4
+Author: Povilas Kanapickas <povilas@radix.lt>
+Date:   2019-05-25 11:15:26 +0300
+
+    genesys: Add facility for auto releasing static data on backend exit
+
+commit 9cea33b53c4fb351e8983c0a1f6e2694220f8127
+Author: Povilas Kanapickas <povilas@radix.lt>
+Date:   2019-05-25 11:15:25 +0300
+
+    genesys: Use std::vector instead of malloc for local allocations
+
+commit 9f461060aac2c6517e471699a7efa7e254b8048d
+Merge: 5d7fc4e0ed34 896385a082f0
+Author: Povilas Kanapickas <povilas@radix.lt>
+Date:   2019-05-28 01:21:44 +0000
+
+    Merge branch 'genesys-catch-exceptions' into 'master'
+
+    genesys: Catch C++ exceptions when returning to C code
+
+    See merge request sane-project/backends!75
+
+commit 896385a082f0d44a4fa4abb21c4c5fd110d51d8e
+Author: Povilas Kanapickas <povilas@radix.lt>
+Date:   2019-05-25 10:03:15 +0300
+
+    genesys: Ensure that functions passed to C API don't throw
+
+commit 23f3ebf612456f3328c925764abfcaaa31c80e39
+Author: Povilas Kanapickas <povilas@radix.lt>
+Date:   2019-05-25 10:03:14 +0300
+
+    genesys: Wrap exported functions to always catch exceptions
+
+commit 5d7fc4e0ed3489982082be3c1845fa3f2eba42d9
+Merge: 216e8b28a0b7 58ee13d057f0
+Author: Povilas Kanapickas <povilas@radix.lt>
+Date:   2019-05-24 18:25:58 +0000
+
+    Merge branch 'genesys-fix-warning' into 'master'
+
+    genesys: Fix warning
+
+    See merge request sane-project/backends!71
+
+commit 58ee13d057f0db1c07edb6627aaf973e6a3d6566
+Author: Povilas Kanapickas <povilas@radix.lt>
+Date:   2019-05-24 21:13:37 +0300
+
+    genesys: Fix warning
+
+commit 216e8b28a0b792276ede8a46618a713ad5ef4b9d
+Author: Olaf Meeuwissen <paddy-hack@member.fsf.org>
+Date:   2019-05-22 21:48:32 +0900
+
+    Turn C++ compiler warning into error on the right job.  Re #85
+
+    Fixes 8d67531c70e8cc346d8705477ac9c53d0a4571d8 where the flags were
+    set for a job that runs in an environment *without* a C++ compiler.
+
+commit 199a685d0b174ce618d23decd0565b591be67b91
+Author: Olaf Meeuwissen <paddy-hack@member.fsf.org>
+Date:   2019-05-22 21:35:08 +0900
+
+    Restore availability of config.status for archive stage.  Re #85
+
+commit 8d67531c70e8cc346d8705477ac9c53d0a4571d8
+Author: Olaf Meeuwissen <paddy-hack@member.fsf.org>
+Date:   2019-05-22 21:31:13 +0900
+
+    Turn C++ compiler warnings into errors.  See #85
+
+commit 57ee89a6760621d92fa8564bdc066c36c17618d7
+Author: Olaf Meeuwissen <paddy-hack@member.fsf.org>
+Date:   2019-05-22 21:19:54 +0900
+
+    Drop caching of untracked files.  Re #85
+
+commit be9736020f48119a1060088d95ec1ac8eef8ac07
+Author: Olaf Meeuwissen <paddy-hack@member.fsf.org>
+Date:   2019-05-21 22:11:50 +0900
+
+    autofoo: Sync generated files
+
+    The AX_CXX_COMPILE_STDCXX* macros that were embedded in aclocal.m4
+    have been replaced with the versions found in the autoconf-archive
+    package from Debian 9.
+
+commit e2d89c1ab3b06cb81634a869ed94620d91af6d68
+Author: Olaf Meeuwissen <paddy-hack@member.fsf.org>
+Date:   2019-05-21 22:10:12 +0900
+
+    Expand AM_CXXFLAGS in our Makefiles.  Fixes #84
+
+commit 16a3945ce6b585c97a90461419b573a2d389d58f
+Merge: f498e5fa6671 0a66ed1dbcb3
+Author: Povilas Kanapickas <povilas@radix.lt>
+Date:   2019-05-20 09:47:38 +0000
+
+    Merge branch 'genesys-sleep' into 'master'
+
+    genesys: Add wrapper for sleep that can be turned off when testing
+
+    See merge request sane-project/backends!70
+
+commit 0a66ed1dbcb3f85bedab81581cb84320a8c3c2c1
+Author: Povilas Kanapickas <povilas@radix.lt>
+Date:   2019-04-28 17:47:45 +0300
+
+    genesys: Use a function to sleep ms to reduce chance of errors
+
+commit d9f65eefc0fca4a45fb3ac1b944d55fb33fd319a
+Author: Povilas Kanapickas <povilas@radix.lt>
+Date:   2019-04-28 17:47:44 +0300
+
+    genesys: Fix a bug in sleep duration calculation
+
+commit baaa934dce8db53bd1c4f0e0308f7dac1000201f
+Author: Povilas Kanapickas <povilas@radix.lt>
+Date:   2019-04-28 17:47:43 +0300
+
+    genesys: Use a wrapper of usleep()
+
+commit f498e5fa66718a76adbcd60be8228a50cc903ab1
+Author: Olaf Meeuwissen <paddy-hack@member.fsf.org>
+Date:   2019-05-20 18:32:48 +0900
+
+    genesys: Add missing pointer cast on malloc call
+
+    Fixes build on Fedora 29 and 30.
+
+commit 2bb5ed655ade84281435d80cf133403f8e11bb29
+Merge: 2a11622967ff 185303a18d18
+Author: Olaf Meeuwissen <paddy-hack@member.fsf.org>
+Date:   2019-05-20 09:10:53 +0000
+
+    Merge branch 'genesys-enable-cxx' into 'master'
+
+    Use C++ for the genesys backend
+
+    See merge request sane-project/backends!61
+
+commit 185303a18d18e855df38b85a0647d595a1c0462f
+Author: Povilas Kanapickas <povilas@radix.lt>
+Date:   2019-05-19 13:50:11 +0300
+
+    Enable warnings in C++ source
+
+commit 42fb5a3e038d1344534e5ff1b175dc4c7125ff0d
+Author: Povilas Kanapickas <povilas@radix.lt>
+Date:   2019-05-19 13:39:42 +0300
+
+    Don't compile genesys backend when C++11 is not available
+
+commit ca051cc22736909c7eaddbb1ba549eb718ea36f8
+Author: Povilas Kanapickas <povilas@radix.lt>
+Date:   2019-05-10 21:16:11 +0300
+
+    genesys: Compile library as C++ code
+
+commit 72121bc7d88bbd6577cd3ea88b301d91ac35d675
+Author: Povilas Kanapickas <povilas@radix.lt>
+Date:   2019-05-10 21:16:10 +0300
+
+    sanei: Use C linkage for internal functions in C++ mode
+
+commit 9e3b5d6381b5c8d49b71753e7b28b65f45feebee
+Author: Povilas Kanapickas <povilas@radix.lt>
+Date:   2019-05-10 21:16:09 +0300
+
+    Update generated files
+
+commit b93340b8623de865c73b7e12a5b448732f9a5f68
+Author: Povilas Kanapickas <povilas@radix.lt>
+Date:   2019-05-11 00:02:47 +0300
+
+    Enable C++ in autoconf
+
+commit 2a11622967ff2f5f09d4b47ffc3e1817645f814a
+Merge: 758553859589 7a8ae928626a
+Author: Stanislav Yuzvinsky <yu-stas@yandex.ru>
+Date:   2019-05-19 18:18:57 +0000
+
+    Merge branch 'teardown' into 'master'
+
+    ricoh2: Rearrange init/deinit code of ricoh2 to correctly support "code flow"
+
+    See merge request sane-project/backends!65
+
 commit 7a8ae928626a2ccecc5dd40dd4564c47d8dcb9a4
 Author: Stanislav Yuzvinsky <yu-stas@yandex.ru>
 Date:   2019-05-08 11:03:15 +0300
@@ -1724,8 +1723,62 @@ Date:   2019-05-08 11:03:15 +0300
     Also debug levels was changed to have better control over what should be
     logged.
 
+commit 758553859589a1c5ec0a7ff688fe4621e81b62db
+Author: Olaf Meeuwissen <paddy-hack@member.fsf.org>
+Date:   2019-05-19 21:41:16 +0900
+
+    epson2: Add XP-255 as supported.  Fixes #81
+
+commit 71bf2daec6584db1228975c88cb737375244e57e
+Merge: 8cdd5ae22e3a a4ab69376c3f
+Author: Povilas Kanapickas <povilas@radix.lt>
+Date:   2019-05-19 12:02:50 +0000
+
+    Merge branch 'genesys-remove-static' into 'master'
+
+    genesys: Remove uses of GENESYS_STATIC
+
+    See merge request sane-project/backends!68
+
+commit a4ab69376c3f05a37d51953776a938731c277683
+Author: Povilas Kanapickas <povilas@radix.lt>
+Date:   2019-05-19 14:49:44 +0300
+
+    genesys: Remove uses of GENESYS_STATIC
+
+commit 8cdd5ae22e3ac4c3b059edba56e174eafcfc404d
+Merge: e13b80fa6ff3 4c2c4eb6397b
+Author: Povilas Kanapickas <povilas@radix.lt>
+Date:   2019-05-19 11:56:38 +0000
+
+    Merge branch 'genesys-debug-cleanup' into 'master'
+
+    genesys: Use the same debug identifier for the whole backend
+
+    See merge request sane-project/backends!67
+
+commit 4c2c4eb6397b974c90a20c1f4f355730b700be27
+Author: Povilas Kanapickas <povilas@radix.lt>
+Date:   2019-05-19 14:46:46 +0300
+
+    genesys: Remove duplicate definition of DBGSTART and DBGCOMPLETED
+
+commit 6f617e9889be1c35f5960b2a00dcc702aa3787f2
+Author: Povilas Kanapickas <povilas@radix.lt>
+Date:   2019-05-19 14:46:45 +0300
+
+    genesys: Don't define different backend names in source files
+
+commit 873e82c0a06a6a240cdb8e0178f4bc6f5d87c1c2
+Author: Povilas Kanapickas <povilas@radix.lt>
+Date:   2019-05-19 14:46:44 +0300
+
+    genesys: Remove logging of the build number
+
+    A git commit would be much more useful in log messages
+
 commit e13b80fa6ff333cede132dc29377eec9b6c02f48
-Merge: ae871333 0273c05c
+Merge: ae871333ef09 0273c05c9504
 Author: Olaf Meeuwissen <paddy-hack@member.fsf.org>
 Date:   2019-05-12 03:11:00 +0000
 
@@ -1735,8 +1788,20 @@ Date:   2019-05-12 03:11:00 +0000
 
     See merge request sane-project/backends!57
 
+commit 0273c05c95040b0cd3141117d67bbd08e4a03e5b
+Author: Stanislav Yuzvinsky <yu-stas@yandex.ru>
+Date:   2019-05-11 16:17:40 +0300
+
+    Fix review comments; add the backend to dll.conf
+
+commit 3514d06156424373b832f2e46a7d7e3311f6d15b
+Author: Stanislav Yuzvinsky <yu-stas@yandex.ru>
+Date:   2019-05-01 01:14:45 +0300
+
+    Add support for Aficio SG3100SNw
+
 commit ae871333ef09d867c6d95edd6c3adf3bd05c2fea
-Merge: 4df63ef5 ee6d6da3
+Merge: 4df63ef54801 ee6d6da33945
 Author: Olaf Meeuwissen <paddy-hack@member.fsf.org>
 Date:   2019-05-12 02:36:36 +0000
 
@@ -1746,14 +1811,44 @@ Date:   2019-05-12 02:36:36 +0000
 
     See merge request sane-project/backends!46
 
-commit 0273c05c95040b0cd3141117d67bbd08e4a03e5b
-Author: Stanislav Yuzvinsky <yu-stas@yandex.ru>
-Date:   2019-05-11 16:17:40 +0300
+commit ee6d6da339459bc8393547005e087e97d3d4987b
+Author: Povilas Kanapickas <povilas@radix.lt>
+Date:   2019-04-28 23:28:21 +0300
 
-    Fix review comments; add the backend to dll.conf
+    scanimage: Update manual page
+
+commit 728de89d7166708331907726571c7027b4921d82
+Author: Povilas Kanapickas <povilas@radix.lt>
+Date:   2019-04-28 23:28:20 +0300
+
+    scanimage: Guess --format from --output-file if possible
+
+commit 86e917b04b9bd1fbeb53d58323b118f30c8efc15
+Author: Povilas Kanapickas <povilas@radix.lt>
+Date:   2019-04-28 23:28:19 +0300
+
+    scanimage: Prevent --output-file and --batch to be used together
+
+commit 7f4944f0a7d1c7ce90d5f4f79078112bc5d52dff
+Author: Povilas Kanapickas <povilas@radix.lt>
+Date:   2019-04-28 23:28:18 +0300
+
+    scanimage: Warn when output format is not set
+
+commit 877cc29d88529f9af8e898a52b4be99863a20eea
+Author: Povilas Kanapickas <povilas@radix.lt>
+Date:   2019-04-28 23:28:17 +0300
+
+    scanimage: Raise an error if --format option is an unknown format
+
+commit 5dbd51d1ec36ba4389a7ec18ff041fd04ee3c5da
+Author: Povilas Kanapickas <povilas@radix.lt>
+Date:   2019-03-20 23:09:03 +0200
+
+    scanimage: Allow specification of the output path via option
 
 commit 4df63ef5480103edf5c2a92a1641afdc0eddca04
-Merge: 3c8b9b91 988a91ae
+Merge: 3c8b9b916794 988a91aec476
 Author: Povilas Kanapickas <povilas@radix.lt>
 Date:   2019-05-11 09:20:45 +0000
 
@@ -1762,17 +1857,6 @@ Date:   2019-05-11 09:20:45 +0000
     genesys: Miscellaneous debug improvements
 
     See merge request sane-project/backends!64
-
-commit 3c8b9b9167947def05544160153d8f3bc5312548
-Merge: 74fffa64 8de5a1fd
-Author: Povilas Kanapickas <povilas@radix.lt>
-Date:   2019-05-11 09:14:06 +0000
-
-    Merge branch 'genesys-reduce-duplication' into 'master'
-
-    genesys: Reduce duplication in low level functions
-
-    See merge request sane-project/backends!63
 
 commit 988a91aec47697f1ec37ecc492819223df40b18f
 Author: Povilas Kanapickas <povilas@radix.lt>
@@ -1804,16 +1888,16 @@ Date:   2019-05-11 12:12:25 +0300
 
     genesys: Don't write identical debug pnm files
 
-commit 74fffa64791f6e670942604eac27bc330afc339b
-Merge: 15fd9bc9 88775919
+commit 3c8b9b9167947def05544160153d8f3bc5312548
+Merge: 74fffa64791f 8de5a1fdb104
 Author: Povilas Kanapickas <povilas@radix.lt>
-Date:   2019-05-11 09:08:11 +0000
+Date:   2019-05-11 09:14:06 +0000
 
-    Merge branch 'genesys-force-calibration' into 'master'
+    Merge branch 'genesys-reduce-duplication' into 'master'
 
-    genesys: Add option to force calibration ignoring caches
+    genesys: Reduce duplication in low level functions
 
-    See merge request sane-project/backends!62
+    See merge request sane-project/backends!63
 
 commit 8de5a1fdb10498c85a998ad8eeb4e6b228019fb2
 Author: Povilas Kanapickas <povilas@radix.lt>
@@ -1925,44 +2009,25 @@ Date:   2019-05-11 12:05:09 +0300
 
     genesys: Create generic sanei_genesys_bulk_read_data out of gl124 impl
 
+commit 74fffa64791f6e670942604eac27bc330afc339b
+Merge: 15fd9bc9ce70 887759192bbf
+Author: Povilas Kanapickas <povilas@radix.lt>
+Date:   2019-05-11 09:08:11 +0000
+
+    Merge branch 'genesys-force-calibration' into 'master'
+
+    genesys: Add option to force calibration ignoring caches
+
+    See merge request sane-project/backends!62
+
 commit 887759192bbf2f8265f5897ba43acdcf5a10cbe5
 Author: Povilas Kanapickas <povilas@radix.lt>
 Date:   2019-05-11 12:00:25 +0300
 
     genesys: Add option to force calibration ignoring caches
 
-commit ee6d6da339459bc8393547005e087e97d3d4987b
-Author: Povilas Kanapickas <povilas@radix.lt>
-Date:   2019-04-28 23:28:21 +0300
-
-    scanimage: Update manual page
-
-commit 728de89d7166708331907726571c7027b4921d82
-Author: Povilas Kanapickas <povilas@radix.lt>
-Date:   2019-04-28 23:28:20 +0300
-
-    scanimage: Guess --format from --output-file if possible
-
-commit 86e917b04b9bd1fbeb53d58323b118f30c8efc15
-Author: Povilas Kanapickas <povilas@radix.lt>
-Date:   2019-04-28 23:28:19 +0300
-
-    scanimage: Prevent --output-file and --batch to be used together
-
-commit 7f4944f0a7d1c7ce90d5f4f79078112bc5d52dff
-Author: Povilas Kanapickas <povilas@radix.lt>
-Date:   2019-04-28 23:28:18 +0300
-
-    scanimage: Warn when output format is not set
-
-commit 877cc29d88529f9af8e898a52b4be99863a20eea
-Author: Povilas Kanapickas <povilas@radix.lt>
-Date:   2019-04-28 23:28:17 +0300
-
-    scanimage: Raise an error if --format option is an unknown format
-
 commit 15fd9bc9ce70953d70fd3fa2f48bf725cb27a37d
-Merge: 85639110 16a8d554
+Merge: 856391100f00 16a8d5548091
 Author: Olaf Meeuwissen <paddy-hack@member.fsf.org>
 Date:   2019-05-11 08:13:18 +0000
 
@@ -1972,32 +2037,14 @@ Date:   2019-05-11 08:13:18 +0000
 
     See merge request sane-project/backends!60
 
-commit ca051cc22736909c7eaddbb1ba549eb718ea36f8
+commit 16a8d554809171156ed2727c6e1f4e2fdff5b5e3
 Author: Povilas Kanapickas <povilas@radix.lt>
-Date:   2019-05-10 21:16:11 +0300
+Date:   2019-05-10 21:05:51 +0300
 
-    genesys: Compile library as C++ code
-
-commit 72121bc7d88bbd6577cd3ea88b301d91ac35d675
-Author: Povilas Kanapickas <povilas@radix.lt>
-Date:   2019-05-10 21:16:10 +0300
-
-    sanei: Use C linkage for internal functions in C++ mode
-
-commit 9e3b5d6381b5c8d49b71753e7b28b65f45feebee
-Author: Povilas Kanapickas <povilas@radix.lt>
-Date:   2019-05-10 21:16:09 +0300
-
-    Update generated files
-
-commit b93340b8623de865c73b7e12a5b448732f9a5f68
-Author: Povilas Kanapickas <povilas@radix.lt>
-Date:   2019-05-11 00:02:47 +0300
-
-    Enable C++ in autoconf
+    Don't use strings that are similar to conflict markers in debug msgs
 
 commit 856391100f00b49bdf245930cd68c52f3116b6f7
-Merge: 56c01c00 47e7f087
+Merge: 56c01c005a8d 47e7f087c622
 Author: Povilas Kanapickas <povilas@radix.lt>
 Date:   2019-05-10 18:23:32 +0000
 
@@ -2013,14 +2060,8 @@ Date:   2019-05-10 21:04:15 +0300
 
     genesys: Perform type casts explicitly
 
-commit 16a8d554809171156ed2727c6e1f4e2fdff5b5e3
-Author: Povilas Kanapickas <povilas@radix.lt>
-Date:   2019-05-10 21:05:51 +0300
-
-    Don't use strings that are similar to conflict markers in debug msgs
-
 commit 56c01c005a8ddda04d24e81a337e724f673faece
-Merge: f6038a70 29654290
+Merge: f6038a70ec2c 296542905e84
 Author: Olaf Meeuwissen <paddy-hack@member.fsf.org>
 Date:   2019-05-05 09:27:29 +0000
 
@@ -2045,7 +2086,7 @@ Date:   2019-05-04 09:19:26 +0900
     Add a Fedora 30 build, drop the Fedora 28 one
 
 commit 1b8f7926fe18b2d5c646480a4fa691f1984114a3
-Merge: fa940e86 25feb1be
+Merge: fa940e86bbac 25feb1be0c89
 Author: Olaf Meeuwissen <paddy-hack@member.fsf.org>
 Date:   2019-05-02 06:16:55 +0000
 
@@ -2063,14 +2104,8 @@ Date:   2017-08-03 18:50:05 +0900
 
     See https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=869673
 
-commit 3514d06156424373b832f2e46a7d7e3311f6d15b
-Author: Stanislav Yuzvinsky <yu-stas@yandex.ru>
-Date:   2019-05-01 01:14:45 +0300
-
-    Add support for Aficio SG3100SNw
-
 commit fa940e86bbac2ac21c969b80722d8cf341eac389
-Merge: 916ce82f 0921d366
+Merge: 916ce82f007e 0921d3661812
 Author: Povilas Kanapickas <povilas@radix.lt>
 Date:   2019-04-28 21:02:16 +0000
 
@@ -2080,29 +2115,11 @@ Date:   2019-04-28 21:02:16 +0000
 
     See merge request sane-project/backends!48
 
-commit 5dbd51d1ec36ba4389a7ec18ff041fd04ee3c5da
+commit 0921d3661812615b4cb12d16d0754af49445bd05
 Author: Povilas Kanapickas <povilas@radix.lt>
-Date:   2019-03-20 23:09:03 +0200
+Date:   2019-03-22 15:56:57 +0200
 
-    scanimage: Allow specification of the output path via option
-
-commit 0a66ed1dbcb3f85bedab81581cb84320a8c3c2c1
-Author: Povilas Kanapickas <povilas@radix.lt>
-Date:   2019-04-28 17:47:45 +0300
-
-    genesys: Use a function to sleep ms to reduce chance of errors
-
-commit d9f65eefc0fca4a45fb3ac1b944d55fb33fd319a
-Author: Povilas Kanapickas <povilas@radix.lt>
-Date:   2019-04-28 17:47:44 +0300
-
-    genesys: Fix a bug in sleep duration calculation
-
-commit baaa934dce8db53bd1c4f0e0308f7dac1000201f
-Author: Povilas Kanapickas <povilas@radix.lt>
-Date:   2019-04-28 17:47:43 +0300
-
-    genesys: Use a wrapper of usleep()
+    sanei_usb: Deduplicate endpoint setup code
 
 commit 916ce82f007e0eb297dadda9a0577482f0fb2dc0
 Author: Rolf Bensch <rolf@bensch-online.de>
@@ -2111,14 +2128,14 @@ Date:   2019-04-25 21:31:27 +0200
     pixma: backend version 0.23.0
 
 commit 28d87cb6e5400df519c703bc4769808a37b6f990
-Merge: 392beeec 9fe7d990
+Merge: 392beeec74b9 9fe7d990891c
 Author: Rolf Bensch <rolf@bensch-online.de>
 Date:   2019-04-25 21:27:53 +0200
 
     Merge remote-tracking branch 'origin/master'
 
 commit 9fe7d990891cd53ec6295610507be0238ad868c6
-Merge: d50f3330 a3c64bc0
+Merge: d50f33306f9c a3c64bc0cad1
 Author: Rolf Bensch <rolf@bensch-online.de>
 Date:   2019-04-25 19:26:50 +0000
 
@@ -2128,6 +2145,14 @@ Date:   2019-04-25 19:26:50 +0000
 
     See merge request sane-project/backends!49
 
+commit a3c64bc0cad104d09ba14f833828ae963dbc72f9
+Author: MackPi <mack@prototypeiteration.com>
+Date:   2019-04-03 16:37:03 -0700
+
+    Added Imageclass MF634Cdw
+
+    Added MF634Cdw using MF733Cdw as reference
+
 commit 392beeec74b97cd712469953962c2b3a6bf2b31f
 Author: Rolf Bensch <rolf@bensch-online.de>
 Date:   2019-04-25 21:24:40 +0200
@@ -2135,7 +2160,7 @@ Date:   2019-04-25 21:24:40 +0200
     pixma: new scanners Canon i-SENSYS MF110, MF260, MF420, MF510, MF520, MF640 and MF740 Series
 
 commit d50f33306f9c9ae0d976dce247c316c071ae3715
-Merge: a569bfbf a814df33
+Merge: a569bfbf02c1 a814df334311
 Author: Povilas Kanapickas <povilas@radix.lt>
 Date:   2019-04-22 22:07:19 +0000
 
@@ -2164,7 +2189,7 @@ Date:   2019-04-23 00:55:44 +0300
     genesys: Add numeric model IDs to model tables
 
 commit a569bfbf02c1d85b440db0b00f5e3a6564991564
-Merge: 595e1fc7 3cd8a4cd
+Merge: 595e1fc754cf 3cd8a4cd0157
 Author: Povilas Kanapickas <povilas@radix.lt>
 Date:   2019-04-22 21:38:29 +0000
 
@@ -2179,17 +2204,6 @@ Author: Povilas Kanapickas <povilas@radix.lt>
 Date:   2019-04-23 00:14:49 +0300
 
     genesys: Use hex to print USB vendor and product IDs to debug log
-
-commit 595e1fc754cfa463f771f25daff5c7bea79715d8
-Merge: c9ebf2b5 23416187
-Author: Povilas Kanapickas <povilas@radix.lt>
-Date:   2019-04-22 21:15:44 +0000
-
-    Merge branch 'genesys-bugs' into 'master'
-
-    Several genesys bugfixes
-
-    See merge request sane-project/backends!52
 
 commit d7c17f75403aa5619c711b7d19e81932fa9a47b1
 Author: Povilas Kanapickas <povilas@radix.lt>
@@ -2211,6 +2225,17 @@ Date:   2019-04-23 00:14:46 +0300
 
     genesys: Include genesys_low.h
 
+commit 595e1fc754cfa463f771f25daff5c7bea79715d8
+Merge: c9ebf2b5605e 23416187205c
+Author: Povilas Kanapickas <povilas@radix.lt>
+Date:   2019-04-22 21:15:44 +0000
+
+    Merge branch 'genesys-bugs' into 'master'
+
+    Several genesys bugfixes
+
+    See merge request sane-project/backends!52
+
 commit 23416187205c4d7ef4ec9c1a4b1eaa3f0e03a4c4
 Author: Povilas Kanapickas <povilas@radix.lt>
 Date:   2019-04-23 00:05:35 +0300
@@ -2230,7 +2255,7 @@ Date:   2019-04-23 00:05:33 +0300
     genesys: Fix use of uninitialized memory
 
 commit c9ebf2b5605e263d8d93f1132cb4df73ebee4516
-Merge: 4f5eb745 2fd3b562
+Merge: 4f5eb745ac68 2fd3b5622b39
 Author: Povilas Kanapickas <povilas@radix.lt>
 Date:   2019-04-22 20:56:38 +0000
 
@@ -2264,14 +2289,6 @@ Date:   2019-04-06 17:11:47 +0900
 
     utsushi.desc: Sync with upstream
 
-commit a3c64bc0cad104d09ba14f833828ae963dbc72f9
-Author: MackPi <mack@prototypeiteration.com>
-Date:   2019-04-03 16:37:03 -0700
-
-    Added Imageclass MF634Cdw
-
-    Added MF634Cdw using MF733Cdw as reference
-
 commit 155248dde28b2a9ec4114d59dc294b69b3260142
 Author: Louis Lagendijk <louis.lagendijk@gmail.com>
 Date:   2019-03-27 19:09:43 +0100
@@ -2291,14 +2308,8 @@ Date:   2019-03-23 14:09:24 +0900
 
     utsushi.desc: Sync with upstream
 
-commit 0921d3661812615b4cb12d16d0754af49445bd05
-Author: Povilas Kanapickas <povilas@radix.lt>
-Date:   2019-03-22 15:56:57 +0200
-
-    sanei_usb: Deduplicate endpoint setup code
-
 commit 276670f3c249e4a59267bc5c45e170c8e7be7286
-Merge: e92a3d6e 2653cbae
+Merge: e92a3d6ebaca 2653cbaec799
 Author: Povilas Kanapickas <povilas@radix.lt>
 Date:   2019-03-22 14:27:53 +0000
 
@@ -2308,8 +2319,14 @@ Date:   2019-03-22 14:27:53 +0000
 
     See merge request sane-project/backends!44
 
+commit 2653cbaec799fbfd365362c45e61796ce90b6466
+Author: Povilas Kanapickas <povilas@radix.lt>
+Date:   2019-03-20 23:09:07 +0200
+
+    Run autoreconf and automake
+
 commit e92a3d6ebaca4fcedb262e7861155b9fd49e5bf0
-Merge: de5c63ee d866998f
+Merge: de5c63ee7cff d866998f102f
 Author: Povilas Kanapickas <povilas@radix.lt>
 Date:   2019-03-22 14:25:39 +0000
 
@@ -2319,8 +2336,20 @@ Date:   2019-03-22 14:25:39 +0000
 
     See merge request sane-project/backends!45
 
+commit d866998f102f242ed421ff4b4480aa2a4073c166
+Author: Povilas Kanapickas <povilas@radix.lt>
+Date:   2019-03-20 23:09:05 +0200
+
+    genesys: Remove uses of unused UNIT_TESTING ifdef
+
+commit b7b5ca79c8f7a92d488d96d0b1d0963d01d86423
+Author: Povilas Kanapickas <povilas@radix.lt>
+Date:   2019-03-20 23:09:04 +0200
+
+    rts8891: Remove uses of unused UNIT_TESTING ifdef
+
 commit de5c63ee7cff16115fa04ed998c988fb79087bda
-Merge: 13350ba4 265f4a96
+Merge: 13350ba4ba0a 265f4a96ea0d
 Author: Povilas Kanapickas <povilas@radix.lt>
 Date:   2019-03-22 14:24:48 +0000
 
@@ -2335,24 +2364,6 @@ Author: Povilas Kanapickas <povilas@radix.lt>
 Date:   2019-03-22 14:50:03 +0200
 
     genesys: Prefer enums to #defines
-
-commit 2653cbaec799fbfd365362c45e61796ce90b6466
-Author: Povilas Kanapickas <povilas@radix.lt>
-Date:   2019-03-20 23:09:07 +0200
-
-    Run autoreconf and automake
-
-commit d866998f102f242ed421ff4b4480aa2a4073c166
-Author: Povilas Kanapickas <povilas@radix.lt>
-Date:   2019-03-20 23:09:05 +0200
-
-    genesys: Remove uses of unused UNIT_TESTING ifdef
-
-commit b7b5ca79c8f7a92d488d96d0b1d0963d01d86423
-Author: Povilas Kanapickas <povilas@radix.lt>
-Date:   2019-03-20 23:09:04 +0200
-
-    rts8891: Remove uses of unused UNIT_TESTING ifdef
 
 commit 13350ba4ba0a40e0fae4567bb23566575a0317e2
 Author: Rolf Bensch <rolf@bensch-online.de>
@@ -2405,7 +2416,7 @@ Date:   2019-03-11 17:15:54 +0100
     pixma: fix some interface descriptions
 
 commit 960a6d5d697bac72dd5d068eefe12741a5d68de5
-Merge: 9d69d94f 2915756a
+Merge: 9d69d94f0219 2915756ae426
 Author: Rolf Bensch <rolf@bensch-online.de>
 Date:   2019-03-08 20:56:26 +0000
 
@@ -2415,17 +2426,17 @@ Date:   2019-03-08 20:56:26 +0000
 
     See merge request sane-project/backends!43
 
-commit 9d69d94f0219fa71b8e16968f08293f902d0016f
-Author: Rolf Bensch <rolf@bensch-online.de>
-Date:   2019-03-08 17:28:36 +0100
-
-    add missing development packages to INSTALL.linux
-
 commit 2915756ae4262b6a87490b5d96959f58c498307b
 Author: Thierry <thierry@substantiel.fr>
 Date:   2019-03-05 08:43:31 +0100
 
     Add Driver Canon Pixma TS 6200 Series.
+
+commit 9d69d94f0219fa71b8e16968f08293f902d0016f
+Author: Rolf Bensch <rolf@bensch-online.de>
+Date:   2019-03-08 17:28:36 +0100
+
+    add missing development packages to INSTALL.linux
 
 commit 9e4344b33a2d83aa7663b65d6d8a49c7306d72c7
 Author: Rolf Bensch <rolf@bensch-online.de>
@@ -2445,7 +2456,7 @@ Date:   2019-02-24 20:37:55 -0500
     - minor comments and move a bit of code for consistency
 
 commit 81faeb46f28c4b6c251123aabac118ff0262d9e7
-Merge: 2d0912af 60dffda6
+Merge: 2d0912afdcdb 60dffda6036a
 Author: m. allan noah <kitno455@gmail.com>
 Date:   2019-02-25 01:37:03 +0000
 
@@ -2454,6 +2465,36 @@ Date:   2019-02-25 01:37:03 +0000
     Add support for Canon DR-X10C scanner
 
     See merge request sane-project/backends!12
+
+commit 60dffda6036ae15d89b2a94af269d32dcb300786
+Author: Manuel Argüelles <manuel.arguelles@smartmatic.com>
+Date:   2019-02-08 22:40:15 -0500
+
+    Add mention of company contributing to canon_dr.c
+
+commit 1bc6ade107d294d93ad4c50727bd9fd77caf63ec
+Author: Manuel Argüelles <manuel.arguelles@smartmatic.com>
+Date:   2018-11-30 10:50:13 -0500
+
+    Fix image displacement for lineart/halftone during hardware crop
+
+    Increases the width of the image if the reported size is less than the byte
+    boundary.
+
+commit ecac81eee2f79fc3f089f3a3d3509a2860e3f4c0
+Author: Manuel Argüelles <manuel.arguelles@smartmatic.com>
+Date:   2018-11-12 14:01:24 -0500
+
+    Set scan area to maximum when hardware crop is enable
+
+commit d61a59ca01b638474b6a847bf26e6dfb9420e064
+Author: Manuel Argüelles <manuel.arguelles@smartmatic.com>
+Date:   2018-07-30 17:26:13 -0500
+
+    Add support for Canon DR-X10C scanner
+
+    Added initial support for DR-X10C SSM2 scanner with dropout color, hardware
+    deskew and hardware crop.
 
 commit 2d0912afdcdb174721dbad0cb2e200880e5ddb15
 Author: Rolf Bensch <rolf@bensch-online.de>
@@ -2474,7 +2515,7 @@ Date:   2019-02-24 12:38:37 +0100
     pixma: add comment for MF733C
 
 commit 73645abba08a0df68c43f798dee9cf28451b785d
-Merge: 5ae6f698 b327c3d7
+Merge: 5ae6f698aedd b327c3d780a4
 Author: Rolf Bensch <rolf@bensch-online.de>
 Date:   2019-02-24 11:22:07 +0000
 
@@ -2483,6 +2524,25 @@ Date:   2019-02-24 11:22:07 +0000
     Mikef mf733 c
 
     See merge request sane-project/backends!42
+
+commit b327c3d780a486b3069f2f17c589fcc083289788
+Author: Mike Ferrara <mikef@mrf.sonoma.ca.us>
+Date:   2019-02-22 11:01:51 -0800
+
+    Typo. fixed.
+
+commit eadd663676c17a30ba27854e82ad8dfebefb4aa6
+Merge: 7277cec027c8 ff04ede4adb4
+Author: Mike Ferrara <mikef@mrf.sonoma.ca.us>
+Date:   2019-02-22 10:40:29 -0800
+
+    Merge branch 'master' into mikef-MF733C
+
+commit 7277cec027c80386f90193b330aacf1b555d0c96
+Author: Mike Ferrara <mikef@mrf.sonoma.ca.us>
+Date:   2019-02-22 10:30:18 -0800
+
+    Mods to support imageCLASS MF733Cdw USA color laser MFP
 
 commit 5ae6f698aedd58ad83802b0ecfe87d171f30ee72
 Author: m. allan noah <kitno455@gmail.com>
@@ -2523,25 +2583,6 @@ Author: m. allan noah <kitno455@gmail.com>
 Date:   2019-02-23 14:50:49 -0500
 
     Fix a few typos
-
-commit b327c3d780a486b3069f2f17c589fcc083289788
-Author: Mike Ferrara <mikef@mrf.sonoma.ca.us>
-Date:   2019-02-22 11:01:51 -0800
-
-    Typo. fixed.
-
-commit eadd663676c17a30ba27854e82ad8dfebefb4aa6
-Merge: 7277cec0 ff04ede4
-Author: Mike Ferrara <mikef@mrf.sonoma.ca.us>
-Date:   2019-02-22 10:40:29 -0800
-
-    Merge branch 'master' into mikef-MF733C
-
-commit 7277cec027c80386f90193b330aacf1b555d0c96
-Author: Mike Ferrara <mikef@mrf.sonoma.ca.us>
-Date:   2019-02-22 10:30:18 -0800
-
-    Mods to support imageCLASS MF733Cdw USA color laser MFP
 
 commit ff04ede4adb4f0267351150122fa63fea354f0bb
 Author: Rolf Bensch <rolf@bensch-online.de>
@@ -2586,7 +2627,7 @@ Date:   2019-02-20 18:47:24 +0100
     pixma: add button support for CanoScan LiDE400
 
 commit c784e82d65689fd1e315bb814e381959a56d2b98
-Merge: 2b0c7a31 d9784940
+Merge: 2b0c7a3170a6 d9784940968d
 Author: Rolf Bensch <rolf@bensch-online.de>
 Date:   2019-02-20 17:44:44 +0000
 
@@ -2604,12 +2645,6 @@ Date:   2019-02-20 17:44:44 +0000
 
     See merge request sane-project/backends!36
 
-commit 60dffda6036ae15d89b2a94af269d32dcb300786
-Author: Manuel Argüelles <manuel.arguelles@smartmatic.com>
-Date:   2019-02-08 22:40:15 -0500
-
-    Add mention of company contributing to canon_dr.c
-
 commit 2b0c7a3170a6ef0ab74bbf652069aa06a069e8c6
 Author: Alex Belkin <abc@telekom.ru>
 Date:   2019-02-05 15:19:27 +0300
@@ -2619,7 +2654,7 @@ Date:   2019-02-05 15:19:27 +0300
     Reported in #54 by Lambrigts walter.
 
 commit 78ffe3235db28a1048561d32267dc69fdc3b79d1
-Merge: 66fed7c4 fd18d197
+Merge: 66fed7c4bfb2 fd18d197f834
 Author: Alex Belkin <abc@telekom.ru>
 Date:   2019-02-05 15:08:17 +0300
 
@@ -2643,7 +2678,7 @@ Date:   2019-02-02 10:38:35 +0900
     Bump Alpine build from 3.8 to 3.9
 
 commit 4354fc7f6da2ee65cbe940a715f11abecdad3f49
-Merge: 93340afd 00d31e14
+Merge: 93340afddfbc 00d31e14f8a5
 Author: Olaf Meeuwissen <paddy-hack@member.fsf.org>
 Date:   2019-01-21 11:51:48 +0000
 
@@ -2654,6 +2689,20 @@ Date:   2019-01-21 11:51:48 +0000
     Closes #7
 
     See merge request sane-project/backends!34
+
+commit 00d31e14f8a5339a2756af29697ec3c2ff6e7d4d
+Author: Olaf Meeuwissen <paddy-hack@member.fsf.org>
+Date:   2018-12-16 22:25:12 +0900
+
+    genesys: fix [-Wunused-function] compiler warning
+
+commit d609de285b710ca0a9c76c653abee4b8f4315f57
+Author: Olaf Meeuwissen <paddy-hack@member.fsf.org>
+Date:   2018-12-16 21:56:52 +0900
+
+    Restore slow_back_home use, disable rewind for gl847
+
+    See #7.
 
 commit 93340afddfbc4085a5297fe635b65dd7f7f3ef05
 Author: Bernhard Übelacker <bernhardu@mailbox.org>
@@ -2711,7 +2760,7 @@ Date:   2019-01-01 14:13:58 +0100
     pixma: new scanner Canon imageCLASS D550
 
 commit ac83c8110c47659993266dae3de6aafb29308716
-Merge: 36648cba d71f5e4b
+Merge: 36648cba52c9 d71f5e4bc875
 Author: Gerhard Jäger <gerhard@gjaeger.de>
 Date:   2018-12-31 14:13:26 +0000
 
@@ -2723,54 +2772,6 @@ Date:   2018-12-31 14:13:26 +0000
 
     See merge request sane-project/backends!33
 
-commit 36648cba52c90df11ee5a6c3d3a4a7506b0cc7cd
-Merge: 2d14283d 47f9b1ee
-Author: Gerhard Jäger <gerhard@gjaeger.de>
-Date:   2018-12-31 14:09:56 +0000
-
-    Merge branch 'lide700' into 'master'
-
-    Fix a bug with Canon LiDE 700 where bright areas overflow
-
-    See merge request sane-project/backends!32
-
-commit 2d14283d0c443cfd505088f2503b6e59d47b192d
-Author: Rolf Bensch <rolf@bensch-online.de>
-Date:   2018-12-20 12:57:14 +0100
-
-    pixma: backend version 0.19.0
-
-commit 2f3cdcb58089ca62e36151d687bf29839882f748
-Author: Rolf Bensch <rolf@bensch-online.de>
-Date:   2018-12-20 12:56:47 +0100
-
-    pixma: new scanner Canon PIXMA TS9500 Series
-
-commit 08a638dc319a9f10810f2653002c7f348dd492d6
-Author: Nico R <nico@n1c0.de>
-Date:   2018-10-06 17:50:47 +0200
-
-    xerox_mfp: Add Samsung Xpress C1860FW
-
-    Device status is “untested”, because it was not really tested _in depth_.
-    Basic scanning of a number of pages using the automated feeder worked.
-
-    See https://alioth-lists.debian.net/pipermail/sane-devel/2018-October/036411.html
-
-commit 00d31e14f8a5339a2756af29697ec3c2ff6e7d4d
-Author: Olaf Meeuwissen <paddy-hack@member.fsf.org>
-Date:   2018-12-16 22:25:12 +0900
-
-    genesys: fix [-Wunused-function] compiler warning
-
-commit d609de285b710ca0a9c76c653abee4b8f4315f57
-Author: Olaf Meeuwissen <paddy-hack@member.fsf.org>
-Date:   2018-12-16 21:56:52 +0900
-
-    Restore slow_back_home use, disable rewind for gl847
-
-    See #7.
-
 commit d71f5e4bc87500c2de8e4297e140bab09e3f6272
 Author: Michał Wróbel <mvv@google.com>
 Date:   2018-12-09 22:21:18 +0100
@@ -2779,23 +2780,16 @@ Date:   2018-12-09 22:21:18 +0100
 
     Fixes https://gitlab.com/sane-project/backends/issues/42
 
-commit dc3e6e6e41f4698c0676bb8d0119777ed91d287a
-Author: Olaf Meeuwissen <paddy-hack@member.fsf.org>
-Date:   2018-12-08 20:33:20 +0900
+commit 36648cba52c90df11ee5a6c3d3a4a7506b0cc7cd
+Merge: 2d14283d0c44 47f9b1eeed2d
+Author: Gerhard Jäger <gerhard@gjaeger.de>
+Date:   2018-12-31 14:09:56 +0000
 
-    .gitignore: `make check` artifacts
+    Merge branch 'lide700' into 'master'
 
-commit 866c451edb420855c6d9dff6b7a6c21a0a2d96ce
-Author: Olaf Meeuwissen <paddy-hack@member.fsf.org>
-Date:   2018-12-08 20:29:22 +0900
+    Fix a bug with Canon LiDE 700 where bright areas overflow
 
-    Add a Fedora 29 build, drop the Fedora 27 one
-
-commit b72e2bc758a9d6a93b25083f8f4ac73dadff1e86
-Author: Olaf Meeuwissen <paddy-hack@member.fsf.org>
-Date:   2018-12-08 20:24:00 +0900
-
-    utsushi.desc: Sync with upstream
+    See merge request sane-project/backends!32
 
 commit 47f9b1eeed2deb1f0d0f63c25f83dab5aeea0c8d
 Author: Mark Hills <mark@xwax.org>
@@ -2822,20 +2816,46 @@ Date:   2018-12-01 21:00:47 +0000
     Avoid the negative 'if' case which is harder to reason about. Preparing
     for new entries to be added here.
 
-commit 1bc6ade107d294d93ad4c50727bd9fd77caf63ec
-Author: Manuel Argüelles <manuel.arguelles@smartmatic.com>
-Date:   2018-11-30 10:50:13 -0500
+commit 2d14283d0c443cfd505088f2503b6e59d47b192d
+Author: Rolf Bensch <rolf@bensch-online.de>
+Date:   2018-12-20 12:57:14 +0100
 
-    Fix image displacement for lineart/halftone during hardware crop
+    pixma: backend version 0.19.0
 
-    Increases the width of the image if the reported size is less than the byte
-    boundary.
+commit 2f3cdcb58089ca62e36151d687bf29839882f748
+Author: Rolf Bensch <rolf@bensch-online.de>
+Date:   2018-12-20 12:56:47 +0100
 
-commit ecac81eee2f79fc3f089f3a3d3509a2860e3f4c0
-Author: Manuel Argüelles <manuel.arguelles@smartmatic.com>
-Date:   2018-11-12 14:01:24 -0500
+    pixma: new scanner Canon PIXMA TS9500 Series
 
-    Set scan area to maximum when hardware crop is enable
+commit 08a638dc319a9f10810f2653002c7f348dd492d6
+Author: Nico R <nico@n1c0.de>
+Date:   2018-10-06 17:50:47 +0200
+
+    xerox_mfp: Add Samsung Xpress C1860FW
+
+    Device status is “untested”, because it was not really tested _in depth_.
+    Basic scanning of a number of pages using the automated feeder worked.
+
+    See https://alioth-lists.debian.net/pipermail/sane-devel/2018-October/036411.html
+
+commit dc3e6e6e41f4698c0676bb8d0119777ed91d287a
+Author: Olaf Meeuwissen <paddy-hack@member.fsf.org>
+Date:   2018-12-08 20:33:20 +0900
+
+    .gitignore: `make check` artifacts
+
+commit 866c451edb420855c6d9dff6b7a6c21a0a2d96ce
+Author: Olaf Meeuwissen <paddy-hack@member.fsf.org>
+Date:   2018-12-08 20:29:22 +0900
+
+    Add a Fedora 29 build, drop the Fedora 27 one
+
+commit b72e2bc758a9d6a93b25083f8f4ac73dadff1e86
+Author: Olaf Meeuwissen <paddy-hack@member.fsf.org>
+Date:   2018-12-08 20:24:00 +0900
+
+    utsushi.desc: Sync with upstream
 
 commit dc8b27c1eff4617596f7b9304ef743d415791c26
 Author: Olaf Meeuwissen <paddy-hack@member.fsf.org>
@@ -2852,7 +2872,7 @@ Date:   2018-11-09 20:31:29 +0900
     [skip ci]
 
 commit 0af6149aa8799f0d0b08570af34a99c3de63eaba
-Merge: 6f797d94 9cf0de75
+Merge: 6f797d94e572 9cf0de7559fe
 Author: Olaf Meeuwissen <paddy-hack@member.fsf.org>
 Date:   2018-11-04 11:33:33 +0000
 
@@ -2867,6 +2887,12 @@ Author: Stanislav Yuzvinsky <yu-stas@yandex.ru>
 Date:   2018-11-02 23:12:44 +0300
 
     Address review comments
+
+commit d62ba623b2118ca009a8491e40daedbbd643f267
+Author: Stanislav Yuzvinsky <yu-stas@yandex.ru>
+Date:   2018-09-22 01:00:06 +0300
+
+    Add new backend ricoh2
 
 commit 6f797d94e572e333341d11a32aa37a6b36018584
 Author: Rolf Bensch <rolf@bensch-online.de>
@@ -2886,17 +2912,6 @@ Date:   2018-10-28 12:11:49 +0100
 
     pixma: Canon imageCLASS MF8030 is working
 
-commit f111032e7f05e735422d02a88b1d04cb7b5da1c2
-Author: Martin Güthle <mguethle@xunit.de>
-Date:   2018-10-25 08:53:58 +0200
-
-    as6e: Avoid out of bound access
-
-    This fixes a crash due to a stack corruption.
-    To reproduce the bug, set a path within the PATH variable, to something,
-    which exceeds 128 chars. Maybe more chars are needed, to reach the stack
-    corruption.
-
 commit 54aa154d918245d5090fc342d4d1b00cf12a2477
 Author: Rolf Bensch <rolf@bensch-online.de>
 Date:   2018-10-24 20:25:40 +0200
@@ -2910,7 +2925,7 @@ Date:   2018-10-24 20:24:00 +0200
     pixma: Canon PIXMA E510 is working
 
 commit e41090725370cf0abaf15cd9c34ad7e711fece3f
-Merge: ef85977e 1846b038
+Merge: ef85977ec4ba 1846b0381e06
 Author: Rolf Bensch <rolf@bensch-online.de>
 Date:   2018-10-24 20:05:00 +0200
 
@@ -2929,7 +2944,7 @@ Date:   2018-10-12 12:33:46 +0200
     pixma: Canon PIXMA TS3100 Series is working
 
 commit 54c42b04a8ccfce2c140782007a11d2b3a1627fe
-Merge: f633bad6 05400ad6
+Merge: f633bad6ec1d 05400ad69b80
 Author: Gerhard Jäger <gerhard@gjaeger.de>
 Date:   2018-10-11 07:36:54 +0000
 
@@ -2939,8 +2954,14 @@ Date:   2018-10-11 07:36:54 +0000
 
     See merge request sane-project/backends!10
 
+commit 05400ad69b8047f0a2320a120519941fa99faf36
+Author: Povilas Kanapickas <povilas@radix.lt>
+Date:   2018-07-21 03:37:45 +0300
+
+    backend/genesys: Increase excessively low bright point on Lide 80 calib
+
 commit f633bad6ec1dd4b306ea245dc10a602020df7bba
-Merge: 030153b3 92c40c44
+Merge: 030153b39b82 92c40c44b9a6
 Author: Gerhard Jäger <gerhard@gjaeger.de>
 Date:   2018-10-11 07:34:14 +0000
 
@@ -2950,8 +2971,14 @@ Date:   2018-10-11 07:34:14 +0000
 
     See merge request sane-project/backends!9
 
+commit 92c40c44b9a6c7ce7a5cc865db1f4b61fb1bd3c0
+Author: Povilas Kanapickas <povilas@radix.lt>
+Date:   2018-07-21 03:37:44 +0300
+
+    backend/genesys_gl841: Reduce extra dark area offset for LIDE 80
+
 commit 030153b39b82aca45b724b940aa107fdfe0c4b37
-Merge: 6abb072d 065855e1
+Merge: 6abb072ded1d 065855e1da5c
 Author: Gerhard Jäger <gerhard@gjaeger.de>
 Date:   2018-10-11 07:33:24 +0000
 
@@ -2963,8 +2990,14 @@ Date:   2018-10-11 07:33:24 +0000
 
     See merge request sane-project/backends!7
 
+commit 065855e1da5c088e561580c26d96ad2b051685c4
+Author: Povilas Kanapickas <povilas@radix.lt>
+Date:   2018-07-21 03:37:46 +0300
+
+    backend/genesys_gl841: Disable LEDADD on Lide 80 since it's broken there
+
 commit 6abb072ded1daea860c64375b140287fb180bfbd
-Merge: c980c732 a64f2096
+Merge: c980c73259de a64f20964389
 Author: Gerhard Jäger <gerhard@gjaeger.de>
 Date:   2018-10-11 07:29:59 +0000
 
@@ -2973,6 +3006,15 @@ Date:   2018-10-11 07:29:59 +0000
     genesys: Add buttons to LiDE 60
 
     See merge request sane-project/backends!6
+
+commit a64f2096438970ca0c1b9a86f363a0f3ce8476ef
+Author: iosabi <iosabi@yahoo.com>
+Date:   2018-07-02 22:48:02 +0200
+
+    genesys: Add buttons to LiDE 60
+
+    Canon LiDE 60 has four buttons. These are already supported in the
+    GL841, we just needed to add them to the config. Tested it with scanbd.
 
 commit c980c73259de59b5af1785068b21c5417173e47e
 Author: Olaf Meeuwissen <paddy-hack@member.fsf.org>
@@ -3015,7 +3057,7 @@ Date:   2018-10-02 22:09:18 +0900
     utsushi.desc: SYnc with upstream
 
 commit 30579b0f54dc079549bdf8190e59477814852799
-Merge: 428dc565 de8ab756
+Merge: 428dc5657d4e de8ab7560898
 Author: Olaf Meeuwissen <paddy-hack@member.fsf.org>
 Date:   2018-10-02 11:27:47 +0000
 
@@ -3025,8 +3067,14 @@ Date:   2018-10-02 11:27:47 +0000
 
     See merge request sane-project/backends!24
 
+commit de8ab7560898550cbb6e3dcac655b46c52adaeaf
+Author: Michael Niewoehner <foss@mniewoehner.de>
+Date:   2018-09-20 19:26:43 +0200
+
+    add .po~ to gitignore
+
 commit 428dc5657d4e02d8eefabd0231e8117e73c17ccd
-Merge: 6bdb2486 37bbbed3
+Merge: 6bdb2486aeba 37bbbed3cbe8
 Author: Olaf Meeuwissen <paddy-hack@member.fsf.org>
 Date:   2018-10-01 21:17:45 +0000
 
@@ -3042,36 +3090,12 @@ Date:   2018-09-30 20:29:16 +0200
 
     check-po.awk: Fix minor typos
 
-commit de8ab7560898550cbb6e3dcac655b46c52adaeaf
-Author: Michael Niewoehner <foss@mniewoehner.de>
-Date:   2018-09-20 19:26:43 +0200
-
-    add .po~ to gitignore
-
 commit 6bdb2486aeba08a4d75964b325da5a75b14c68bf
-Merge: 04fc0ca8 cfbc7448
+Merge: 04fc0ca8bd7b cfbc744826f5
 Author: Rolf Bensch <rolf@bensch-online.de>
 Date:   2018-09-29 20:39:05 +0200
 
     Merge remote-tracking branch 'origin/master'
-
-commit 04fc0ca8bd7bd64a1d4fbee6790d4353a79275a4
-Author: Rolf Bensch <rolf@bensch-online.de>
-Date:   2018-09-29 20:37:59 +0200
-
-    pixma: TS6100 Series is working
-
-commit d62ba623b2118ca009a8491e40daedbbd643f267
-Author: Stanislav Yuzvinsky <yu-stas@yandex.ru>
-Date:   2018-09-22 01:00:06 +0300
-
-    Add new backend ricoh2
-
-commit 3437b6e48ed235d5fcec6a4625eddf6bb52b77df
-Author: Rolf Bensch <rolf@bensch-online.de>
-Date:   2018-09-22 12:54:05 +0200
-
-    pixma: i-SENSYS MF730 Series is working
 
 commit cfbc744826f5ca29936fd00ae05b385819ce9988
 Author: Alex Belkin <abc@telekom.ru>
@@ -3088,7 +3112,7 @@ Date:   2018-09-20 15:11:16 +0300
     xerox_mfp: Update xerox_mfp.desc with useful comments
 
 commit 9ee0d41f4a0529fc2dd17b976337f6902053acff
-Merge: 8bc33176 46e59346
+Merge: 8bc331761a88 46e59346ea4f
 Author: Olaf Meeuwissen <paddy-hack@member.fsf.org>
 Date:   2018-09-17 00:36:35 +0000
 
@@ -3104,8 +3128,20 @@ Date:   2018-09-16 22:57:27 +0300
 
     Add Hebrew translation by Elishai Shkury
 
+commit 04fc0ca8bd7bd64a1d4fbee6790d4353a79275a4
+Author: Rolf Bensch <rolf@bensch-online.de>
+Date:   2018-09-29 20:37:59 +0200
+
+    pixma: TS6100 Series is working
+
+commit 3437b6e48ed235d5fcec6a4625eddf6bb52b77df
+Author: Rolf Bensch <rolf@bensch-online.de>
+Date:   2018-09-22 12:54:05 +0200
+
+    pixma: i-SENSYS MF730 Series is working
+
 commit 8bc331761a88491c80524cd7d4b1ae64c1fccc92
-Merge: 0b811391 eceeaa80
+Merge: 0b811391a9b3 eceeaa80afcf
 Author: Olaf Meeuwissen <paddy-hack@member.fsf.org>
 Date:   2018-09-16 13:07:31 +0900
 
@@ -3116,36 +3152,6 @@ Author: Antoni Bella Pérez <antonibella5@yahoo.com>
 Date:   2018-09-15 22:28:48 +0200
 
     Add a new transtalion for Valencian Language
-
-commit 0b811391a9b3bacfe17f8760da16b96663ba647e
-Author: Rolf Bensch <rolf@bensch-online.de>
-Date:   2018-09-13 19:07:42 +0200
-
-    pixma: new scanner i-SENSYS MF410 Series
-
-commit e8b11ec2eb948d5b13bc05287ddd58aad24bc413
-Author: Rolf Bensch <rolf@bensch-online.de>
-Date:   2018-09-13 18:43:55 +0200
-
-    pixma: backend version 0.17.51
-
-commit 3b5223b16b043bba1c74a70df87047c889c7bc88
-Author: Rolf Bensch <rolf@bensch-online.de>
-Date:   2018-09-13 18:43:31 +0200
-
-    pixma: new scanner imageCLASS D570
-
-commit 01533e2e3e99e72ec29272a039ef6997360e99e6
-Author: Rolf Bensch <rolf@bensch-online.de>
-Date:   2018-09-12 22:09:06 +0200
-
-    pixma: backend version 0.17.50
-
-commit dbecf846d5c040eb0688eba2af21a168dbe29114
-Author: Rolf Bensch <rolf@bensch-online.de>
-Date:   2018-09-12 22:08:41 +0200
-
-    pixma: new scanner TS6100 Series
 
 commit 92dc8789be48297c4dca68b1150dfb0c83603c90
 Author: Antoni Bella Pérez <antonibella5@yahoo.com>
@@ -3159,22 +3165,6 @@ Date:   2018-09-10 00:43:34 +0200
 
     Fixes from Softcatalà.org mailing list
 
-commit 4c562f8142b0b67e8646975f07a3d0ebb588703f
-Author: Olaf Meeuwissen <paddy-hack@member.fsf.org>
-Date:   2018-09-09 09:54:38 +0900
-
-    Document that Ethernet works for the Canon MB5300 Series
-
-    See https://alioth-lists.debian.net/pipermail/sane-devel/2018-September/036346.html
-
-commit fd8aedea4c475f1c8c51c3efe28bc81495ece61c
-Author: Olaf Meeuwissen <paddy-hack@member.fsf.org>
-Date:   2018-09-08 20:15:15 +0900
-
-    List Canon MB5300 Series as supported
-
-    See https://alioth-lists.debian.net/pipermail/sane-devel/2018-September/036340.html
-
 commit f0f349b0ce2088dac9c8762959f9bf2f93313e9b
 Author: Antoni Bella Pérez <antonibella5@yahoo.com>
 Date:   2018-09-07 15:22:17 +0200
@@ -3187,37 +3177,11 @@ Date:   2018-09-07 14:52:27 +0200
 
     100% translated, whaiting mailing list fixes... ;-)
 
-commit 3ee997194a7026085b3c390289bfec89fb81e40c
-Merge: 2f944738 1484b475
-Author: Olaf Meeuwissen <paddy-hack@member.fsf.org>
-Date:   2018-09-06 12:30:34 +0000
-
-    Add support for Plustek OpticSlim 500+
-
-    See merge request sane-project/backends!4
-
-commit 1484b47582d20eab6a78a1f0461f5e90ceb7faa8
-Author: Mikhail Strizhov <mishastrij@mail.ru>
-Date:   2018-09-06 12:36:26 +0300
-
-    add support of Plustek OpticSlim 500+
-
 commit 210ea90b107337a79e4505c372124db4a6ad41b8
 Author: Antoni Bella Pérez <antonibella5@yahoo.com>
 Date:   2018-09-04 23:26:43 +0200
 
     More updates
-
-commit 2f944738803fbaf90a37e3960b06f565274c1174
-Merge: 1d58e23c 32d05417
-Author: Olaf Meeuwissen <paddy-hack@member.fsf.org>
-Date:   2018-09-04 12:24:52 +0000
-
-    Merge branch 'master' into 'master'
-
-    Update Ukrainian translation
-
-    See merge request sane-project/backends!14
 
 commit 7f551a79e33df168b5faaa73ea0bcb7d5b8f7269
 Author: Antoni Bella Pérez <antonibella5@yahoo.com>
@@ -3236,18 +3200,6 @@ Author: Antoni Bella Pérez <antonibella5@yahoo.com>
 Date:   2018-09-02 21:06:41 +0200
 
     Last fixes for initial translation
-
-commit 32d05417c898fad4985f3cb87b465826ec99fd60
-Author: Yuri Chornoivan <yurchor@ukr.net>
-Date:   2018-09-02 20:23:47 +0300
-
-    Update Ukrainian translation
-
-commit 1d58e23c91bce08693ae75ae18d66c938927b6b7
-Author: Olaf Meeuwissen <paddy-hack@member.fsf.org>
-Date:   2018-09-02 20:52:51 +0900
-
-    utsushi.desc: Sync with upstream
 
 commit 4a73b1cb0c0184cb7340fb398d39c63f649341cb
 Author: Antoni Bella Pérez <antonibella5@yahoo.com>
@@ -3279,6 +3231,102 @@ Date:   2018-08-28 00:52:26 +0200
 
     More updates for initial translation
 
+commit c187b6c36334789f9d71f1e74f89615725a9f068
+Author: Antoni Bella Pérez <antonibella5@yahoo.com>
+Date:   2018-08-27 02:05:11 +0200
+
+    Updates for initial translation
+
+commit a76b0b21543f38996fb6a516f7d8e25cb80d08c7
+Author: Antoni Bella Pérez <antonibella5@yahoo.com>
+Date:   2018-08-21 14:10:54 +0200
+
+    Add an initial translation
+
+commit 0b811391a9b3bacfe17f8760da16b96663ba647e
+Author: Rolf Bensch <rolf@bensch-online.de>
+Date:   2018-09-13 19:07:42 +0200
+
+    pixma: new scanner i-SENSYS MF410 Series
+
+commit e8b11ec2eb948d5b13bc05287ddd58aad24bc413
+Author: Rolf Bensch <rolf@bensch-online.de>
+Date:   2018-09-13 18:43:55 +0200
+
+    pixma: backend version 0.17.51
+
+commit 3b5223b16b043bba1c74a70df87047c889c7bc88
+Author: Rolf Bensch <rolf@bensch-online.de>
+Date:   2018-09-13 18:43:31 +0200
+
+    pixma: new scanner imageCLASS D570
+
+commit 01533e2e3e99e72ec29272a039ef6997360e99e6
+Author: Rolf Bensch <rolf@bensch-online.de>
+Date:   2018-09-12 22:09:06 +0200
+
+    pixma: backend version 0.17.50
+
+commit dbecf846d5c040eb0688eba2af21a168dbe29114
+Author: Rolf Bensch <rolf@bensch-online.de>
+Date:   2018-09-12 22:08:41 +0200
+
+    pixma: new scanner TS6100 Series
+
+commit 4c562f8142b0b67e8646975f07a3d0ebb588703f
+Author: Olaf Meeuwissen <paddy-hack@member.fsf.org>
+Date:   2018-09-09 09:54:38 +0900
+
+    Document that Ethernet works for the Canon MB5300 Series
+
+    See https://alioth-lists.debian.net/pipermail/sane-devel/2018-September/036346.html
+
+commit fd8aedea4c475f1c8c51c3efe28bc81495ece61c
+Author: Olaf Meeuwissen <paddy-hack@member.fsf.org>
+Date:   2018-09-08 20:15:15 +0900
+
+    List Canon MB5300 Series as supported
+
+    See https://alioth-lists.debian.net/pipermail/sane-devel/2018-September/036340.html
+
+commit 3ee997194a7026085b3c390289bfec89fb81e40c
+Merge: 2f944738803f 1484b47582d2
+Author: Olaf Meeuwissen <paddy-hack@member.fsf.org>
+Date:   2018-09-06 12:30:34 +0000
+
+    Add support for Plustek OpticSlim 500+
+
+    See merge request sane-project/backends!4
+
+commit 1484b47582d20eab6a78a1f0461f5e90ceb7faa8
+Author: Mikhail Strizhov <mishastrij@mail.ru>
+Date:   2018-09-06 12:36:26 +0300
+
+    add support of Plustek OpticSlim 500+
+
+commit 2f944738803fbaf90a37e3960b06f565274c1174
+Merge: 1d58e23c91bc 32d05417c898
+Author: Olaf Meeuwissen <paddy-hack@member.fsf.org>
+Date:   2018-09-04 12:24:52 +0000
+
+    Merge branch 'master' into 'master'
+
+    Update Ukrainian translation
+
+    See merge request sane-project/backends!14
+
+commit 32d05417c898fad4985f3cb87b465826ec99fd60
+Author: Yuri Chornoivan <yurchor@ukr.net>
+Date:   2018-09-02 20:23:47 +0300
+
+    Update Ukrainian translation
+
+commit 1d58e23c91bce08693ae75ae18d66c938927b6b7
+Author: Olaf Meeuwissen <paddy-hack@member.fsf.org>
+Date:   2018-09-02 20:52:51 +0900
+
+    utsushi.desc: Sync with upstream
+
 commit 5230430a572c078605cf9cd3894de2ebb80b1956
 Author: Rolf Bensch <rolf@bensch-online.de>
 Date:   2018-08-27 21:57:24 +0200
@@ -3291,29 +3339,8 @@ Date:   2018-08-27 21:56:48 +0200
 
     pixma: new scanner i-SENSYS MF731/733
 
-commit c187b6c36334789f9d71f1e74f89615725a9f068
-Author: Antoni Bella Pérez <antonibella5@yahoo.com>
-Date:   2018-08-27 02:05:11 +0200
-
-    Updates for initial translation
-
-commit d61a59ca01b638474b6a847bf26e6dfb9420e064
-Author: Manuel Argüelles <manuel.arguelles@smartmatic.com>
-Date:   2018-07-30 17:26:13 -0500
-
-    Add support for Canon DR-X10C scanner
-
-    Added initial support for DR-X10C SSM2 scanner with dropout color, hardware
-    deskew and hardware crop.
-
-commit a76b0b21543f38996fb6a516f7d8e25cb80d08c7
-Author: Antoni Bella Pérez <antonibella5@yahoo.com>
-Date:   2018-08-21 14:10:54 +0200
-
-    Add an initial translation
-
 commit 082cf4cdf3cad1f97f4d1a5c0ffb1ad2c69ab9df
-Merge: 1a2a8ee7 d6aace7d
+Merge: 1a2a8ee744ce d6aace7d5167
 Author: Olaf Meeuwissen <paddy-hack@member.fsf.org>
 Date:   2018-07-22 13:01:55 +0000
 
@@ -3322,24 +3349,6 @@ Date:   2018-07-22 13:01:55 +0000
     hp5590: Fix sanei_net.h include path.
 
     See merge request sane-project/backends!8
-
-commit 05400ad69b8047f0a2320a120519941fa99faf36
-Author: Povilas Kanapickas <povilas@radix.lt>
-Date:   2018-07-21 03:37:45 +0300
-
-    backend/genesys: Increase excessively low bright point on Lide 80 calib
-
-commit 92c40c44b9a6c7ce7a5cc865db1f4b61fb1bd3c0
-Author: Povilas Kanapickas <povilas@radix.lt>
-Date:   2018-07-21 03:37:44 +0300
-
-    backend/genesys_gl841: Reduce extra dark area offset for LIDE 80
-
-commit 065855e1da5c088e561580c26d96ad2b051685c4
-Author: Povilas Kanapickas <povilas@radix.lt>
-Date:   2018-07-21 03:37:46 +0300
-
-    backend/genesys_gl841: Disable LEDADD on Lide 80 since it's broken there
 
 commit d6aace7d5167b39d474f57c5671f0a400cad0bc0
 Author: Povilas Kanapickas <povilas@radix.lt>
@@ -3356,7 +3365,7 @@ Date:   2018-07-15 14:09:49 +0300
        Damiano Scaramuzza and Bernard Badr
 
 commit bfc63709a796704005642edfacf0b4bb92732597
-Merge: fc88e525 1649d5bf
+Merge: fc88e5251130 1649d5bfea36
 Author: Ilia Sotnikov <hostcc@gmail.com>
 Date:   2018-07-15 11:00:18 +0000
 
@@ -3371,15 +3380,6 @@ Author: Bernard B Badr <bb3138@live.de>
 Date:   2018-07-15 11:00:18 +0000
 
     HP5590: scanbd integration is ready.
-
-commit a64f2096438970ca0c1b9a86f363a0f3ce8476ef
-Author: iosabi <iosabi@yahoo.com>
-Date:   2018-07-02 22:48:02 +0200
-
-    genesys: Add buttons to LiDE 60
-
-    Canon LiDE 60 has four buttons. These are already supported in the
-    GL841, we just needed to add them to the config. Tested it with scanbd.
 
 commit fc88e5251130ef39a7e56930c3323aa1d8d7762d
 Author: Olaf Meeuwissen <paddy-hack@member.fsf.org>
@@ -3397,7 +3397,7 @@ Date:   2018-06-11 11:11:53 +0300
      * Use C-style comments instead of C++ ones
 
 commit 8c912284299d37dd32ea8e3216d16cada180928e
-Merge: 85efea28 b1da51f7
+Merge: 85efea28aeb1 b1da51f7fe04
 Author: Ilia Sotnikov <hostcc@gmail.com>
 Date:   2018-06-11 07:56:28 +0000
 
@@ -3450,7 +3450,7 @@ Date:   2018-05-16 21:29:14 +0200
     pixma: Canon MAXIFY MB2100 and MB2700 Series support 1200 dpi
 
 commit 6a7e4141eb53876511829b5bb87aae311d828402
-Merge: 9d315bc2 5e5183c8
+Merge: 9d315bc2f71c 5e5183c84efe
 Author: Rolf Bensch <rolf@bensch-online.de>
 Date:   2018-05-16 18:08:42 +0000
 
@@ -3496,7 +3496,7 @@ Date:   2018-05-12 20:55:16 +0200
     pixma: new scanners Canon Maxify MB2100 and MB2700 Series
 
 commit 8c340a34a49312a29f959e22286c3b83be9bf19b
-Merge: c6bfe88c d90f9054
+Merge: c6bfe88c31f3 d90f9054c6fd
 Author: Rolf Bensch <roben-guest@alioth.debian.org>
 Date:   2018-05-12 20:35:41 +0200
 
@@ -4670,17 +4670,11 @@ Date:   2017-05-26 23:36:52 +0200
     pixma_imageclass.c: reduce max. scan width to 216mm for particular scanners
 
 commit 2b0028b4af61761420fbff4459310b799bc13c7b
-Merge: 35dc4426 2bba2739
+Merge: 35dc4426d2da 2bba2739937b
 Author: Rolf Bensch <roben-guest@alioth.debian.org>
 Date:   2017-05-23 21:16:52 +0200
 
     Merge branch 'pixma/mf240_adf_only_300dpi'
-
-commit 35dc4426d2dad67167af40e6c136feb229b4f3ac
-Author: m. allan noah <kitno455@gmail.com>
-Date:   2017-05-22 21:08:33 -0400
-
-    Open repo for 1.0.28 development
 
 commit 2bba2739937ba26059701eec1ae5e4372ff9de2a
 Author: Rolf Bensch <roben-guest@alioth.debian.org>
@@ -4693,3 +4687,9 @@ Author: Rolf Bensch <roben-guest@alioth.debian.org>
 Date:   2017-05-19 11:26:00 +0200
 
     pixma_imageclass.c: MF240 Series supports only 300dpi for adf scans
+
+commit 35dc4426d2dad67167af40e6c136feb229b4f3ac
+Author: m. allan noah <kitno455@gmail.com>
+Date:   2017-05-22 21:08:33 -0400
+
+    Open repo for 1.0.28 development

@@ -30,6 +30,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <arpa/inet.h>
 
 #include <avahi-client/lookup.h>
 #include <avahi-common/error.h>
@@ -65,45 +66,53 @@ resolve_callback(AvahiServiceResolver *r, AVAHI_GCC_UNUSED AvahiIfIndex interfac
                             AvahiLookupResultFlags __sane_unused__ flags,
                             void __sane_unused__ *userdata)
 {
-    char a[(AVAHI_ADDRESS_STR_MAX + 2)] = { 0 };
+    char a[(AVAHI_ADDRESS_STR_MAX + 10)] = { 0 };
     char *t;
     const char *is;
     const char *uuid;
     AvahiStringList   *s;
     assert(r);
     switch (event) {
-    case AVAHI_RESOLVER_FAILURE:
-        break;
-    case AVAHI_RESOLVER_FOUND:
-        if (protocol == AVAHI_PROTO_INET6) {
-            char b[AVAHI_ADDRESS_STR_MAX] = { 0 };
-            avahi_address_snprint(b, sizeof(b), address);
-	    snprintf(a, sizeof(a), "[%s]", b);
-	}
-	else
-            avahi_address_snprint(a, sizeof(a), address);
-        t = avahi_string_list_to_string(txt);
-        if (strstr(t, "\"rs=eSCL\"") || strstr(t, "\"rs=/eSCL\"")) {
-	    char ip_add[PATH_MAX] = {0};
-	    s = avahi_string_list_find(txt, "is");
-	    if (s && s->size > 3)
-	       is = (const char*)s->text + 3;
-	    else
-	       is = (const char*)NULL;
-	    s = avahi_string_list_find(txt, "uuid");
-	    if (s && s->size > 5)
-	       uuid = (const char*)s->text + 5;
-	    else
-	       uuid = (const char*)NULL;
-            DBG (10, "resolve_callback [%s]\n", a);
-            if (strstr(a, "127.0.0.1") != NULL) {
-               snprintf(ip_add, sizeof(ip_add), "%s", "localhost");
-               DBG (10,"resolve_callback fix redirect [localhost]\n");
-            }
+        case AVAHI_RESOLVER_FAILURE:
+           break;
+        case AVAHI_RESOLVER_FOUND:
+        {
+	    char *psz_addr = ((void*)0);
+            char b[128] = { 0 };
+	    avahi_address_snprint(b, (sizeof(b)/sizeof(b[0]))-1, address);
+#ifdef ENABLE_IPV6
+            if (protocol == AVAHI_PROTO_INET6 && strchr(b, ':'))
+            {
+		if ( asprintf( &psz_addr, "[%s]", b ) == -1 )
+		   break;
+	    }
             else
-               snprintf(ip_add, sizeof(ip_add), "%s", a);
-            escl_device_add(port, name, ip_add, is, uuid, (char*)type);
-        }
+#endif
+	    {
+		if ( asprintf( &psz_addr, "%s", b ) == -1 )
+		   break;
+	    }
+            t = avahi_string_list_to_string(txt);
+            if (strstr(t, "\"rs=eSCL\"") || strstr(t, "\"rs=/eSCL\"")) {
+	        s = avahi_string_list_find(txt, "is");
+	        if (s && s->size > 3)
+	            is = (const char*)s->text + 3;
+	        else
+	            is = (const char*)NULL;
+	        s = avahi_string_list_find(txt, "uuid");
+	        if (s && s->size > 5)
+	            uuid = (const char*)s->text + 5;
+	        else
+	            uuid = (const char*)NULL;
+                DBG (10, "resolve_callback [%s]\n", a);
+                if (strstr(psz_addr, "127.0.0.1") != NULL) {
+                    escl_device_add(port, name, "localhost", is, uuid, (char*)type);
+                    DBG (10,"resolve_callback fix redirect [localhost]\n");
+                }
+                else
+                    escl_device_add(port, name, psz_addr, is, uuid, (char*)type);
+            }
+	}
     }
 }
 

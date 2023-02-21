@@ -19,8 +19,8 @@
                                   ;               :meta, :api
 
 :mfg "Fujitsu"  ; name a manufacturer
-:url "http://www.fcpa.fujitsu.com/products/scanners/"
 :url "http://www.fujitsu.com/"
+:url "https://fujitsuscanners.com/"
 
 :model "ScanPartner 15C"                  ; name models for above-specified mfg.
 :interface "SCSI"

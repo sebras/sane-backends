@@ -131,8 +131,6 @@ static PortRec port[] =
 
 extern int setuid (uid_t);
 
-static inline int pio_outb (const Port port, u_char val, u_long addr);
-static inline int pio_inb (const Port port, u_char * val, u_long addr);
 static inline int pio_wait (const Port port, u_char val, u_char mask);
 static inline void pio_ctrl (const Port port, u_char val);
 static inline void pio_delay (const Port port);
@@ -141,38 +139,6 @@ static void pio_reset (const Port port);
 static int pio_write (const Port port, const u_char * buf, int n);
 static int pio_read (const Port port, u_char * buf, int n);
 static int pio_open (const char *dev, SANE_Status * status);
-
-static inline int
-pio_outb (const Port port, u_char val, u_long addr)
-{
-
-  if (-1 == port->fd)
-    sanei_outb (addr, val);
-  else
-    {
-      if (addr != (u_long)lseek (port->fd, addr, SEEK_SET))
-	return -1;
-      if (1 != write (port->fd, &val, 1))
-	return -1;
-    }
-  return 0;
-}
-
-static inline int
-pio_inb (const Port port, u_char * val, u_long addr)
-{
-
-  if (-1 == port->fd)
-    *val = sanei_inb (addr);
-  else
-    {
-      if (addr != (u_long)lseek (port->fd, addr, SEEK_SET))
-	return -1;
-      if (1 != read (port->fd, val, 1))
-	return -1;
-    }
-  return 0;
-}
 
 static inline int
 pio_wait (const Port port, u_char val, u_char mask)

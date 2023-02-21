@@ -483,7 +483,7 @@ void
 CircBufferInit (int iHandle, TDataPipe * p, int iBytesPerLine,
 		int bpp, int iMisAlignment, int blksize, int iTransferSize)
 {
-  iHandle = iHandle; /* to avoid compilation warning */
+  (void) iHandle; /* to avoid compilation warning */
   p->buffersize = max (BUFFER_SIZE, 3 * blksize);
 
   if (p->buffer)
@@ -746,7 +746,7 @@ HP5400_SANE_STATIC
 int
 hp5400_test_scan_response (struct ScanResponse *resp, struct ScanRequest *req)
 {
-  req = req; /* to avoid compilation warning */
+  (void) req; /* to avoid compilation warning */
   HP5400_DBG (DBG_MSG, "Scan response:\n");
   HP5400_DBG (DBG_MSG, "  transfersize=%d   htonl-> %d\n", resp->transfersize,
        htonl (resp->transfersize));
@@ -828,7 +828,7 @@ DoScan (int iHandle, struct ScanRequest *req, const char *filename, int code,
 /*  int bpp, planes; */
   int i;
 
-  code = code; /*to avoid compilation warning*/
+  (void) code; /*to avoid compilation warning*/
 
   if (res == NULL)
     res = &res_temp;
@@ -1011,7 +1011,7 @@ hp5400_scan (int iHandle, TScanParams * params, THWParams * pHWParams,
   struct ScanResponse res;
   int result;
 
-  pHWParams = pHWParams; /*to avoid compilation warning*/
+  (void) pHWParams; /*to avoid compilation warning*/
 
   HP5400_DBG (DBG_MSG, "\n");
   HP5400_DBG (DBG_MSG, "Scanning :\n");

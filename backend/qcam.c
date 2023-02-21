@@ -1444,7 +1444,7 @@ sane_init (SANE_Int * version_code, SANE_Auth_Callback authorize)
   char dev_name[PATH_MAX], *str;
   size_t len;
   FILE *fp;
-  authorize = authorize;	/* silence compilation warnings */
+  (void) authorize;		/* silence compilation warnings */
 
   DBG_INIT ();
 
@@ -1511,7 +1511,7 @@ sane_get_devices (const SANE_Device *** device_list, SANE_Bool local_only)
 
   DBG (5, "sane_get_devices: enter\n");
 
-  local_only = local_only;	/* silence compilation warnings */
+  (void) local_only;		/* silence compilation warnings */
 
   if (devlist)
     free (devlist);
@@ -2119,7 +2119,7 @@ sane_read (SANE_Handle handle, SANE_Byte * buf, SANE_Int max_len,
     len = s->bytes_per_frame - s->num_bytes;
 
   DBG (8, "read(buf=%p,num_bytes=%ld,max_len=%d,len=%ld)\n",
-       buf, (long) s->num_bytes, max_len, (long) len);
+       (void *) buf, (long) s->num_bytes, max_len, (long) len);
 
   nread = read (s->read_fd, buf, len);
   if (nread <= 0)

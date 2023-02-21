@@ -827,7 +827,7 @@ typedef struct Microtek2_Info {
     SANE_Byte nlens;
     SANE_Byte nwindows;
     SANE_Byte shtrnsferequ;
-#define MI_WHITE_SHADING_ONLY(x)       ((x) & 0x20) == 0
+#define MI_WHITE_SHADING_ONLY(x)       (((x) & 0x20) == 0)
 #define MI_HAS_SCNBTTN                 SANE_TRUE
     SANE_Bool scnbuttn;
 #define MI_HAS_PIPOBUF                 SANE_TRUE

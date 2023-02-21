@@ -439,8 +439,8 @@ st400_sense_handler( int fd, SANE_Byte *result, void *arg )
 	/* ST400_Device *dev = arg; */
 	SANE_Status status;
 
-	fd = fd;
-	arg = arg; /* silence compilation warnings */
+	(void) fd;
+	(void) arg; /* silence compilation warnings */
 
 	switch( result[0] & 0x0f ) {
 		case 0x0:
@@ -563,7 +563,7 @@ st400_config_get_arg(char **optP, unsigned long *argP, size_t linenum)
 {
 	int n;
 
-	linenum = linenum; /* silence compilation warnings */
+	(void) linenum; /* silence compilation warnings */
 
 	if( sscanf(*optP, "%lu%n", argP, &n) == 1 ) {
 		*optP += n;
@@ -1221,7 +1221,7 @@ sane_read( SANE_Handle handle, SANE_Byte *buf, SANE_Int maxlen, SANE_Int *lenP )
 	size_t r, i;
 	SANE_Byte val;
 
-	DBG(DCODE, "sane_read(%p, %p, %d, %p)\n", handle, buf, (int)maxlen, (void *) lenP);
+	DBG(DCODE, "sane_read(%p, %p, %d, %p)\n", handle, (void *) buf, (int) maxlen, (void *) lenP);
 
 	*lenP = 0;
 	if( !dev->status.scanning )

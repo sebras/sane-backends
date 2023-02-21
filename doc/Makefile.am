@@ -95,7 +95,8 @@ MAN2HTML = nroff -c -man |\
 	  sed 's,<BODY>,<BODY BGCOLOR=\#FFFFFF TEXT=\#000000><H1 ALIGN=CENTER><IMG SRC="/images/sane.png" HEIGHT=117 WIDTH=346></H1>,'
 
 %.1 %.5 %.7 %.8: %.man
-	@echo "Generating manpage $@...";
+	$(AM_V_GEN)
+	@if $(AM_V_P); then echo "Generating manpage $@..."; fi
 	@sed -e 's|@DATADIR@|$(datadir)|g' \
 	  -e 's|@CONFIGDIR@|$(configdir)|g' \
 	  -e 's|@DOCDIR@|$(docdir)|g' \
@@ -124,8 +125,8 @@ BEDOCS += mustek/mustek.CHANGES
 BEDOCS += mustek_usb/mustek_usb.CHANGES mustek_usb/mustek_usb.TODO
 BEDOCS += mustek_usb2/mustek_usb2.CHANGES mustek_usb2/mustek_usb2.TODO
 BEDOCS += niash/niash.TODO
-BEDOCS += plustek/FAQ plustek/MakeModule.sh plustek/Makefile.kernel24 \
-  plustek/Makefile.kernel26 plustek/Plustek-PARPORT-TODO.txt \
+BEDOCS += plustek/FAQ \
+  plustek/Plustek-PARPORT-TODO.txt \
   plustek/Plustek-PARPORT.changes plustek/Plustek-PARPORT.txt \
   plustek/Plustek-USB-TODO.txt plustek/Plustek-USB.changes \
   plustek/Plustek-USB.txt
@@ -186,9 +187,10 @@ DESC_FILES = descriptions/abaton.desc descriptions/agfafocus.desc \
   descriptions/umax1220u.desc descriptions/umax.desc \
   descriptions/umax_pp.desc  descriptions/unsupported.desc \
   descriptions/v4l.desc descriptions/xerox_mfp.desc
-EXTRA_DIST += $(DESC_FILES) descriptions/template.desc.
+EXTRA_DIST += $(DESC_FILES) descriptions/template.desc
 
-DESC_EXT_FILES = descriptions-external/brother2.desc \
+DESC_EXT_FILES = descriptions-external/ambir.desc \
+  descriptions-external/brother2.desc \
   descriptions-external/brother.desc \
   descriptions-external/brother-mfc4600.desc \
   descriptions-external/cs3200f.desc \
@@ -199,6 +201,7 @@ DESC_EXT_FILES = descriptions-external/brother2.desc \
   descriptions-external/hpaio.desc \
   descriptions-external/hpoj.desc \
   descriptions-external/kodak-twain.desc \
+  descriptions-external/kyocera.desc \
   descriptions-external/lhii.desc \
   descriptions-external/mustek_a3p1.desc \
   descriptions-external/panamfs.desc \
@@ -210,7 +213,7 @@ DESC_EXT_FILES = descriptions-external/brother2.desc \
   descriptions-external/utsushi.desc \
   descriptions-external/v4l2.desc \
   descriptions-external/viceo.desc
-EXTRA_DIST += $(DESC_EXT_FILES) descriptions-external/template.desc.
+EXTRA_DIST += $(DESC_EXT_FILES) descriptions-external/template.desc
 
 install-data-local: install-beman5
 

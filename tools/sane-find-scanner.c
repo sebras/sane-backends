@@ -89,9 +89,12 @@ scsiblk;
 #define set_inquiry_return_size(icb,val)	icb[0x04]=val
 #define IN_periph_devtype_cpu			0x03
 #define IN_periph_devtype_scanner		0x06
-#define get_scsi_inquiry_vendor(in, buf)	strncpy(buf, in + 0x08, 0x08)
-#define get_scsi_inquiry_product(in, buf)	strncpy(buf, in + 0x10, 0x010)
-#define get_scsi_inquiry_version(in, buf)	strncpy(buf, in + 0x20, 0x04)
+#define get_scsi_inquiry_vendor(in, buf)	snprintf(buf, 0x08 + 1, "%.*s", \
+								0x08, in + 0x08)
+#define get_scsi_inquiry_product(in, buf)	snprintf(buf, 0x10 + 1, "%.*s", \
+								0x10, in + 0x10)
+#define get_scsi_inquiry_version(in, buf)	snprintf(buf, 0x04 + 1, "%.*s", \
+								0x04, in + 0x20)
 #define get_scsi_inquiry_periph_devtype(in)	(in[0] & 0x1f)
 #define get_scsi_inquiry_additional_length(in)	in[0x04]
 #define set_scsi_inquiry_length(out,n)		out[0x04]=n-5

@@ -716,7 +716,6 @@ That is probably if the scanner disconnected the network connection
 			/* pollreply is -ve */
 			DBG(1, "net poll error\n");
 		*status = SANE_STATUS_IO_ERROR;
-		return read;
 	}
 	else if((fds[0].revents & POLLIN) && !(fds[0].revents & (POLLERR | POLLHUP | POLLNVAL))) {
 		while (read < wanted) {
@@ -733,12 +732,11 @@ That is probably if the scanner disconnected the network connection
 			*status = SANE_STATUS_IO_ERROR;
 
 		DBG(32, "net read %lu bytes:%x,%x,%x,%x,%x,%x,%x,%x\n",(unsigned long)read,buf[0],buf[1],buf[2],buf[3],buf[4],buf[5],buf[6],buf[7]);
-
-		return read;
 	}
 	else
 		DBG(1, "Unknown problem with poll\n");
-		return read;
+
+	return read;
 }
 
 
@@ -2046,7 +2044,7 @@ open_scanner(KodakAio_Scanner *s)
 		unsigned int model = 0;
 		if (!split_scanner_name (s->hw->sane.name, IP, &model))
 			return SANE_STATUS_INVAL;
-			DBG(10, "split_scanner_name OK model=0x%x\n",model);
+		DBG(10, "split_scanner_name OK model=0x%x\n",model);
 /* normal with IP */
 		status = sanei_tcp_open(IP, 9101, &s->fd);  /* (host,port,file pointer) */
 

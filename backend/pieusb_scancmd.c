@@ -205,7 +205,8 @@ sanei_pieusb_cmd_test_unit_ready(SANE_Int device_number, struct Pieusb_Command_S
 
     status->pieusb_status = sanei_pieusb_command (device_number, command, NULL, 0);
 
-    DBG (DBG_info_scan, "sanei_pieusb_cmd_test_unit_ready() return status = %s\n", sane_strstatus(status->pieusb_status));
+    DBG (DBG_info_scan, "sanei_pieusb_cmd_test_unit_ready() return status = %s\n",
+         sane_strstatus (sanei_pieusb_convert_status (status->pieusb_status)));
 }
 
 /**

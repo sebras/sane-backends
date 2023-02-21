@@ -52,4 +52,4 @@ EXTRA_LOCALE_CATEGORIES =
 #  Selected files in POTFILES.in are generated.  Make sure they are
 #  available when needed.
 $(top_srcdir)/backend/pixma/pixma_sane_options.c:
-	cd ../backend; make pixma/pixma_sane_options.c
+	$(MAKE) -C ../backend pixma/pixma_sane_options.c

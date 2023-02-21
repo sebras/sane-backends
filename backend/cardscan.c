@@ -271,7 +271,7 @@ static struct scanner *scanner_devList = NULL;
 SANE_Status
 sane_init (SANE_Int * version_code, SANE_Auth_Callback authorize)
 {
-    authorize = authorize;        /* get rid of compiler warning */
+    (void) authorize;           /* get rid of compiler warning */
 
     DBG_INIT ();
     DBG (10, "sane_init: start\n");
@@ -323,7 +323,7 @@ sane_get_devices (const SANE_Device *** device_list, SANE_Bool local_only)
     int num_devices=0;
     int i=0;
 
-    local_only = local_only;        /* get rid of compiler warning */
+    (void) local_only;          /* get rid of compiler warning */
 
     DBG (10, "sane_get_devices: start\n");
 

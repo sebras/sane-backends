@@ -26,13 +26,12 @@
 :model "MFC-J985DW"
 :interface "Ethernet WiFi"
 :status :good
-:comment "All resolutions supported, Flatted and ADF supported."
+:comment "All resolutions supported, Flatbed and ADF supported."
 
 :model "MFC-J1300DW"
 :interface "Ethernet WiFi"
-:interface "WiFi"
 :status :good
-:comment "All resolutions supported, Flatted and ADF supported."
+:comment "All resolutions supported, Flatbed and ADF supported."
 
 :mfg "Canon"
 :url "https://www.canon-europe.com/support/"
@@ -40,7 +39,7 @@
 :model "IR C3520"
 :interface "WiFi"
 :status :good
-:comment "All resolutions supported, Flatted and ADF supported."
+:comment "All resolutions supported, Flatbed and ADF supported."
 
 :model "PIXMA MG5765"
 :interface "WiFi"
@@ -58,39 +57,39 @@
 :comment "Testers needed!"
 
 :model "PIXMA TR4520 Series"
-:interface "Wifi"
+:interface "WiFi"
 :status :good
-:comment "All resolutions supported, Flatted and ADF supported."
+:comment "All resolutions supported, Flatbed and ADF supported."
 
 :model "PIXMA TR4540 Series"
-:interface "Wifi"
+:interface "WiFi"
 :status :good
-:comment "All resolutions supported, Flatted and ADF supported."
+:comment "All resolutions supported, Flatbed and ADF supported."
 
 :model "PIXMA TR4550 Series"
-:interface "Wifi"
+:interface "WiFi"
 :status :good
-:comment "All resolutions supported, Flatted and ADF supported."
+:comment "All resolutions supported, Flatbed and ADF supported."
 
 :model "PIXMA TR4551"
-:interface "Wifi"
+:interface "WiFi"
 :status :good
-:comment "All resolutions supported, Flatted and ADF supported."
+:comment "All resolutions supported, Flatbed and ADF supported."
 
 :model "PIXMA TR7500 Series"
 :interface "WiFi"
 :status :good
-:comment "All resolutions supported, Flatted and ADF supported."
+:comment "All resolutions supported, Flatbed and ADF supported."
 
 :model "PIXMA TR8500 Series"
 :interface "Ethernet WiFi"
 :status :good
-:comment "All resolutions supported, Flatted and ADF supported."
+:comment "All resolutions supported, Flatbed and ADF supported."
 
 :model "PIXMA TR8520"
 :interface "Ethernet WiFi"
 :status :good
-:comment "All resolutions supported, Flatted and ADF supported."
+:comment "All resolutions supported, Flatbed and ADF supported."
 
 :model "PIXMA TS3100 Series"
 :interface "WiFi"
@@ -132,6 +131,21 @@
 :status :good
 :comment "All resolutions supported."
 
+:model "PIXMA TS3450"
+:interface "WiFi"
+:status :good
+:comment "All resolutions supported."
+
+:model "PIXMA TS3451"
+:interface "WiFi"
+:status :good
+:comment "All resolutions supported."
+
+:model "PIXMA TS3452"
+:interface "WiFi"
+:status :good
+:comment "All resolutions supported."
+
 :model "PIXMA TS5350 Series"
 :interface "WiFi"
 :status :good
@@ -143,12 +157,12 @@
 :comment "All resolutions supported."
 
 :model "PIXMA TS6150 Series"
-:interface "Wifi"
+:interface "WiFi"
 :status :untested
 :comment "Testers needed!"
 
 :model "PIXMA TS8050 Series"
-:interface "Wifi"
+:interface "WiFi"
 :status :untested
 :comment "Testers needed!"
 
@@ -158,7 +172,7 @@
 :comment "All resolutions supported."
 
 :model "PIXMA TS9100 Series"
-:interface "Wifi"
+:interface "WiFi"
 :status :untested
 :comment "Testers needed!"
 
@@ -168,22 +182,27 @@
 :model "ET-2750"
 :interface "WiFi"
 :status :good
-:comment "All resolutions supported, Flatted only supported."
+:comment "All resolutions supported, Flatbed only supported."
 
 :model "ET-3750"
 :interface "WiFi"
 :status :good
-:comment "All resolutions supported, Flatted and ADF supported."
+:comment "All resolutions supported, Flatbed and ADF supported."
 
 :model "ET-4750"
 :interface "WiFi"
 :status :good
-:comment "All resolutions supported, Flatted and ADF supported."
+:comment "All resolutions supported, Flatbed and ADF supported."
+
+:model "EcoTank L3160"
+:interface "WiFi"
+:status :good
+:comment "All resolutions supported."
 
 :model "XP-6100"
 :interface "WiFi"
 :status :good
-:comment "All resolutions supported, Flatted only supported."
+:comment "All resolutions supported, Flatbed only supported."
 
 :mfg "HP"
 :url "https://support.hp.com/us-en/drivers/printers"
@@ -231,7 +250,7 @@
 :model "OfficeJet Pro 8610"
 :interface "Ethernet WiFi"
 :status :good
-:comment "All resolutions supported, Flatted and ADF supported."
+:comment "All resolutions supported, Flatbed and ADF supported."
 
 :mfg "Ricoh"
 :url "http://support.ricoh.com/bb/html/dr_ut_e/re2/"
@@ -247,4 +266,4 @@
 :model "VERSALINK C7220"
 :interface "WiFi"
 :status :good
-:comment "All resolutions supported, Flatted and ADF supported."
+:comment "All resolutions supported, Flatbed and ADF supported."

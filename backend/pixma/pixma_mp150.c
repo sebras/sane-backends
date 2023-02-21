@@ -332,6 +332,15 @@
 #define GX7000_PID 0x18A8
 #define TS5400_PID 0x18D8
 
+/* 2022 new device (untested) */
+#define TS2400_PID 0x1108
+#define TS2600_PID 0x1107
+
+#define TS8630_PID 0x18F8
+#define XK110_PID 0x18F9
+#define GX3000_PID 0x18F1
+#define GX4000_PID 0x18F2
+
 /* Generation 4 XML messages that encapsulates the Pixma protocol messages */
 #define XML_START_1   \
 "<?xml version=\"1.0\" encoding=\"utf-8\" ?>\
@@ -709,7 +718,7 @@ send_scan_param (pixma_t * s)
 
   if (mp->generation <= 2)
     {
-      PDBG (pixma_dbg (4, "*send_scan_param gen. 1-2 ***** Setting: xdpi=%hi ydpi=%hi  x=%i y=%i  wx=%i ***** \n",
+      PDBG (pixma_dbg (4, "*send_scan_param gen. 1-2 ***** Setting: xdpi=%u ydpi=%u  x=%i y=%i  wx=%i ***** \n",
                            xdpi, ydpi, x-xs, y, wx));
       data = pixma_newcmd (&mp->cb, cmd_scan_param, 0x30, 0);
       pixma_set_be16 (xdpi | 0x8000, data + 0x04);
@@ -731,7 +740,7 @@ send_scan_param (pixma_t * s)
     }
   else
     {
-      PDBG (pixma_dbg (4, "*send_scan_param gen. 3+ ***** Setting: xdpi=%hi ydpi=%hi x=%i xs=%i y=%i  wx=%i h=%i ***** \n",
+      PDBG (pixma_dbg (4, "*send_scan_param gen. 3+ ***** Setting: xdpi=%u ydpi=%u x=%i xs=%i y=%i  wx=%i h=%i ***** \n",
                            xdpi, ydpi, x, xs, y, wx, h));
       data = pixma_newcmd (&mp->cb, cmd_scan_param_3, 0x38, 0);
       data[0x00] = (is_scanning_from_adf (s)) ? 0x02 : 0x01;
@@ -945,6 +954,7 @@ handle_interrupt (pixma_t * s, int timeout)
    * poll event with 'scanimage -A' */
   if (s->cfg->pid == MG5300_PID
       || s->cfg->pid == MG5400_PID
+      || s->cfg->pid == MG5700_PID
       || s->cfg->pid == MG6200_PID
       || s->cfg->pid == MG6300_PID
       || s->cfg->pid == MX340_PID
@@ -1658,7 +1668,7 @@ mp150_finish_scan (pixma_t * s)
       else
         PDBG (pixma_dbg (4, "*mp150_finish_scan***** wait for next page from ADF  *****\n"));
 
-        mp->state = state_idle;
+      mp->state = state_idle;
       /* fall through */
     case state_idle:
       break;
@@ -1923,9 +1933,9 @@ const pixma_config_t pixma_mp150_devices[] = {
   DEVICE ("Canon PIXMA TS8330 Series", "TS8330", TS8330_PID, 0, 1200, 0, 0, 638, 877, PIXMA_CAP_CIS),
   DEVICE ("Canon PIXMA XK60 Series", "XK60", XK60_PID, 0, 1200, 0, 0, 638, 877, PIXMA_CAP_CIS),
   DEVICE ("Canon PIXMA TS6330 Series", "TS6330", TS6330_PID, 0, 1200, 0, 0, 638, 877, PIXMA_CAP_CIS),
-  DEVICE ("Canon PIXMA TS3300 Series", "TS3300", TS3300_PID, 0, 1200, 0, 0, 638, 877, PIXMA_CAP_CIS),
+  DEVICE ("Canon PIXMA TS3300 Series", "TS3300", TS3300_PID, 0, 600, 0, 0, 638, 877, PIXMA_CAP_CIS),
   DEVICE ("Canon PIXMA E3300 Series", "E3300", E3300_PID, 0, 600, 0, 0, 638, 877, PIXMA_CAP_CIS),
-  DEVICE ("Canon PIXMA TS3400 Series", "TS3400", TS3400_PID, 0, 1200, 0, 0, 638, 877, PIXMA_CAP_CIS),
+  DEVICE ("Canon PIXMA TS3400 Series", "TS3400", TS3400_PID, 0, 600, 0, 0, 638, 877, PIXMA_CAP_CIS),
   DEVICE ("Canon PIXMA E3400 Series", "E3400", E3400_PID, 0, 600, 0, 0, 638, 877, PIXMA_CAP_CIS | PIXMA_CAP_ADF),
   DEVICE ("Canon PIXMA TR7000 Series", "TR7000", TR7000_PID, 0, 1200, 0, 0, 638, 877, PIXMA_CAP_CIS | PIXMA_CAP_ADF),
   DEVICE ("Canon PIXMA G2020", "G2020", G2020_PID, 0, 600, 0, 0, 638, 877, PIXMA_CAP_CIS),
@@ -1940,11 +1950,11 @@ const pixma_config_t pixma_mp150_devices[] = {
   DEVICE ("Canon PIXMA TR8630 Series", "TR8630", TR8630_PID, 0, 1200, 0, 0, 638, 877, PIXMA_CAP_CIS | PIXMA_CAP_ADF),
   DEVICE ("Canon PIXMA TS6400 Series", "TS6400", TS6400_PID, 0, 1200, 0, 0, 638, 877, PIXMA_CAP_CIS),
   DEVICE ("Canon PIXMA TS7400 Series", "TS7400", TS7400_PID, 0, 1200, 0, 0, 638, 877, PIXMA_CAP_CIS),
-  DEVICE ("Canon PIXMA G7080 Series", "G7080", G7080_PID, 0, 600, 0, 0, 638, 877, PIXMA_CAP_CIS),
-  DEVICE ("Canon PIXMA GM4080", "GM4080", GM4080_PID, 0, 600, 0, 0, 638, 877, PIXMA_CAP_CIS | PIXMA_CAP_ADF),
+  DEVICE ("Canon PIXMA G7080 Series", "G7080", G7080_PID, 0, 1200, 0, 0, 638, 877, PIXMA_CAP_CIS),
+  DEVICE ("Canon PIXMA GM4080", "GM4080", GM4080_PID, 0, 1200, 0, 0, 638, 877, PIXMA_CAP_CIS | PIXMA_CAP_ADF),
   DEVICE ("Canon PIXMA TS5350i Series", "TS5350i", TS5350i_PID, 0, 1200, 0, 0, 638, 877, PIXMA_CAP_CIS),
   DEVICE ("Canon PIXMA G600", "G600", G600_PID, 0, 600, 0, 0, 638, 877, PIXMA_CAP_CIS),
-  DEVICE ("Canon PIXMA TS3500 Series", "TS3500", TS3500_PID, 0, 1200, 0, 0, 638, 877, PIXMA_CAP_CIS),
+  DEVICE ("Canon PIXMA TS3500 Series", "TS3500", TS3500_PID, 0, 600, 0, 0, 638, 877, PIXMA_CAP_CIS),
   /* ToDo: max. scan resolution = 600x1200dpi */
   DEVICE ("Canon PIXMA TR4600 Series", "TR4600", TR4600_PID, 0, 600, 0, 0, 638, 877, PIXMA_CAP_CIS | PIXMA_CAP_ADF | PIXMA_CAP_ADF_JPEG),
   /* ToDo: max. scan resolution = 600x1200dpi */
@@ -1958,6 +1968,12 @@ const pixma_config_t pixma_mp150_devices[] = {
   DEVICE ("Canon PIXMA GX6000 Series", "GX6000", GX6000_PID, 0, 1200, 0, 0, 638, 877, PIXMA_CAP_CIS | PIXMA_CAP_ADF),
   DEVICE ("Canon PIXMA GX7000 Series", "GX7000", GX7000_PID, 0, 1200, 0, 0, 638, 877, PIXMA_CAP_CIS | PIXMA_CAP_ADF),
   DEVICE ("Canon PIXMA TS5400 Series", "TS5400", TS5400_PID, 0, 1200, 0, 0, 638, 877, PIXMA_CAP_CIS),
+  DEVICE ("Canon PIXMA TS2400 Series", "TS2400", TS2400_PID, 0, 600, 0, 0, 638, 877, PIXMA_CAP_CIS),
+  DEVICE ("Canon PIXMA TS2600 Series", "TS2600", TS2600_PID, 0, 600, 0, 0, 638, 877, PIXMA_CAP_CIS),
+  DEVICE ("Canon PIXMA TS8630 Series", "TS8630", TS8630_PID, 0, 1200, 0, 0, 638, 877, PIXMA_CAP_CIS),
+  DEVICE ("Canon PIXUS XK110 Series", "XK110", XK110_PID, 0, 1200, 0, 0, 638, 877, PIXMA_CAP_CIS),
+  DEVICE ("Canon PIXMA GX3000 Series", "GX3000", GX3000_PID, 0, 1200, 0, 0, 638, 877, PIXMA_CAP_CIS | PIXMA_CAP_ADF),
+  DEVICE ("Canon PIXMA GX4000 Series", "GX4000", GX4000_PID, 0, 1200, 0, 0, 638, 877, PIXMA_CAP_CIS | PIXMA_CAP_ADF),
 
   END_OF_DEVICE_LIST
 };

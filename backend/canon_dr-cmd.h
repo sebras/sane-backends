@@ -131,9 +131,12 @@ putnbyte (unsigned char *pnt, unsigned int value, unsigned int nbytes)
 #define IN_periph_devtype_unknown             0x1f
 #define get_IN_response_format(in)         getbitfield(in + 0x03, 0x07, 0)
 #define IN_recognized                         0x02
-#define get_IN_vendor(in, buf)            strncpy(buf, (char *)in + 0x08, 0x08)
-#define get_IN_product(in, buf)           strncpy(buf, (char *)in + 0x10, 0x010)
-#define get_IN_version(in, buf)           strncpy(buf, (char *)in + 0x20, 0x04)
+#define get_IN_vendor(in, buf)             snprintf(buf, 0x08 + 1, "%.*s", \
+                                                    0x08, (char*)in + 0x08)
+#define get_IN_product(in, buf)            snprintf(buf, 0x10 + 1, "%.*s", \
+                                                    0x10, (char*)in + 0x10)
+#define get_IN_version(in, buf)            snprintf(buf, 0x04 + 1, "%.*s", \
+                                                    0x04, (char*)in + 0x20)
 
 /* the VPD response */
 #define get_IN_page_length(in)             in[0x04]
@@ -219,6 +222,7 @@ putnbyte (unsigned char *pnt, unsigned int value, unsigned int nbytes)
 #define SR_datatype_endorser            0x90
 #define SR_datatype_fineoffset          0x90
 #define SR_datatype_finegain            0x91
+#define SR_datatype_imprinters          0x96 /*DR-X10C*/
 
 /* ==================================================================== */
 /* READ */
@@ -252,7 +256,20 @@ putnbyte (unsigned char *pnt, unsigned int value, unsigned int nbytes)
 
 /*counters*/
 #define R_COUNTERS_len                 0x80
-#define get_R_COUNTERS_scans(in)       getnbyte(in + 0x04, 4)
+#define get_R_COUNTERS_total(in)       getnbyte(in + 0x04, 4)
+#define get_R_COUNTERS_last_srv(in)    getnbyte(in + 0x44, 4)
+
+/*imprinters*/
+#define R_IMPRINTER_len                0x20
+#define R_PRE_IMPRINTER                0
+#define R_POST_IMPRINTER               1
+#define get_R_IMPRINTER_found(in)      getbitfield(in+1, 1, 0)
+/*4 bytes at in + 0: (DR-X10C)
+pre-imprinter on:   0x07010000
+pre-imprinter off:  0x06000000
+post-imprinter on:  0x03010000
+post-imprinter off: 0x02000000
+*/
 
 /*endorser unread?*/
 
@@ -454,6 +471,14 @@ putnbyte (unsigned char *pnt, unsigned int value, unsigned int nbytes)
 #define SM2_pc_buffer                   0x02
 #define SM2_pc_hw_enhancement           0x03
 #define SM2_pc_dropout                  0x06
+#define SM2_pc_date_time                0x07
+#define SM2_pc_imprinter_settings       0x33
+#define SM2_pc_imprinter_specstring     0x34
+
+/* ==================================================================== */
+/* GET SCAN MODE 2 */
+#define GET_SCAN_MODE2_code             0xe4
+#define GET_SCAN_MODE2_len              12
 
 /* ==================================================================== */
 /* SET SCAN MODE 2 */
@@ -465,11 +490,15 @@ putnbyte (unsigned char *pnt, unsigned int value, unsigned int nbytes)
 
 /* the payload */
 #define SSM2_PAY_len                     0x10
+#define SSM2_IMPRINTER_STRING_PAY_len    0x8e
 
 /* for DF (0x00) page */
-#define set_SSM2_DF_thick(sb, val)       setbitfield(sb+3, 1, 2, val)
+#define set_SSM2_DF_imprint(sb, val)     setbitfield(sb+2, 1, 0, val)
+#define set_SSM2_DF_post_addon(sb, val)  setbitfield(sb+2, 1, 1, val)
 #define set_SSM2_DF_len(sb, val)         setbitfield(sb+3, 1, 0, val)
+#define set_SSM2_DF_thick(sb, val)       setbitfield(sb+3, 1, 2, val)
 #define set_SSM2_DF_staple(sb, val)      setbitfield(sb+3, 1, 4, val)
+#define set_SSM2_DF_imprint2(sb, val)    setbitfield(sb+3, 1, 6, val)
 
 /* for ULTRA (0x01) page */
 #define set_SSM2_ULTRA_top(sb, val)      putnbyte(sb + 0x07, val, 2)
@@ -488,6 +517,32 @@ putnbyte (unsigned char *pnt, unsigned int value, unsigned int nbytes)
 #define set_SSM2_DO_do(sb, val)              sb[0x09] = val
 #define set_SSM2_DO_en(sb, val)              sb[0x0a] = val
 #define set_SSM2_DO_side(sb, val)            sb[0x05] = val
+
+/* for IMPRINT DATE & TIME (0x07) */
+#define set_SSM2_imprint_year(sb, val)       putnbyte(sb + 0x02, val, 2)
+#define set_SSM2_imprint_month(sb, val)      putnbyte(sb + 0x04, val, 1)
+#define set_SSM2_imprint_day(sb, val)        putnbyte(sb + 0x05, val, 1)
+#define set_SSM2_imprint_hour(sb, val)       putnbyte(sb + 0x06, val, 1)
+#define set_SSM2_imprint_min(sb, val)        putnbyte(sb + 0x07, val, 1)
+#define set_SSM2_imprint_sec(sb, val)        putnbyte(sb + 0x08, val, 1)
+
+/* for IMPRINTER SETTINGS (0x33) page */
+#define set_SSM2_postimprint_cmd(sb)         sb[0x04] = 1
+#define set_SSM2_postimprint_addon(sb)       setbitfield(sb, 1, 1, 1)
+#define set_SSM2_imprint_hoffset(sb, val)    putnbyte(sb + 0x05, val, 2)
+#define set_SSM2_imprint_voffset(sb, val)    putnbyte(sb + 0x07, val, 2)
+
+/* for IMPRINTER STRING SPECIFICATION (0x34) page */
+#define IMPRINTER_12x12_FONT                 0
+#define IMPRINTER_8x12_FONT                  1
+#define set_SSM2_imprint_fontsize(sb, val)   setbitfield(sb + 0xA, 1, 0, val)
+#define set_SSM2_imprint_spacing(sb, val)    setbitfield(sb + 0xA, 1, 1, val)
+#define set_SSM2_imprint_addonmode(sb, val)  setbitfield(sb + 0x9, 3, 4, val)
+#define IMPRINTER_0_FONT_ROT                 0
+#define IMPRINTER_90_FONT_ROT                1
+#define IMPRINTER_180_FONT_ROT               2
+#define IMPRINTER_270_FONT_ROT               3
+#define set_SSM2_imprint_fontrot(sb, val)    setbitfield(sb + 0x9, 3, 0, val)
 
 /* ==================================================================== */
 /* window descriptor macros for SET_WINDOW and GET_WINDOW */

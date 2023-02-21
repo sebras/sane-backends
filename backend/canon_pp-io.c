@@ -178,8 +178,8 @@ int sanei_canon_pp_wake_scanner(struct parport *port, int mode)
 			usleep(100000);
 		}
 
-	} while ((i < max_cycles) && (!expect(port,"Scanner wakeup reply 2",
-					0x03, 0x1f, 100000) == 0));
+	} while ((i < max_cycles) && expect(port, "Scanner wakeup reply 2",
+					0x03, 0x1f, 100000));
 
 	/* Block just after chessboarding
 	   Reply 1 (S3 and S4 on, S5 and S7 off) */

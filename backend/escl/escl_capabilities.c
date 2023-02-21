@@ -325,7 +325,8 @@ print_support(xmlNode *node)
             cpt++;
 	}
 	else if (!strcmp((const char *)node->name, "Normal")) {
-            sup->normal = atoi((const char *)xmlNodeGetContent(node));
+            sup->value = atoi((const char *)xmlNodeGetContent(node));
+            sup->normal = sup->value;
             cpt++;
             have_norm = 1;
 	}
@@ -338,7 +339,8 @@ print_support(xmlNode *node)
     if (cpt == 4)
         return sup;
     if (cpt == 3 && have_norm == 0) {
-	sup->normal = (sup->max / 2 );
+	sup->value = (sup->max / 2 );
+	sup->normal = sup->value;
         return sup;
     }
     free(sup);
@@ -428,6 +430,10 @@ print_xml_c(xmlNode *node, ESCL_Device *device, capabilities_t *scanner, int typ
             if (find_nodes_c(node) && type != -1)
                 find_true_variables(node, scanner, type);
         }
+        if (!strcmp((const char *)node->name, "Version")&& node->ns && node->ns->prefix){
+            if (!strcmp((const char*)node->ns->prefix, "pwg"))
+                device->version = atof ((const char *)xmlNodeGetContent(node));
+	}
         if (!strcmp((const char *)node->name, "MakeAndModel")){
             device->model_name = strdup((const char *)xmlNodeGetContent(node));
 	}
@@ -582,6 +588,7 @@ escl_capabilities(ESCL_Device *device, char *blacklist, SANE_Status *status)
         strstr(header->memory, "Server: HP_Compact_Server"))
         device->hack = curl_slist_append(NULL, "Host: localhost");
 
+    device->version = 0.0;
     scanner->source = 0;
     scanner->Sources = (SANE_String_Const *)malloc(sizeof(SANE_String_Const) * 4);
     for (i = 0; i < 4; i++)

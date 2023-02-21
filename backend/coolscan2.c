@@ -344,7 +344,7 @@ sane_init (SANE_Int * version_code, SANE_Auth_Callback authorize)
   DBG (10, "sane_init() called.\n");
   DBG (1, "coolscan2 backend, version %i.%i.%i initializing.\n", CS2_VERSION_MAJOR, CS2_VERSION_MINOR, CS2_REVISION);
 
-  authorize = authorize;	/* to shut up compiler */
+  (void) authorize;		/* to shut up compiler */
 
   if (version_code)
     *version_code =
@@ -378,7 +378,7 @@ sane_get_devices (const SANE_Device *** list, SANE_Bool local_only)
   char line[PATH_MAX], *p;
   FILE *config;
 
-  local_only = local_only;	/* to shut up compiler */
+  (void) local_only;		/* to shut up compiler */
 
   DBG (10, "sane_get_devices() called.\n");
 
@@ -468,7 +468,10 @@ sane_open (SANE_String_Const name, SANE_Handle * h)
   for (i_option = 0; i_option < CS2_N_OPTIONS; i_option++)
     {
       o.name = o.title = o.desc = NULL;
-      o.type = o.unit = o.cap = o.constraint_type = o.size = 0;
+      o.type = SANE_TYPE_BOOL;
+      o.unit = SANE_UNIT_NONE;
+      o.size = o.cap = 0;
+      o.constraint_type = SANE_CONSTRAINT_NONE;
       o.constraint.range = NULL;	/* only one union member needs to be NULLed */
       switch (i_option)
 	{
@@ -1738,8 +1741,8 @@ sane_get_select_fd (SANE_Handle h, SANE_Int * fd)
 
   DBG (10, "sane_get_select_fd() called.\n");
 
-  fd = fd;			/* to shut up compiler */
-  s = s;			/* to shut up compiler */
+  (void) fd;			/* to shut up compiler */
+  (void) s;			/* to shut up compiler */
 
   return SANE_STATUS_UNSUPPORTED;
 }
@@ -2003,7 +2006,7 @@ cs2_scsi_sense_handler (int fd, u_char * sense_buffer, void *arg)
 {
   cs2_t *s = (cs2_t *) arg;
 
-  fd = fd;			/* to shut up compiler */
+  (void) fd;			/* to shut up compiler */
 
   /* sort this out ! XXXXXXXXX */
 

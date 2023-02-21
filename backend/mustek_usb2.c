@@ -1165,12 +1165,12 @@ IsTAConnected ()
 
   DBG (DBG_FUNC, "StopScan: start\n");
 
-  if (Asic_Open (&g_chip, g_pDeviceFile) != STATUS_GOOD)
+  if (Asic_Open (&g_chip, g_pDeviceFile) != SANE_STATUS_GOOD)
     {
       return FALSE;
     }
 
-  if (Asic_IsTAConnected (&g_chip, &hasTA) != STATUS_GOOD)
+  if (Asic_IsTAConnected (&g_chip, &hasTA) != SANE_STATUS_GOOD)
     {
       Asic_Close (&g_chip);
       return FALSE;
@@ -1199,16 +1199,16 @@ static SANE_Bool
 GetKeyStatus (SANE_Byte * pKey)
 {
   SANE_Byte pKeyTemp = 0x00;
-  STATUS status = Asic_CheckFunctionKey (&g_chip, &pKeyTemp);
+  SANE_Status status = Asic_CheckFunctionKey (&g_chip, &pKeyTemp);
   DBG (DBG_FUNC, "GetKeyStatus: start\n");
 
-  if (STATUS_GOOD != Asic_Open (&g_chip, g_pDeviceFile))
+  if (SANE_STATUS_GOOD != Asic_Open (&g_chip, g_pDeviceFile))
     {
       DBG (DBG_ERR, "GetKeyStatus: Asic_Open is fail\n");
       return FALSE;
     }
 
-  if (STATUS_GOOD != status)
+  if (SANE_STATUS_GOOD != status)
     {
       DBG (DBG_ERR, "GetKeyStatus: Asic_CheckFunctionKey is fail\n");
       return FALSE;
@@ -1236,7 +1236,7 @@ GetKeyStatus (SANE_Byte * pKey)
       *pKey = 0x05;		/*Panel key pressed */
     }
 
-  if (STATUS_GOOD != Asic_Close (&g_chip))
+  if (SANE_STATUS_GOOD != Asic_Close (&g_chip))
     {
       DBG (DBG_ERR, "GetKeyStatus: Asic_Close is fail\n");
       return FALSE;

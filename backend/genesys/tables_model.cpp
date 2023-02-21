@@ -447,7 +447,9 @@ void genesys_init_usb_device_tables()
                   ModelFlag::SHADING_REPARK |
                   ModelFlag::UTA_NO_SECONDARY_MOTOR;
 
-    model.buttons = GENESYS_HAS_SCAN_SW | GENESYS_HAS_FILE_SW | GENESYS_HAS_COPY_SW;
+    model.buttons = GENESYS_HAS_TRANSP_SW | GENESYS_HAS_EMAIL_SW
+        | GENESYS_HAS_COPY_SW | GENESYS_HAS_PDF1_SW | GENESYS_HAS_PDF2_SW
+        | GENESYS_HAS_PDF3_SW | GENESYS_HAS_PDF4_SW;
     model.search_lines = 100;
 
     s_usb_devices->emplace_back(0x04a9, 0x2228, model);
@@ -517,7 +519,7 @@ void genesys_init_usb_device_tables()
                   ModelFlag::DARK_CALIBRATION |
                   ModelFlag::CUSTOM_GAMMA |
                   ModelFlag::SHADING_REPARK;
-    model.buttons = GENESYS_HAS_SCAN_SW | GENESYS_HAS_FILE_SW | GENESYS_HAS_COPY_SW;
+    model.buttons = GENESYS_HAS_SCAN_SW | GENESYS_HAS_FILE_SW | GENESYS_HAS_COPY_SW | GENESYS_HAS_EMAIL_SW;
     model.search_lines = 100;
 
     s_usb_devices->emplace_back(0x04a9, 0x221e, model);
@@ -927,7 +929,10 @@ void genesys_init_usb_device_tables()
     model.buttons = GENESYS_HAS_SCAN_SW |
                     GENESYS_HAS_COPY_SW |
                     GENESYS_HAS_EMAIL_SW |
-                    GENESYS_HAS_FILE_SW;
+                    GENESYS_HAS_PDF1_SW |
+                    GENESYS_HAS_PDF2_SW |
+                    GENESYS_HAS_PDF3_SW |
+                    GENESYS_HAS_PDF4_SW;
     model.search_lines = 400;
 
     s_usb_devices->emplace_back(0x04a9, 0x1906, model);

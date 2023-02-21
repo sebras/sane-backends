@@ -1258,6 +1258,7 @@ const  epsonds_profile_map epsonds_models_predefined[] = {
   {0x118A, "PID 118A","ET-2810 Series", 7},
   {0x118A, "PID 118A","L3250 Series", 7},
   {0x119B, "PID 119B","XP-2150 Series", 7},
+  {0x11B1, "PID 11B1","XP-2200 Series", 7},
   {0x00, "","", 0x00 }
 };
 
@@ -1629,10 +1630,7 @@ device_detect(const char *name, int type, SANE_Status *status)
 			{//Convert to user friendly model name
 				free(s->hw->model);
 
-				char* deviceName = (char*)malloc(strlen(map->deviceID) + 1);
-				memset(deviceName, 0, strlen(map->deviceID) + 1);
-				strncpy(deviceName,  map->deviceID, strlen(map->deviceID));
-				s->hw->model = deviceName;
+				s->hw->model = strdup(map->deviceID);
 				s->hw->sane.model = s->hw->model;
 			}
 			{// set lutid

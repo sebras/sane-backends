@@ -290,7 +290,7 @@ sense_handler(int fd, u_char *sense_buffer, void *ss)
   int sense_key;
   NEC_Sense_Data *sdat = (NEC_Sense_Data *) ss;
 
-  fd = fd; /* silence compilation warnings */
+  (void) fd; /* silence compilation warnings */
 
   #define add_sense_code sense_buffer[12]
   #define add_sense_qual sense_buffer[13]
@@ -1890,7 +1890,7 @@ sane_init (SANE_Int * version_code, SANE_Auth_Callback authorize)
   NEC_New_Device *np;
   int i;
 
-  authorize = authorize; /* silence compilation warnings */
+  (void) authorize; /* silence compilation warnings */
 
   DBG_INIT ();
   DBG (10, "<< sane_init ");
@@ -2079,7 +2079,7 @@ sane_get_devices (const SANE_Device *** device_list, SANE_Bool local_only)
   int i;
   DBG (10, "<< sane_get_devices ");
 
-  local_only = local_only; /* silence compilation warnings */
+  (void) local_only; /* silence compilation warnings */
 
   if (devlist)
     free (devlist);
@@ -2714,7 +2714,7 @@ send_binary_g_table(NEC_Scanner *s, SANE_Word *a, int dtq)
   SANE_Status status;
   unsigned int i, j;
 
-  dtq = dtq; /* silence compilation warnings */
+  (void) dtq; /* silence compilation warnings */
 
   DBG(11, "<< send_binary_g_table\n");
 
@@ -3696,8 +3696,8 @@ sane_cancel (SANE_Handle handle)
 SANE_Status
 sane_set_io_mode (SANE_Handle handle, SANE_Bool non_blocking)
 {
-  handle = handle;
-  non_blocking = non_blocking; /* silence compilation warnings */
+  (void) handle;
+  (void) non_blocking; /* silence compilation warnings */
 
   DBG (10, "<< sane_set_io_mode");
   DBG (10, ">>\n");
@@ -3708,8 +3708,8 @@ sane_set_io_mode (SANE_Handle handle, SANE_Bool non_blocking)
 SANE_Status
 sane_get_select_fd (SANE_Handle handle, SANE_Int * fd)
 {
-  handle = handle;
-  fd = fd; /* silence compilation warnings */
+  (void) handle;
+  (void) fd; /* silence compilation warnings */
 
   DBG (10, "<< sane_get_select_fd");
   DBG (10, ">>\n");

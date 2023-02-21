@@ -1853,8 +1853,8 @@ hexdump (int level, char *comment, unsigned char *p, int l)
 static SANE_Status
 sense_handler (int scsi_fd, unsigned char * result, void *arg)
 {
-  scsi_fd = scsi_fd;
-  arg = arg;
+  (void) scsi_fd;
+  (void) arg;
 
   if (result[0] != 0x70)
     {
@@ -2155,7 +2155,7 @@ attach_one (const char *devName)
 static void
 sigterm_handler (int signal)
 {
-  signal = signal;
+  (void) signal;
   sanei_scsi_req_flush_all ();	/* flush SCSI queue */
   _exit (SANE_STATUS_GOOD);
 }
@@ -2360,7 +2360,7 @@ static int RGBIfix16(Coolscan_t * scanner,
   unsigned short *opr,*opg,*opb,*opi;
   int x;
 
-  scanner = scanner; lutr = lutr; lutg = lutg; lutb = lutb; luti = luti;
+  (void) scanner; (void) lutr; (void) lutg; (void) lutb; (void) luti;
 
    for(x=0;x<size;x++)
    {
@@ -2459,7 +2459,7 @@ static int RGBIfix1(unsigned char* rgbimat,unsigned char* orgbimat,
    int ii;
    int x;
 
-   lutg = lutg; lutb = lutb;
+   (void) lutg; (void) lutb;
 
    /* calculate regression between r and ir */
    cc.sum=0;
@@ -3237,7 +3237,7 @@ sane_init (SANE_Int * version_code, SANE_Auth_Callback authorize)
   size_t len;
   FILE *fp;
 
-  authorize = authorize;
+  (void) authorize;
 
   DBG_INIT ();
   sanei_thread_init ();
@@ -3297,7 +3297,7 @@ sane_get_devices (const SANE_Device *** device_list,
   Coolscan_t *dev;
   int i;
 
-  local_only = local_only;
+  (void) local_only;
 
   DBG (10, "sane_get_devices\n");
 

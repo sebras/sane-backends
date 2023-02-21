@@ -1436,7 +1436,7 @@ SANE_Status
 sane_get_select_fd (SANE_Handle handle, SANE_Int * fd)
 {
     DBG(DBG_info_sane,"sane_get_select_fd(): not supported (only for non-blocking IO)\n");
-    handle = handle;
-    fd = fd;
+    (void) handle;
+    (void) fd;
     return SANE_STATUS_UNSUPPORTED;
 }

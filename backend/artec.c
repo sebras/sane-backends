@@ -3474,7 +3474,7 @@ artec_sane_read (SANE_Handle handle, SANE_Byte * buf, SANE_Int max_len, SANE_Int
   SANE_Byte line_buf[ARTEC_MAX_READ_SIZE];
 
 
-  DBG (7, "artec_sane_read( %p, %p, %d, %d )\n", handle, buf, max_len, *len);
+  DBG (7, "artec_sane_read( %p, %p, %d, %d )\n", handle, (void *) buf, max_len, *len);
 
   *len = 0;
 
@@ -3674,7 +3674,7 @@ sane_read (SANE_Handle handle, SANE_Byte * buf, SANE_Int max_len, SANE_Int * len
   static SANE_Byte temp_buf[ARTEC_MAX_READ_SIZE];
   static int bytes_in_buf = 0;
 
-  DBG (7, "sane_read( %p, %p, %d, %d )\n", handle, buf, max_len, *len);
+  DBG (7, "sane_read( %p, %p, %d, %d )\n", handle, (void *) buf, max_len, *len);
   DBG (9, "sane_read: bib = %d, ml = %d\n", bytes_in_buf, max_len);
 
   if (bytes_in_buf != 0)

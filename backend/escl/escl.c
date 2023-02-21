@@ -1039,7 +1039,7 @@ init_options(SANE_String_Const name_source, escl_sane_t *s)
     s->opt[OPT_BRIGHTNESS].constraint_type = SANE_CONSTRAINT_RANGE;
     if (s->scanner->brightness) {
        s->opt[OPT_BRIGHTNESS].constraint.range = &s->brightness_range;
-       s->val[OPT_BRIGHTNESS].w = s->scanner->brightness->normal;
+       s->val[OPT_BRIGHTNESS].w = s->scanner->brightness->value;
        s->brightness_range.quant=1;
        s->brightness_range.min=s->scanner->brightness->min;
        s->brightness_range.max=s->scanner->brightness->max;
@@ -1058,7 +1058,7 @@ init_options(SANE_String_Const name_source, escl_sane_t *s)
     s->opt[OPT_CONTRAST].constraint_type = SANE_CONSTRAINT_RANGE;
     if (s->scanner->contrast) {
        s->opt[OPT_CONTRAST].constraint.range = &s->contrast_range;
-       s->val[OPT_CONTRAST].w = s->scanner->contrast->normal;
+       s->val[OPT_CONTRAST].w = s->scanner->contrast->value;
        s->contrast_range.quant=1;
        s->contrast_range.min=s->scanner->contrast->min;
        s->contrast_range.max=s->scanner->contrast->max;
@@ -1077,7 +1077,7 @@ init_options(SANE_String_Const name_source, escl_sane_t *s)
     s->opt[OPT_SHARPEN].constraint_type = SANE_CONSTRAINT_RANGE;
     if (s->scanner->sharpen) {
        s->opt[OPT_SHARPEN].constraint.range = &s->sharpen_range;
-       s->val[OPT_SHARPEN].w = s->scanner->sharpen->normal;
+       s->val[OPT_SHARPEN].w = s->scanner->sharpen->value;
        s->sharpen_range.quant=1;
        s->sharpen_range.min=s->scanner->sharpen->min;
        s->sharpen_range.max=s->scanner->sharpen->max;
@@ -1097,7 +1097,7 @@ init_options(SANE_String_Const name_source, escl_sane_t *s)
     s->opt[OPT_THRESHOLD].constraint_type = SANE_CONSTRAINT_RANGE;
     if (s->scanner->threshold) {
       s->opt[OPT_THRESHOLD].constraint.range = &s->thresold_range;
-      s->val[OPT_THRESHOLD].w = s->scanner->threshold->normal;
+      s->val[OPT_THRESHOLD].w = s->scanner->threshold->value;
       s->thresold_range.quant=1;
       s->thresold_range.min= s->scanner->threshold->min;
       s->thresold_range.max=s->scanner->threshold->max;

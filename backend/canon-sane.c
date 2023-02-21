@@ -1111,9 +1111,6 @@ sane_start (SANE_Handle handle)
   u_char cbuf[2];			/* modification for FB620S */
   size_t buf_size, i;
 
-  char tmpfilename[] = "/tmp/canon.XXXXXX"; /* for FB1200S */
-  char *thistmpfile; /* for FB1200S */
-
   DBG (1, ">> sane_start\n");
 
   s->tmpfile = -1; /* for FB1200S */
@@ -1121,36 +1118,18 @@ sane_start (SANE_Handle handle)
 /******* making a tempfile for 1200 dpi scanning of FB1200S ******/
   if (s->hw->info.model == FB1200)
     {
-      thistmpfile = strdup(tmpfilename);
+      char tmpfilename[] = "/tmp/canon.XXXXXX"; /* for FB1200S */
 
-      if (thistmpfile != NULL)
-        {
-          if (!mkstemp(thistmpfile))
-            {
-              DBG(1, "mkstemp(thistmpfile) is failed\n");
-              return (SANE_STATUS_INVAL);
-	    }
-	}
-      else
-        {
-	  DBG(1, "strdup(thistmpfile) is failed\n");
-	  return (SANE_STATUS_INVAL);
-	}
-
-      s->tmpfile = open(thistmpfile, O_RDWR | O_CREAT | O_EXCL, 0600);
-
+      s->tmpfile = mkstemp(tmpfilename);
       if (s->tmpfile == -1)
 	{
-	  DBG(1, "error opening temp file %s\n", thistmpfile);
+	  DBG(1, "error opening temp file %s\n", tmpfilename);
 	  DBG(1, "errno: %i; %s\n", errno, strerror(errno));
 	  errno = 0;
 	  return (SANE_STATUS_INVAL);
 	}
       DBG(1, " ****** tmpfile is opened ****** \n");
-
-      unlink(thistmpfile);
-      free (thistmpfile);
-      DBG(1, "free thistmpfile\n");
+      unlink(tmpfilename);
     }
 /******************************************************************/
 

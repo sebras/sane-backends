@@ -1,4 +1,4 @@
-.TH sane\-fujitsu 5 "13 Feb 2021" "@PACKAGEVERSION@" "SANE Scanner Access Now Easy"
+.TH sane\-fujitsu 5 "15 Nov 2022" "@PACKAGEVERSION@" "SANE Scanner Access Now Easy"
 .IX sane\-fujitsu
 
 .SH NAME
@@ -10,13 +10,13 @@ The
 library implements a SANE (Scanner Access Now Easy) backend which provides
 access to most Fujitsu flatbed and ADF scanners.
 
-This document describes backend version 137, which shipped with SANE 1.0.32.
+This document describes backend version 139, which initially shipped with SANE 1.1.2.
 
 .SH SUPPORTED HARDWARE
 This version supports every known model which speaks the Fujitsu SCSI and
 SCSI\-over\-USB protocols. Specifically, the SCSI M309x and M409x series, the
-SCSI fi\-series, most of the USB fi\-series, the USB ScanSnap S5xx/S15xx, and
-the USB iX1xx/5xx series scanners are supported. Please see the list at
+SCSI fi\-series, and most of the USB fi\-, ScanSnap, & iX series scanners are
+supported.  Please see the list at
 .I http://www.sane\-project.org/sane\-supported\-devices.html
 for details.
 
@@ -27,7 +27,7 @@ Please contact the author for help or with test results.
 
 .SH UNSUPPORTED HARDWARE
 The following scanners are known NOT to work with this backend,
-either because they have a non\-fujitsu chipset, or an unsupported
+either because they have a non\-Fujitsu chipset, or an unsupported
 interface type. Some of these scanners may be supported by another
 backend.
 .PP
@@ -100,19 +100,19 @@ may not perform as well as the native implementations. Note also that these
 features all require that the driver cache the entire image in memory. This
 will almost certainly result in a reduction of scanning speed.
 .PP
-swcrop
+.B swcrop
 .RS
 Requests the driver to detect the extremities of the paper within the larger
 image, and crop the empty edges.
 .RE
 .PP
-swdeskew
+.B swdeskew
 .RS
 Requests the driver to detect the rotation of the paper within the larger
 image, and counter the rotation.
 .RE
 .PP
-swdespeck X
+.B swdespeck X
 .RS
 Requests the driver to find and remove dots of X diameter or smaller from the
 image, and fill the space with the average surrounding color.
@@ -210,6 +210,8 @@ CCITT Fax compression used by older scanners is not supported.
 .PP
 JPEG output is supported by the backend, but not by the SANE protocol, so is
 disabled in this release. It can be enabled if you rebuild from source.
+.PP
+Network interfaces are not supported on any scanner model.
 
 .SH CREDITS
 m3091 backend: Frederik Ramm
@@ -252,8 +254,8 @@ Automatic length detection support funded by:
 .I  mgmiller at optonline.net
 
 Hardware donated, software image enhancement and fi-6/7xxx support funded by:
-  Fujitsu Computer Products of America, Inc.
-.I  www.fcpa.com
+  PFU America, Inc.
+.I  fujitsuscanners.com
 
 iX500 support funded by:
   Prefix Computer Services

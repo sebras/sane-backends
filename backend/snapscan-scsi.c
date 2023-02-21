@@ -144,7 +144,6 @@ static SANE_Status sense_handler (int scsi_fd, u_char * result, void *arg)
             as_str = "Logical unit is in process of becoming ready.";
             DBG (DL_MINOR_INFO, "%s: %s (%d seconds)\n", me, as_str, result[18]);
             status = SANE_STATUS_DEVICE_BUSY;
-        DBG (DL_MINOR_INFO, "%s: %s\n", me, sense_str);
         }
         break;
     case 0x04:
@@ -160,8 +159,10 @@ static SANE_Status sense_handler (int scsi_fd, u_char * result, void *arg)
         sense_str = "Illegal request.";
         DBG (DL_MINOR_INFO, "%s: %s\n", me, sense_str);
         if (asc == 0x25 && ascq == 0x00)
+        {
             as_str = "Logical unit not supported.";
             DBG (DL_MINOR_INFO, "%s: %s\n", me, as_str);
+        }
         status = SANE_STATUS_IO_ERROR;
         break;
     case 0x09:

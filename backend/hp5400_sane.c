@@ -611,7 +611,7 @@ sane_init (SANE_Int * piVersion, SANE_Auth_Callback pfnAuth)
   int nline = 0;
 
   /* prevent compiler from complaining about unused parameters */
-  pfnAuth = pfnAuth;
+  (void) pfnAuth;
 
   strcpy(usb_devfile, "/dev/usb/scanner0");
   _pFirstSaneDev = 0;
@@ -712,7 +712,7 @@ sane_get_devices (const SANE_Device *** device_list, SANE_Bool local_only)
 
   HP5400_DBG (DBG_MSG, "sane_get_devices\n");
 
-  local_only = local_only;
+  (void) local_only;
 
   if (_pSaneDevList)
     {
@@ -1333,7 +1333,7 @@ sane_set_io_mode (SANE_Handle h, SANE_Bool m)
   HP5400_DBG (DBG_MSG, "sane_set_io_mode %s\n", m ? "non-blocking" : "blocking");
 
   /* prevent compiler from complaining about unused parameters */
-  h = h;
+  (void) h;
 
   if (m)
     {
@@ -1349,8 +1349,8 @@ sane_get_select_fd (SANE_Handle h, SANE_Int * fd)
   HP5400_DBG (DBG_MSG, "sane_select_fd\n");
 
   /* prevent compiler from complaining about unused parameters */
-  h = h;
-  fd = fd;
+  (void) h;
+  (void) fd;
 
   return SANE_STATUS_UNSUPPORTED;
 }

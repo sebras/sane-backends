@@ -442,15 +442,15 @@ sane_cancel (SANE_Handle handle)
 SANE_Status
 sane_set_io_mode (SANE_Handle h, SANE_Bool m)
 {
-  h=h;
-  m=m;
+  (void) h;
+  (void) m;
   return SANE_STATUS_UNSUPPORTED;
 }
 
 SANE_Status
 sane_get_select_fd (SANE_Handle h, SANE_Int * fd)
 {
-  h=h;
-  fd=fd;
+  (void) h;
+  (void) fd;
   return SANE_STATUS_UNSUPPORTED;
 }

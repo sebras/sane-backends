@@ -152,48 +152,27 @@ AC_CHECK_LIB(sane, sane_init, LIBSANE_EXISTS="yes")
 
 
 dnl **************************************************************
-dnl SNMP CHECKS
+dnl Check for libsnmp availability
 dnl **************************************************************
 
 AC_ARG_WITH(snmp,
-	AS_HELP_STRING([--with-snmp], [enable SNMP support @<:@default=yes@:>@]))
-
-if test "$with_snmp" = "no"; then
-	echo "Not including SNMP support"
-else
-	AC_PATH_PROG(SNMP_CONFIG_PATH, net-snmp-config, "no")
-	AC_CHECK_LIB([netsnmp], [snmp_timeout], LIBSNMP_EXISTS="yes")
-	AC_MSG_CHECKING(for proper SNMP version)
-	if test "$SNMP_CONFIG_PATH" != "no" ; then
-		snmp_version=`$SNMP_CONFIG_PATH --version 2>/dev/null`
-		vers=`echo $snmp_version | awk 'BEGIN { FS = "."; } { printf "%d", ($1 * 1000 + $2);}'`
-		if test -n "$vers" && test "$vers" -ge 5006; then
-			SNMP_LIBS=`$SNMP_CONFIG_PATH --libs`
-			SNMP_CFLAGS=`$SNMP_CONFIG_PATH --cflags`
-			AC_MSG_RESULT(yes)
-			with_snmp="yes"
-		else
-			AC_MSG_RESULT(no)
-			AC_MSG_WARN([You need at least net-snmp 5.6, your version is $snmp_version])
-			with_snmp="no"
-		fi
-	else
-		with_snmp="no"
-		AC_MSG_RESULT(no)
-	fi
-fi
-
-if test "$with_snmp" = "yes" && test "${LIBSNMP_EXISTS}x" = "yesx"; then
-	AC_SUBST(SNMP_LIBS)
-	AC_SUBST(SNMP_CFLAGS)
-	AC_DEFINE(HAVE_LIBSNMP, 1, [Define to 1 if you have the net-snmp library.])
-else
-	AC_MSG_WARN([net-snmp library disabled, autodetecting network scanners will not be supported.])
-fi
-
-
-
-
+  AS_HELP_STRING([--with-snmp],
+    [enable SNMP support @<:@default=check@:>@]),
+  [],
+  [with_snmp=check])
+AC_DEFINE(HAVE_LIBSNMP,
+  [0], [Define to 1 if libsnmp is available])
+AS_IF([test xno != "x$with_snmp"],
+  [PKG_CHECK_MODULES(SNMP, [netsnmp >= 5.6],
+    [AC_DEFINE([HAVE_LIBSNMP], [1])
+     with_snmp=yes
+    ],
+    [AS_IF([test xcheck != "x$with_snmp"],
+       [AC_MSG_ERROR([libsnmp requested but not found])])
+     with_snmp=no
+    ])
+  ])
+AM_CONDITIONAL([have_snmp], [test x != "x$SNMP_LIBS"])
 
 dnl ***********************************************************************
 dnl Checks for header files.
@@ -202,7 +181,7 @@ AC_HEADER_STDC
 AC_CHECK_HEADERS(fcntl.h unistd.h libc.h sys/dsreq.h sys/select.h \
     sys/time.h sys/shm.h sys/ipc.h sys/scanio.h os2.h \
     sys/socket.h sys/io.h sys/hw.h sys/types.h linux/ppdev.h \
-    dev/ppbus/ppi.h machine/cpufunc.h sys/sem.h sys/poll.h \
+    dev/ppbus/ppi.h machine/cpufunc.h sys/sem.h poll.h \
     windows.h be/kernel/OS.h limits.h sys/ioctl.h asm/types.h\
     netinet/in.h tiffio.h ifaddrs.h pwd.h getopt.h)
 AC_CHECK_HEADERS([asm/io.h],,,[#include <sys/types.h>])
@@ -671,7 +650,7 @@ ALL_BACKENDS="abaton agfafocus apple artec artec_eplus48u as6e \
         mustek_usb mustek_usb2 nec net niash pie pieusb pint \
         pixma plustek plustek_pp qcam ricoh ricoh2 rts8891 s9036 \
         sceptre sharp sm3600 sm3840 snapscan sp15c st400 \
-        stv680 tamarack teco1 teco2 teco3 test u12 umax
+        stv680 tamarack teco1 teco2 teco3 test u12 umax \
         umax_pp umax1220u v4l xerox_mfp p5"
 
 # If user specifies backends manually then cause configure

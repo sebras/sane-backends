@@ -219,13 +219,6 @@ _LOC void IORegisterDirectToScanner( pScanData, Byte bReg );
 _LOC void IOSoftwareReset          ( pScanData ps );
 _LOC void IOReadScannerImageData   ( pScanData ps, pUChar pBuf, ULong size );
 
-#ifdef __KERNEL__
-_LOC void IOOut       ( Byte data, UShort port );
-_LOC void IOOutDelayed( Byte data, UShort port );
-_LOC Byte IOIn        ( UShort port );
-_LOC Byte IOInDelayed ( UShort port );
-#endif
-
 /*
  * implementation in plustek-pp_tpa.c
  */
@@ -237,16 +230,6 @@ _LOC void TPAP98003Reshading         ( pScanData ps );
  * implementation in plustek-pp_scale.c
  */
 _LOC void ScaleX( pScanData ps, pUChar inBuf, pUChar outBuf );
-
-/*
- * implementation in plustek-pp_procfs.c (Kernel-mode only)
- */
-#ifdef __KERNEL__
-int  ProcFsInitialize      ( void );
-void ProcFsShutdown        ( void );
-void ProcFsRegisterDevice  ( pScanData ps );
-void ProcFsUnregisterDevice( pScanData ps );
-#endif
 
 #endif	/* guard __PROCS_H__ */
 

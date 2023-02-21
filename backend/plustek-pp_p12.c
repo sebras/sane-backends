@@ -472,7 +472,7 @@ static void p12Init98003( pScanData ps, Bool shading )
     if( _AGFA_SCANNER == ps->Device.bPCBID )
         ps->Device.bDACType = _DA_WOLFSON8141;
 
-	DBG( DBG_LOW, "PCB-ID=0x%02x, CCD-ID=0x%02x, DAC-TYPE=0x%02x\n",
+    DBG( DBG_LOW, "PCB-ID=0x%02x, CCD-ID=0x%02x, DAC-TYPE=0x%02x\n",
                    ps->Device.bPCBID, ps->Device.bCCDID, ps->Device.bDACType );
 
     p12InitiateComponentModel( ps );

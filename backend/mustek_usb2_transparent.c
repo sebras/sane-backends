@@ -82,37 +82,37 @@ Transparent_Reset ()
       DBG (DBG_FUNC, "Transparent_Reset: scanner has been opened\n");
       return FALSE;
     }
-  if (STATUS_GOOD != Asic_Open (&g_chip, g_pDeviceFile))
+  if (SANE_STATUS_GOOD != Asic_Open (&g_chip, g_pDeviceFile))
     {
       DBG (DBG_FUNC, "Transparent_Reset: can not open scanner\n");
       return FALSE;
     }
 
-  if (STATUS_GOOD != Asic_Reset (&g_chip))
+  if (SANE_STATUS_GOOD != Asic_Reset (&g_chip))
     {
       DBG (DBG_FUNC, "Reflective_Reset: Asic_Reset return error\n");
       return FALSE;
     }
 
-  if (STATUS_GOOD != Asic_SetSource (&g_chip, LS_POSITIVE))
+  if (SANE_STATUS_GOOD != Asic_SetSource (&g_chip, LS_POSITIVE))
     {
       DBG (DBG_FUNC, "Reflective_Reset: Asic_SetSource return error\n");
       return FALSE;
     }
 
-  if (STATUS_GOOD != Asic_TurnLamp (&g_chip, FALSE))
+  if (SANE_STATUS_GOOD != Asic_TurnLamp (&g_chip, FALSE))
     {
       DBG (DBG_FUNC, "Reflective_Reset: Asic_TurnLamp return error\n");
       return FALSE;
     }
 
-  if (STATUS_GOOD != Asic_TurnTA (&g_chip, TRUE))
+  if (SANE_STATUS_GOOD != Asic_TurnTA (&g_chip, TRUE))
     {
       DBG (DBG_FUNC, "Reflective_Reset: Asic_TurnTA return error\n");
       return FALSE;
     }
 
-  if (STATUS_GOOD != Asic_Close (&g_chip))
+  if (SANE_STATUS_GOOD != Asic_Close (&g_chip))
     {
       DBG (DBG_FUNC, "Reflective_Reset: Asic_Close return error\n");
       return FALSE;
@@ -305,7 +305,7 @@ Transparent_SetupScan (COLORMODE ColorMode, unsigned short XDpi, unsigned short 
   SANE_Bool hasTA;
   unsigned short wTAShadingMinus = 0;
 
-  isInvert = isInvert;
+  (void) isInvert;
   DBG (DBG_FUNC, "Transparent_SetupScan: call in\n");
 
   if (g_bOpened)
@@ -391,7 +391,7 @@ Transparent_SetupScan (COLORMODE ColorMode, unsigned short XDpi, unsigned short 
       break;
     }
 
-  if (Asic_Open (&g_chip, g_pDeviceFile) != STATUS_GOOD)
+  if (Asic_Open (&g_chip, g_pDeviceFile) != SANE_STATUS_GOOD)
     {
       DBG (DBG_FUNC, "Transparent_SetupScan: Asic_Open return error\n");
       return FALSE;
@@ -399,13 +399,13 @@ Transparent_SetupScan (COLORMODE ColorMode, unsigned short XDpi, unsigned short 
 
   g_bOpened = TRUE;
 
-  if (STATUS_GOOD != Asic_TurnLamp (&g_chip, FALSE))
+  if (SANE_STATUS_GOOD != Asic_TurnLamp (&g_chip, FALSE))
     {
       DBG (DBG_FUNC, "Transparent_SetupScan: Asic_TurnLamp return error\n");
       return FALSE;
     }
 
-  if (Asic_IsTAConnected (&g_chip, &hasTA) != STATUS_GOOD)
+  if (Asic_IsTAConnected (&g_chip, &hasTA) != SANE_STATUS_GOOD)
     {
       DBG (DBG_FUNC,
 	   "Transparent_SetupScan: Asic_IsTAConnected return error\n");
@@ -417,7 +417,7 @@ Transparent_SetupScan (COLORMODE ColorMode, unsigned short XDpi, unsigned short 
       return FALSE;
     }
 
-  if (Asic_TurnTA (&g_chip, TRUE) != STATUS_GOOD)
+  if (Asic_TurnTA (&g_chip, TRUE) != SANE_STATUS_GOOD)
     {
       DBG (DBG_FUNC, "Transparent_SetupScan: Asic_TurnTA return error\n");
       return FALSE;

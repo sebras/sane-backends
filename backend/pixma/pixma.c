@@ -899,7 +899,7 @@ print_scan_param (int level, const pixma_scan_param_t * sp)
   pixma_dbg (level, "  dpi=%ux%u offset=(%u,%u) dimension=%ux%u\n",
 	     sp->xdpi, sp->ydpi, sp->x, sp->y, sp->w, sp->h);
   pixma_dbg (level, "  gamma=%f gamma_table=%p source=%d\n", sp->gamma,
-       sp->gamma_table, sp->source);
+             (void *) sp->gamma_table, sp->source);
   pixma_dbg (level, "  adf-wait=%d\n", sp->adf_wait);
 }
 #endif

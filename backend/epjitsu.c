@@ -3,7 +3,7 @@
    This file implements a SANE backend for the Fujitsu fi-60F, the
    ScanSnap S300/S1300, and (hopefully) other Epson-based scanners.
 
-   Copyright 2007-2015 by m. allan noah <kitno455 at gmail dot com>
+   Copyright 2007-2022 by m. allan noah <kitno455 at gmail dot com>
    Copyright 2009 by Richard Goedeken <richard at fascinationsoftware dot com>
 
    Development funded by Microdea, Inc., TrueCheck, Inc. and Archivista, GmbH
@@ -155,6 +155,10 @@
       v31 2017-04-09, MAN
          - hardware gray support for fi-60F/65F (disabled pending calibration)
          - merge fi-60F/65F settings
+      v32 2022-11-15, MAN
+         - fix hanging scan when using source = ADF Back (fixes #601)
+      v33 2022-11-17, MAN
+         - S1300i: fix color plane offset at 225 and 330 dpi (fixes #538)
 
    SANE FLOW DIAGRAM
 
@@ -203,7 +207,7 @@
 #include "epjitsu-cmd.h"
 
 #define DEBUG 1
-#define BUILD 31
+#define BUILD 33
 
 #ifndef MIN
   #define MIN(a,b) ((a) < (b) ? (a) : (b))
@@ -271,7 +275,7 @@ static struct scanner *scanner_devList = NULL;
 SANE_Status
 sane_init (SANE_Int * version_code, SANE_Auth_Callback authorize)
 {
-    authorize = authorize;        /* get rid of compiler warning */
+    (void) authorize;           /* get rid of compiler warning */
 
     DBG_INIT ();
     DBG (10, "sane_init: start\n");
@@ -323,7 +327,7 @@ sane_get_devices (const SANE_Device *** device_list, SANE_Bool local_only)
     int num_devices=0;
     int i=0;
 
-    local_only = local_only;        /* get rid of compiler warning */
+    (void) local_only;          /* get rid of compiler warning */
 
     DBG (10, "sane_get_devices: start\n");
 
@@ -4087,12 +4091,12 @@ sane_read (SANE_Handle handle, SANE_Byte * buf, SANE_Int max_len, SANE_Int * len
 
         memcpy(buf, page->image->buffer + page->bytes_read, *len);
         page->bytes_read += *len;
+    }
 
-        /* sent it all, return eof on next read */
-        if(page->bytes_read == page->bytes_scanned && s->fullscan.done){
-            DBG (10, "sane_read: side done\n");
-            page->done = 1;
-        }
+    /* sent it all, return eof on next read */
+    if(page->bytes_read == page->bytes_scanned && s->fullscan.done){
+        DBG (10, "sane_read: side done\n");
+        page->done = 1;
     }
 
     DBG (10, "sane_read: finish si:%d len:%d max:%d\n",s->side,*len,max_len);
@@ -4160,6 +4164,7 @@ descramble_raw(struct scanner *s, struct transfer * tp)
         for (j = 0; j < height; j++){             /* row (y)*/
           int curr_col = 0;
           int r=0, g=0, b=0, ppc=0;
+          int g_offset=0, b_offset=0;
 
           for (k = 0; k <= tp->plane_width; k++){  /* column (x) */
             int this_col = k*tp->image->x_res/tp->x_res;
@@ -4184,14 +4189,20 @@ descramble_raw(struct scanner *s, struct transfer * tp)
               break;
             }
 
+            /* if we're using an S1300i with scan resolution 225 or 300, on AC power, the color planes are shifted */
+            if(s->model == MODEL_S1300i && !s->usb_power && (tp->x_res == 225 || tp->x_res == 300) && tp != &s->cal_image && k + 2 <= tp->plane_width){
+              g_offset = 3;
+              b_offset = 6;
+            }
+
             /*red is first*/
             r += tp->raw_data[j*tp->line_stride + k*3 + i];
 
             /*green is second*/
-            g += tp->raw_data[j*tp->line_stride + tp->plane_stride + k*3 + i];
+            g += tp->raw_data[j*tp->line_stride + tp->plane_stride + k*3 + i + g_offset];
 
             /*blue is third*/
-            b += tp->raw_data[j*tp->line_stride + 2*tp->plane_stride + k*3 + i];
+            b += tp->raw_data[j*tp->line_stride + 2*tp->plane_stride + k*3 + i + b_offset];
 
             ppc++;
           }

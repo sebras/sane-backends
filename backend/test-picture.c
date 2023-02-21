@@ -48,7 +48,8 @@ init_picture_buffer (Test_Device * test_device, SANE_Byte ** buffer,
 		     size_t * buffer_size)
 {
   SANE_Word pattern_size = 0, pattern_distance = 0;
-  SANE_Word line_count, b_size;
+  SANE_Word line_count;
+  size_t b_size;
   SANE_Word lines = 0;
   SANE_Word bpl = test_device->bytes_per_line;
   SANE_Word ppl = test_device->pixels_per_line;
@@ -83,7 +84,7 @@ init_picture_buffer (Test_Device * test_device, SANE_Byte ** buffer,
       if (strcmp (test_device->val[opt_test_picture].s, "Solid black") == 0)
 	{
 	  DBG (3, "(child) init_picture_buffer: drawing solid black test "
-	       "picture %d bytes\n", b_size);
+	       "picture %zu bytes\n", b_size);
 	  if (test_device->params.format == SANE_FRAME_GRAY
 	      && test_device->params.depth == 1)
 	    pattern = 0xff;
@@ -93,7 +94,7 @@ init_picture_buffer (Test_Device * test_device, SANE_Byte ** buffer,
       else
 	{
 	  DBG (3, "(child) init_picture_buffer: drawing solid white test "
-	       "picture %d bytes\n", b_size);
+	       "picture %zu bytes\n", b_size);
 	  if (test_device->params.format == SANE_FRAME_GRAY
 	      && test_device->params.depth == 1)
 	    pattern = 0x00;
@@ -115,8 +116,8 @@ init_picture_buffer (Test_Device * test_device, SANE_Byte ** buffer,
       if (test_device->params.depth == 16)
 	increment *= 2;
 
-      lines = 2 * p_size + 0.5;
-      b_size = lines * bpl;
+      lines = (SANE_Word) (2 * p_size + 0.5);
+      b_size = (size_t) lines * (size_t) bpl;
       if (buffer_size)
 	*buffer_size = b_size;
       b = malloc (b_size);
@@ -128,7 +129,7 @@ init_picture_buffer (Test_Device * test_device, SANE_Byte ** buffer,
       if (buffer)
 	*buffer = b;
       DBG (3, "(child) init_picture_buffer: drawing grid test picture "
-	   "%d bytes, %d bpl, %d ppl, %d lines\n", b_size, bpl, ppl, lines);
+	   "%zu bytes, %d bpl, %d ppl, %d lines\n", b_size, bpl, ppl, lines);
 
       for (line_count = 0; line_count < lines; line_count++)
 	{
@@ -161,7 +162,7 @@ init_picture_buffer (Test_Device * test_device, SANE_Byte ** buffer,
 			    }
 			  else
 			    color = (rand ()) & 0x01;
-			  value |= (color << x1);
+			  value |= (SANE_Byte) (color << x1);
 			}
 		      b[line_count * bpl + x] = value;
 		    }
@@ -182,7 +183,7 @@ init_picture_buffer (Test_Device * test_device, SANE_Byte ** buffer,
 			    }
 			  else
 			    color = (rand ()) & 0x01;
-			  value |= (color << x1);
+			  value |= (SANE_Byte) (color << x1);
 			}
 		      for (x1 = 0; x1 < increment; x1++)
 			b[line_count * bpl + x + x1] = value;
@@ -197,7 +198,7 @@ init_picture_buffer (Test_Device * test_device, SANE_Byte ** buffer,
 		    else
 		      color = 0xff;
 		  else
-		    color = (rand ()) & 0xff;
+		    color = (SANE_Byte) ((rand ()) & 0xff);
 
 		  for (x1 = 0; x1 < increment; x1++)
 		    b[line_count * bpl + x + x1] = color;
@@ -215,7 +216,7 @@ init_picture_buffer (Test_Device * test_device, SANE_Byte ** buffer,
       pattern_size = 16;
       pattern_distance = 0;
       lines = 2 * (pattern_size + pattern_distance);
-      b_size = lines * bpl;
+      b_size = (size_t) lines * (size_t) bpl;
 
       if (buffer_size)
 	*buffer_size = b_size;
@@ -228,7 +229,7 @@ init_picture_buffer (Test_Device * test_device, SANE_Byte ** buffer,
       if (buffer)
 	*buffer = b;
       DBG (3, "(child) init_picture_buffer: drawing b/w test picture "
-	   "%d bytes, %d bpl, %d lines\n", b_size, bpl, lines);
+	   "%zu bytes, %d bpl, %d lines\n", b_size, bpl, lines);
       memset (b, 255, b_size);
       for (line_count = 0; line_count < lines; line_count++)
 	{
@@ -244,7 +245,7 @@ init_picture_buffer (Test_Device * test_device, SANE_Byte ** buffer,
 	      width = pattern_size / 8;
 	      if (x + width >= bpl)
 		width = bpl - x;
-	      memset (b + line_count * bpl + x, 0x00, width);
+	      memset (b + line_count * bpl + x, 0x00, (size_t) width);
 	      x += (pattern_size + pattern_distance) * 2 / 8;
 	    }
 	}
@@ -256,7 +257,7 @@ init_picture_buffer (Test_Device * test_device, SANE_Byte ** buffer,
       pattern_size = 4;
       pattern_distance = 1;
       lines = 2 * (pattern_size + pattern_distance);
-      b_size = lines * bpl;
+      b_size = (size_t) lines * (size_t) bpl;
 
       if (buffer_size)
 	*buffer_size = b_size;
@@ -269,7 +270,7 @@ init_picture_buffer (Test_Device * test_device, SANE_Byte ** buffer,
       if (buffer)
 	*buffer = b;
       DBG (3, "(child) init_picture_buffer: drawing 8 bit gray test picture "
-	   "%d bytes, %d bpl, %d lines\n", b_size, bpl, lines);
+	   "%zu bytes, %d bpl, %d lines\n", b_size, bpl, lines);
       memset (b, 0x55, b_size);
       for (line_count = 0; line_count < lines; line_count++)
 	{
@@ -289,10 +290,10 @@ init_picture_buffer (Test_Device * test_device, SANE_Byte ** buffer,
 		width = bpl - x;
 	      if (line_count > (pattern_size + pattern_distance))
 		color =
-		  0xff - ((x / (pattern_size + pattern_distance)) & 0xff);
+		  (SANE_Byte) (0xff - ((x / (pattern_size + pattern_distance)) & 0xff));
 	      else
-		color = (x / (pattern_size + pattern_distance)) & 0xff;
-	      memset (b + line_count * bpl + x, color, width);
+		color = (SANE_Byte) ((x / (pattern_size + pattern_distance)) & 0xff);
+	      memset (b + line_count * bpl + x, color, (size_t) width);
 	      x += (pattern_size + pattern_distance);
 	    }
 	}
@@ -305,7 +306,7 @@ init_picture_buffer (Test_Device * test_device, SANE_Byte ** buffer,
       pattern_size = 256;
       pattern_distance = 4;
       lines = 1 * (pattern_size + pattern_distance);
-      b_size = lines * bpl;
+      b_size = (size_t) lines * (size_t) bpl;
 
       if (buffer_size)
 	*buffer_size = b_size;
@@ -318,7 +319,7 @@ init_picture_buffer (Test_Device * test_device, SANE_Byte ** buffer,
       if (buffer)
 	*buffer = b;
       DBG (3, "(child) init_picture_buffer: drawing 16 bit gray test picture "
-	   "%d bytes, %d bpl, %d lines\n", b_size, bpl, lines);
+	   "%zu bytes, %d bpl, %d lines\n", b_size, bpl, lines);
       memset (b, 0x55, b_size);
       for (line_count = 0; line_count < lines; line_count++)
 	{
@@ -338,11 +339,11 @@ init_picture_buffer (Test_Device * test_device, SANE_Byte ** buffer,
 	      if (x + width >= bpl)
 		width = bpl - x;
 	      pattern_lo =
-		((line_count - pattern_distance)
-		 % (pattern_size + pattern_distance)) & 0xff;
+		(SANE_Byte) (((line_count - pattern_distance)
+		 % (pattern_size + pattern_distance)) & 0xff);
 	      for (x1 = 0; x1 < width; x1 += 2)
 		{
-		  pattern_hi = (x1 / 2) & 0xff;
+		  pattern_hi = (SANE_Byte) ((x1 / 2) & 0xff);
 		  if (is_little_endian)
 		    {
 		      b[line_count * bpl + x + x1 + 0] = pattern_lo;
@@ -366,7 +367,7 @@ init_picture_buffer (Test_Device * test_device, SANE_Byte ** buffer,
       pattern_size = 16;
       pattern_distance = 0;
       lines = 2 * (pattern_size + pattern_distance);
-      b_size = lines * bpl;
+      b_size = (size_t) lines * (size_t) bpl;
 
       if (buffer_size)
 	*buffer_size = b_size;
@@ -379,7 +380,7 @@ init_picture_buffer (Test_Device * test_device, SANE_Byte ** buffer,
       if (buffer)
 	*buffer = b;
       DBG (3, "(child) init_picture_buffer: drawing color lineart test "
-	   "picture %d bytes, %d bpl, %d lines\n", b_size, bpl, lines);
+	   "picture %zu bytes, %d bpl, %d lines\n", b_size, bpl, lines);
       memset (b, 0x55, b_size);
 
       for (line_count = 0; line_count < lines; line_count++)
@@ -433,7 +434,7 @@ init_picture_buffer (Test_Device * test_device, SANE_Byte ** buffer,
       pattern_size = 16;
       pattern_distance = 0;
       lines = 2 * (pattern_size + pattern_distance);
-      b_size = lines * bpl;
+      b_size = (size_t) lines * (size_t) bpl;
 
       if (buffer_size)
 	*buffer_size = b_size;
@@ -446,7 +447,7 @@ init_picture_buffer (Test_Device * test_device, SANE_Byte ** buffer,
       if (buffer)
 	*buffer = b;
       DBG (3, "(child) init_picture_buffer: drawing color lineart three-pass "
-	   "test picture %d bytes, %d bpl, %d lines\n", b_size, bpl, lines);
+	   "test picture %zu bytes, %d bpl, %d lines\n", b_size, bpl, lines);
       memset (b, 0x55, b_size);
 
       for (line_count = 0; line_count < lines; line_count++)
@@ -501,7 +502,7 @@ init_picture_buffer (Test_Device * test_device, SANE_Byte ** buffer,
       pattern_size = 4;
       pattern_distance = 1;
       lines = 6 * (pattern_size + pattern_distance);
-      b_size = lines * bpl;
+      b_size = (size_t) lines * (size_t) bpl;
 
       if (buffer_size)
 	*buffer_size = b_size;
@@ -514,7 +515,7 @@ init_picture_buffer (Test_Device * test_device, SANE_Byte ** buffer,
       if (buffer)
 	*buffer = b;
       DBG (3, "(child) init_picture_buffer: drawing 8 bit color test picture "
-	   "%d bytes, %d bpl, %d lines\n", b_size, bpl, lines);
+	   "%zu bytes, %d bpl, %d lines\n", b_size, bpl, lines);
       memset (b, 0x55, b_size);
       for (line_count = 0; line_count < lines; line_count++)
 	{
@@ -536,10 +537,10 @@ init_picture_buffer (Test_Device * test_device, SANE_Byte ** buffer,
 
 	      if ((line_count / (pattern_size + pattern_distance)) & 1)
 		color =
-		  0xff - ((x / ((pattern_size + pattern_distance) * 3))
-			  & 0xff);
+		  (SANE_Byte) (0xff - ((x / ((pattern_size + pattern_distance) * 3))
+			  & 0xff));
 	      else
-		color = (x / ((pattern_size + pattern_distance) * 3)) & 0xff;
+		color = (SANE_Byte) ((x / ((pattern_size + pattern_distance) * 3)) & 0xff);
 
 	      if (line_count / (pattern_size + pattern_distance) < 2)
 		{
@@ -581,7 +582,7 @@ init_picture_buffer (Test_Device * test_device, SANE_Byte ** buffer,
       pattern_size = 4;
       pattern_distance = 1;
       lines = 6 * (pattern_size + pattern_distance);
-      b_size = lines * bpl;
+      b_size = (size_t) lines * (size_t) bpl;
 
       if (buffer_size)
 	*buffer_size = b_size;
@@ -594,7 +595,7 @@ init_picture_buffer (Test_Device * test_device, SANE_Byte ** buffer,
       if (buffer)
 	*buffer = b;
       DBG (3, "(child) init_picture_buffer: drawing 8 bit color three-pass "
-	   "test picture %d bytes, %d bpl, %d lines\n", b_size, bpl, lines);
+	   "test picture %zu bytes, %d bpl, %d lines\n", b_size, bpl, lines);
       memset (b, 0x55, b_size);
       for (line_count = 0; line_count < lines; line_count++)
 	{
@@ -614,10 +615,10 @@ init_picture_buffer (Test_Device * test_device, SANE_Byte ** buffer,
 		width = bpl - x;
 
 	      if ((line_count / (pattern_size + pattern_distance)) & 1)
-		color =
-		  0xff - (x / ((pattern_size + pattern_distance)) & 0xff);
+		color = (SANE_Byte)
+		  (0xff - (x / ((pattern_size + pattern_distance)) & 0xff));
 	      else
-		color = (x / (pattern_size + pattern_distance)) & 0xff;
+		color = (SANE_Byte) ((x / (pattern_size + pattern_distance)) & 0xff);
 
 	      if (line_count / (pattern_size + pattern_distance) < 2)
 		{
@@ -634,7 +635,7 @@ init_picture_buffer (Test_Device * test_device, SANE_Byte ** buffer,
 		  if (test_device->params.format != SANE_FRAME_BLUE)
 		    color = 0x00;
 		}
-	      memset (b + line_count * bpl + x, color, width);
+	      memset (b + line_count * bpl + x, color, (size_t) width);
 
 	      x += (pattern_size + pattern_distance);
 	    }
@@ -647,7 +648,7 @@ init_picture_buffer (Test_Device * test_device, SANE_Byte ** buffer,
       pattern_size = 256;
       pattern_distance = 4;
       lines = pattern_size + pattern_distance;
-      b_size = lines * bpl;
+      b_size = (size_t) lines * (size_t) bpl;
 
       if (buffer_size)
 	*buffer_size = b_size;
@@ -661,7 +662,7 @@ init_picture_buffer (Test_Device * test_device, SANE_Byte ** buffer,
 	*buffer = b;
       DBG (3,
 	   "(child) init_picture_buffer: drawing 16 bit color test picture "
-	   "%d bytes, %d bpl, %d lines\n", b_size, bpl, lines);
+	   "%zu bytes, %d bpl, %d lines\n", b_size, bpl, lines);
       memset (b, 0x55, b_size);
       for (line_count = 0; line_count < lines; line_count++)
 	{
@@ -687,10 +688,10 @@ init_picture_buffer (Test_Device * test_device, SANE_Byte ** buffer,
 
 	      for (x1 = 0; x1 < width; x1 += 6)
 		{
-		  color_lo =
-		    ((line_count + pattern_size)
-		     % (pattern_size + pattern_distance)) & 0xff;
-		  color_hi = (x1 / 6) & 0xff;
+		  color_lo = (SANE_Byte)
+		    (((line_count + pattern_size)
+		     % (pattern_size + pattern_distance)) & 0xff);
+		  color_hi = (SANE_Byte) ((x1 / 6) & 0xff);
 		  if (((x / ((pattern_size + pattern_distance) * 6)) % 3) ==
 		      0)
 		    {
@@ -753,7 +754,7 @@ init_picture_buffer (Test_Device * test_device, SANE_Byte ** buffer,
       pattern_size = 256;
       pattern_distance = 4;
       lines = pattern_size + pattern_distance;
-      b_size = lines * bpl;
+      b_size = (size_t) lines * (size_t) bpl;
 
       if (buffer_size)
 	*buffer_size = b_size;
@@ -766,7 +767,7 @@ init_picture_buffer (Test_Device * test_device, SANE_Byte ** buffer,
       if (buffer)
 	*buffer = b;
       DBG (3, "(child) init_picture_buffer: drawing 16 bit color three-pass "
-	   "test picture %d bytes, %d bpl, %d lines\n", b_size, bpl, lines);
+	   "test picture %zu bytes, %d bpl, %d lines\n", b_size, bpl, lines);
       memset (b, 0x55, b_size);
       for (line_count = 0; line_count < lines; line_count++)
 	{
@@ -789,10 +790,10 @@ init_picture_buffer (Test_Device * test_device, SANE_Byte ** buffer,
 
 	      for (x1 = 0; x1 < width; x1 += 2)
 		{
-		  color_lo =
-		    ((line_count + pattern_size)
-		     % (pattern_size + pattern_distance)) & 0xff;
-		  color_hi = (x1 / 2) & 0xff;
+		  color_lo = (SANE_Byte)
+		    (((line_count + pattern_size)
+		     % (pattern_size + pattern_distance)) & 0xff);
+		  color_hi = (SANE_Byte) ((x1 / 2) & 0xff);
 		  if (((x / ((pattern_size + pattern_distance) * 2)) % 3) ==
 		      0)
 		    {

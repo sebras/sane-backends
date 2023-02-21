@@ -434,7 +434,7 @@ sane_init (SANE_Int * version_code, SANE_Auth_Callback authorize)
   size_t len;
   FILE *fp;
 
-  authorize = authorize;	/* stop gcc from complaining */
+  (void) authorize;		/* stop gcc from complaining */
   DBG_INIT ();
 
   DBG (2, "SANE v4l backend version %d.%d build %d from %s\n", SANE_CURRENT_MAJOR,
@@ -1007,7 +1007,7 @@ sane_start (SANE_Handle handle)
 	  buffer = NULL;
 	  return SANE_STATUS_IO_ERROR;
 	}
-      DBG (3, "sane_start: mmapped frame, capture 1 pict into %p\n", buffer);
+      DBG (3, "sane_start: mmapped frame, capture 1 pict into %p\n", (void *) buffer);
       s->mmap.frame = 0;
       s->mmap.width = s->window.width;
       /*   s->mmap.width = parms.pixels_per_line;  ??? huh? */
