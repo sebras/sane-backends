@@ -2751,9 +2751,6 @@ List of available devices:", prog_name);
 
 	      if (batch_prompt)
 		{
-	          char readbuf[2];
-	          char *readbuf2;
-
 		  fprintf (stderr, "Place document no. %d on the scanner.\n",
 			   n);
 		  fprintf (stderr, "Press <RETURN> to continue.\n");
