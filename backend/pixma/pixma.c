@@ -851,18 +851,48 @@ control_option (pixma_sane_t * ss, SANE_Int n,
     case opt_source:
       if ((cfg->cap & (PIXMA_CAP_ADF|PIXMA_CAP_ADFDUP|PIXMA_CAP_TPU))
           && (a == SANE_ACTION_SET_VALUE || a == SANE_ACTION_SET_AUTO))
-        { /* new source selected: flatbed, ADF, TPU, ... */
-          /* to avoid fatal errors,
-           * select first entry of dynamic mode_list
-           * identifiers are unknown here */
-          OVAL (opt_mode).w = ss->mode_map[0];
+        {
+          /* new source selected: flatbed, ADF, TPU, ... */
+          pixma_scan_mode_t curr_mode = ss->mode_map[OVAL (opt_mode).w];
+          SANE_Word curr_res = OVAL (opt_resolution).w;
+
           /* recreate dynamic lists */
           create_mode_list (ss);
           create_dpi_list (ss);
-          /* to avoid fatal errors,
-           * select first entry of dynamic dpi_list
-           * identifiers are unknown here */
-          OVAL (opt_resolution).w = ss->dpi_list[1];
+
+          /*
+           * Check to see if the mode and res are still valid.
+           * Replace with default mode or closest res if not.
+           *
+           */
+          for (SANE_Int mode_idx = 0;; mode_idx++)
+            {
+              if (!ss->mode_list[mode_idx])
+                {
+                  OVAL (opt_mode).w = 0;
+                  break;
+                }
+              if (curr_mode == ss->mode_map[mode_idx])
+                {
+                  OVAL (opt_mode).w = mode_idx;
+                  break;
+                }
+            }
+
+          for (SANE_Int res_idx = 1;; res_idx++)
+            {
+              if (res_idx > ss->dpi_list[0])
+                {
+                  OVAL (opt_resolution).w = ss->dpi_list[1];
+                  break;
+                }
+              if (ss->dpi_list[res_idx] >= curr_res)
+                {
+                  OVAL (opt_resolution).w = ss->dpi_list[res_idx];
+                  break;
+                }
+            }
+
           if (ss->mode_map[OVAL (opt_mode).w] == PIXMA_SCAN_MODE_LINEART)
             { /* lineart */
               enable_option (ss, opt_threshold, SANE_TRUE);
