@@ -2263,6 +2263,7 @@ getvalue(SANE_Handle handle, SANE_Int option, void *value)
 	case OPT_BR_Y:
 	case OPT_DEPTH:
 	case OPT_ADF_SKEW:
+	case OPT_ADF_CRP:
 		*((SANE_Word *) value) = sval->w;
 		break;
 
