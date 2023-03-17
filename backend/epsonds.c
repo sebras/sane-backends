@@ -1971,6 +1971,7 @@ init_options(epsonds_scanner *s)
 	}
 
 	/* "Geometry" group: */
+	s->opt[OPT_GEOMETRY_GROUP].name = "";
 	s->opt[OPT_GEOMETRY_GROUP].title = SANE_I18N("Geometry");
 	s->opt[OPT_GEOMETRY_GROUP].desc = "";
 	s->opt[OPT_GEOMETRY_GROUP].type = SANE_TYPE_GROUP;
@@ -2020,6 +2021,7 @@ init_options(epsonds_scanner *s)
 	s->val[OPT_BR_Y].w = s->hw->y_range->max;
 
 	/* "Optional equipment" group: */
+	s->opt[OPT_EQU_GROUP].name = "";
 	s->opt[OPT_EQU_GROUP].title = SANE_I18N("Optional equipment");
 	s->opt[OPT_EQU_GROUP].desc = "";
 	s->opt[OPT_EQU_GROUP].type = SANE_TYPE_GROUP;
@@ -2263,6 +2265,7 @@ getvalue(SANE_Handle handle, SANE_Int option, void *value)
 	case OPT_BR_Y:
 	case OPT_DEPTH:
 	case OPT_ADF_SKEW:
+	case OPT_ADF_CRP:
 		*((SANE_Word *) value) = sval->w;
 		break;
 
