@@ -1,12 +1,12 @@
 /* sane - Scanner Access Now Easy.
 
    This file is part of the SANE package, and implements a SANE backend
-   for various Fujitsu scanners.
+   for various Fujitsu and Ricoh scanners.
 
    Copyright (C) 2000 Randolph Bentson
    Copyright (C) 2001 Frederik Ramm
    Copyright (C) 2001-2004 Oliver Schirrmeister
-   Copyright (C) 2003-2022 m. allan noah
+   Copyright (C) 2003-2023 m. allan noah
 
    JPEG output and low memory usage support funded by:
      Archivista GmbH, www.archivista.ch
@@ -616,6 +616,8 @@
       v139 2022-11-15, MAN
          - move updated window_gamma logic to set_window
          - use internal gamma table if possible (fixes #618)
+      v140 2023-03-27, MAN
+         - add initial support for Ricoh scanners
 
    SANE FLOW DIAGRAM
 
@@ -665,7 +667,7 @@
 #include "fujitsu.h"
 
 #define DEBUG 1
-#define BUILD 139
+#define BUILD 140
 
 /* values for SANE_DEBUG_FUJITSU env var:
  - errors           5
@@ -1154,7 +1156,7 @@ connect_fd (struct fujitsu *s)
 }
 
 /*
- * This routine will check if a certain device is a Fujitsu scanner
+ * This routine will check if a certain device is a Fujitsu/Ricoh scanner
  * It also copies interesting data from INQUIRY into the handle structure
  */
 static SANE_Status
@@ -1209,9 +1211,9 @@ init_inquire (struct fujitsu *s)
   for (i = 3; s->version_name[i] == ' ' && i >= 0; i--)
     s->version_name[i] = 0;
 
-  if (strcmp ("FUJITSU", s->vendor_name)) {
+  if (strcmp ("FUJITSU", s->vendor_name) && strcmp ("RICOH", s->vendor_name)) {
     DBG (5, "The device at '%s' is reported to be made by '%s'\n", s->device_name, s->vendor_name);
-    DBG (5, "This backend only supports Fujitsu products.\n");
+    DBG (5, "This backend only supports Fujitsu and Ricoh products.\n");
     return SANE_STATUS_INVAL;
   }
 

@@ -11,7 +11,7 @@
 
 
 :backend "fujitsu"               ; name of backend
-:version "139"                   ; version of backend
+:version "140"                   ; version of backend
 :manpage "sane-fujitsu"          ; name of manpage (if it exists)
 :comment "This backend supports most Fujitsu and Ricoh fi-series and similar scanners. See manpage for details."
 :devicetype :scanner             ; start of a list of devices....
@@ -814,4 +814,14 @@
 :interface "USB"
 :status :good
 :usbid "0x04c5" "0x160b"
+
+:model "fi-8040"
+:interface "USB"
+:status :untested
+:usbid "0x05ca" "0x0307"
+
+:model "fi-70F"
+:interface "USB"
+:status :untested
+:usbid "0x05ca" "0x0308"
 
