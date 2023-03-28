@@ -824,4 +824,3 @@
 :interface "USB"
 :status :untested
 :usbid "0x05ca" "0x0308"
-
