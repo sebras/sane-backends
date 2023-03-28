@@ -683,28 +683,78 @@
 :mfg "Ricoh"                   ; name a manufacturer
 :url "http://www.ricoh.com/"
 
-:model "ScanSnap iX1600"
-:interface "USB WiFi"
-:status :good
-:usbid "0x04c5" "0x1632"
-:comment "WiFi not supported."
-
-:model "ScanSnap iX1400"
+:model "fi-70F"
 :interface "USB"
 :status :untested
-:usbid "0x04c5" "0x1630"
+:usbid "0x05ca" "0x0308"
 
-:model "fi-8190"
+:model "fi-400F"
+:interface "USB"
+:status :untested
+:usbid "0x04c5" "0x151e"
+
+:model "fi-800R"
 :interface "USB"
 :status :good
-:usbid "0x04c5" "0x15fd"
-:comment "Ethernet not supported."
+:usbid "0x04c5" "0x15fc"
+:comment "Both feed methods are supported."
 
-:model "fi-8290"
+:model "fi-7300NX"
 :interface "USB"
 :status :good
-:usbid "0x04c5" "0x15fe"
+:usbid "0x04c5" "0x1575"
+:comment "Ethernet and WiFi not supported."
+
+:model "fi-7460"
+:interface "USB"
+:status :good
+:usbid "0x04c5" "0x14be"
+
+:model "fi-7480"
+:interface "USB"
+:status :good
+:usbid "0x04c5" "0x14b8"
+
+:model "fi-7600"
+:interface "USB"
+:status :good
+:usbid "0x04c5" "0x1521"
+
+:model "fi-7700"
+:interface "USB"
+:status :good
+:usbid "0x04c5" "0x1520"
+
+:model "fi-7700S"
+:interface "USB"
+:status :untested
+:usbid "0x04c5" "0x1522"
+
+:model "fi-7800"
+:interface "USB"
+:status :good
+:usbid "0x04c5" "0x160b"
+
+:model "fi-7900"
+:interface "USB"
+:status :good
+:usbid "0x04c5" "0x160a"
+
+:model "fi-8040"
+:interface "USB"
+:status :untested
+:usbid "0x05ca" "0x0307"
+
+:model "fi-8150"
+:interface "USB"
+:status :good
+:usbid "0x04c5" "0x1601"
 :comment "Ethernet not supported."
+
+:model "fi-8150U"
+:interface "USB"
+:status :good
+:usbid "0x04c5" "0x162d"
 
 :model "fi-8170"
 :interface "USB"
@@ -712,16 +762,10 @@
 :usbid "0x04c5" "0x15ff"
 :comment "Ethernet not supported."
 
-:model "fi-8270"
+:model "fi-8190"
 :interface "USB"
 :status :good
-:usbid "0x04c5" "0x1600"
-:comment "Ethernet not supported."
-
-:model "fi-8150"
-:interface "USB"
-:status :good
-:usbid "0x04c5" "0x1601"
+:usbid "0x04c5" "0x15fd"
 :comment "Ethernet not supported."
 
 :model "fi-8250"
@@ -730,69 +774,27 @@
 :usbid "0x04c5" "0x1602"
 :comment "Ethernet not supported."
 
-:model "fi-8150U"
-:interface "USB"
-:status :good
-:usbid "0x04c5" "0x162d"
-
 :model "fi-8250U"
 :interface "USB"
 :status :good
 :usbid "0x04c5" "0x162e"
 
-:model "ScanSnap iX1300"
-:interface "USB WiFi"
-:status :good
-:usbid "0x04c5" "0x162c"
-:comment "WiFi not supported."
-
-:model "fi-7300NX"
+:model "fi-8270"
 :interface "USB"
 :status :good
-:usbid "0x04c5" "0x1575"
-:comment "Ethernet and WiFi not supported."
+:usbid "0x04c5" "0x1600"
+:comment "Ethernet not supported."
 
-:model "fi-7480"
+:model "fi-8290"
 :interface "USB"
 :status :good
-:usbid "0x04c5" "0x14b8"
+:usbid "0x04c5" "0x15fe"
+:comment "Ethernet not supported."
 
-:model "fi-7460"
-:interface "USB"
-:status :good
-:usbid "0x04c5" "0x14be"
-
-:model "fi-7700"
-:interface "USB"
-:status :good
-:usbid "0x04c5" "0x1520"
-
-:model "fi-7600"
-:interface "USB"
-:status :good
-:usbid "0x04c5" "0x1521"
-
-:model "fi-7700S"
-:interface "USB"
+:model "N7100"
+:interface "USB Ethernet"
 :status :untested
-:usbid "0x04c5" "0x1522"
-
-:model "fi-800R"
-:interface "USB"
-:status :good
-:usbid "0x04c5" "0x15fc"
-:comment "Both feed methods are supported."
-
-:model "fi-400F"
-:interface "USB"
-:status :untested
-:usbid "0x04c5" "0x151e"
-
-:model "ScanSnap SV600"
-:interface "USB"
-:status :unsupported
-:usbid "0x04c5" "0x128e"
-:comment "Also has a second USB VID 0x13ba. Will require some gymnastics to support."
+:usbid "0x04c5" "0x146f"
 
 :model "ScanSnap iX100"
 :interface "USB WiFi"
@@ -800,27 +802,25 @@
 :usbid "0x04c5" "0x13f4"
 :comment "WiFi not supported."
 
-:model "N7100"
-:interface "USB Ethernet"
-:status :untested
-:usbid "0x04c5" "0x146f"
-
-:model "fi-7900"
-:interface "USB"
+:model "ScanSnap iX1300"
+:interface "USB WiFi"
 :status :good
-:usbid "0x04c5" "0x160a"
+:usbid "0x04c5" "0x162c"
+:comment "WiFi not supported."
 
-:model "fi-7800"
+:model "ScanSnap iX1400"
 :interface "USB"
+:status :untested
+:usbid "0x04c5" "0x1630"
+
+:model "ScanSnap iX1600"
+:interface "USB WiFi"
 :status :good
-:usbid "0x04c5" "0x160b"
+:usbid "0x04c5" "0x1632"
+:comment "WiFi not supported."
 
-:model "fi-8040"
+:model "ScanSnap SV600"
 :interface "USB"
-:status :untested
-:usbid "0x05ca" "0x0307"
-
-:model "fi-70F"
-:interface "USB"
-:status :untested
-:usbid "0x05ca" "0x0308"
+:status :unsupported
+:usbid "0x04c5" "0x128e"
+:comment "Also has a second USB VID 0x13ba. Will require some gymnastics to support."
