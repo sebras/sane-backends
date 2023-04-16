@@ -46,7 +46,7 @@ struct downloading
 static const char settings[] =
     "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"                        \
     "<scan:ScanSettings xmlns:pwg=\"http://www.pwg.org/schemas/2010/12/sm\" xmlns:scan=\"http://schemas.hp.com/imaging/escl/2011/05/03\">" \
-    "   <pwg:Version>%.2f</pwg:Version>" \
+    "   <pwg:Version>%s</pwg:Version>" \
     "   <pwg:ScanRegions>" \
     "      <pwg:ScanRegion>" \
     "          <pwg:ContentRegionUnits>escl:ThreeHundredthsOfInches</pwg:ContentRegionUnits>" \
@@ -187,7 +187,7 @@ escl_newjob (capabilities_t *scanner, const ESCL_Device *device, SANE_Status *st
 	    scanner->caps[scanner->source].default_format =
 		    strdup(scanner->caps[scanner->source].DocumentFormats[have_pdf]);
     }
-    if (device->version <= 2.0)
+    if (atof ((const char *)device->version) <= 2.0)
     {
         // For eSCL 2.0 and older clients
         snprintf(f_ext_tmp, sizeof(f_ext_tmp),

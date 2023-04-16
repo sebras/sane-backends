@@ -92,7 +92,7 @@ typedef struct {
 typedef struct ESCL_Device {
     struct ESCL_Device *next;
 
-    double    version;
+    char     *version;
     char     *model_name;
     int       port_nb;
     char     *ip_address;
