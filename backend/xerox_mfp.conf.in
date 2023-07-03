@@ -251,6 +251,9 @@ usb 0x0924 0x42da
 #Xerox WorkCentre 3225
 usb 0x0924 0x42dc
 
+#Xerox WorkCentre 3335
+usb 0x0924 0x42e2
+
 ###################
 ### Dell Models ###
 ###################
