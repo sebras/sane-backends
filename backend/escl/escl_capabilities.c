@@ -72,7 +72,7 @@ convert_elements(SANE_String_Const str)
         return (SANE_VALUE_SCAN_MODE_GRAY);
     else if (strcmp(str, "RGB24") == 0)
         return (SANE_VALUE_SCAN_MODE_COLOR);
-#if(defined HAVE_POPPLER_GLIB)
+#if HAVE_POPPLER_GLIB
     else if (strcmp(str, "BlackAndWhite1") == 0)
         return (SANE_VALUE_SCAN_MODE_LINEART);
 #endif
@@ -202,7 +202,11 @@ find_valor_of_array_variables(xmlNode *node, capabilities_t *scanner, int type)
     const char *name = (const char *)node->name;
     if (strcmp(name, "ColorMode") == 0) {
 	const char *color = (SANE_String_Const)xmlNodeGetContent(node);
-        if (type == PLATEN || strcmp(color, "BlackAndWhite1"))
+        if (type == PLATEN
+#if HAVE_POPPLER_GLIB
+		       	|| strcmp(color, "BlackAndWhite1")
+#endif
+		)
           scanner->caps[type].ColorModes = char_to_array(scanner->caps[type].ColorModes, &scanner->caps[type].ColorModesSize, (SANE_String_Const)xmlNodeGetContent(node), 1);
     }
     else if (strcmp(name, "ContentType") == 0)
@@ -237,7 +241,7 @@ find_valor_of_array_variables(xmlNode *node, capabilities_t *scanner, int type)
 	       scanner->caps[type].have_tiff = i;
             }
 #endif
-#if(defined HAVE_POPPLER_GLIB)
+#if HAVE_POPPLER_GLIB
             else if(type == PLATEN && !strcmp(scanner->caps[type].DocumentFormats[i], "application/pdf"))
             {
                have_pdf = SANE_TRUE;
