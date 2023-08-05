@@ -184,8 +184,22 @@ escl_newjob (capabilities_t *scanner, const ESCL_Device *device, SANE_Status *st
 	    }
     }
     else {
-	    scanner->caps[scanner->source].default_format =
-		    strdup(scanner->caps[scanner->source].DocumentFormats[have_pdf]);
+	    if (have_pdf != -1) {
+	    	    scanner->caps[scanner->source].default_format =
+		    	    strdup(scanner->caps[scanner->source].DocumentFormats[have_pdf]);
+	    }
+	    else if (have_tiff != -1) {
+		    scanner->caps[scanner->source].default_format =
+			    strdup(scanner->caps[scanner->source].DocumentFormats[have_tiff]);
+	    }
+	    else if (have_png != -1) {
+		    scanner->caps[scanner->source].default_format =
+			    strdup(scanner->caps[scanner->source].DocumentFormats[have_png]);
+	    }
+	    else if (have_jpeg != -1) {
+		    scanner->caps[scanner->source].default_format =
+			    strdup(scanner->caps[scanner->source].DocumentFormats[have_jpeg]);
+	    }
     }
     if (atof ((const char *)device->version) <= 2.0)
     {
