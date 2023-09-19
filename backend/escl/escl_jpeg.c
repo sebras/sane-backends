@@ -232,7 +232,13 @@ get_JPEG_data(capabilities_t *scanner, int *width, int *height, int *bps)
 	        y_off,
 	        w,
 	        h);
-    surface = malloc(w * h * cinfo.output_components);
+    jpeg_start_decompress(&cinfo);
+    if (x_off > 0 || w < cinfo.output_width)
+       jpeg_crop_scanline(&cinfo, &x_off, &w);
+    lineSize = w * cinfo.output_components;
+    if (y_off > 0)
+        jpeg_skip_scanlines(&cinfo, y_off);
+    surface = malloc(cinfo.output_width * cinfo.output_height * cinfo.output_components);
     if (surface == NULL) {
         jpeg_destroy_decompress(&cinfo);
         DBG( 1, "Escl Jpeg : Memory allocation problem\n");
@@ -242,12 +248,6 @@ get_JPEG_data(capabilities_t *scanner, int *width, int *height, int *bps)
         }
         return (SANE_STATUS_NO_MEM);
     }
-    jpeg_start_decompress(&cinfo);
-    if (x_off > 0 || w < cinfo.output_width)
-       jpeg_crop_scanline(&cinfo, &x_off, &w);
-    lineSize = w * cinfo.output_components;
-    if (y_off > 0)
-        jpeg_skip_scanlines(&cinfo, y_off);
     pos = 0;
     while (cinfo.output_scanline < (unsigned int)rh) {
         rowptr[0] = (JSAMPROW)surface + (lineSize * pos); // ..cinfo.output_scanline);
