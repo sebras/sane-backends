@@ -91,7 +91,7 @@
 #define SANE_PDF_LENGTH_OBJ "%d 0 obj\n%d\nendobj\n"
 
 /* end of stream/object */
-#define SANE_PDF_END_ST_OBJ "endstream\nendobj\n"
+#define SANE_PDF_END_ST_OBJ "\nendstream\nendobj\n"
 
 
 /* object id of first page */
