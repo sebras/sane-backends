@@ -136,9 +136,21 @@
 :status :untested
 :comment "Testers needed!"
 
+:model "G2030 series"
+:interface "USB"
+:usbid "0x04a9" "0x1106"
+:status :untested
+:comment "Testers needed!"
+
 :model "PIXMA G2060"
 :interface "USB"
 :usbid "0x04a9" "0x18c1"
+:status :untested
+:comment "Testers needed!"
+
+:model "G2070 series"
+:interface "USB"
+:usbid "0x04a9" "0x18f5"
 :status :untested
 :comment "Testers needed!"
 
@@ -166,9 +178,21 @@
 :status :untested
 :comment "Testers needed!"
 
+:model "G3030 series"
+:interface "USB"
+:usbid "0x04a9" "0x1105"
+:status :untested
+:comment "Testers needed!"
+
 :model "PIXMA G3060"
 :interface "USB"
 :usbid "0x04a9" "0x18c3"
+:status :untested
+:comment "Testers needed!"
+
+:model "G3070 series"
+:interface "USB"
+:usbid "0x04a9" "0x18f4"
 :status :untested
 :comment "Testers needed!"
 
@@ -181,6 +205,12 @@
 :model "PIXMA G4010 Series"
 :interface "USB WiFi"
 :usbid "0x04a9" "0x183d"
+:status :untested
+:comment "Testers needed!"
+
+:model "G4070 series"
+:interface "USB"
+:usbid "0x04a9" "0x18f3"
 :status :untested
 :comment "Testers needed!"
 
@@ -946,6 +976,18 @@
 :usbid "0x04a9" "0x171c"
 :status :complete
 :comment "Flatbed and ADF scan. All resolutions supported (up to 4800DPI)"
+
+:model "TC-20M"
+:interface "USB"
+:usbid "0x04a9" "0x18fc"
+:status :untested
+:comment "Testers needed!"
+
+:model "TC-5200M"
+:interface "USB"
+:usbid "0x04a9" "0x18ff"
+:status :untested
+:comment "Testers needed!"
 
 :model "PIXMA TR4500 Series"
 :interface "USB WiFi"

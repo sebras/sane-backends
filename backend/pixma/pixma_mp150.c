@@ -341,6 +341,15 @@
 #define GX3000_PID 0x18F1
 #define GX4000_PID 0x18F2
 
+/* 2023 new device (untested) */
+#define G3070_PID 0x18F4
+#define G2070_PID 0x18F5
+#define G4070_PID 0x18F3
+#define G3030_PID 0x1105
+#define G2030_PID 0x1106
+#define TC20M_PID 0x18FC
+#define TC5200M_PID 0x18FF
+
 /* Generation 4 XML messages that encapsulates the Pixma protocol messages */
 #define XML_START_1   \
 "<?xml version=\"1.0\" encoding=\"utf-8\" ?>\
@@ -1974,6 +1983,13 @@ const pixma_config_t pixma_mp150_devices[] = {
   DEVICE ("Canon PIXUS XK110 Series", "XK110", XK110_PID, 0, 1200, 0, 0, 638, 877, PIXMA_CAP_CIS),
   DEVICE ("Canon PIXMA GX3000 Series", "GX3000", GX3000_PID, 0, 1200, 0, 0, 638, 877, PIXMA_CAP_CIS | PIXMA_CAP_ADF),
   DEVICE ("Canon PIXMA GX4000 Series", "GX4000", GX4000_PID, 0, 1200, 0, 0, 638, 877, PIXMA_CAP_CIS | PIXMA_CAP_ADF),
+  DEVICE ("Canon PIXMA G3070", "G3070", G3070_PID, 0, 600, 0, 0, 638, 877, PIXMA_CAP_CIS),
+  DEVICE ("Canon PIXMA G2070", "G2070", G2070_PID, 0, 600, 0, 0, 638, 877, PIXMA_CAP_CIS),
+  DEVICE ("Canon PIXMA G4070", "G4070", G4070_PID, 0, 600, 0, 0, 638, 877, PIXMA_CAP_CIS),
+  DEVICE ("Canon PIXMA G3030", "G3030", G3030_PID, 0, 600, 0, 0, 638, 877, PIXMA_CAP_CIS),
+  DEVICE ("Canon PIXMA G2030", "G2030", G2030_PID, 0, 600, 0, 0, 638, 877, PIXMA_CAP_CIS),
+  DEVICE ("Canon PIXMA TC-20M", "TC-20M", TC2OM_PID, 0, 1200, 0, 0, 638, 877, PIXMA_CAP_CIS),
+  DEVICE ("Canon PIXMA TC-5200M", "TC-5200M", TC5200M_PID, 0, 1200, 0, 0, 638, 877, PIXMA_CAP_CIS),
 
   END_OF_DEVICE_LIST
 };
