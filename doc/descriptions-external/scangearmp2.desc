@@ -28,6 +28,74 @@
 ; Canon MFP2 conf file
 ;
 
+; ---- V460 --------------------------
+:model "G3070 series"
+:interface "USB WiFi"
+:usbid "0x04a9" "0x18f4"
+:status :untested
+:comment "Testers needed!"
+
+:model "G2070 series"
+:interface "USB WiFi"
+:usbid "0x04a9" "0x18f5"
+:status :untested
+:comment "Testers needed!"
+
+:model "G4070 series"
+:interface "USB WiFi"
+:usbid "0x04a9" "0x18f3"
+:status :untested
+:comment "Testers needed!"
+
+:model "G3030 series"
+:interface "USB WiFi"
+:usbid "0x04a9" "0x1105"
+:status :untested
+:comment "Testers needed!"
+
+:model "G2030 series"
+:interface "USB WiFi"
+:usbid "0x04a9" "0x1106"
+:status :untested
+:comment "Testers needed!"
+
+:model "TC-20M"
+:interface "USB WiFi"
+:usbid "0x04a9" "0x18fc"
+:status :untested
+:comment "Testers needed!"
+
+:model "TC-5200M"
+:interface "USB WiFi"
+:usbid "0x04a9" "0x18ff"
+:status :untested
+:comment "Testers needed!"
+
+; ---- V450 --------------------------
+:model "TS8630 series"
+:interface "USB WiFi"
+:usbid "0x04a9" "0x18f8"
+:status :untested
+:comment "Testers needed!"
+
+:model "XK110 series"
+:interface "USB WiFi"
+:usbid "0x04a9" "0x18f9"
+:status :untested
+:comment "Testers needed!"
+
+:model "GX3000 series"
+:interface "USB WiFi"
+:usbid "0x04a9" "0x18f1"
+:status :untested
+:comment "Testers needed!"
+
+:model "GX4000 series"
+:interface "USB WiFi"
+:usbid "0x04a9" "0x18f2"
+:status :untested
+:comment "Testers needed!"
+
 ; ---- V440 --------------------------
 
 :model "TS2400 series"
