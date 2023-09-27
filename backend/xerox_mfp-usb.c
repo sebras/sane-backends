@@ -21,6 +21,21 @@
 
 extern int sanei_debug_xerox_mfp;
 
+static int
+xerox_need_clear_halt()
+{
+    char *env;
+    int workaround = 0;
+
+    env = getenv("SANE_XEROX_USB_HALT_WORKAROUND");
+    if (env) {
+        workaround = atoi(env);
+        DBG(5, "xerox_need_clear_halt: workaround: %d\n", workaround);
+        return workaround;
+    }
+    return 0;
+}
+
 int
 usb_dev_request(struct device *dev,
                 SANE_Byte *cmd, size_t cmdlen,
@@ -70,7 +85,9 @@ usb_dev_open(struct device *dev)
         dev->dn = -1;
         return status;
     }
-    sanei_usb_clear_halt(dev->dn);
+    if (xerox_need_clear_halt()) {
+        sanei_usb_clear_halt(dev->dn);
+    }
     return SANE_STATUS_GOOD;
 }
 
@@ -92,7 +109,9 @@ usb_dev_close(struct device *dev)
             ret_cancel(dev, 0);
     }
 
-    sanei_usb_clear_halt(dev->dn);	/* unstall for next users */
+    if (xerox_need_clear_halt()) {
+        sanei_usb_clear_halt(dev->dn);	/* unstall for next users */
+    }
     sanei_usb_close(dev->dn);
     dev->dn = -1;
 }
