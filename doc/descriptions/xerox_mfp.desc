@@ -43,6 +43,12 @@
 :usbid "0x0924" "0x42dc"
 :status :good
 
+:model "WorkCentre 3335"
+:interface "USB"
+:usbid "0x0924" "0x42e2"
+:status :basic
+:comment "When scanning from automatic feeder, only the first page is scanned"
+
 :mfg "Dell"
 :url "http://www.dell.com/"
 
