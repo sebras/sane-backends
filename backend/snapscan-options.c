@@ -138,6 +138,16 @@ static const SANE_Range y_range_tpo_default =
     SANE_FIX (0.0), SANE_FIX (180.0), 0
 };        /* mm */
 
+/* TPO range for the Agfa Arcus 1200 */
+static const SANE_Range x_range_tpo_arcus =
+{
+    SANE_FIX (0.0), SANE_FIX (203.0), 0
+};        /* mm */
+static const SANE_Range y_range_tpo_arcus =
+{
+    SANE_FIX (0.0), SANE_FIX (254.0), 0
+};        /* mm */
+
 /* TPO range for the Agfa 1236 */
 static const SANE_Range x_range_tpo_1236 =
 {
@@ -329,6 +339,10 @@ static void init_options (SnapScan_Scanner * ps)
     case PERFECTION3490:
         x_range_tpo = x_range_tpo_3490;
         y_range_tpo = y_range_tpo_3490;
+        break;
+    case ARCUS1200:
+        x_range_tpo = x_range_tpo_arcus;
+        y_range_tpo = y_range_tpo_arcus;
         break;
     default:
         x_range_tpo = x_range_tpo_default;
