@@ -1432,6 +1432,43 @@ read_option (SANE_String line, SANE_String option_string,
   return SANE_STATUS_GOOD;
 }
 
+
+static SANE_Status
+read_option_str_list (SANE_String line, SANE_String option_string,
+                      parameter_type p_type, void *value,
+                      SANE_String_Const *string_list)
+{
+  SANE_String new_value = NULL;
+
+  SANE_Status ret = read_option (line, option_string, p_type, &new_value);
+  if (ret != SANE_STATUS_GOOD)
+    {
+      if (new_value)
+        {
+          free(new_value);
+        }
+      return ret;
+    }
+
+  for (SANE_String_Const *option = string_list; *option; option++)
+    {
+      if (strcmp (*option, new_value) == 0)
+        {
+
+          if (*(SANE_String*) value)
+            {
+              free (*(SANE_String*) value);
+            }
+          *(SANE_String*) value = new_value;
+
+          return SANE_STATUS_GOOD;
+        }
+    }
+
+  return SANE_STATUS_INVAL;
+}
+
+
 static SANE_Status
 reader_process (Test_Device * test_device, SANE_Int fd)
 {
@@ -1636,7 +1673,6 @@ print_options (Test_Device * test_device)
 
 /***************************** SANE API ****************************/
 
-
 SANE_Status
 sane_init (SANE_Int * __sane_unused__ version_code, SANE_Auth_Callback __sane_unused__ authorize)
 {
@@ -1736,20 +1772,23 @@ sane_init (SANE_Int * __sane_unused__ version_code, SANE_Auth_Callback __sane_un
 
 	  DBG (5, "sane_init: config file line %3d: `%s'\n",
 	       linenumber, line);
+
 	  if (read_option (line, "number_of_devices", param_int,
 			   &init_number_of_devices) == SANE_STATUS_GOOD)
 	    continue;
-	  if (read_option (line, "mode", param_string,
-			   &init_mode) == SANE_STATUS_GOOD)
-	    continue;
+
+          if (read_option_str_list (line, "mode", param_string,
+                                    &init_mode, mode_list) == SANE_STATUS_GOOD)
+              continue;
+
 	  if (read_option (line, "hand-scanner", param_bool,
 			   &init_hand_scanner) == SANE_STATUS_GOOD)
 	    continue;
 	  if (read_option (line, "three-pass", param_bool,
 			   &init_three_pass) == SANE_STATUS_GOOD)
 	    continue;
-	  if (read_option (line, "three-pass-order", param_string,
-			   &init_three_pass_order) == SANE_STATUS_GOOD)
+	  if (read_option_str_list (line, "three-pass-order", param_string,
+	                            &init_three_pass_order, order_list) == SANE_STATUS_GOOD)
 	    continue;
 	  if (read_option (line, "resolution_min", param_fixed,
 			   &resolution_range.min) == SANE_STATUS_GOOD)
@@ -1766,11 +1805,11 @@ sane_init (SANE_Int * __sane_unused__ version_code, SANE_Auth_Callback __sane_un
 	  if (read_option (line, "depth", param_int,
 			   &init_depth) == SANE_STATUS_GOOD)
 	    continue;
-	  if (read_option (line, "scan-source", param_string,
-			   &init_scan_source) == SANE_STATUS_GOOD)
+	  if (read_option_str_list (line, "scan-source", param_string,
+	                            &init_scan_source, source_list) == SANE_STATUS_GOOD)
 	    continue;
-	  if (read_option (line, "test-picture", param_string,
-			   &init_test_picture) == SANE_STATUS_GOOD)
+	  if (read_option_str_list (line, "test-picture", param_string,
+	                               &init_test_picture, test_picture_list) == SANE_STATUS_GOOD)
 	    continue;
 	  if (read_option (line, "invert-endianess", param_bool,
 			   &init_invert_endianess) == SANE_STATUS_GOOD)
@@ -1787,8 +1826,8 @@ sane_init (SANE_Int * __sane_unused__ version_code, SANE_Auth_Callback __sane_un
 	  if (read_option (line, "read-delay-duration", param_int,
 			   &init_read_delay_duration) == SANE_STATUS_GOOD)
 	    continue;
-	  if (read_option (line, "read-status-code", param_string,
-			   &init_read_status_code) == SANE_STATUS_GOOD)
+	  if (read_option_str_list (line, "read-status-code", param_string,
+	                            &init_read_status_code, read_status_code_list) == SANE_STATUS_GOOD)
 	    continue;
 	  if (read_option (line, "ppl-loss", param_int,
 			   &init_ppl_loss) == SANE_STATUS_GOOD)
