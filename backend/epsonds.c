@@ -1259,6 +1259,9 @@ const  epsonds_profile_map epsonds_models_predefined[] = {
   {0x118A, "PID 118A","L3250 Series", 7},
   {0x119B, "PID 119B","XP-2150 Series", 7},
   {0x11B1, "PID 11B1","XP-2200 Series", 7},
+  {0x0193, "ES-C220","ES-C220", 5},
+  {0x018F, "DS-C330","DS-C330", 5},
+  {0x0191, "DS-C490","DS-C490", 5},
   {0x00, "","", 0x00 }
 };
 
