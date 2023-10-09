@@ -2256,8 +2256,8 @@ process_request (Wire * w)
 		     strerror (errno));
 		return 1;
 	      }
-	    fcntl (data_fd, F_SETFL, 1);      /* set non-blocking */
-	    shutdown (data_fd, 0);
+	    fcntl (data_fd, F_SETFL, O_NONBLOCK);      /* set non-blocking */
+	    shutdown (data_fd, SHUT_RD);
 	    do_scan (w, h, data_fd);
 	    close (data_fd);
 	  }
