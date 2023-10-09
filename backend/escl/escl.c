@@ -621,16 +621,20 @@ sane_get_devices(const SANE_Device ***device_list, SANE_Bool local_only)
     ESCL_Device *dev = NULL;
     static const SANE_Device **devlist = 0;
     SANE_Status status;
+    SANE_Status status2;
 
     if (device_list == NULL)
 	return (SANE_STATUS_INVAL);
-    status = sanei_configure_attach(ESCL_CONFIG_FILE, NULL,
+    status2 = sanei_configure_attach(ESCL_CONFIG_FILE, NULL,
 				    attach_one_config, NULL);
-    if (status != SANE_STATUS_GOOD)
-	return (status);
     escl_devices(&status);
-    if (status != SANE_STATUS_GOOD)
-	return (status);
+    if (status != SANE_STATUS_GOOD && status2 != SANE_STATUS_GOOD)
+    {
+       if (status2 != SANE_STATUS_GOOD)
+               return (status2);
+       if (status != SANE_STATUS_GOOD)
+               return (status);
+    }
     if (devlist)
 	free(devlist);
     devlist = (const SANE_Device **) calloc (num_devices + 1, sizeof (devlist[0]));
