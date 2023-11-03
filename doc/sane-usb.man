@@ -178,6 +178,15 @@ setting the environment variable
 to 1. This may work around issues which happen with particular kernel
 versions. Example:
 .I export SANE_USB_WORKAROUND=1.
+.TP
+.B SANE_XEROX_USB_HALT_WORKAROUND
+If your old (pre-2010) Xerox / Samsung / HP scanner is detected
+only once and subsequent usage requires replugging the cable, try
+setting the environment variable
+.B SANE_XEROX_USB_HALT_WORKAROUND
+to 1. This may work around issues which happen with particular USB
+controllers. Example:
+.I export SANE_XEROX_USB_HALT_WORKAROUND=1.
 
 .SH "SEE ALSO"
 .BR sane (7),
