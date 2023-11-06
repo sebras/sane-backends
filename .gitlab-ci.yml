@@ -38,8 +38,8 @@ make-dist:
   - mkdir build
   - cd build
   - tar xzf ../sane-backends-*.tar.gz --strip-components=1
-  - ./configure $CONFIGURE_OPTS
-  - make -j2 -k $MAKE_FLAGS
+  - (set -x; ./configure $CONFIGURE_OPTS)
+  - eval "(set -x; make -j2 -k $MAKE_FLAGS)"
 
 debian-10-full:
   image: $REGISTRY_HUB:debian-buster-full
@@ -87,9 +87,8 @@ alpine-3.15-musl:
   image: $REGISTRY_HUB:alpine-3.15-musl
   variables:
     CONFIGURE_OPTS: "$CONFIGURE_MINI $CONFIGURE_FULL"
-    MAKE_FLAGS: "CFLAGS=-Werror CXXFLAGS=-Werror"
+    MAKE_FLAGS: "CFLAGS='-Werror -Wno-pedantic' CXXFLAGS=-Werror"
   <<: *compile_definition
-  allow_failure: true
 
 ubuntu-22.04-lts:
   image: $REGISTRY_HUB:ubuntu-jammy-dist
