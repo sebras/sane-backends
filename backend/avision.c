@@ -7520,7 +7520,6 @@ reader_process (void *data)
   sigset_t sigterm_set;
   sigset_t ignore_set;
   struct SIGACTION act;
-  int old;
 
   FILE* fp;
   FILE* fp_fd = 0; /* for ADF bottom offset truncating */
@@ -7800,7 +7799,10 @@ reader_process (void *data)
 	    sigprocmask (SIG_BLOCK, &sigterm_set, 0);
 #ifdef USE_PTHREAD
 	  else
-	    pthread_setcancelstate (PTHREAD_CANCEL_DISABLE, &old);
+	    {
+	      int old;
+	      pthread_setcancelstate (PTHREAD_CANCEL_DISABLE, &old);
+	    }
 #endif
 
 	  status = read_data (s, stripe_data + stripe_fill, &this_read);
@@ -7809,9 +7811,11 @@ reader_process (void *data)
 	    sigprocmask (SIG_UNBLOCK, &sigterm_set, 0);
 #ifdef USE_PTHREAD
 	  else
-	    pthread_setcancelstate (PTHREAD_CANCEL_ENABLE, &old);
+	    {
+	      int old;
+	      pthread_setcancelstate (PTHREAD_CANCEL_ENABLE, &old);
+	    }
 #endif
-
 
 	  /* only EOF on the second stripe, as otherwise the rear page
 	     is shorter */
