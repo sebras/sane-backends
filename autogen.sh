@@ -2,6 +2,20 @@
 test -n "$srcdir" || srcdir=`dirname "$0"`
 test -n "$srcdir" || srcdir=.
 
+# When repos are forked on GitLab tags aren't copied thus making
+# git-version-gen producing incorrect version ("UNKNOWN") which in turn causes
+# CI build failures. To workaround this reconstruct version from ChangeLogs
+# files (handy updated on every release). If git describe is not working and we
+# are not in dist package - take version from the top-most ChangeLog file.
+if [ ! -e .tarball-version ] &&
+   ! git describe >/dev/null 2>&1; then
+	ls ChangeLogs \
+		| sort -Vr \
+		| grep -m1 -P -o '(?<=ChangeLog-).*' > .tarball-version
+	read v < .tarball-version
+	echo >&2 "Package version reconstructed from ChangeLog: $v"
+fi
+
 patchdir="$srcdir/patches"
 
 # Suppress warnings about obsolete macros if still needed (#122)
