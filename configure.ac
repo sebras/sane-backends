@@ -117,6 +117,9 @@ SANE_CHECK_PTHREAD
 SANE_CHECK_LOCKING
 SANE_CHECK_GPHOTO2
 
+dnl **************************************************************
+dnl Check for V4L availability
+dnl **************************************************************
 
 AC_ARG_WITH(v4l,
 	    AS_HELP_STRING([--with-v4l],
@@ -128,23 +131,32 @@ if test "$with_v4l" != "no" ; then
   PKG_CHECK_MODULES(LIBV4L, [libv4l1 >= 0.8.3], have_libv4l1=yes, have_libv4l1=no)
 fi
 
+dnl **************************************************************
+dnl Check for AVAHI availability
+dnl **************************************************************
+
 AC_ARG_WITH(avahi,
   AS_HELP_STRING([--with-avahi],
     [enable Avahi support @<:@default=check@:>@]),
   [],
   [with_avahi=check])
-AC_DEFINE(WITH_AVAHI,
-  [0], [Define to 1 if Avahi support is available])
+
 AS_IF([test xno != "x$with_avahi"],
   [PKG_CHECK_MODULES(AVAHI, [avahi-client >= 0.6.24],
-    [AC_DEFINE([WITH_AVAHI], [1])
-     with_avahi=yes
+    [with_avahi=yes
     ],
     [AS_IF([test xcheck != "x$with_avahi"],
        [AC_MSG_ERROR([Avahi support requested but not found])])
      with_avahi=no
     ])
   ])
+
+ AS_IF([test xno != "x$with_avahi"],
+ 	[AC_DEFINE(WITH_AVAHI,
+  		[1], [Define to 1 if Avahi support is available])],
+ 	[AC_DEFINE(WITH_AVAHI,
+  		[0], [Define to 1 if Avahi support is available])])
+
 AM_CONDITIONAL([have_libavahi], [test x != "x$AVAHI_LIBS"])
 
 dnl check sane to make sure we don't have two installations
@@ -160,18 +172,23 @@ AC_ARG_WITH(snmp,
     [enable SNMP support @<:@default=check@:>@]),
   [],
   [with_snmp=check])
-AC_DEFINE(HAVE_LIBSNMP,
-  [0], [Define to 1 if libsnmp is available])
+
 AS_IF([test xno != "x$with_snmp"],
   [PKG_CHECK_MODULES(SNMP, [netsnmp >= 5.6],
-    [AC_DEFINE([HAVE_LIBSNMP], [1])
-     with_snmp=yes
+    [with_snmp=yes
     ],
     [AS_IF([test xcheck != "x$with_snmp"],
        [AC_MSG_ERROR([libsnmp requested but not found])])
      with_snmp=no
     ])
   ])
+
+ AS_IF([test xno != "x$with_snmp"],
+ 	[AC_DEFINE(HAVE_LIBSNMP,
+  		[1], [Define to 1 if libsnmp is available])],
+ 	[AC_DEFINE(HAVE_LIBSNMP,
+  		[0], [Define to 1 if libsnmp is available])])
+
 AM_CONDITIONAL([have_snmp], [test x != "x$SNMP_LIBS"])
 
 dnl ***********************************************************************
@@ -423,18 +440,23 @@ AC_ARG_WITH(libcurl,
     [enable functionality that needs libcurl @<:@default=check@:>@]),
   [],
   [with_libcurl=check])
-AC_DEFINE(HAVE_LIBCURL,
-  [0], [Define to 1 if libcurl is available])
+
 AS_IF([test xno != "x$with_libcurl"],
   [PKG_CHECK_MODULES(libcurl, [libcurl],
-     [AC_DEFINE([HAVE_LIBCURL], [1])
-      with_libcurl=yes
+     [with_libcurl=yes
      ],
      [AS_IF([test xcheck != "x$with_libcurl"],
         [AC_MSG_ERROR([libcurl requested but not found])])
       with_libcurl=no
      ])
   ])
+
+AS_IF([test xno != "x$with_libcurl"],
+ 	[AC_DEFINE(HAVE_LIBCURL,
+  		[1], [Define to 1 if libcurl is available])],
+ 	[AC_DEFINE(HAVE_LIBCURL,
+  		[0], [Define to 1 if libcurl is available])])
+
 AM_CONDITIONAL([have_libcurl], [test x != "x$libcurl_LIBS"])
 
 dnl ******************************************************************
@@ -445,18 +467,23 @@ AC_ARG_WITH(poppler-glib,
     [enable functionality that needs poppler-glib @<:@default=check@:>@]),
   [],
   [with_poppler_glib=check])
-AC_DEFINE(HAVE_POPPLER_GLIB,
-  [0], [Define to 1 if libpoppler-glib is available])
+
 AS_IF([test xno != "x$with_poppler_glib"],
   [PKG_CHECK_MODULES(POPPLER_GLIB, [poppler-glib],
-     [AC_DEFINE([HAVE_POPPLER_GLIB], [1])
-      with_poppler_glib=yes
+     [with_poppler_glib=yes
      ],
      [AS_IF([test xcheck != "x$with_poppler_glib"],
         [AC_MSG_ERROR([poppler-glib requested but not found])])
       with_poppler_glib=no
      ])
   ])
+
+  AS_IF([test xno != "x$with_poppler_glib"],
+ 	[AC_DEFINE(HAVE_POPPLER_GLIB,
+  		[1], [Define to 1 if libpoppler-glib is available])],
+ 	[AC_DEFINE(HAVE_POPPLER_GLIB,
+  		[0], [Define to 1 if libpoppler-glib is available])])
+
 AM_CONDITIONAL([have_poppler_glib], [test x != "x$POPPLER_GLIB_LIBS"])
 
 dnl ******************************************************************
