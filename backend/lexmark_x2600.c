@@ -32,12 +32,12 @@ static SANE_Range y_range = {
   1				/* quantization */
 };
 
-static SANE_Int command1_block_size = 28;
 static SANE_Byte command1_block[] = {
   0xA5, 0x00, 0x19, 0x10, 0x01, 0x83, 0xAA, 0xBB,
   0xCC, 0xDD, 0x02, 0x00, 0x1B, 0x53, 0x03, 0x00,
   0x00, 0x00, 0x80, 0x00, 0xAA, 0xBB, 0xCC, 0xDD,
   0xAA, 0xBB, 0xCC, 0xDD};
+static SANE_Int command1_block_size = sizeof(command1_block);
 
 static SANE_Int command2_block_size = 28;
 static SANE_Byte command2_block[] = {
@@ -77,10 +77,10 @@ static SANE_Byte cancel_packet[] = {
   0x1b, 0x53, 0x02, 0x00, 0x01, 0x00, 0x00, 0x00,
   0x03};
 
-static SANE_Byte empty_data_packet[8] = {0xFF};
+static SANE_Byte empty_data_packet[8] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF 0xFF, 0xFF};
 
 void
-clean_and_copy_data(SANE_Byte * source, SANE_Int source_size,
+clean_and_copy_data(const SANE_Byte * source, SANE_Int source_size,
                     SANE_Byte * destination, SANE_Int * destination_length,
                     SANE_Int mode, SANE_Int max_length)
 {
