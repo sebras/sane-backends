@@ -39,14 +39,13 @@ static SANE_Byte command1_block[] = {
   0xAA, 0xBB, 0xCC, 0xDD};
 static SANE_Int command1_block_size = sizeof(command1_block);
 
-static SANE_Int command2_block_size = 28;
 static SANE_Byte command2_block[] = {
   0xA5, 0x00, 0x19, 0x10, 0x01, 0x83, 0xAA, 0xBB,
   0xCC, 0xDD, 0x02, 0x00, 0x1B, 0x53, 0x04, 0x00,
   0x00, 0x00, 0x80, 0x00, 0xAA, 0xBB, 0xCC, 0xDD,
   0xAA, 0xBB, 0xCC, 0xDD};
+static SANE_Int command2_block_size = sizeof(command2_block);
 
-static SANE_Int command_with_params_block_size = 52;
 static SANE_Byte command_with_params_block[] = {
   0xA5, 0x00, 0x31, 0x10, 0x01, 0x83, 0xAA, 0xBB,
   0xCC, 0xDD, 0x02, 0x00, 0x1B, 0x53, 0x05, 0x00,
@@ -55,8 +54,8 @@ static SANE_Byte command_with_params_block[] = {
   0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
   0xFF, 0xFF, 0xFF, 0xFF, 0xAA, 0xBB, 0xCC, 0xDD,
   0xAA, 0xBB, 0xCC, 0xDD};
+static SANE_Int command_with_params_block_size = sizeof(command_with_params_block);
 
-static SANE_Int command_cancel_size = 28;
 static SANE_Byte command_cancel1_block[] = {
   0xa5, 0x00, 0x19, 0x10, 0x01, 0x83, 0xaa, 0xbb,
   0xcc, 0xdd, 0x02, 0x00, 0x1b, 0x53, 0x0f, 0x00,
@@ -67,15 +66,17 @@ static SANE_Byte command_cancel2_block[] = {
   0xcc, 0xdd, 0x02, 0x00, 0x1b, 0x53, 0x06, 0x00,
   0x00, 0x00, 0x80, 0x00, 0xaa, 0xbb, 0xcc, 0xdd,
   0xaa, 0xbb, 0xcc, 0xdd};
+static SANE_Int command_cancel_size = sizeof(command_cancel1_block);
 
-static SANE_Int last_data_packet_size = 9;
 static SANE_Byte last_data_packet[] = {
   0x1b, 0x53, 0x02, 0x00, 0x01, 0x00, 0x00, 0x00,
   0x01};
-static SANE_Int cancel_packet_size = 9;
+static SANE_Int last_data_packet_size = sizeof(last_data_packet);
+
 static SANE_Byte cancel_packet[] = {
   0x1b, 0x53, 0x02, 0x00, 0x01, 0x00, 0x00, 0x00,
   0x03};
+static SANE_Int cancel_packet_size = sizeof(cancel_packet);
 
 static SANE_Byte empty_data_packet[8] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
 
@@ -94,8 +95,6 @@ clean_and_copy_data(const SANE_Byte * source, SANE_Int source_size,
   // COLOR 1b 53 02 00 f7 0f 00        |      | 0ff7 ->  4087 
   // COLOR 1b 53 02 00 fa 0f 00        [      [ 0ffa ->  4090 <- in that case the line doesnt fit, clean_and_copy_data will be called again with the rest of the data
 
-  // if source doesnt start with 1b 53 02, then it is a continuation packet
-
   SANE_Int segment_length = (source[4] + ((source[5] << 8) & 0xFF00)) - 1;
   // edge case segment doesn(t feet in the packet size
   /* if(segment_length > source_size - 9) */
@@ -107,6 +106,11 @@ clean_and_copy_data(const SANE_Byte * source, SANE_Int source_size,
   
   DBG (10, "clean_and_copy_data segment_length:%d mode:%d source_size=%d destination_length=%d max_length=%d\n",
        segment_length, mode, source_size, *destination_length, max_length);
+
+
+  //if (memcmp(last_data_packet, buf, last_data_packet_size) == 0)
+      // if source doesnt start with 1b 53 02, then it is a continuation packet
+
   
   while (i < source_size)
     {
