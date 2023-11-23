@@ -77,10 +77,10 @@ static SANE_Byte cancel_packet[] = {
   0x1b, 0x53, 0x02, 0x00, 0x01, 0x00, 0x00, 0x00,
   0x03};
 
-static SANE_Byte empty_data_packet[8] = {0xFF};
+static SANE_Byte empty_data_packet[8] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF 0xFF, 0xFF};
 
 void
-clean_and_copy_data(SANE_Byte * source, SANE_Int source_size,
+clean_and_copy_data(const SANE_Byte * source, SANE_Int source_size,
                     SANE_Byte * destination, SANE_Int * destination_length,
                     SANE_Int mode, SANE_Int max_length)
 {
