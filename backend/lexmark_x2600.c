@@ -91,7 +91,10 @@ clean_and_copy_data(SANE_Byte * source, SANE_Int source_size,
   // COLOR 1b 53 02 00 c1 00 00 00 00  |   64 |   c1 ->   193 (segmentlng=  192)
   // COLOR 1b 53 02 00 01 06 00 00 00  |  512 |  601 ->  1537 (segmentlng= 1536)
   // COLOR 1b 53 02 00 99 3a 00 00 00  | 5000 | 3a99 -> 15001 (segmentlng=15000)
+  // COLOR 1b 53 02 00 f7 0f 00        |      | 0ff7 ->  4087 
+  // COLOR 1b 53 02 00 fa 0f 00        [      [ 0ffa ->  4090 <- in that case the line doesnt fit, clean_and_copy_data will be called again with the rest of the data
 
+  // if source doesnt start with 1b 53 02, then it is a continuation packet
 
   SANE_Int segment_length = (source[4] + ((source[5] << 8) & 0xFF00)) - 1;
   // edge case segment doesn(t feet in the packet size
@@ -99,20 +102,32 @@ clean_and_copy_data(SANE_Byte * source, SANE_Int source_size,
   /*   segment_length = source_size - 9; */
 
   SANE_Byte tmp = 0;
-  DBG (10, "clean_and_copy_data segment_length:%d mode:%d\n",
-       segment_length, mode);
+
+  DBG (10, "source = %02hhx %02hhx %02hhx %02hhx %02hhx %02hhx %02hhx \n", source[0], source[1], source[2], source[3], source[4], source[5], source[6], source[7]);
+  
+  DBG (10, "clean_and_copy_data segment_length:%d mode:%d source_size=%d destination_length=%d \n",
+       segment_length, mode, source_size, *destination_length);
+  
   while (i < source_size)
     {
+      DBG (20, "  i=%d\n", i);
       // some segments contains only 0xFF ignore them
       if (memcmp(source + 9, empty_data_packet, 4) == 0 )
         break;
+
+      // works: clean_and_copy_data segment_length:4086 mode:1 source_size=16380 destination_length=32688 source[3] source[4] source[5] = 00 f7 0f 
+      // fails: clean_and_copy_data segment_length:62972 mode:1 source_size=16 destination_length=32712   source[3] source[4] source[5] = f5 f9 f4
+      
       memcpy (destination + bytes_written, source + i, segment_length);
+      DBG (20, "  i=%d memcpy done\n", i);      
       // swap RGB <- BGR
       if (mode == SANE_FRAME_RGB)
         {
           for(SANE_Int j=bytes_written; j < bytes_written + segment_length;
               j += 3)
             {
+              // DBG (20, "  swapping RGB <- BGR j=%d\n", j);
+
               tmp = destination[j];
               destination[j] = destination[j+2];
               destination[j+2] = tmp;
@@ -763,7 +778,7 @@ sane_read (SANE_Handle handle, SANE_Byte * data,
   size_t size = max_length;
   SANE_Byte buf[size];
 
-  DBG (20, "sane_read: handle=%p, data=%p, max_length = %d\n",
+  DBG (1, "sane_read: handle=%p, data=%p, max_length=%d\n",
        (void *) handle, (void *) data, max_length);
 
   for (lexmark_device = first_device; lexmark_device;
