@@ -77,7 +77,7 @@ static SANE_Byte cancel_packet[] = {
   0x1b, 0x53, 0x02, 0x00, 0x01, 0x00, 0x00, 0x00,
   0x03};
 
-static SANE_Byte empty_data_packet[8] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF 0xFF, 0xFF};
+static SANE_Byte empty_data_packet[8] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
 
 void
 clean_and_copy_data(const SANE_Byte * source, SANE_Int source_size,
@@ -103,10 +103,10 @@ clean_and_copy_data(const SANE_Byte * source, SANE_Int source_size,
 
   SANE_Byte tmp = 0;
 
-  DBG (10, "source = %02hhx %02hhx %02hhx %02hhx %02hhx %02hhx %02hhx \n", source[0], source[1], source[2], source[3], source[4], source[5], source[6], source[7]);
+  DBG (10, "source = %02hhx %02hhx %02hhx %02hhx %02hhx %02hhx %02hhx %02hhx \n", source[0], source[1], source[2], source[3], source[4], source[5], source[6], source[7]);
   
-  DBG (10, "clean_and_copy_data segment_length:%d mode:%d source_size=%d destination_length=%d \n",
-       segment_length, mode, source_size, *destination_length);
+  DBG (10, "clean_and_copy_data segment_length:%d mode:%d source_size=%d destination_length=%d max_length=%d\n",
+       segment_length, mode, source_size, *destination_length, max_length);
   
   while (i < source_size)
     {
