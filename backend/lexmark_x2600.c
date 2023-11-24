@@ -68,6 +68,15 @@ static SANE_Byte command_cancel2_block[] = {
   0xaa, 0xbb, 0xcc, 0xdd};
 static SANE_Int command_cancel_size = sizeof(command_cancel1_block);
 
+static SANE_Byte unknnown_d_data_packet[] = {
+  0x1b, 0x53, 0x01, 0x00, 0x01, 0x00, 0x80, 0x00};
+static SANE_Int unknnown_d_data_packet_size = sizeof(unknnown_d_data_packet);
+
+static SANE_Byte empty_line_data_packet[] = {
+  0x1b, 0x53, 0x02, 0x00, 0x01, 0x00, 0x00, 0x00,
+  0x00};
+static SANE_Int empty_line_data_packet_size = sizeof(empty_line_data_packet);
+
 static SANE_Byte last_data_packet[] = {
   0x1b, 0x53, 0x02, 0x00, 0x01, 0x00, 0x00, 0x00,
   0x01};
@@ -78,52 +87,147 @@ static SANE_Byte cancel_packet[] = {
   0x03};
 static SANE_Int cancel_packet_size = sizeof(cancel_packet);
 
-static SANE_Byte empty_data_packet[8] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
+static SANE_Byte linebegin_data_packet[] = {
+  0x1b, 0x53, 0x02, 0x00};
+static SANE_Int linebegin_data_packet_size = sizeof(linebegin_data_packet);
+
+static SANE_Byte unknnown_a_data_packet[] = {
+  0x1b, 0x53, 0x04, 0x00, 0x00, 0x00, 0x80, 0x00};
+static SANE_Int unknnown_a_data_packet_size = sizeof(unknnown_a_data_packet);
+
+static SANE_Byte unknnown_c_data_packet[] = {
+  0x1b, 0x53, 0x05, 0x00, 0x00, 0x00};
+static SANE_Int unknnown_c_data_packet_size = sizeof(unknnown_c_data_packet);
+
+static SANE_Byte unknnown_b_data_packet[] = {
+  0xa5, 0x00, 0x06, 0x10, 0x01, 0xaa, 0xbb, 0xcc,
+  0xdd};
+static SANE_Int unknnown_b_data_packet_size = sizeof(unknnown_b_data_packet);
+
+
+
+
+//static SANE_Byte empty_data_packet[8] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
 
 void
 clean_and_copy_data(const SANE_Byte * source, SANE_Int source_size,
                     SANE_Byte * destination, SANE_Int * destination_length,
-                    SANE_Int mode, SANE_Int max_length)
+                    SANE_Int mode, SANE_Int max_length, SANE_Handle dev)
 {
-  SANE_Int i = 9;
+
+  // if source doesnt start with 1b 53 02, then it is a continuation packet
+  if (memcmp(empty_line_data_packet, source, empty_line_data_packet_size) == 0){
+    return;
+  }
+  if (memcmp(unknnown_a_data_packet, source, unknnown_a_data_packet_size) == 0){
+    return;
+  }
+  if (memcmp(unknnown_b_data_packet, source, unknnown_b_data_packet_size) == 0){
+    return;
+  }
+  if (memcmp(unknnown_c_data_packet, source, unknnown_c_data_packet_size) == 0){
+    return;
+  }
+  if (memcmp(unknnown_d_data_packet, source, unknnown_d_data_packet_size) == 0){
+    return;
+  }
+
+  Lexmark_Device * ldev = (Lexmark_Device * ) dev;
+
+  SANE_Int i = 0;
+  SANE_Int k = 0;
+  SANE_Int overflow = 0;
   SANE_Int bytes_written = 0;
+  SANE_Int segment_length = source_size;//ldev->bytes_remaining;
+  SANE_Int offset = 0;
+  SANE_Int end_offset = 0;
+  SANE_Byte tmp = 0;
   // BW    1b 53 02 00 21 00 00 00 00  |   32 |   21 ->    33 (segmentlng=   32)
   // BW    1b 53 02 00 41 00 00 00 00  |   64 |   41 ->    65 (segmentlng=   64)
   // COLOR 1b 53 02 00 c1 00 00 00 00  |   64 |   c1 ->   193 (segmentlng=  192)
   // COLOR 1b 53 02 00 01 06 00 00 00  |  512 |  601 ->  1537 (segmentlng= 1536)
   // COLOR 1b 53 02 00 99 3a 00 00 00  | 5000 | 3a99 -> 15001 (segmentlng=15000)
-  // COLOR 1b 53 02 00 f7 0f 00        |      | 0ff7 ->  4087 
-  // COLOR 1b 53 02 00 fa 0f 00        [      [ 0ffa ->  4090 <- in that case the line doesnt fit, clean_and_copy_data will be called again with the rest of the data
+  // COLOR 1b 53 02 00 f7 0f 00        | 1362 | 0ff7 ->  4087 <- limit where sane_read can a read a line at e time, more that 1362 and then the rest
+  //                                                             of the line will be available in the next sane_read call
+  // COLOR 1b 53 02 00 fa 0f 00        |      | 0ffa ->  4090 <- in that case the line doesnt fit, clean_and_copy_data will be called again with the rest of the data
 
-  SANE_Int segment_length = (source[4] + ((source[5] << 8) & 0xFF00)) - 1;
+
   // edge case segment doesn(t feet in the packet size
   /* if(segment_length > source_size - 9) */
   /*   segment_length = source_size - 9; */
 
-  SANE_Byte tmp = 0;
+  DBG (10, "source = %02hhx %02hhx %02hhx %02hhx | %02hhx %02hhx %02hhx %02hhx \n",
+       source[0], source[1], source[2], source[3], source[4], source[5], source[6], source[7]);
+  DBG (10, "source = %02hhx %02hhx %02hhx %02hhx | %02hhx %02hhx %02hhx %02hhx \n",
+       source[8], source[9], source[10], source[11], source[12], source[13], source[14], source[15]);
+  if(source_size > 16){
+    DBG (10, "source = %02hhx %02hhx %02hhx %02hhx | %02hhx %02hhx %02hhx %02hhx \n",
+         source[source_size-16],
+         source[source_size-15],
+         source[source_size-14],
+         source[source_size-13],
+         source[source_size-12],
+         source[source_size-11],
+         source[source_size-10],
+         source[source_size-9]);
+    DBG (10, "source = %02hhx %02hhx %02hhx %02hhx | %02hhx %02hhx %02hhx %02hhx \n",
+         source[source_size-8],
+         source[source_size-7],
+         source[source_size-6],
+         source[source_size-5],
+         source[source_size-4],
+         source[source_size-3],
+         source[source_size-2],
+         source[source_size-1]);
+  }
 
-  DBG (10, "source = %02hhx %02hhx %02hhx %02hhx %02hhx %02hhx %02hhx %02hhx \n", source[0], source[1], source[2], source[3], source[4], source[5], source[6], source[7]);
-  
-  DBG (10, "clean_and_copy_data segment_length:%d mode:%d source_size=%d destination_length=%d max_length=%d\n",
-       segment_length, mode, source_size, *destination_length, max_length);
+  DBG (10, "\n");
 
 
-  //if (memcmp(last_data_packet, buf, last_data_packet_size) == 0)
-      // if source doesnt start with 1b 53 02, then it is a continuation packet
+  // fill the read buffer from source
+  ldev->read_buffer->size += source_size;
+  DBG (10, "size=%ld source_size=%d\n", ldev->read_buffer->size, source_size);
+  SANE_Byte* alloc_result = realloc(
+      ldev->read_buffer->data,
+      ldev->read_buffer->size*sizeof(SANE_Byte));
+  DBG (10, "ALLOC done\n");
+  if(alloc_result==NULL){
+    // TODO no more memory
+  }
 
-  
+  ldev->read_buffer->data = alloc_result;
+  // point to the end of our new alloceted buffer minus the source_size
+  ldev->read_buffer->writeptr = ldev->read_buffer->data + \
+    ldev->read_buffer->size - source_size;
+  memcpy(ldev->read_buffer->writeptr, source, source_size);
+
+  // if source doesnt start with 1b 53 02, then it is a continuation packet
+  if (memcmp(linebegin_data_packet, source, linebegin_data_packet_size) == 0){
+    segment_length = (source[4] + ((source[5] << 8) & 0xFF00)) - 1;
+    offset = 9;
+    i = offset;
+    //ldev->bytes_remaining = segment_length;
+    end_offset = source_size % (segment_length+9);
+  } else {
+    DBG (20, "this is not a new line packet, continu current data line\n");
+    //return;
+  }
+  DBG (10, "clean_and_copy_data segment_length:%d mode:%d source_size=%d destination_length=%d max_length=%d i=%d offset=%d bytes_remaining=%ld end_offset=%d\n",
+       segment_length, mode, source_size, *destination_length, max_length, i, offset, ldev->bytes_remaining, end_offset);
+
   while (i < source_size)
     {
-      DBG (20, "  i=%d\n", i);
       // some segments contains only 0xFF ignore them
-      if (memcmp(source + 9, empty_data_packet, 4) == 0 )
-        break;
+      //if (memcmp(source + offset, empty_data_packet, 4) == 0 )
+      //  break;
 
-      // works: clean_and_copy_data segment_length:4086 mode:1 source_size=16380 destination_length=32688 source[3] source[4] source[5] = 00 f7 0f 
-      // fails: clean_and_copy_data segment_length:62972 mode:1 source_size=16 destination_length=32712   source[3] source[4] source[5] = f5 f9 f4
-      
-      memcpy (destination + bytes_written, source + i, segment_length);
-      DBG (20, "  i=%d memcpy done\n", i);      
+      if(i + segment_length <= max_length){
+        memcpy (destination + bytes_written, source + i, segment_length);
+      }else{
+        memcpy (destination + bytes_written, source + i, max_length - i);
+      }
+      DBG (20, "  i=%d + segment_length=%d = %d\n", i, segment_length, i + segment_length);
+      overflow = i + segment_length - max_length;
       // swap RGB <- BGR
       if (mode == SANE_FRAME_RGB)
         {
@@ -131,25 +235,38 @@ clean_and_copy_data(const SANE_Byte * source, SANE_Int source_size,
               j += 3)
             {
               // DBG (20, "  swapping RGB <- BGR j=%d\n", j);
-
               tmp = destination[j];
               destination[j] = destination[j+2];
               destination[j+2] = tmp;
             }
         }
-
-      bytes_written += segment_length;
-      i += segment_length + 9;
-      DBG (20, "  i:%d bytes_written:%d\n", i, bytes_written);
+      if(i + segment_length < max_length){
+        bytes_written += segment_length;
+      }else{
+        bytes_written += (max_length - i);
+      }
+      i += segment_length + offset;
+      k++;
+      DBG (20, "  k=%d i=%d bytes_written=%d\n", k, i, bytes_written);
+      //DBG (20, "  i:%d bytes_written:%d\n", i, bytes_written);
     }
 
-  DBG (20, "    destination[] %d %d %d %d",
-       destination[bytes_written-4],
-       destination[bytes_written-3],
-       destination[bytes_written-2],
-       destination[bytes_written-1]);
-  *destination_length = bytes_written;
-  DBG (10, "clean_and_copy_data done %d\n", *destination_length);
+
+  /* DBG (20, "    destination[] %d %d %d %d", */
+  /*      destination[bytes_written-4], */
+  /*      destination[bytes_written-3], */
+  /*      destination[bytes_written-2], */
+  /*      destination[bytes_written-1]); */
+  DBG (20, "  overflow=%d\n", overflow);
+
+  if(overflow > 0){
+    *destination_length = bytes_written; // - 40
+  }else{
+    *destination_length = bytes_written;
+  }
+
+  //ldev->bytes_remaining -= bytes_written;
+  DBG (10, "bytes_written=%d\n", bytes_written);
 }
 
 SANE_Status
@@ -350,7 +467,7 @@ attach_one (SANE_String_Const devname)
       if (strcmp (lexmark_device->sane.name, devname) == 0)
       {
         lexmark_device->missing = SANE_FALSE;
-	return SANE_STATUS_GOOD;
+    return SANE_STATUS_GOOD;
       }
     }
 
@@ -364,7 +481,10 @@ attach_one (SANE_String_Const devname)
   lexmark_device->sane.type = "flat bed";
 
   /* Make the pointer to the read buffer null here */
-  lexmark_device->read_buffer = NULL;
+  lexmark_device->read_buffer = malloc (sizeof (Read_Buffer));
+  //lexmark_device->read_buffer->writeptr = lexmark_device->read_buffer;
+  //lexmark_device->read_buffer->readptr = lexmark_device->read_buffer;
+  lexmark_device->read_buffer->size = 0;
   /* mark device as present */
   lexmark_device->missing = SANE_FALSE;
   lexmark_device->device_cancelled = SANE_FALSE;
@@ -403,12 +523,12 @@ sane_init (SANE_Int *version_code, SANE_Auth_Callback authorize)
   while (sanei_config_read (config_line, sizeof (config_line), fp))
     {
       if (config_line[0] == '#')
-	continue;		/* ignore line comments */
+    continue;		/* ignore line comments */
 
       lp = sanei_config_skip_whitespace (config_line);
       /* skip empty lines */
       if (*lp == 0)
-	continue;
+    continue;
 
       DBG (4, "attach_matching_devices(%s)\n", config_line);
       sanei_usb_attach_matching_devices (config_line, attach_one);
@@ -445,11 +565,11 @@ sane_get_devices (const SANE_Device ***device_list, SANE_Bool local_only)
       DBG (2, "sane_get_devices:   lexmark_device->missing:%d\n",
            lexmark_device->missing);
       if (lexmark_device->missing == SANE_FALSE)
-	{
+    {
 
-	  devlist[index] = &(lexmark_device->sane);
-	  index++;
-	}
+      devlist[index] = &(lexmark_device->sane);
+      index++;
+    }
       lexmark_device = lexmark_device->next;
     }
   devlist[index] = 0;
@@ -474,11 +594,11 @@ sane_open (SANE_String_Const devicename, SANE_Handle * handle)
        lexmark_device = lexmark_device->next)
     {
       DBG (10, "sane_open: devname from list: %s\n",
-	   lexmark_device->sane.name);
+       lexmark_device->sane.name);
       if (strcmp (devicename, "") == 0
-	  || strcmp (devicename, "lexmark") == 0
-	  || strcmp (devicename, lexmark_device->sane.name) == 0)
-	break;
+      || strcmp (devicename, "lexmark") == 0
+      || strcmp (devicename, lexmark_device->sane.name) == 0)
+    break;
     }
 
   *handle = lexmark_device;
@@ -494,7 +614,7 @@ sane_open (SANE_String_Const devicename, SANE_Handle * handle)
     {
       DBG (1, "sane_open: couldn't open device `%s': %s\n",
            lexmark_device->sane.name,
-	   sane_strstatus (status));
+       sane_strstatus (status));
       return status;
     }
   else
@@ -522,7 +642,7 @@ sane_get_option_descriptor (SANE_Handle handle, SANE_Int option)
        lexmark_device = lexmark_device->next)
     {
       if (lexmark_device == handle)
-	break;
+    break;
     }
 
   if (!lexmark_device)
@@ -531,7 +651,7 @@ sane_get_option_descriptor (SANE_Handle handle, SANE_Int option)
   if (lexmark_device->opt[option].name)
     {
       DBG (2, "sane_get_option_descriptor: name=%s\n",
-	   lexmark_device->opt[option].name);
+       lexmark_device->opt[option].name);
     }
 
   return &(lexmark_device->opt[option]);
@@ -552,7 +672,7 @@ sane_control_option (SANE_Handle handle, SANE_Int option, SANE_Action action,
        lexmark_device = lexmark_device->next)
     {
       if (lexmark_device == handle)
-	break;
+    break;
     }
 
 
@@ -568,88 +688,88 @@ sane_control_option (SANE_Handle handle, SANE_Int option, SANE_Action action,
         }
       /* Make sure boolean values are only TRUE or FALSE */
       if (lexmark_device->opt[option].type == SANE_TYPE_BOOL)
-	{
-	  if (!
-	      ((*(SANE_Bool *) value == SANE_FALSE)
-	       || (*(SANE_Bool *) value == SANE_TRUE)))
-	    return SANE_STATUS_INVAL;
-	}
+    {
+      if (!
+          ((*(SANE_Bool *) value == SANE_FALSE)
+           || (*(SANE_Bool *) value == SANE_TRUE)))
+        return SANE_STATUS_INVAL;
+    }
 
       /* Check range constraints */
       if (lexmark_device->opt[option].constraint_type ==
-	  SANE_CONSTRAINT_RANGE)
-	{
-	  status =
-	    sanei_constrain_value (&(lexmark_device->opt[option]), value,
-				   info);
-	  if (status != SANE_STATUS_GOOD)
-	    {
-	      DBG (2, "SANE_CONTROL_OPTION: Bad value for range\n");
-	      return SANE_STATUS_INVAL;
-	    }
-	}
+      SANE_CONSTRAINT_RANGE)
+    {
+      status =
+        sanei_constrain_value (&(lexmark_device->opt[option]), value,
+                   info);
+      if (status != SANE_STATUS_GOOD)
+        {
+          DBG (2, "SANE_CONTROL_OPTION: Bad value for range\n");
+          return SANE_STATUS_INVAL;
+        }
+    }
               switch (option)
-	{
-	case OPT_NUM_OPTS:
-	case OPT_RESOLUTION:
-	case OPT_TL_X:
-	case OPT_TL_Y:
-	case OPT_BR_X:
-	case OPT_BR_Y:
-	  DBG (2, "Option value set to %d (%s)\n", *(SANE_Word *) value,
-	       lexmark_device->opt[option].name);
-	  lexmark_device->val[option].w = *(SANE_Word *) value;
-	  if (lexmark_device->val[OPT_TL_X].w >
-	      lexmark_device->val[OPT_BR_X].w)
-	    {
-	      w = lexmark_device->val[OPT_TL_X].w;
-	      lexmark_device->val[OPT_TL_X].w =
-		lexmark_device->val[OPT_BR_X].w;
-	      lexmark_device->val[OPT_BR_X].w = w;
-	      if (info)
-		*info |= SANE_INFO_RELOAD_PARAMS;
-	    }
-	  if (lexmark_device->val[OPT_TL_Y].w >
-	      lexmark_device->val[OPT_BR_Y].w)
-	    {
-	      w = lexmark_device->val[OPT_TL_Y].w;
-	      lexmark_device->val[OPT_TL_Y].w =
-		lexmark_device->val[OPT_BR_Y].w;
-	      lexmark_device->val[OPT_BR_Y].w = w;
-	      if (info)
-		*info |= SANE_INFO_RELOAD_PARAMS;
-	    }
-	  break;
-	case OPT_MODE:
-	  strcpy (lexmark_device->val[option].s, value);
-	  if (info)
-	    *info |= SANE_INFO_RELOAD_PARAMS | SANE_INFO_RELOAD_OPTIONS;
-	  return SANE_STATUS_GOOD;
-	}
+    {
+    case OPT_NUM_OPTS:
+    case OPT_RESOLUTION:
+    case OPT_TL_X:
+    case OPT_TL_Y:
+    case OPT_BR_X:
+    case OPT_BR_Y:
+      DBG (2, "Option value set to %d (%s)\n", *(SANE_Word *) value,
+           lexmark_device->opt[option].name);
+      lexmark_device->val[option].w = *(SANE_Word *) value;
+      if (lexmark_device->val[OPT_TL_X].w >
+          lexmark_device->val[OPT_BR_X].w)
+        {
+          w = lexmark_device->val[OPT_TL_X].w;
+          lexmark_device->val[OPT_TL_X].w =
+        lexmark_device->val[OPT_BR_X].w;
+          lexmark_device->val[OPT_BR_X].w = w;
+          if (info)
+        *info |= SANE_INFO_RELOAD_PARAMS;
+        }
+      if (lexmark_device->val[OPT_TL_Y].w >
+          lexmark_device->val[OPT_BR_Y].w)
+        {
+          w = lexmark_device->val[OPT_TL_Y].w;
+          lexmark_device->val[OPT_TL_Y].w =
+        lexmark_device->val[OPT_BR_Y].w;
+          lexmark_device->val[OPT_BR_Y].w = w;
+          if (info)
+        *info |= SANE_INFO_RELOAD_PARAMS;
+        }
+      break;
+    case OPT_MODE:
+      strcpy (lexmark_device->val[option].s, value);
+      if (info)
+        *info |= SANE_INFO_RELOAD_PARAMS | SANE_INFO_RELOAD_OPTIONS;
+      return SANE_STATUS_GOOD;
+    }
 
       if (info != NULL)
-	*info |= SANE_INFO_RELOAD_PARAMS;
+    *info |= SANE_INFO_RELOAD_PARAMS;
 
       break;
     case SANE_ACTION_GET_VALUE:
 
       switch (option)
-	{
-	case OPT_NUM_OPTS:
-	case OPT_RESOLUTION:
-	case OPT_PREVIEW:
-	case OPT_TL_X:
-	case OPT_TL_Y:
-	case OPT_BR_X:
-	case OPT_BR_Y:
-	  *(SANE_Word *) value = lexmark_device->val[option].w;
-	  DBG (2, "Option value = %d (%s)\n", *(SANE_Word *) value,
-	       lexmark_device->opt[option].name);
-	  break;
-	case OPT_MODE:
-	  strcpy (value, lexmark_device->val[option].s);
-	  break;
-	}
+    {
+    case OPT_NUM_OPTS:
+    case OPT_RESOLUTION:
+    case OPT_PREVIEW:
+    case OPT_TL_X:
+    case OPT_TL_Y:
+    case OPT_BR_X:
+    case OPT_BR_Y:
+      *(SANE_Word *) value = lexmark_device->val[option].w;
+      DBG (2, "Option value = %d (%s)\n", *(SANE_Word *) value,
+           lexmark_device->opt[option].name);
+      break;
+    case OPT_MODE:
+      strcpy (value, lexmark_device->val[option].s);
+      break;
+    }
       break;
 
     default:
@@ -673,7 +793,7 @@ sane_get_parameters (SANE_Handle handle, SANE_Parameters * params)
        lexmark_device = lexmark_device->next)
     {
       if (lexmark_device == handle)
-	break;
+    break;
     }
 
   if (!lexmark_device)
@@ -744,7 +864,7 @@ sane_start (SANE_Handle handle)
        lexmark_device = lexmark_device->next)
     {
       if (lexmark_device == handle)
-	break;
+    break;
     }
 
   //launch scan commands
@@ -775,7 +895,7 @@ sane_start (SANE_Handle handle)
 
 SANE_Status
 sane_read (SANE_Handle handle, SANE_Byte * data,
-	   SANE_Int max_length, SANE_Int * length)
+       SANE_Int max_length, SANE_Int * length)
 {
   Lexmark_Device * lexmark_device;
   SANE_Status status;
@@ -789,7 +909,7 @@ sane_read (SANE_Handle handle, SANE_Byte * data,
        lexmark_device = lexmark_device->next)
     {
       if (lexmark_device == handle)
-	break;
+    break;
     }
 
   if (lexmark_device->device_cancelled == SANE_TRUE) {
@@ -836,7 +956,7 @@ sane_read (SANE_Handle handle, SANE_Byte * data,
     }
 
   clean_and_copy_data(buf, size, data, length, lexmark_device->params.format,
-                      max_length);
+                      max_length, handle);
 
   return SANE_STATUS_GOOD;
 }
@@ -873,7 +993,7 @@ sane_cancel (SANE_Handle handle)
        lexmark_device = lexmark_device->next)
     {
       if (lexmark_device == handle)
-	break;
+    break;
     }
 
   lexmark_device->device_cancelled = SANE_TRUE;
@@ -890,7 +1010,7 @@ sane_close (SANE_Handle handle)
        lexmark_device = lexmark_device->next)
     {
       if (lexmark_device == handle)
-	break;
+    break;
     }
 
   sanei_usb_close (lexmark_device->devnum);
