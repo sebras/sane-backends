@@ -133,8 +133,8 @@ clean_and_copy_data(const SANE_Byte * source, SANE_Int source_size,
   }
 
   Lexmark_Device * ldev = (Lexmark_Device * ) dev;
-
   SANE_Int i = 0;
+  SANE_Int bytes_read = 0;
   // SANE_Int k = 0;
   // SANE_Int bytes_written = 0;
   // SANE_Byte tmp = 0;
@@ -204,105 +204,80 @@ clean_and_copy_data(const SANE_Byte * source, SANE_Int source_size,
     //return;
   }
 
-
-  // fill out buffer stored in ldev->read_buffer->data
-  // loop on data
-  while (i < source_size){
+  SANE_Int source_read_cursor = 0;
+  SANE_Int block_pixel_data_length = 0;
+  SANE_Byte* alloc_result;
+  SANE_Int size_to_realloc = 0;
+  while(i < source_size){
     // last line was full
     if(ldev->read_buffer->last_line_bytes_read == ldev->read_buffer->linesize){
-      // current line number
-      ldev->read_buffer->image_line_no += 1;
-
       // if next block fit in the source
       if(i + line_header_length + ldev->read_buffer->linesize <= source_size){
-        DBG (20, "last line was full\n");
-        // extract the first line
-        // allocate
-        SANE_Int size_to_realloc = ldev->read_buffer->image_line_no *
+        ldev->read_buffer->image_line_no += 1;
+        source_read_cursor = i + line_header_length;
+        block_pixel_data_length = ldev->read_buffer->linesize;
+        ldev->read_buffer->last_line_bytes_read = block_pixel_data_length;
+        size_to_realloc = ldev->read_buffer->image_line_no *
           ldev->read_buffer->linesize * sizeof(SANE_Byte);
-        DBG (20, "size_to_realloc=%d\n", size_to_realloc);
-        ldev->read_buffer->last_line_bytes_read = ldev->read_buffer->linesize;
-        SANE_Byte* alloc_result = realloc(ldev->read_buffer->data, size_to_realloc);
-        if(alloc_result == NULL){
-          // TODO allocation was not possible
-            DBG (20, "REALLOC failed\n");
-        }
-        ldev->read_buffer->data = alloc_result;
-        // set write pointer
-        ldev->read_buffer->writeptr =
-          ldev->read_buffer->data + ldev->read_buffer->write_byte_counter;
-        ldev->read_buffer->readptr =
-          ldev->read_buffer->data + ldev->read_buffer->read_byte_counter;
-        // copy data
-        memcpy(ldev->read_buffer->writeptr, source + i + line_header_length, ldev->read_buffer->linesize);
-        ldev->read_buffer->write_byte_counter += ldev->read_buffer->linesize;
-
+        bytes_read = block_pixel_data_length + line_header_length;
       }
-
-      // last line was not full lets extract what is left
+      // next block cannot be read fully because source_size is too small
+      // (USB packet fragmentation)
       else{
-        DBG (20, "next line doesnt fit %d < %ld sourcesize=%d i=%d\n",
-             source_size, i + line_header_length + ldev->read_buffer->linesize,
-             source_size, i);
-        SANE_Int bytes_left = source_size - i - line_header_length;
-        ldev->read_buffer->last_line_bytes_read = bytes_left;
-        DBG (20, "    ldev->read_buffer->write_byte_counter=%d bytes_left=%d\n",
-             ldev->read_buffer->write_byte_counter, bytes_left);
-        // so copy what is left
-        SANE_Int size_to_realloc = ((ldev->read_buffer->image_line_no-1) *
-          ldev->read_buffer->linesize + bytes_left) * sizeof(SANE_Byte);
-        DBG (20, "size_to_realloc=%d\n", size_to_realloc);
-        SANE_Byte* alloc_result = realloc(ldev->read_buffer->data, size_to_realloc);
-        if(alloc_result == NULL){
-          // TODO allocation was not possible
-            DBG (20, "REALLOC failed\n");
-        }
-        ldev->read_buffer->data = alloc_result;
-        // set write pointer
-        ldev->read_buffer->writeptr =
-          ldev->read_buffer->data + ldev->read_buffer->write_byte_counter;
-        ldev->read_buffer->readptr =
-          ldev->read_buffer->data + ldev->read_buffer->read_byte_counter;
-        // copy data
-        //DBG (20, "REALLOC bytes_left=%d\n", bytes_left);
-        memcpy(ldev->read_buffer->writeptr, source + i + line_header_length, bytes_left);
-        ldev->read_buffer->write_byte_counter += bytes_left;
-
+        ldev->read_buffer->image_line_no += 1;
+        source_read_cursor = i + line_header_length;
+        block_pixel_data_length = source_size - i - line_header_length;
+        ldev->read_buffer->last_line_bytes_read = block_pixel_data_length;
+        size_to_realloc = ((ldev->read_buffer->image_line_no-1) *
+          ldev->read_buffer->linesize + block_pixel_data_length) * sizeof(SANE_Byte);
+        bytes_read = block_pixel_data_length + line_header_length;
       }
-      // shift 'i' to next line
-      i += ldev->read_buffer->linesize + line_header_length;
-    }else{
-      // this packet is begeging with the end of a line from the last usb packet
-      SANE_Int bytes_left = ldev->read_buffer->linesize - ldev->read_buffer->last_line_bytes_read;
-      DBG (20, "last line was splitted bytes_left=%d write_byte_counter=%d\n",
-           bytes_left, ldev->read_buffer->write_byte_counter);
-      // we filled our last line so tell it
-      ldev->read_buffer->last_line_bytes_read = ldev->read_buffer->linesize;
-
-      SANE_Int size_to_realloc = ldev->read_buffer->image_line_no *
-        ldev->read_buffer->linesize * sizeof(SANE_Byte);
-      DBG (20, "size_to_realloc=%d\n", size_to_realloc);
-      SANE_Byte* alloc_result = realloc(ldev->read_buffer->data, size_to_realloc);
-      if(alloc_result == NULL){
-        // TODO allocation was not possible
-        DBG (20, "REALLOC failed\n");
-      }
-      ldev->read_buffer->data = alloc_result;
-      // reposition write/read pointer
-      ldev->read_buffer->writeptr =
-        ldev->read_buffer->data + ldev->read_buffer->write_byte_counter;
-      ldev->read_buffer->readptr =
-        ldev->read_buffer->data + ldev->read_buffer->read_byte_counter;
-      // copy data
-      memcpy(ldev->read_buffer->writeptr, source + i, bytes_left);
-      ldev->read_buffer->write_byte_counter += bytes_left;
-      // shift 'i' to next line
-      i += bytes_left;
     }
-    DBG (20, "i=%d image_line_no=%d\n", i, ldev->read_buffer->image_line_no);
+    // last line was not full lets extract what is left
+    // this is du to USB packet fragmentation
+    else{
+      // the last line was not full so no increment
+      ldev->read_buffer->image_line_no += 0;
+      source_read_cursor = i;
+      block_pixel_data_length = ldev->read_buffer->linesize -
+        ldev->read_buffer->last_line_bytes_read;
+      // we completed the last line with missing bytes so new the line is full
+      ldev->read_buffer->last_line_bytes_read = ldev->read_buffer->linesize;
+      size_to_realloc = ldev->read_buffer->image_line_no *
+        ldev->read_buffer->linesize * sizeof(SANE_Byte);
+      bytes_read = block_pixel_data_length;
+    }  
+
+    DBG (20, "size_to_realloc=%d i=%d image_line_no=%d\n",
+         size_to_realloc, i, ldev->read_buffer->image_line_no);
+    // do realoc memory space for our buffer
+    SANE_Byte* alloc_result = realloc(ldev->read_buffer->data, size_to_realloc);
+    if(alloc_result == NULL){
+      // TODO allocation was not possible
+      DBG (20, "REALLOC failed\n");
+    }
+    // point data to our new memary space
+    ldev->read_buffer->data = alloc_result;
+    // reposition writeptr and readptr to the correct memory adress
+    // to do that use write_byte_counter and read_byte_counter
+    ldev->read_buffer->writeptr =
+      ldev->read_buffer->data + ldev->read_buffer->write_byte_counter;
+    ldev->read_buffer->readptr =
+      ldev->read_buffer->data + ldev->read_buffer->read_byte_counter;
+    // copy new data
+    memcpy(
+           ldev->read_buffer->writeptr,
+           source + source_read_cursor,
+           block_pixel_data_length
+    );
+    
+    // store how long is the buffer
+    ldev->read_buffer->write_byte_counter += block_pixel_data_length;
+
+    i += bytes_read;
   }
 
-
+  
   // read our buffer to fill the destination buffer
   // mulitple call so read may has been already started
   // length already read is stored in ldev->read_buffer->read_byte_counter
@@ -315,94 +290,6 @@ clean_and_copy_data(const SANE_Byte * source, SANE_Int source_size,
   //ldev->read_buffer->readptr += bytes_to_read;
 
   *destination_length = bytes_to_read;
-  //DBG (20, "done destination_length=%d\n\n\n", bytes_to_read);
-
-
-  /* // fill the read buffer from source */
-  /* ldev->read_buffer->size += (source_size - offset); */
-  /* DBG (10, "size=%ld source_size=%d offset=%d\n", */
-  /*      ldev->read_buffer->size, source_size, offset); */
-  /* SANE_Byte* alloc_result = realloc( */
-  /*     ldev->read_buffer->data, */
-  /*     ldev->read_buffer->size*sizeof(SANE_Byte)); */
-  /* DBG (10, "ALLOC done\n"); */
-  /* if(alloc_result==NULL){ */
-  /*   // TODO no more memory */
-  /* } */
-  /* ldev->read_buffer->data = alloc_result; */
-  /* // point to the end of our new alloceted buffer minus the source_size - offset */
-  /* ldev->read_buffer->writeptr = ldev->read_buffer->data + \ */
-  /*   ldev->read_buffer->size - (source_size - offset); */
-  /* memcpy(ldev->read_buffer->writeptr, source + offset, source_size - offset); */
-
-
-
-  /* // if source doesnt start with 1b 53 02, then it is a continuation packet */
-  /* if (memcmp(linebegin_data_packet, source, linebegin_data_packet_size) == 0){ */
-  /*   segment_length = (source[4] + ((source[5] << 8) & 0xFF00)) - 1; */
-  /*   offset = 9; */
-  /*   i = offset; */
-  /*   //ldev->bytes_remaining = segment_length; */
-  /*   end_offset = source_size % (segment_length+9); */
-  /* } else { */
-  /*   DBG (20, "this is not a new line packet, continu current data line\n"); */
-  /*   //return; */
-  /* } */
-  /* DBG (10, "clean_and_copy_data segment_length:%d mode:%d source_size=%d destination_length=%d max_length=%d i=%d offset=%d bytes_remaining=%ld end_offset=%d\n", */
-  /*      segment_length, mode, source_size, *destination_length, max_length, i, offset, ldev->bytes_remaining, end_offset); */
-
-  /* while (i < source_size) */
-  /*   { */
-  /*     // some segments contains only 0xFF ignore them */
-  /*     //if (memcmp(source + offset, empty_data_packet, 4) == 0 ) */
-  /*     //  break; */
-
-  /*     if(i + segment_length <= max_length){ */
-  /*       memcpy (destination + bytes_written, source + i, segment_length); */
-  /*     }else{ */
-  /*       memcpy (destination + bytes_written, source + i, max_length - i); */
-  /*     } */
-  /*     DBG (20, "  i=%d + segment_length=%d = %d\n", i, segment_length, i + segment_length); */
-  /*     overflow = i + segment_length - max_length; */
-  /*     // swap RGB <- BGR */
-  /*     if (mode == SANE_FRAME_RGB) */
-  /*       { */
-  /*         for(SANE_Int j=bytes_written; j < bytes_written + segment_length; */
-  /*             j += 3) */
-  /*           { */
-  /*             // DBG (20, "  swapping RGB <- BGR j=%d\n", j); */
-  /*             tmp = destination[j]; */
-  /*             destination[j] = destination[j+2]; */
-  /*             destination[j+2] = tmp; */
-  /*           } */
-  /*       } */
-  /*     if(i + segment_length < max_length){ */
-  /*       bytes_written += segment_length; */
-  /*     }else{ */
-  /*       bytes_written += (max_length - i); */
-  /*     } */
-  /*     i += segment_length + offset; */
-  /*     k++; */
-  /*     DBG (20, "  k=%d i=%d bytes_written=%d\n", k, i, bytes_written); */
-  /*     //DBG (20, "  i:%d bytes_written:%d\n", i, bytes_written); */
-  /*   } */
-
-
-  /* /\* DBG (20, "    destination[] %d %d %d %d", *\/ */
-  /* /\*      destination[bytes_written-4], *\/ */
-  /* /\*      destination[bytes_written-3], *\/ */
-  /* /\*      destination[bytes_written-2], *\/ */
-  /* /\*      destination[bytes_written-1]); *\/ */
-  /* DBG (20, "  overflow=%d\n", overflow); */
-
-  /* if(overflow > 0){ */
-  /*   *destination_length = bytes_written; // - 40 */
-  /* }else{ */
-  /*   *destination_length = bytes_written; */
-  /* } */
-
-  /* //ldev->bytes_remaining -= bytes_written; */
-  /* DBG (10, "bytes_written=%d\n", bytes_written); */
 }
 
 SANE_Status
