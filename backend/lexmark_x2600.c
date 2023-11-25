@@ -132,12 +132,8 @@ clean_and_copy_data(const SANE_Byte * source, SANE_Int source_size,
     return;
   }
 
-  Lexmark_Device * ldev = (Lexmark_Device * ) dev;
-  SANE_Int i = 0;
-  SANE_Int bytes_read = 0;
   // SANE_Int k = 0;
   // SANE_Int bytes_written = 0;
-  // SANE_Byte tmp = 0;
   // BW    1b 53 02 00 21 00 00 00 00  |   32 |   21 ->    33 (segmentlng=   32)
   // BW    1b 53 02 00 41 00 00 00 00  |   64 |   41 ->    65 (segmentlng=   64)
   // COLOR 1b 53 02 00 c1 00 00 00 00  |   64 |   c1 ->   193 (segmentlng=  192)
@@ -191,6 +187,15 @@ clean_and_copy_data(const SANE_Byte * source, SANE_Int source_size,
   //     if this is the case the source[4] & source[5] contains how much data
   //     can be read before onother header is reach (linebegin_data_packet)
 
+  Lexmark_Device * ldev = (Lexmark_Device * ) dev;
+  SANE_Int i = 0;
+  SANE_Int bytes_read = 0;
+  SANE_Byte tmp = 0;
+  SANE_Int source_read_cursor = 0;
+  SANE_Int block_pixel_data_length = 0;
+  SANE_Byte* alloc_result;
+  SANE_Int size_to_realloc = 0;
+  
   // does source start with linebegin_data_packet?
   if (memcmp(linebegin_data_packet, source, linebegin_data_packet_size) == 0){
     // extract the number of bytes we can read befor new header is reached
@@ -204,10 +209,7 @@ clean_and_copy_data(const SANE_Byte * source, SANE_Int source_size,
     //return;
   }
 
-  SANE_Int source_read_cursor = 0;
-  SANE_Int block_pixel_data_length = 0;
-  SANE_Byte* alloc_result;
-  SANE_Int size_to_realloc = 0;
+  // loop over source buffer
   while(i < source_size){
     // last line was full
     if(ldev->read_buffer->last_line_bytes_read == ldev->read_buffer->linesize){
@@ -282,14 +284,45 @@ clean_and_copy_data(const SANE_Byte * source, SANE_Int source_size,
   // mulitple call so read may has been already started
   // length already read is stored in ldev->read_buffer->read_byte_counter
   DBG (20, "##### source read done now sending to destination\n");
-  SANE_Int bytes_to_read =
-    ldev->read_buffer->write_byte_counter - ldev->read_buffer->read_byte_counter;
-  //DBG (20, "memcopy bytes_to_read=%d\n", bytes_to_read);
-  memcpy (destination, ldev->read_buffer->readptr, bytes_to_read);
-  ldev->read_buffer->read_byte_counter += bytes_to_read;
-  //ldev->read_buffer->readptr += bytes_to_read;
 
-  *destination_length = bytes_to_read;
+  // we will copy image line by image line
+  // this avoid error on color channels swapping
+  SANE_Int available_bytes_to_read =
+    ldev->read_buffer->write_byte_counter - ldev->read_buffer->read_byte_counter;
+  SANE_Int offset = 0;
+  //*destination_length = 0;
+  i = 0;
+  while(available_bytes_to_read >= ldev->read_buffer->linesize){
+    DBG (20, "    i=%d destination_length=%d\n", i, *destination_length);
+    offset = i*ldev->read_buffer->linesize;
+
+    SANE_Byte * color_swarp_ptr = ldev->read_buffer->readptr + offset;
+    // we have to invert color channels
+    if (mode == SANE_FRAME_RGB){
+      for(SANE_Int j=0; j < ldev->read_buffer->linesize;j += 3)
+        {
+          // DBG (20, "  swapping RGB <- BGR j=%d\n", j);
+          tmp = *(color_swarp_ptr + j);
+          *(color_swarp_ptr + j) = *(color_swarp_ptr + j + 2);
+          *(color_swarp_ptr + j + 2) = tmp;
+        }
+    }
+
+    
+    memcpy (
+      destination + offset,
+      ldev->read_buffer->readptr + offset,
+      ldev->read_buffer->linesize
+    );
+    ldev->read_buffer->read_byte_counter += ldev->read_buffer->linesize;
+    //ldev->read_buffer->readptr += bytes_to_read;
+    
+    available_bytes_to_read =
+      ldev->read_buffer->write_byte_counter - ldev->read_buffer->read_byte_counter;
+    i++;
+  }
+
+  *destination_length = ldev->read_buffer->linesize * i;  
 }
 
 SANE_Status
