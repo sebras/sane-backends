@@ -42,10 +42,11 @@ typedef struct Read_Buffer
   SANE_Byte *max_writeptr;
   size_t size;
   size_t linesize;
+  size_t last_line_bytes_read;
   SANE_Bool empty;
   SANE_Int image_line_no;
-  SANE_Int bit_counter;
-  SANE_Int max_lineart_offset;
+  SANE_Int write_byte_counter;
+  SANE_Int read_byte_counter;
 }
 Read_Buffer;
 
