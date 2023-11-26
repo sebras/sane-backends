@@ -108,6 +108,10 @@ static SANE_Byte unknnown_e_data_packet[] = {
   0xdd};
 static SANE_Int unknnown_e_data_packet_size = sizeof(unknnown_e_data_packet);
 
+static SANE_Byte not_ready_data_packet[] = {
+  0x1b, 0x53, 0x01, 0x00, 0x01, 0x00, 0x84, 0x00};
+static SANE_Int not_ready_data_packet = sizeof(unknnown_c_data_packet);
+
 
 static SANE_Int  line_header_length = 9;
 
@@ -217,6 +221,12 @@ clean_and_copy_data(const SANE_Byte * source, SANE_Int source_size,
     //return;
   }
 
+  if(ldev->read_buffer->linesize == 0){
+    DBG (20, "linesize=0 something went wrong, lets ignore that USB packet\n");
+    return SANE_STATUS_GOOD;
+  }
+
+
   // loop over source buffer
   while(i < source_size){
     // last line was full
@@ -301,7 +311,8 @@ clean_and_copy_data(const SANE_Byte * source, SANE_Int source_size,
   //*destination_length = 0;
   i = 0;
   while(available_bytes_to_read >= ldev->read_buffer->linesize){
-    DBG (20, "    i=%d destination_length=%d\n", i, *destination_length);
+    DBG (20, "    i=%d destination_length=%d linesize=%ld\n",
+         i, *destination_length, ldev->read_buffer->linesize);
     offset = i*ldev->read_buffer->linesize;
 
     SANE_Byte * color_swarp_ptr = ldev->read_buffer->readptr + offset;
@@ -1005,7 +1016,7 @@ sane_read (SANE_Handle handle, SANE_Byte * data,
   status = sanei_usb_read_bulk (lexmark_device->devnum, buf, &size);
   if (status != SANE_STATUS_GOOD && status != SANE_STATUS_EOF)
     {
-      DBG (1, "USB READ Error in usb_write_then_read, cannot read devnum=%d status=%d\n",
+      DBG (1, "USB READ Error in sanei_usb_read_bulk, cannot read devnum=%d status=%d\n",
            lexmark_device->devnum, status);
       return status;
     }
