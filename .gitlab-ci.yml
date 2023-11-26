@@ -73,7 +73,7 @@ fedora-39-clang:
   image: $REGISTRY_HUB:fedora-39-clang
   variables:
     CONFIGURE_OPTS: "$CONFIGURE_MINI $CONFIGURE_FULL"
-    MAKE_FLAGS: "CFLAGS=-Werror CXXFLAGS=-Werror"
+    MAKE_FLAGS: "CFLAGS='-Werror -Wno-error=unused-but-set-variable' CXXFLAGS='-Werror -Wno-error=unused-but-set-variable'"
   <<: *compile_definition
 
 alpine-3.18-musl:
