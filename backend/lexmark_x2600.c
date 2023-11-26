@@ -68,10 +68,6 @@ static SANE_Byte command_cancel2_block[] = {
   0xaa, 0xbb, 0xcc, 0xdd};
 static SANE_Int command_cancel_size = sizeof(command_cancel1_block);
 
-static SANE_Byte unknnown_d_data_packet[] = {
-  0x1b, 0x53, 0x01, 0x00, 0x01, 0x00, 0x80, 0x00};
-static SANE_Int unknnown_d_data_packet_size = sizeof(unknnown_d_data_packet);
-
 static SANE_Byte empty_line_data_packet[] = {
   0x1b, 0x53, 0x02, 0x00, 0x01, 0x00, 0x00, 0x00,
   0x00};
@@ -92,17 +88,26 @@ static SANE_Byte linebegin_data_packet[] = {
 static SANE_Int linebegin_data_packet_size = sizeof(linebegin_data_packet);
 
 static SANE_Byte unknnown_a_data_packet[] = {
-  0x1b, 0x53, 0x04, 0x00, 0x00, 0x00, 0x80, 0x00};
+  0x1b, 0x53, 0x01, 0x00, 0x01, 0x00, 0x80, 0x00};
 static SANE_Int unknnown_a_data_packet_size = sizeof(unknnown_a_data_packet);
 
+static SANE_Byte unknnown_b_data_packet[] = {
+  0x1b, 0x53, 0x04, 0x00, 0x00, 0x00, 0x80, 0x00};
+static SANE_Int unknnown_b_data_packet_size = sizeof(unknnown_b_data_packet);
+
 static SANE_Byte unknnown_c_data_packet[] = {
-  0x1b, 0x53, 0x05, 0x00, 0x00, 0x00};
+  0x1b, 0x53, 0x04, 0x00, 0x00, 0x00, 0x84, 0x00};
 static SANE_Int unknnown_c_data_packet_size = sizeof(unknnown_c_data_packet);
 
-static SANE_Byte unknnown_b_data_packet[] = {
+static SANE_Byte unknnown_d_data_packet[] = {
+  0x1b, 0x53, 0x05, 0x00, 0x00, 0x00};
+static SANE_Int unknnown_d_data_packet_size = sizeof(unknnown_d_data_packet);
+
+static SANE_Byte unknnown_e_data_packet[] = {
   0xa5, 0x00, 0x06, 0x10, 0x01, 0xaa, 0xbb, 0xcc,
   0xdd};
-static SANE_Int unknnown_b_data_packet_size = sizeof(unknnown_b_data_packet);
+static SANE_Int unknnown_e_data_packet_size = sizeof(unknnown_e_data_packet);
+
 
 static SANE_Int  line_header_length = 9;
 
@@ -129,6 +134,9 @@ clean_and_copy_data(const SANE_Byte * source, SANE_Int source_size,
     return;
   }
   if (memcmp(unknnown_d_data_packet, source, unknnown_d_data_packet_size) == 0){
+    return;
+  }
+  if (memcmp(unknnown_e_data_packet, source, unknnown_e_data_packet_size) == 0){
     return;
   }
 
@@ -195,7 +203,7 @@ clean_and_copy_data(const SANE_Byte * source, SANE_Int source_size,
   SANE_Int block_pixel_data_length = 0;
   SANE_Byte* alloc_result;
   SANE_Int size_to_realloc = 0;
-  
+
   // does source start with linebegin_data_packet?
   if (memcmp(linebegin_data_packet, source, linebegin_data_packet_size) == 0){
     // extract the number of bytes we can read befor new header is reached
@@ -248,7 +256,7 @@ clean_and_copy_data(const SANE_Byte * source, SANE_Int source_size,
       size_to_realloc = ldev->read_buffer->image_line_no *
         ldev->read_buffer->linesize * sizeof(SANE_Byte);
       bytes_read = block_pixel_data_length;
-    }  
+    }
 
     DBG (20, "size_to_realloc=%d i=%d image_line_no=%d\n",
          size_to_realloc, i, ldev->read_buffer->image_line_no);
@@ -272,14 +280,14 @@ clean_and_copy_data(const SANE_Byte * source, SANE_Int source_size,
            source + source_read_cursor,
            block_pixel_data_length
     );
-    
+
     // store how long is the buffer
     ldev->read_buffer->write_byte_counter += block_pixel_data_length;
 
     i += bytes_read;
   }
 
-  
+
   // read our buffer to fill the destination buffer
   // mulitple call so read may has been already started
   // length already read is stored in ldev->read_buffer->read_byte_counter
@@ -308,7 +316,7 @@ clean_and_copy_data(const SANE_Byte * source, SANE_Int source_size,
         }
     }
 
-    
+
     memcpy (
       destination + offset,
       ldev->read_buffer->readptr + offset,
@@ -316,13 +324,13 @@ clean_and_copy_data(const SANE_Byte * source, SANE_Int source_size,
     );
     ldev->read_buffer->read_byte_counter += ldev->read_buffer->linesize;
     //ldev->read_buffer->readptr += bytes_to_read;
-    
+
     available_bytes_to_read =
       ldev->read_buffer->write_byte_counter - ldev->read_buffer->read_byte_counter;
     i++;
   }
 
-  *destination_length = ldev->read_buffer->linesize * i;  
+  *destination_length = ldev->read_buffer->linesize * i;
 }
 
 SANE_Status
@@ -410,7 +418,7 @@ init_options (Lexmark_Device * dev)
   od->type = SANE_TYPE_STRING;
   od->unit = SANE_UNIT_NONE;
   od->size = MAX_OPTION_STRING_SIZE;
-  od->cap = SANE_CAP_SOFT_DETECT | SANE_CAP_SOFT_SELECT;
+  od->cap = SANE_CAP_SOFT_SELECT;
   od->constraint_type = SANE_CONSTRAINT_STRING_LIST;
   od->constraint.string_list = mode_list;
   dev->val[OPT_MODE].s = malloc (od->size);
@@ -451,6 +459,7 @@ init_options (Lexmark_Device * dev)
   od->cap = SANE_CAP_SOFT_DETECT | SANE_CAP_SOFT_SELECT;
   od->size = 0;
   od->constraint_type = SANE_CONSTRAINT_NONE;
+  //
 
   /* top-left x */
   od = &(dev->opt[OPT_TL_X]);
@@ -489,7 +498,7 @@ init_options (Lexmark_Device * dev)
   od->unit = SANE_UNIT_PIXEL;
   od->constraint_type = SANE_CONSTRAINT_RANGE;
   od->constraint.range = &x_range;
-  dev->val[OPT_BR_X].w = 1699;
+  dev->val[OPT_BR_X].w = 1654;
 
   /* bottom-right y */
   od = &(dev->opt[OPT_BR_Y]);
@@ -502,7 +511,7 @@ init_options (Lexmark_Device * dev)
   od->unit = SANE_UNIT_PIXEL;
   od->constraint_type = SANE_CONSTRAINT_RANGE;
   od->constraint.range = &y_range;
-  dev->val[OPT_BR_Y].w = 2337;
+  dev->val[OPT_BR_Y].w = 2339;
 
   return SANE_STATUS_GOOD;
 }
@@ -514,7 +523,7 @@ attach_one (SANE_String_Const devname)
 {
   Lexmark_Device *lexmark_device;
 
-  DBG (2, "attachLexmark: devname=%s\n", devname);
+  DBG (2, "attach_one: attachLexmark: devname=%s\n", devname);
 
   for (lexmark_device = first_device; lexmark_device;
        lexmark_device = lexmark_device->next)
@@ -565,7 +574,7 @@ sane_init (SANE_Int *version_code, SANE_Auth_Callback authorize)
   DBG_INIT ();
   DBG (2, "sane_init: version_code %s 0, authorize %s 0\n",
        version_code == 0 ? "=" : "!=", authorize == 0 ? "=" : "!=");
-  DBG (1, "sane_init: SANE lexmark_x2600 backend version %d.%d.%d from %s\n",
+  DBG (1, "    SANE lexmark_x2600 backend version %d.%d.%d from %s\n",
        SANE_CURRENT_MAJOR, SANE_CURRENT_MINOR, BUILD, PACKAGE_STRING);
 
   if (version_code)
@@ -576,7 +585,7 @@ sane_init (SANE_Int *version_code, SANE_Auth_Callback authorize)
   fp = sanei_config_open (LEXMARK_X2600_CONFIG_FILE);
   if (!fp)
     {
-      DBG (2, "No config no prob...(%s)\n", LEXMARK_X2600_CONFIG_FILE);
+      DBG (2, "    No config no prob...(%s)\n", LEXMARK_X2600_CONFIG_FILE);
       return SANE_STATUS_GOOD;
     }
   while (sanei_config_read (config_line, sizeof (config_line), fp))
@@ -589,11 +598,10 @@ sane_init (SANE_Int *version_code, SANE_Auth_Callback authorize)
       if (*lp == 0)
     continue;
 
-      DBG (4, "attach_matching_devices(%s)\n", config_line);
+      DBG (4, "    attach_matching_devices(%s)\n", config_line);
       sanei_usb_attach_matching_devices (config_line, attach_one);
     }
 
-  DBG (4, "finished reading configure file\n");
   fclose (fp);
   initialized = SANE_TRUE;
   return SANE_STATUS_GOOD;
@@ -621,7 +629,7 @@ sane_get_devices (const SANE_Device ***device_list, SANE_Bool local_only)
   lexmark_device = first_device;
   while (lexmark_device != NULL)
     {
-      DBG (2, "sane_get_devices:   lexmark_device->missing:%d\n",
+      DBG (2, "    lexmark_device->missing:%d\n",
            lexmark_device->missing);
       if (lexmark_device->missing == SANE_FALSE)
     {
@@ -652,7 +660,7 @@ sane_open (SANE_String_Const devicename, SANE_Handle * handle)
   for (lexmark_device = first_device; lexmark_device;
        lexmark_device = lexmark_device->next)
     {
-      DBG (10, "sane_open: devname from list: %s\n",
+      DBG (10, "    devname from list: %s\n",
        lexmark_device->sane.name);
       if (strcmp (devicename, "") == 0
       || strcmp (devicename, "lexmark") == 0
@@ -666,19 +674,19 @@ sane_open (SANE_String_Const devicename, SANE_Handle * handle)
   if (status != SANE_STATUS_GOOD)
     return status;
 
-  DBG(2, "sane_open: device `%s' opening devnum: '%d'\n",
+  DBG(2, "    device `%s' opening devnum: '%d'\n",
       lexmark_device->sane.name, lexmark_device->devnum);
   status = sanei_usb_open (lexmark_device->sane.name, &(lexmark_device->devnum));
   if (status != SANE_STATUS_GOOD)
     {
-      DBG (1, "sane_open: couldn't open device `%s': %s\n",
+      DBG (1, "     couldn't open device `%s': %s\n",
            lexmark_device->sane.name,
        sane_strstatus (status));
       return status;
     }
   else
     {
-      DBG (2, "sane_open: device `%s' successfully opened devnum: '%d'\n",
+      DBG (2, "    device `%s' successfully opened devnum: '%d'\n",
            lexmark_device->sane.name, lexmark_device->devnum);
     }
 
@@ -709,7 +717,7 @@ sane_get_option_descriptor (SANE_Handle handle, SANE_Int option)
 
   if (lexmark_device->opt[option].name)
     {
-      DBG (2, "sane_get_option_descriptor: name=%s\n",
+      DBG (2, "    name=%s\n",
        lexmark_device->opt[option].name);
     }
 
@@ -763,7 +771,7 @@ sane_control_option (SANE_Handle handle, SANE_Int option, SANE_Action action,
                    info);
       if (status != SANE_STATUS_GOOD)
         {
-          DBG (2, "SANE_CONTROL_OPTION: Bad value for range\n");
+          DBG (2, "    SANE_CONTROL_OPTION: Bad value for range\n");
           return SANE_STATUS_INVAL;
         }
     }
@@ -775,7 +783,7 @@ sane_control_option (SANE_Handle handle, SANE_Int option, SANE_Action action,
     case OPT_TL_Y:
     case OPT_BR_X:
     case OPT_BR_Y:
-      DBG (2, "Option value set to %d (%s)\n", *(SANE_Word *) value,
+      DBG (2, "    Option value set to %d (%s)\n", *(SANE_Word *) value,
            lexmark_device->opt[option].name);
       lexmark_device->val[option].w = *(SANE_Word *) value;
       if (lexmark_device->val[OPT_TL_X].w >
@@ -822,7 +830,7 @@ sane_control_option (SANE_Handle handle, SANE_Int option, SANE_Action action,
     case OPT_BR_X:
     case OPT_BR_Y:
       *(SANE_Word *) value = lexmark_device->val[option].w;
-      DBG (2, "Option value = %d (%s)\n", *(SANE_Word *) value,
+      DBG (2, "    Option value = %d (%s)\n", *(SANE_Word *) value,
            lexmark_device->opt[option].name);
       break;
     case OPT_MODE:
@@ -883,15 +891,17 @@ sane_get_parameters (SANE_Handle handle, SANE_Parameters * params)
   device_params->last_frame = SANE_TRUE;
   device_params->lines = -1;//lexmark_device->val[OPT_BR_Y].w;
 
-  DBG (2, "sane_get_parameters: device_params->pixels_per_line=%d\n",
+  DBG (2, "    device_params->pixels_per_line=%d\n",
        device_params->pixels_per_line);
-  DBG (2, "sane_get_parameters: device_params->bytes_per_line=%d\n",
+  DBG (2, "    device_params->bytes_per_line=%d\n",
        device_params->bytes_per_line);
-  DBG (2, "sane_get_parameters: device_params->format=%d\n",
+  DBG (2, "    device_params->depth=%d\n",
+       device_params->depth);
+  DBG (2, "    device_params->format=%d\n",
        device_params->format);
-  DBG (2, "    SANE_FRAME_GRAY: %d\n",
+  DBG (2, "      SANE_FRAME_GRAY: %d\n",
        SANE_FRAME_GRAY);
-  DBG (2, "    SANE_FRAME_RGB: %d\n",
+  DBG (2, "      SANE_FRAME_RGB: %d\n",
        SANE_FRAME_RGB);
 
   if (params != 0)
@@ -995,8 +1005,8 @@ sane_read (SANE_Handle handle, SANE_Byte * data,
   status = sanei_usb_read_bulk (lexmark_device->devnum, buf, &size);
   if (status != SANE_STATUS_GOOD && status != SANE_STATUS_EOF)
     {
-      DBG (1, "USB READ Error in usb_write_then_read, cannot read devnum=%d\n",
-           lexmark_device->devnum);
+      DBG (1, "USB READ Error in usb_write_then_read, cannot read devnum=%d status=%d\n",
+           lexmark_device->devnum, status);
       return status;
     }
 
