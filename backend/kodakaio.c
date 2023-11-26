@@ -1827,7 +1827,7 @@ k_init_parametersta(KodakAio_Scanner * s)
 	    SANE_UNFIX(s->val[OPT_BR_X].w), SANE_UNFIX(s->val[OPT_BR_Y].w));
 
 	/*
-	 * The default color depth is stored in mode_params.depth:‭
+	 * The default color depth is stored in mode_params.depth:
 	 */
 	if (mode_params[s->val[OPT_MODE].w].depth == 1)
 		s->params.depth = 1;
