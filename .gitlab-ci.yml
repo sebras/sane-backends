@@ -5,7 +5,7 @@
 
 variables:
   REGISTRY_HUB: "registry.gitlab.com/sane-project/ci-envs"
-  CONFIGURE_MINI: "--enable-silent-rules"
+  CONFIGURE_MINI: ""
   CONFIGURE_FULL: "--with-usb --with-usb-record-replay --with-avahi --enable-pnm-backend --with-libcurl --with-poppler-glib"
 
 stages:
@@ -39,7 +39,7 @@ make-dist:
   - cd build
   - tar xzf ../sane-backends-*.tar.gz --strip-components=1
   - (set -x; ./configure $CONFIGURE_OPTS)
-  - eval "(set -x; make -j2 -k $MAKE_FLAGS)"
+  - eval "(set -x; make -w -O -j2 -k $MAKE_FLAGS)"
 
 debian-11-mini:
   image: $REGISTRY_HUB:debian-bullseye-mini
