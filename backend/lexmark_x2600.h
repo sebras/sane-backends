@@ -69,6 +69,14 @@ typedef enum
 }
 Lexmark_Options;
 
+typedef enum
+{
+  READ = 0,
+  WRITE = 1,
+}
+Debug_Packet;
+
+
 typedef struct Lexmark_Device
 {
   struct Lexmark_Device *next;
@@ -96,5 +104,7 @@ typedef struct Lexmark_Device
 }
 Lexmark_Device;
 
+
+void debug_packet(const SANE_Byte * source, SANE_Int source_size, Debug_Packet dp);
 
 #endif /* LEXMARK_X2600_H */
