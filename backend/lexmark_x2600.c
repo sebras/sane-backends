@@ -1000,7 +1000,7 @@ void debug_packet(const SANE_Byte * source, SANE_Int source_size, Debug_Packet d
          source[source_size-12-debug_offset],
          source[source_size-11-debug_offset],
          source[source_size-10-debug_offset],
-         source[source_size-9]-debug_offset);
+         source[source_size-9-debug_offset]);
     DBG (10, "       %02hhx %02hhx %02hhx %02hhx | %02hhx %02hhx %02hhx %02hhx \n",
          source[source_size-8-debug_offset],
          source[source_size-7-debug_offset],
