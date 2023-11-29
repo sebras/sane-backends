@@ -322,6 +322,7 @@ clean_and_copy_data(const SANE_Byte * source, SANE_Int source_size,
   if(available_bytes_to_read > 0){
     return SANE_STATUS_GOOD;
   }else{
+    ldev->eof = 0;
     return SANE_STATUS_EOF; 
   }
   
@@ -1155,9 +1156,9 @@ sane_cancel (SANE_Handle handle)
       if (lexmark_device == handle)
     break;
     }
-  sanei_usb_reset (lexmark_device->devnum);
+  //sanei_usb_reset (lexmark_device->devnum);
 
-  lexmark_device->device_cancelled = SANE_TRUE;
+  //lexmark_device->device_cancelled = SANE_TRUE;
 }
 
 void
