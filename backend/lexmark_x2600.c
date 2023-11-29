@@ -115,7 +115,7 @@ static SANE_Int unknnown_e_data_packet_size = sizeof(unknnown_e_data_packet);
 /* static SANE_Int not_ready_data_packet_size = sizeof(not_ready_data_packet); */
 
 
-static SANE_Int  line_header_length = 9;
+static SANE_Int line_header_length = 9;
 
 
 //static SANE_Byte empty_data_packet[8] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
@@ -160,13 +160,11 @@ clean_and_copy_data(const SANE_Byte * source, SANE_Int source_size,
   SANE_Byte tmp = 0;
   SANE_Int source_read_cursor = 0;
   SANE_Int block_pixel_data_length = 0;
-  SANE_Byte* alloc_result;
-  SANE_Byte* pixel[3];
   SANE_Int size_to_realloc = 0;
 
 
   if(!ldev->eof){
-  
+
     // does source start with linebegin_data_packet?
     if (memcmp(linebegin_data_packet, source, linebegin_data_packet_size) == 0){
       // extract the number of bytes we can read befor new header is reached
@@ -191,7 +189,7 @@ clean_and_copy_data(const SANE_Byte * source, SANE_Int source_size,
       // last line was full
       if(ldev->read_buffer->last_line_bytes_read == ldev->read_buffer->linesize){
         // if next block fit in the source
-        if(i + line_header_length + ldev->read_buffer->linesize <= source_size){
+        if(i + line_header_length + (SANE_Int) ldev->read_buffer->linesize <= source_size){
           ldev->read_buffer->image_line_no += 1;
           source_read_cursor = i + line_header_length;
           block_pixel_data_length = ldev->read_buffer->linesize;
@@ -234,6 +232,7 @@ clean_and_copy_data(const SANE_Byte * source, SANE_Int source_size,
       if(alloc_result == NULL){
         // TODO allocation was not possible
         DBG (20, "    REALLOC failed\n");
+        return SANE_STATUS_NO_MEM;
       }
       // point data to our new memary space
       ldev->read_buffer->data = alloc_result;
@@ -266,7 +265,6 @@ clean_and_copy_data(const SANE_Byte * source, SANE_Int source_size,
 
   SANE_Int available_bytes_to_read =
     ldev->read_buffer->write_byte_counter - ldev->read_buffer->read_byte_counter;
-  SANE_Int offset = 0;
 
   DBG (20, "    source read done now sending to destination \n");
 
@@ -313,19 +311,19 @@ clean_and_copy_data(const SANE_Byte * source, SANE_Int source_size,
     );
     ldev->read_buffer->read_byte_counter += data_chunk_size;;
     *destination_length = data_chunk_size;
-    
+
   }
 
   DBG (20, "    done destination_length=%d available_bytes_to_read=%d\n",
        *destination_length, available_bytes_to_read);
-  
+
   if(available_bytes_to_read > 0){
     return SANE_STATUS_GOOD;
   }else{
     ldev->eof = 0;
-    return SANE_STATUS_EOF; 
+    return SANE_STATUS_EOF;
   }
-  
+
 }
 
 SANE_Status
@@ -557,7 +555,7 @@ attach_one (SANE_String_Const devname)
   lexmark_device->sane.vendor = "Lexmark";
   lexmark_device->sane.model = "X2600 series";
   lexmark_device->sane.type = "flat bed";
-  
+
   /* init transfer_buffer */
   lexmark_device->transfer_buffer = malloc (transfer_buffer_size);
 
@@ -749,6 +747,7 @@ sane_control_option (SANE_Handle handle, SANE_Int option, SANE_Action action,
   Lexmark_Device *lexmark_device;
   SANE_Status status;
   SANE_Word w;
+  SANE_Int res_selected;
 
   DBG (2, "sane_control_option: handle=%p, opt=%d, act=%d, val=%p, info=%p\n",
        (void *) handle, option, action, (void *) value, (void *) info);
@@ -790,7 +789,7 @@ sane_control_option (SANE_Handle handle, SANE_Int option, SANE_Action action,
     switch (option){
     case OPT_NUM_OPTS:
     case OPT_RESOLUTION:
-      SANE_Int res_selected = *(SANE_Int *) value;
+      res_selected = *(SANE_Int *) value;
       // first value is the size of the wordlist!
       for(int i=1; i<dpi_list_size; i++){
         DBG (10, "    posible res=%d selected=%d\n", dpi_list[i], res_selected);
@@ -1074,11 +1073,11 @@ sane_read (SANE_Handle handle, SANE_Byte * data,
   }else{
     DBG (1, "    no usb_read eof reached\n");
   }
-  
+
   // is last data packet ?
   if (!lexmark_device->eof && memcmp(last_data_packet, lexmark_device->transfer_buffer, last_data_packet_size) == 0){
 
-    // we may still have data left to send in our buffer device->read_buffer->data    
+    // we may still have data left to send in our buffer device->read_buffer->data
     //length = 0;
     //return SANE_STATUS_EOF;
     lexmark_device->eof = SANE_TRUE;
@@ -1109,7 +1108,7 @@ sane_read (SANE_Handle handle, SANE_Byte * data,
   if (memcmp(unknnown_e_data_packet, lexmark_device->transfer_buffer, unknnown_e_data_packet_size) == 0){
     return SANE_STATUS_GOOD;
   }
-  
+
   status = clean_and_copy_data(
       lexmark_device->transfer_buffer,
       size,
@@ -1157,7 +1156,6 @@ sane_cancel (SANE_Handle handle)
     break;
     }
   //sanei_usb_reset (lexmark_device->devnum);
-
   //lexmark_device->device_cancelled = SANE_TRUE;
 }
 
