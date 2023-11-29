@@ -65,6 +65,7 @@
 #include <time.h>
 
 #if WITH_USB_RECORD_REPLAY
+#include <libxml/parser.h>
 #include <libxml/tree.h>
 #endif
 
