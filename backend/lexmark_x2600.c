@@ -120,7 +120,7 @@ static SANE_Int  line_header_length = 9;
 
 //static SANE_Byte empty_data_packet[8] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
 
-void
+SANE_Status
 clean_and_copy_data(const SANE_Byte * source, SANE_Int source_size,
                     SANE_Byte * destination, SANE_Int * destination_length,
                     SANE_Int mode, SANE_Int max_length, SANE_Handle dev)
@@ -164,94 +164,100 @@ clean_and_copy_data(const SANE_Byte * source, SANE_Int source_size,
   SANE_Byte* pixel[3];
   SANE_Int size_to_realloc = 0;
 
-  // does source start with linebegin_data_packet?
-  if (memcmp(linebegin_data_packet, source, linebegin_data_packet_size) == 0){
-    // extract the number of bytes we can read befor new header is reached
-    // store it in the device in case of continuation packet
-    ldev->read_buffer->linesize = (source[4] + ((source[5] << 8) & 0xFF00)) - 1;
-    ldev->read_buffer->last_line_bytes_read = ldev->read_buffer->linesize;
-    DBG (10, "    this is the begining of a line linesize=%ld\n",
-         ldev->read_buffer->linesize);
-  } else {
-    DBG (10, "    this is not a new line packet, continue to fill the read buffer\n");
-    //return;
-  }
 
-  if(ldev->read_buffer->linesize == 0){
-    DBG (10, "    linesize=0 something went wrong, lets ignore that USB packet\n");
-    return;
-  }
+  if(!ldev->eof){
+  
+    // does source start with linebegin_data_packet?
+    if (memcmp(linebegin_data_packet, source, linebegin_data_packet_size) == 0){
+      // extract the number of bytes we can read befor new header is reached
+      // store it in the device in case of continuation packet
+      ldev->read_buffer->linesize = (source[4] + ((source[5] << 8) & 0xFF00)) - 1;
+      ldev->read_buffer->last_line_bytes_read = ldev->read_buffer->linesize;
+      DBG (10, "    this is the begining of a line linesize=%ld\n",
+           ldev->read_buffer->linesize);
+    } else {
+      DBG (10, "    this is not a new line packet, continue to fill the read buffer\n");
+      //return;
+    }
+
+    if(ldev->read_buffer->linesize == 0){
+      DBG (10, "    linesize=0 something went wrong, lets ignore that USB packet\n");
+      return SANE_STATUS_CANCELLED;
+    }
 
 
-  // loop over source buffer
-  while(i < source_size){
-    // last line was full
-    if(ldev->read_buffer->last_line_bytes_read == ldev->read_buffer->linesize){
-      // if next block fit in the source
-      if(i + line_header_length + ldev->read_buffer->linesize <= source_size){
-        ldev->read_buffer->image_line_no += 1;
-        source_read_cursor = i + line_header_length;
-        block_pixel_data_length = ldev->read_buffer->linesize;
-        ldev->read_buffer->last_line_bytes_read = block_pixel_data_length;
+    // loop over source buffer
+    while(i < source_size){
+      // last line was full
+      if(ldev->read_buffer->last_line_bytes_read == ldev->read_buffer->linesize){
+        // if next block fit in the source
+        if(i + line_header_length + ldev->read_buffer->linesize <= source_size){
+          ldev->read_buffer->image_line_no += 1;
+          source_read_cursor = i + line_header_length;
+          block_pixel_data_length = ldev->read_buffer->linesize;
+          ldev->read_buffer->last_line_bytes_read = block_pixel_data_length;
+          size_to_realloc = ldev->read_buffer->image_line_no *
+            ldev->read_buffer->linesize * sizeof(SANE_Byte);
+          bytes_read = block_pixel_data_length + line_header_length;
+        }
+        // next block cannot be read fully because source_size is too small
+        // (USB packet fragmentation)
+        else{
+          ldev->read_buffer->image_line_no += 1;
+          source_read_cursor = i + line_header_length;
+          block_pixel_data_length = source_size - i - line_header_length;
+          ldev->read_buffer->last_line_bytes_read = block_pixel_data_length;
+          size_to_realloc = ((ldev->read_buffer->image_line_no-1) *
+            ldev->read_buffer->linesize + block_pixel_data_length) * sizeof(SANE_Byte);
+          bytes_read = block_pixel_data_length + line_header_length;
+        }
+      }
+      // last line was not full lets extract what is left
+      // this is du to USB packet fragmentation
+      else{
+        // the last line was not full so no increment
+        ldev->read_buffer->image_line_no += 0;
+        source_read_cursor = i;
+        block_pixel_data_length = ldev->read_buffer->linesize -
+          ldev->read_buffer->last_line_bytes_read;
+        // we completed the last line with missing bytes so new the line is full
+        ldev->read_buffer->last_line_bytes_read = ldev->read_buffer->linesize;
         size_to_realloc = ldev->read_buffer->image_line_no *
           ldev->read_buffer->linesize * sizeof(SANE_Byte);
-        bytes_read = block_pixel_data_length + line_header_length;
+        bytes_read = block_pixel_data_length;
       }
-      // next block cannot be read fully because source_size is too small
-      // (USB packet fragmentation)
-      else{
-        ldev->read_buffer->image_line_no += 1;
-        source_read_cursor = i + line_header_length;
-        block_pixel_data_length = source_size - i - line_header_length;
-        ldev->read_buffer->last_line_bytes_read = block_pixel_data_length;
-        size_to_realloc = ((ldev->read_buffer->image_line_no-1) *
-          ldev->read_buffer->linesize + block_pixel_data_length) * sizeof(SANE_Byte);
-        bytes_read = block_pixel_data_length + line_header_length;
+
+      DBG (20, "    size_to_realloc=%d i=%d image_line_no=%d\n",
+           size_to_realloc, i, ldev->read_buffer->image_line_no);
+      // do realoc memory space for our buffer
+      SANE_Byte* alloc_result = realloc(ldev->read_buffer->data, size_to_realloc);
+      if(alloc_result == NULL){
+        // TODO allocation was not possible
+        DBG (20, "    REALLOC failed\n");
       }
-    }
-    // last line was not full lets extract what is left
-    // this is du to USB packet fragmentation
-    else{
-      // the last line was not full so no increment
-      ldev->read_buffer->image_line_no += 0;
-      source_read_cursor = i;
-      block_pixel_data_length = ldev->read_buffer->linesize -
-        ldev->read_buffer->last_line_bytes_read;
-      // we completed the last line with missing bytes so new the line is full
-      ldev->read_buffer->last_line_bytes_read = ldev->read_buffer->linesize;
-      size_to_realloc = ldev->read_buffer->image_line_no *
-        ldev->read_buffer->linesize * sizeof(SANE_Byte);
-      bytes_read = block_pixel_data_length;
-    }
+      // point data to our new memary space
+      ldev->read_buffer->data = alloc_result;
+      // reposition writeptr and readptr to the correct memory adress
+      // to do that use write_byte_counter and read_byte_counter
+      ldev->read_buffer->writeptr =
+        ldev->read_buffer->data + ldev->read_buffer->write_byte_counter;
+      // copy new data
+      memcpy(
+             ldev->read_buffer->writeptr,
+             source + source_read_cursor,
+             block_pixel_data_length
+      );
 
-    DBG (20, "    size_to_realloc=%d i=%d image_line_no=%d\n",
-         size_to_realloc, i, ldev->read_buffer->image_line_no);
-    // do realoc memory space for our buffer
-    SANE_Byte* alloc_result = realloc(ldev->read_buffer->data, size_to_realloc);
-    if(alloc_result == NULL){
-      // TODO allocation was not possible
-      DBG (20, "    REALLOC failed\n");
+      // store how long is the buffer
+      ldev->read_buffer->write_byte_counter += block_pixel_data_length;
+
+      i += bytes_read;
     }
-    // point data to our new memary space
-    ldev->read_buffer->data = alloc_result;
-    // reposition writeptr and readptr to the correct memory adress
-    // to do that use write_byte_counter and read_byte_counter
-    ldev->read_buffer->writeptr =
-      ldev->read_buffer->data + ldev->read_buffer->write_byte_counter;
-    ldev->read_buffer->readptr =
-      ldev->read_buffer->data + ldev->read_buffer->read_byte_counter;
-    // copy new data
-    memcpy(
-           ldev->read_buffer->writeptr,
-           source + source_read_cursor,
-           block_pixel_data_length
-    );
-
-    // store how long is the buffer
-    ldev->read_buffer->write_byte_counter += block_pixel_data_length;
-
-    i += bytes_read;
   }
+
+  // reposition our readptr
+  ldev->read_buffer->readptr =
+    ldev->read_buffer->data + ldev->read_buffer->read_byte_counter;
 
 
   // read our buffer to fill the destination buffer
@@ -307,10 +313,18 @@ clean_and_copy_data(const SANE_Byte * source, SANE_Int source_size,
     );
     ldev->read_buffer->read_byte_counter += data_chunk_size;;
     *destination_length = data_chunk_size;
-
+    
   }
 
-  DBG (20, "    done destination_length=%d\n", *destination_length);
+  DBG (20, "    done destination_length=%d available_bytes_to_read=%d\n",
+       *destination_length, available_bytes_to_read);
+  
+  if(available_bytes_to_read > 0){
+    return SANE_STATUS_GOOD;
+  }else{
+    return SANE_STATUS_EOF; 
+  }
+  
 }
 
 SANE_Status
@@ -542,7 +556,7 @@ attach_one (SANE_String_Const devname)
   lexmark_device->sane.vendor = "Lexmark";
   lexmark_device->sane.model = "X2600 series";
   lexmark_device->sane.type = "flat bed";
-
+  
   /* init transfer_buffer */
   lexmark_device->transfer_buffer = malloc (transfer_buffer_size);
 
@@ -555,6 +569,7 @@ attach_one (SANE_String_Const devname)
   lexmark_device->read_buffer->image_line_no = 0;
   lexmark_device->read_buffer->write_byte_counter = 0;
   lexmark_device->read_buffer->read_byte_counter = 0;
+  lexmark_device->eof = SANE_FALSE;
   /* mark device as present */
   lexmark_device->missing = SANE_FALSE;
   lexmark_device->device_cancelled = SANE_FALSE;
@@ -1043,33 +1058,38 @@ sane_read (SANE_Handle handle, SANE_Byte * data,
   }
 
   //status = sanei_usb_read_bulk (lexmark_device->devnum, buf, &size);
-  DBG (1, "    usb_read\n");
-  status = sanei_usb_read_bulk (
-      lexmark_device->devnum, lexmark_device->transfer_buffer, &size);
-  if (status != SANE_STATUS_GOOD && status != SANE_STATUS_EOF)
-    {
-      DBG (1, "    USB READ Error in sanei_usb_read_bulk, cannot read devnum=%d status=%d size=%ld\n",
-           lexmark_device->devnum, status, size);
-      return status;
-    }
-  DBG (1, "    usb_read done size=%ld\n", size);
-  debug_packet(lexmark_device->transfer_buffer, size, READ);
-
+  if(!lexmark_device->eof){
+      DBG (1, "    usb_read\n");
+      status = sanei_usb_read_bulk (
+          lexmark_device->devnum, lexmark_device->transfer_buffer, &size);
+      if (status != SANE_STATUS_GOOD && status != SANE_STATUS_EOF)
+        {
+          DBG (1, "    USB READ Error in sanei_usb_read_bulk, cannot read devnum=%d status=%d size=%ld\n",
+               lexmark_device->devnum, status, size);
+          return status;
+        }
+      DBG (1, "    usb_read done size=%ld\n", size);
+      debug_packet(lexmark_device->transfer_buffer, size, READ);
+  }else{
+    DBG (1, "    no usb_read eof reached\n");
+  }
+  
   // is last data packet ?
-  if (memcmp(last_data_packet, lexmark_device->transfer_buffer, last_data_packet_size) == 0)
-    {
-      length = 0;
-      return SANE_STATUS_EOF;
-    }
+  if (!lexmark_device->eof && memcmp(last_data_packet, lexmark_device->transfer_buffer, last_data_packet_size) == 0){
 
+    // we may still have data left to send in our buffer device->read_buffer->data    
+    //length = 0;
+    //return SANE_STATUS_EOF;
+    lexmark_device->eof = SANE_TRUE;
+    DBG (1, "    EOF PACKET no more data from scanner\n");
+
+    return SANE_STATUS_GOOD;
+  }
   // cancel packet received?
-  if (memcmp(cancel_packet, lexmark_device->transfer_buffer, cancel_packet_size) == 0)
-    {
-      length = 0;
-      return SANE_STATUS_CANCELLED;
-    }
-
-
+  if (memcmp(cancel_packet, lexmark_device->transfer_buffer, cancel_packet_size) == 0){
+    length = 0;
+    return SANE_STATUS_CANCELLED;
+  }
   if (memcmp(empty_line_data_packet, lexmark_device->transfer_buffer, empty_line_data_packet_size) == 0){
     return SANE_STATUS_GOOD;
   }
@@ -1088,8 +1108,8 @@ sane_read (SANE_Handle handle, SANE_Byte * data,
   if (memcmp(unknnown_e_data_packet, lexmark_device->transfer_buffer, unknnown_e_data_packet_size) == 0){
     return SANE_STATUS_GOOD;
   }
-
-  clean_and_copy_data(
+  
+  status = clean_and_copy_data(
       lexmark_device->transfer_buffer,
       size,
       data,
@@ -1098,7 +1118,7 @@ sane_read (SANE_Handle handle, SANE_Byte * data,
       max_length,
       handle);
 
-  return SANE_STATUS_GOOD;
+  return status;
 }
 
 SANE_Status
