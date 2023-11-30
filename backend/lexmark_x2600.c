@@ -1190,6 +1190,8 @@ sane_exit (void)
        lexmark_device = next_lexmark_device)
     {
       next_lexmark_device = lexmark_device->next;
+      free (lexmark_device->transfer_buffer);
+      free (lexmark_device->read_buffer);
       free (lexmark_device);
     }
 
