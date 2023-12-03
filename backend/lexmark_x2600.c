@@ -999,6 +999,7 @@ sane_start (SANE_Handle handle)
 
   if(lexmark_device == NULL){
     DBG (2, "    Cannot find device\n");
+    free(cmd);
     return SANE_STATUS_IO_ERROR;
   }
 
@@ -1015,27 +1016,30 @@ sane_start (SANE_Handle handle)
   status = usb_write_then_read(lexmark_device, command1_block,
                                command1_block_size);
   if (status != SANE_STATUS_GOOD)
+    free(cmd);
     return status;
 
   status = usb_write_then_read(lexmark_device, command2_block,
                                command2_block_size);
   if (status != SANE_STATUS_GOOD)
+    free(cmd);
     return status;
 
   build_packet(lexmark_device, 0x05, cmd);
   status = usb_write_then_read(lexmark_device, cmd,
                                command_with_params_block_size);
   if (status != SANE_STATUS_GOOD)
+    free(cmd);
     return status;
 
   build_packet(lexmark_device, 0x01, cmd);;
   status = usb_write_then_read(lexmark_device, cmd,
                                command_with_params_block_size);
   if (status != SANE_STATUS_GOOD)
+    free(cmd);
     return status;
 
   free(cmd);
-
   return SANE_STATUS_GOOD;
 }
 
