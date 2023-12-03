@@ -577,18 +577,18 @@ attach_one (SANE_String_Const devname)
 {
   Lexmark_Device *lexmark_device;
 
-  DBG (2, "attach_one: attachLexmark: devname=%s\n", devname);
+  DBG (2, "attach_one: attachLexmark: devname=%s first_device=%p\n",
+       devname, (void *)first_device);
 
   for (lexmark_device = first_device; lexmark_device;
-       lexmark_device = lexmark_device->next)
-    {
-      /* already attached devices */
-      if (strcmp (lexmark_device->sane.name, devname) == 0)
-      {
-        lexmark_device->missing = SANE_FALSE;
-    return SANE_STATUS_GOOD;
-      }
+       lexmark_device = lexmark_device->next){
+    /* already attached devices */
+
+    if (strcmp (lexmark_device->sane.name, devname) == 0){
+      lexmark_device->missing = SANE_FALSE;
+      return SANE_STATUS_GOOD;
     }
+  }
 
   lexmark_device = (Lexmark_Device *) malloc (sizeof (Lexmark_Device));
   if (lexmark_device == NULL)
@@ -606,7 +606,6 @@ attach_one (SANE_String_Const devname)
   if (lexmark_device->transfer_buffer == NULL)
     return SANE_STATUS_NO_MEM;
 
-
   /* Make the pointer to the read buffer null here */
   lexmark_device->read_buffer = malloc (sizeof (Read_Buffer));
   if (lexmark_device->read_buffer == NULL)
@@ -619,27 +618,18 @@ attach_one (SANE_String_Const devname)
   lexmark_device->next = first_device;
   first_device = lexmark_device;
   num_devices++;
+  DBG (2, "    first_device=%p\n", (void *)first_device);
 
   return SANE_STATUS_GOOD;
 }
 
 SANE_Status
-sane_init (SANE_Int *version_code, SANE_Auth_Callback authorize)
-{
-  FILE *fp;
+scan_devices(){
   SANE_Char config_line[PATH_MAX];
+  FILE *fp;
   const char *lp;
-
-  DBG_INIT ();
-  DBG (2, "sane_init: version_code %s 0, authorize %s 0\n",
-       version_code == 0 ? "=" : "!=", authorize == 0 ? "=" : "!=");
-  DBG (1, "    SANE lexmark_x2600 backend version %d.%d.%d from %s\n",
-       SANE_CURRENT_MAJOR, SANE_CURRENT_MINOR, BUILD, PACKAGE_STRING);
-
-  if (version_code)
-    *version_code = SANE_VERSION_CODE (SANE_CURRENT_MAJOR, SANE_CURRENT_MINOR, BUILD);
-
-  sanei_usb_init ();
+  num_devices = 0;
+  first_device = NULL;
 
   fp = sanei_config_open (LEXMARK_X2600_CONFIG_FILE);
   if (!fp)
@@ -658,12 +648,30 @@ sane_init (SANE_Int *version_code, SANE_Auth_Callback authorize)
     continue;
 
       DBG (4, "    attach_matching_devices(%s)\n", config_line);
+      sanei_usb_init();
       sanei_usb_attach_matching_devices (config_line, attach_one);
     }
 
   fclose (fp);
-  initialized = SANE_TRUE;
   return SANE_STATUS_GOOD;
+}
+
+SANE_Status
+sane_init (SANE_Int *version_code, SANE_Auth_Callback authorize)
+{
+  DBG_INIT ();
+  DBG (2, "sane_init: version_code %s 0, authorize %s 0\n",
+       version_code == 0 ? "=" : "!=", authorize == 0 ? "=" : "!=");
+  DBG (1, "    SANE lexmark_x2600 backend version %d.%d.%d from %s\n",
+       SANE_CURRENT_MAJOR, SANE_CURRENT_MINOR, BUILD, PACKAGE_STRING);
+
+  if (version_code)
+    *version_code = SANE_VERSION_CODE (SANE_CURRENT_MAJOR, SANE_CURRENT_MINOR, BUILD);
+
+
+  SANE_Status status = scan_devices();
+  initialized = SANE_TRUE;
+  return status;
 }
 
 SANE_Status
@@ -675,7 +683,8 @@ sane_get_devices (const SANE_Device ***device_list, SANE_Bool local_only)
   DBG (2, "sane_get_devices: device_list=%p, local_only=%d num_devices=%d\n",
        (void *) device_list, local_only, num_devices);
 
-  sanei_usb_scan_devices ();
+  //sanei_usb_scan_devices ();
+  SANE_Status status = scan_devices();
 
   if (devlist)
     free (devlist);
@@ -702,7 +711,7 @@ sane_get_devices (const SANE_Device ***device_list, SANE_Bool local_only)
 
   *device_list = devlist;
 
-  return SANE_STATUS_GOOD;
+  return status;
 }
 
 SANE_Status
@@ -1039,7 +1048,7 @@ sane_start (SANE_Handle handle)
     free(cmd);
     return status;
   }
-  
+
   free(cmd);
   return SANE_STATUS_GOOD;
 }
