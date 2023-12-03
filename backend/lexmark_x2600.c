@@ -631,12 +631,13 @@ scan_devices(){
   const char *lp;
   num_devices = 0;
 
-  if(first_device){
+  // -- free existing device we are doning a full re-scan
+  while (first_device){
+    Lexmark_Device *this_device = first_device;
+    first_device = first_device->next;
     DBG (2, "    free first_device\n");
-    free(first_device);
+    free(this_device);
   }
-
-  first_device = NULL;
 
   fp = sanei_config_open (LEXMARK_X2600_CONFIG_FILE);
   if (!fp)
