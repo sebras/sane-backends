@@ -132,26 +132,26 @@ static SANE_Byte linebegin_data_packet[] = {
   0x1b, 0x53, 0x02, 0x00};
 static SANE_Int linebegin_data_packet_size = sizeof(linebegin_data_packet);
 
-static SANE_Byte unknnown_a_data_packet[] = {
+static SANE_Byte unknown_a_data_packet[] = {
   0x1b, 0x53, 0x01, 0x00, 0x01, 0x00, 0x80, 0x00};
-static SANE_Int unknnown_a_data_packet_size = sizeof(unknnown_a_data_packet);
+static SANE_Int unknown_a_data_packet_size = sizeof(unknown_a_data_packet);
 
-static SANE_Byte unknnown_b_data_packet[] = {
+static SANE_Byte unknown_b_data_packet[] = {
   0x1b, 0x53, 0x04, 0x00, 0x00, 0x00, 0x80, 0x00};
-static SANE_Int unknnown_b_data_packet_size = sizeof(unknnown_b_data_packet);
+static SANE_Int unknown_b_data_packet_size = sizeof(unknown_b_data_packet);
 
-static SANE_Byte unknnown_c_data_packet[] = {
+static SANE_Byte unknown_c_data_packet[] = {
   0x1b, 0x53, 0x04, 0x00, 0x00, 0x00, 0x84, 0x00};
-static SANE_Int unknnown_c_data_packet_size = sizeof(unknnown_c_data_packet);
+static SANE_Int unknown_c_data_packet_size = sizeof(unknown_c_data_packet);
 
-static SANE_Byte unknnown_d_data_packet[] = {
+static SANE_Byte unknown_d_data_packet[] = {
   0x1b, 0x53, 0x05, 0x00, 0x00, 0x00};
-static SANE_Int unknnown_d_data_packet_size = sizeof(unknnown_d_data_packet);
+static SANE_Int unknown_d_data_packet_size = sizeof(unknown_d_data_packet);
 
-static SANE_Byte unknnown_e_data_packet[] = {
+static SANE_Byte unknown_e_data_packet[] = {
   0xa5, 0x00, 0x06, 0x10, 0x01, 0xaa, 0xbb, 0xcc,
   0xdd};
-static SANE_Int unknnown_e_data_packet_size = sizeof(unknnown_e_data_packet);
+static SANE_Int unknown_e_data_packet_size = sizeof(unknown_e_data_packet);
 
 /* static SANE_Byte not_ready_data_packet[] = { */
 /*   0x1b, 0x53, 0x01, 0x00, 0x01, 0x00, 0x84, 0x00}; */
@@ -595,23 +595,23 @@ attach_one (SANE_String_Const devname)
     return SANE_STATUS_NO_MEM;
 
   lexmark_device->sane.name = strdup (devname);
+  if (lexmark_device->sane.name == NULL)
+    return SANE_STATUS_NO_MEM;
   lexmark_device->sane.vendor = "Lexmark";
   lexmark_device->sane.model = "X2600 series";
   lexmark_device->sane.type = "flat bed";
 
   /* init transfer_buffer */
   lexmark_device->transfer_buffer = malloc (transfer_buffer_size);
+  if (lexmark_device->transfer_buffer == NULL)
+    return SANE_STATUS_NO_MEM;
 
 
   /* Make the pointer to the read buffer null here */
   lexmark_device->read_buffer = malloc (sizeof (Read_Buffer));
-  lexmark_device->read_buffer->data = NULL;
-  lexmark_device->read_buffer->size = 0;
-  lexmark_device->read_buffer->last_line_bytes_read = 0;
-  lexmark_device->read_buffer->image_line_no = 0;
-  lexmark_device->read_buffer->write_byte_counter = 0;
-  lexmark_device->read_buffer->read_byte_counter = 0;
-  lexmark_device->eof = SANE_FALSE;
+  if (lexmark_device->read_buffer == NULL)
+    return SANE_STATUS_NO_MEM;
+
   /* mark device as present */
   lexmark_device->missing = SANE_FALSE;
   lexmark_device->device_cancelled = SANE_FALSE;
@@ -981,7 +981,9 @@ sane_start (SANE_Handle handle)
   Lexmark_Device * lexmark_device;
   SANE_Status status;
   SANE_Byte * cmd = (SANE_Byte *) malloc
-    (command_with_params_block_size * sizeof (SANE_Byte));;
+    (command_with_params_block_size * sizeof (SANE_Byte));
+  if (cmd == NULL)
+    return SANE_STATUS_NO_MEM;
 
   DBG (2, "sane_start: handle=%p initialized=%d\n", (void *) handle, initialized);
 
@@ -994,6 +996,20 @@ sane_start (SANE_Handle handle)
       if (lexmark_device == handle)
     break;
     }
+
+  if(lexmark_device == NULL){
+    DBG (2, "    Cannot find device\n");
+    return SANE_STATUS_IO_ERROR;
+  }
+
+  lexmark_device->read_buffer->data = NULL;
+  lexmark_device->read_buffer->size = 0;
+  lexmark_device->read_buffer->last_line_bytes_read = 0;
+  lexmark_device->read_buffer->image_line_no = 0;
+  lexmark_device->read_buffer->write_byte_counter = 0;
+  lexmark_device->read_buffer->read_byte_counter = 0;
+  lexmark_device->eof = SANE_FALSE;
+  lexmark_device->device_cancelled = SANE_FALSE;
 
   //launch scan commands
   status = usb_write_then_read(lexmark_device, command1_block,
@@ -1017,6 +1033,8 @@ sane_start (SANE_Handle handle)
                                command_with_params_block_size);
   if (status != SANE_STATUS_GOOD)
     return status;
+
+  free(cmd);
 
   return SANE_STATUS_GOOD;
 }
@@ -1088,16 +1106,16 @@ sane_read (SANE_Handle handle, SANE_Byte * data,
       // to empty buffers
       status = sanei_usb_read_bulk (
           lexmark_device->devnum, lexmark_device->transfer_buffer, &size);
-      DBG (10, "USB READ \n");
-      status = sanei_usb_read_bulk (
-          lexmark_device->devnum, lexmark_device->transfer_buffer, &size);
-      DBG (10, "USB READ \n");
-      status = sanei_usb_read_bulk (
-          lexmark_device->devnum, lexmark_device->transfer_buffer, &size);
-      DBG (10, "USB READ \n");
-      //status = sanei_usb_read_bulk (lexmark_device->devnum, buf, &size);
-      //DBG (10, "USB READ \n");
-      return SANE_STATUS_CANCELLED;//SANE_STATUS_GOOD; //;
+      if(status == SANE_STATUS_GOOD){
+        status = sanei_usb_read_bulk (
+            lexmark_device->devnum, lexmark_device->transfer_buffer, &size);
+      }
+      if(status == SANE_STATUS_GOOD){
+        status = sanei_usb_read_bulk (
+            lexmark_device->devnum, lexmark_device->transfer_buffer, &size);
+      }
+
+      return status;
   }
 
   //status = sanei_usb_read_bulk (lexmark_device->devnum, buf, &size);
@@ -1136,19 +1154,19 @@ sane_read (SANE_Handle handle, SANE_Byte * data,
   if (memcmp(empty_line_data_packet, lexmark_device->transfer_buffer, empty_line_data_packet_size) == 0){
     return SANE_STATUS_GOOD;
   }
-  if (memcmp(unknnown_a_data_packet, lexmark_device->transfer_buffer, unknnown_a_data_packet_size) == 0){
+  if (memcmp(unknown_a_data_packet, lexmark_device->transfer_buffer, unknown_a_data_packet_size) == 0){
     return SANE_STATUS_GOOD;
   }
-  if (memcmp(unknnown_b_data_packet, lexmark_device->transfer_buffer, unknnown_b_data_packet_size) == 0){
+  if (memcmp(unknown_b_data_packet, lexmark_device->transfer_buffer, unknown_b_data_packet_size) == 0){
     return SANE_STATUS_GOOD;
   }
-  if (memcmp(unknnown_c_data_packet, lexmark_device->transfer_buffer, unknnown_c_data_packet_size) == 0){
+  if (memcmp(unknown_c_data_packet, lexmark_device->transfer_buffer, unknown_c_data_packet_size) == 0){
     return SANE_STATUS_GOOD;
   }
-  if (memcmp(unknnown_d_data_packet, lexmark_device->transfer_buffer, unknnown_d_data_packet_size) == 0){
+  if (memcmp(unknown_d_data_packet, lexmark_device->transfer_buffer, unknown_d_data_packet_size) == 0){
     return SANE_STATUS_GOOD;
   }
-  if (memcmp(unknnown_e_data_packet, lexmark_device->transfer_buffer, unknnown_e_data_packet_size) == 0){
+  if (memcmp(unknown_e_data_packet, lexmark_device->transfer_buffer, unknown_e_data_packet_size) == 0){
     return SANE_STATUS_GOOD;
   }
 
@@ -1198,8 +1216,8 @@ sane_cancel (SANE_Handle handle)
       if (lexmark_device == handle)
     break;
     }
-  //sanei_usb_reset (lexmark_device->devnum);
-  //lexmark_device->device_cancelled = SANE_TRUE;
+  sanei_usb_reset (lexmark_device->devnum);
+  lexmark_device->device_cancelled = SANE_TRUE;
 }
 
 void
