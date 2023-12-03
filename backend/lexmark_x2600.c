@@ -672,8 +672,8 @@ sane_get_devices (const SANE_Device ***device_list, SANE_Bool local_only)
   SANE_Int index;
   Lexmark_Device *lexmark_device;
 
-  DBG (2, "sane_get_devices: device_list=%p, local_only=%d\n",
-       (void *) device_list, local_only);
+  DBG (2, "sane_get_devices: device_list=%p, local_only=%d num_devices=%d\n",
+       (void *) device_list, local_only, num_devices);
 
   sanei_usb_scan_devices ();
 
@@ -1015,30 +1015,31 @@ sane_start (SANE_Handle handle)
   //launch scan commands
   status = usb_write_then_read(lexmark_device, command1_block,
                                command1_block_size);
-  if (status != SANE_STATUS_GOOD)
+  if (status != SANE_STATUS_GOOD){
     free(cmd);
     return status;
-
+  }
   status = usb_write_then_read(lexmark_device, command2_block,
                                command2_block_size);
-  if (status != SANE_STATUS_GOOD)
+  if (status != SANE_STATUS_GOOD){
     free(cmd);
     return status;
-
+  }
   build_packet(lexmark_device, 0x05, cmd);
   status = usb_write_then_read(lexmark_device, cmd,
                                command_with_params_block_size);
-  if (status != SANE_STATUS_GOOD)
+  if (status != SANE_STATUS_GOOD){
     free(cmd);
     return status;
-
+  }
   build_packet(lexmark_device, 0x01, cmd);;
   status = usb_write_then_read(lexmark_device, cmd,
                                command_with_params_block_size);
-  if (status != SANE_STATUS_GOOD)
+  if (status != SANE_STATUS_GOOD){
     free(cmd);
     return status;
-
+  }
+  
   free(cmd);
   return SANE_STATUS_GOOD;
 }
