@@ -58,3 +58,7 @@ test-suite.log
 
 # `make dist` artifacts
 /sane-backends-*.tar.gz
+
+# editor temp files
+*~
+\#*\#

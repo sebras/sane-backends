@@ -829,7 +829,7 @@ sane_control_option (SANE_Handle handle, SANE_Int option, SANE_Action action,
     case SANE_ACTION_SET_VALUE:
 
       if (!SANE_OPTION_IS_SETTABLE (lexmark_device->opt[option].cap))
-	return SANE_STATUS_INVAL;
+        return SANE_STATUS_INVAL;
 
       /* Make sure boolean values are only TRUE or FALSE */
       if (lexmark_device->opt[option].type == SANE_TYPE_BOOL)

@@ -75,8 +75,8 @@ BACKEND_CONFS= abaton.conf agfafocus.conf apple.conf artec.conf \
 	       epson.conf epsonds.conf escl.conf fujitsu.conf genesys.conf \
 	       gphoto2.conf gt68xx.conf hp3900.conf hp4200.conf hp5400.conf \
 	       hp.conf hpsj5s.conf hs2p.conf ibm.conf kodak.conf kodakaio.conf\
-	       kvs1025.conf \
-	       leo.conf lexmark.conf ma1509.conf magicolor.conf \
+	       kvs1025.conf leo.conf lexmark.conf lexmark_x2600.conf \
+               ma1509.conf magicolor.conf \
 	       matsushita.conf microtek2.conf microtek.conf mustek.conf \
 	       mustek_pp.conf mustek_usb.conf nec.conf net.conf \
 	       p5.conf \
@@ -173,7 +173,7 @@ be_convenience_libs = libabaton.la libagfafocus.la \
     libhp5400.la libhp5590.la libhpljm1005.la \
     libhpsj5s.la libhs2p.la libibm.la libkodak.la libkodakaio.la\
     libkvs1025.la libkvs20xx.la libkvs40xx.la \
-    libleo.la liblexmark.la libma1509.la libmagicolor.la \
+    libleo.la liblexmark.la liblexmark_x2600.la libma1509.la libmagicolor.la \
     libmatsushita.la libmicrotek.la libmicrotek2.la \
     libmustek.la libmustek_pp.la libmustek_usb.la \
     libmustek_usb2.la libnec.la libnet.la \
@@ -208,7 +208,7 @@ be_dlopen_libs = libsane-abaton.la libsane-agfafocus.la \
     libsane-hpsj5s.la libsane-hs2p.la libsane-ibm.la libsane-kodak.la libsane-kodakaio.la\
     libsane-kvs1025.la libsane-kvs20xx.la libsane-kvs40xx.la \
     libsane-leo.la \
-    libsane-lexmark.la libsane-ma1509.la libsane-magicolor.la \
+    libsane-lexmark.la libsane-lexmark_x2600.la libsane-ma1509.la libsane-magicolor.la \
     libsane-matsushita.la libsane-microtek.la libsane-microtek2.la \
     libsane-mustek.la libsane-mustek_pp.la libsane-mustek_usb.la \
     libsane-mustek_usb2.la libsane-nec.la libsane-net.la \
@@ -1146,6 +1146,22 @@ libsane_lexmark_la_LIBADD = $(COMMON_LIBS) \
 EXTRA_DIST += lexmark.conf.in
 # TODO: Why are these distributed but not compiled?
 EXTRA_DIST += lexmark_models.c lexmark_sensors.c
+
+liblexmark_x2600_la_SOURCES = lexmark_x2600.c lexmark_x2600.h
+liblexmark_x2600_la_CPPFLAGS = $(AM_CPPFLAGS) -DBACKEND_NAME=lexmark_x2600
+
+nodist_libsane_lexmark_x2600_la_SOURCES = lexmark_x2600-s.c
+libsane_lexmark_x2600_la_CPPFLAGS = $(AM_CPPFLAGS) -DBACKEND_NAME=lexmark_x2600
+libsane_lexmark_x2600_la_LDFLAGS = $(DIST_SANELIBS_LDFLAGS)
+libsane_lexmark_x2600_la_LIBADD = $(COMMON_LIBS) \
+    liblexmark_x2600.la \
+    ../sanei/sanei_init_debug.lo \
+    ../sanei/sanei_constrain_value.lo \
+    ../sanei/sanei_config.lo \
+    sane_strstatus.lo \
+    ../sanei/sanei_usb.lo \
+    $(USB_LIBS) $(RESMGR_LIBS)
+EXTRA_DIST += lexmark_x2600.conf.in
 
 libma1509_la_SOURCES = ma1509.c ma1509.h
 libma1509_la_CPPFLAGS = $(AM_CPPFLAGS) -DBACKEND_NAME=ma1509

@@ -672,7 +672,7 @@ ALL_BACKENDS="abaton agfafocus apple artec artec_eplus48u as6e \
         dell1600n_net dmc epjitsu epson epson2 epsonds escl fujitsu \
         genesys gphoto2 gt68xx hp hp3500 hp3900 hp4200 hp5400 \
         hp5590 hpsj5s hpljm1005 hs2p ibm kodak kodakaio kvs1025 kvs20xx \
-        kvs40xx leo lexmark ma1509 magicolor \
+        kvs40xx leo lexmark lexmark_x2600 ma1509 magicolor \
         matsushita microtek microtek2 mustek mustek_pp \
         mustek_usb mustek_usb2 nec net niash pie pieusb pint \
         pixma plustek plustek_pp qcam ricoh ricoh2 rts8891 s9036 \
