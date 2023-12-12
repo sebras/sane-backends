@@ -1,5 +1,5 @@
 /* sane - Scanner Access Now Easy.
-   Copyright (C) 1998 David F. Skoll
+   Copyright (C) 1998 Dianne Skoll
    This file is part of the SANE package.
 
    This program is free software; you can redistribute it and/or

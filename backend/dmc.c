@@ -1,5 +1,5 @@
 /* sane - Scanner Access Now Easy.
-   Copyright (C) 1998 David F. Skoll
+   Copyright (C) 1998 Dianne Skoll
    Heavily based on "hp.c" driver for HP Scanners, by
    David Mosberger-Tang.
 

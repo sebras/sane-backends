@@ -148,7 +148,7 @@ like.
 .BR  sane\-scsi (5)
 
 .SH AUTHOR
-David F. Skoll
+Dianne Skoll <dianne@skoll.ca>
 .PP
 The backend is derived from
 .BR sane\-hp (5)

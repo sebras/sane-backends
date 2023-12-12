@@ -419,7 +419,7 @@
 
 1998-05-22  David Mosberger-Tang  <David.Mosberger@acm.org>
 
-	* backend/dmc.c: Updated with David Skoll's latest patch.
+	* backend/dmc.c: Updated with Dianne Skoll's latest patch.
 
 	* sanei/sanei_scsi.c (sanei_scsi_find_devices): Declare missing
 	findtype arg for dummy sanei_scsi_find_devices().
@@ -675,7 +675,7 @@
 	blocking mode, *len==0 implies end of scan).
 	* frontend/xscanimage.c: Ditto.
 
-	* doc/sane-dmc.man: New file by David Skoll.
+	* doc/sane-dmc.man: New file by Dianne Skoll.
 
 	* sanei/sanei_DomainOS.c: New file by Paul Walker.
 
@@ -806,8 +806,8 @@
 	* doc/Makefile.in (SECT5): Ditto.
 
 	* backend/dmc.c, backend/dmc.h: Update with Feb 26 patch from
-	David Skoll.
-	* doc/dmc.man: New file by David Skoll.
+	Dianne Skoll.
+	* doc/dmc.man: New file by Dianne Skoll.
 
 1998-02-25  David Mosberger-Tang  <David.Mosberger@acm.org>
 
@@ -862,8 +862,8 @@
 	* backend/coolscan-scsidef.h: Ditto.
 	* backend/coolscan.h: Ditto.
 
-	* backend/hp.c (sane_close): Change s to s->next (patch by David
-	Skoll <dskoll@chipworks.com>).
+	* backend/hp.c (sane_close): Change s to s->next (patch by Dianne
+	Skoll <dianne@skoll.ca>).
 
 1998-02-17  David Mosberger-Tang  <David.Mosberger@acm.org>
 
