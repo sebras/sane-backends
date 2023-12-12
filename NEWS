@@ -1235,7 +1235,7 @@ There is now support for the SnapScan 310 and 600 scanner models.
 New with 0.71:
 
 * Polaroid Digital Microscope Camera (DMC) backend
-  Written by David Skoll <dskoll@chipworks.com>.
+  Written by Dianne Skoll <dianne@skoll.ca>
 
 * Apple scanner backend
   Written by Milon Firikis <milonf@isosun.ariadne-t.gr>.  This backend

@@ -24,7 +24,7 @@ Backends:
  dc240:         Peter Fales
  dell1600n_net: Jon Chambers
  dll:           David Mosberger
- dmc:           David F. Skoll
+ dmc:           Dianne Skoll
  epjitsu:       m. allan noah (*)
  epson:         Karl Heinz Kremer
  epson2:        Alessandro Zummo, Wolfram Sang (*)
@@ -165,10 +165,10 @@ Chris Bagwell <cbagwell-guest@users.alioth.debian.org>
 Chris Pinkham <cpinkham@corp.infi.net>
 Christian Bucher <cbucher@vernetzt.at>
 David Etherton <etherton@netcom.com>
-David F. Skoll <dskoll@iname.com>
 David Huggins-Daines <bn711@freenet.carleton.ca>
 David Mosberger <David.Mosberger@acm.org>
 David Stevenson <david.stevenson@zoom.co.uk>
+Dianne Skoll <dianne@skoll.ca>
 Didier Carlier <didier@sema.be>
 Earle F. Philhower III <earle@ziplabel.com>
 Eddy De Greef <eddy_de_greef at scarlet dot be>
