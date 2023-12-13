@@ -1055,6 +1055,11 @@
 :status     :complete
 :comment    "network interface supported via DFSG non-free iscan-network-nt package<br>all-in-one"
 
+:model      "L360 Series"
+:interface  "USB"
+:usbid      "0x04b8" "0x08d1"
+:status     :complete
+
 :model      "L365 Series"
 :interface  "USB"
 :usbid      "0x04b8" "0x08d2"
