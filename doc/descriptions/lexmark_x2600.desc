@@ -13,7 +13,7 @@
 :version "1.0-0"   ; version of backend (or "unmaintained")
 :manpage "sane-lexmark_x2600"     ; name of manpage (if it exists)
 :url "https://gitlab.com/sane-project/backends/"
-				  ; backend's web page
+                  ; backend's web page
 
 :comment "This backend supports lexmark x2600 series scanners."
                                   ; comment about the backend
@@ -30,4 +30,3 @@
 :usbid "0x043d" "0x011d"
 :status :good
 :comment "Supports 75, 150, 300, 600 dpi"
-
