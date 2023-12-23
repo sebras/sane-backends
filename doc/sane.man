@@ -910,7 +910,7 @@ for details).
 .BR sane\-kodak (5),
 .BR sane\-leo (5),
 .BR sane\-lexmark (5),
-.BR sane\-lexmark_x2600 (5),    
+.BR sane\-lexmark_x2600 (5),
 .BR sane\-ma1509 (5),
 .BR sane\-matsushita (5),
 .BR sane\-microtek2 (5),
