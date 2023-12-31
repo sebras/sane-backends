@@ -55,6 +55,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <pwd.h>
 #ifdef HAVE_LIBC_H
 # include <libc.h> /* NeXTStep/OpenStep */
 #endif
@@ -311,6 +312,32 @@ add_device (const char *name, Net_Device ** ndp)
 }
 #endif /* NET_USES_AF_INDEP */
 
+/* Calls getpwuid_r(). The return value must be freed by the caller. */
+char* get_current_username()
+{
+  long bufsize = sysconf(_SC_GETPW_R_SIZE_MAX);
+  if (bufsize == -1)
+  {
+    return NULL;
+  }
+
+  char* buf = (char*) malloc(bufsize);
+  if (buf == NULL)
+  {
+    return NULL;
+  }
+  
+  struct passwd pwd;
+  struct passwd *result;
+  if (getpwuid_r(getuid(), &pwd, buf, bufsize, &result) != 0 || result == NULL)
+  {
+    return NULL;
+  }
+
+  /* pw_name is allocated somewhere within buf, so we use memmove() */
+  memmove(buf, pwd.pw_name, strlen(pwd.pw_name));
+  return buf;
+}
 
 #ifdef NET_USES_AF_INDEP
 static SANE_Status
@@ -484,12 +511,14 @@ connect_dev (Net_Device * dev)
   /* exchange version codes with the server: */
   req.version_code = SANE_VERSION_CODE (V_MAJOR, V_MINOR,
 					SANEI_NET_PROTOCOL_VERSION);
-  req.username = getlogin ();
+  req.username = get_current_username();
   DBG (2, "connect_dev: net_init (user=%s, local version=%d.%d.%d)\n",
        req.username, V_MAJOR, V_MINOR, SANEI_NET_PROTOCOL_VERSION);
   sanei_w_call (&dev->wire, SANE_NET_INIT,
 		(WireCodecFunc) sanei_w_init_req, &req,
 		(WireCodecFunc) sanei_w_init_reply, &reply);
+  free(req.username);
+  req.username = NULL;
 
   if (dev->wire.status != 0)
     {
