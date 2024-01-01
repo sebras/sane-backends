@@ -367,6 +367,11 @@ Supports the Lexmark X1100 series of USB scanners. See
 .BR sane\-lexmark (5)
 for details.
 .TP
+.B lexmark_x2600
+Supports the Lexmark X2600 series of USB scanners. See
+.BR sane\-lexmark_x2600 (5)
+for details.
+.TP
 .B ma1509
 Supports the Mustek BearPaw 1200F USB flatbed scanner. See
 .BR sane\-ma1509 (5)
@@ -905,6 +910,7 @@ for details).
 .BR sane\-kodak (5),
 .BR sane\-leo (5),
 .BR sane\-lexmark (5),
+.BR sane\-lexmark_x2600 (5),
 .BR sane\-ma1509 (5),
 .BR sane\-matsushita (5),
 .BR sane\-microtek2 (5),
