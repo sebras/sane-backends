@@ -326,7 +326,7 @@ char* get_current_username()
   {
     return NULL;
   }
-  
+
   struct passwd pwd;
   struct passwd *result;
   if (getpwuid_r(getuid(), &pwd, buf, bufsize, &result) != 0 || result == NULL)
