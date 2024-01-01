@@ -14,7 +14,7 @@
 :manpage "sane-lexmark_x2600"     ; name of manpage (if it exists)
 :url "https://gitlab.com/sane-project/backends/"
                   ; backend's web page
-
+:new :yes
 :comment "This backend supports lexmark x2600 series scanners."
                                   ; comment about the backend
 
