@@ -46,16 +46,11 @@
 #define BUILD 1
 
 #include  "../include/sane/config.h"
-#include  <math.h>
-
-#include  <limits.h>
 #include  <stdio.h>
 #include  <string.h>
 #include  <stdlib.h>
-#include  <ctype.h>
 #include  <fcntl.h>
 #include  <unistd.h>
-#include  <errno.h>
 #include  <stdint.h>
 #include <netinet/in.h>
 #define  BACKEND_NAME hpljm1005
@@ -110,10 +105,10 @@ static int cur_idx;
 #define RGB 1
 #define GRAY 0
 
-#define MAX_X_H 0x350
+#define MAX_X_H 0x351
 #define MAX_Y_H 0x490
-#define MAX_X_S 220
-#define MAX_Y_S 330
+#define MAX_X_S 216
+#define MAX_Y_S 297
 
 #define OPTION_MAX 9
 
@@ -144,6 +139,12 @@ static const SANE_String_Const mode_list[] = {
 #define STATUS_SCANNING 1
 #define STATUS_CANCELING 2
 
+struct buffer_s {
+  char *buffer;
+  size_t w_offset;
+  size_t size;
+};
+
 struct device_s
 {
   struct device_s *next;
@@ -151,15 +152,16 @@ struct device_s
   int idx;			/* Index in the usbid array */
   int dn;			/* Usb "Handle" */
   SANE_Option_Descriptor optiond[OPTION_MAX];
-  char *buffer;
-  int bufs;
+  struct buffer_s buf_r; /* also for gray mode */
+  struct buffer_s buf_g;
+  struct buffer_s buf_b;
   int read_offset;
-  int write_offset_r;
-  int write_offset_g;
-  int write_offset_b;
   int status;
   int width;
   int height;
+  int height_h;
+  int data_width; /* width + some padding 0xFF which should be ignored */
+  int scanned_pixels;
   SANE_Word optionw[OPTION_MAX];
   uint32_t conf_data[512];
   uint32_t packet_data[512];
@@ -184,58 +186,6 @@ static double
 round2(double x)
 {
     return (double)(x >= 0.0) ? (int)(x+0.5) : (int)(x-0.5);
-}
-
-static void
-update_img_size (struct device_s *dev)
-{
-  int dx, dy;
-
-  /* Only update the width when not scanning,
-   * otherwise the scanner give us the correct width */
-  if (dev->status == STATUS_SCANNING)
-    {
-      dev->height = -1;
-      return;
-    }
-
-  dx = dev->optionw[X2_OFFSET] - dev->optionw[X1_OFFSET];
-  dy = dev->optionw[Y2_OFFSET] - dev->optionw[Y1_OFFSET];
-
-  switch (dev->optionw[RES_OFFSET])
-    {
-    case 75:
-      dev->width = round2 ((dx / ((double) MAX_X_S)) * 640);
-      dev->height = round2 ((dy / ((double) MAX_Y_S)) * 880);
-      break;
-    case 100:
-      dev->width = round2 ((dx / ((double) MAX_X_S)) * 848);
-      dev->height = round2 ((dy / ((double) MAX_Y_S)) * 1180);
-      break;
-    case 150:
-      dev->width = round2 ((dx / ((double) MAX_X_S)) * 1264);
-      dev->height = round2 ((dy / ((double) MAX_Y_S)) * 1775);
-      break;
-    case 200:
-      dev->width = round2 ((dx / ((double) MAX_X_S)) * 1696);
-      dev->height = round2 ((dy / ((double) MAX_Y_S)) * 2351);
-      break;
-    case 300:
-      dev->width = round2 ((dx / ((double) MAX_X_S)) * 2528);
-      dev->height = round2 ((dy / ((double) MAX_Y_S)) * 3510);
-      break;
-    case 600:
-      dev->width = round2 ((dx / ((double) MAX_X_S)) * 5088);
-      dev->height = round2 ((dy / ((double) MAX_Y_S)) * 7020);
-      break;
-    case 1200:
-      dev->width = round2 ((dx / ((double) MAX_X_S)) * 10208);
-      dev->height = round2 ((dy / ((double) MAX_Y_S)) * 14025);
-      break;
-    }
-
-    DBG(2,"New image size: %dx%d\n",dev->width, dev->height);
-
 }
 
 /* This function is copy/pasted from the Epson backend */
@@ -721,7 +671,6 @@ sane_get_parameters (SANE_Handle h, SANE_Parameters * p)
   p->last_frame = SANE_TRUE;
   p->depth = 8;
 
-  update_img_size (dev);
   p->pixels_per_line = dev->width;
   p->lines = dev->height;
   p->bytes_per_line = p->pixels_per_line;
@@ -805,7 +754,7 @@ send_conf (struct device_s *dev)
   dev->conf_data[21] = 0;
   dev->conf_data[22] = htonl (0x491);
   dev->conf_data[23] = htonl (0x352);
-
+  dev->height_h = y2 - y1;
   if (dev->optionw[COLOR_OFFSET] == RGB)
     {
       dev->conf_data[15] = htonl (0x2);
@@ -821,116 +770,151 @@ send_conf (struct device_s *dev)
   sanei_usb_write_bulk (dev->dn, (unsigned char *) dev->conf_data, &size);
 }
 
-static SANE_Status
-get_data (struct device_s *dev)
+static SANE_Status create_buffer(struct buffer_s *buf, int buffer_size) {
+  if (buf->buffer)
+  {
+    free(buf->buffer);
+  }
+
+  buf->buffer = malloc(buffer_size);
+  if (!buf->buffer)
+    return SANE_STATUS_NO_MEM;
+  buf->size = buffer_size;
+  buf->w_offset = 0;
+  return SANE_STATUS_GOOD;
+}
+
+static SANE_Status create_buffers(struct device_s *dev, int buf_size) {
+  if (create_buffer(&dev->buf_r, buf_size) != SANE_STATUS_GOOD)
+    return SANE_STATUS_NO_MEM;
+  if (dev->optionw[COLOR_OFFSET] == RGB)
+  {
+    if (create_buffer(&dev->buf_g, buf_size) != SANE_STATUS_GOOD)
+      return SANE_STATUS_NO_MEM;
+    if (create_buffer(&dev->buf_b, buf_size) != SANE_STATUS_GOOD)
+      return SANE_STATUS_NO_MEM;
+  }
+  return SANE_STATUS_GOOD;
+}
+
+static SANE_Status remove_buffers(struct device_s *dev) {
+  if (dev->buf_r.buffer)
+    free(dev->buf_r.buffer);
+  if (dev->buf_g.buffer)
+    free(dev->buf_g.buffer);
+  if (dev->buf_b.buffer)
+    free(dev->buf_b.buffer);
+  dev->buf_r.w_offset = dev->buf_g.w_offset = dev->buf_b.w_offset = 0;
+  dev->buf_r.size = dev->buf_g.size = dev->buf_b.size = 0;
+  dev->buf_r.buffer = dev->buf_g.buffer = dev->buf_b.buffer = NULL;
+  dev->read_offset = 0;
+  return SANE_STATUS_GOOD;
+}
+
+static SANE_Status get_data (struct device_s *dev)
 {
   int color;
   size_t size;
   int packet_size;
   unsigned char *buffer = (unsigned char *) dev->packet_data;
   if (dev->status == STATUS_IDLE)
+  {
+    DBG(101, "STATUS == IDLE\n");
     return SANE_STATUS_IO_ERROR;
+  }
   /* first wait a standard data pkt */
   do
+  {
+    size = 32;
+    sanei_usb_read_bulk (dev->dn, buffer, &size);
+    if (size)
     {
-      size = 32;
-      sanei_usb_read_bulk (dev->dn, buffer, &size);
-      if (size)
-	{
-	  if (ntohl (dev->packet_data[0]) == MAGIC_NUMBER)
-	    {
-	      if (ntohl (dev->packet_data[1]) == PKT_DATA)
-		break;
-	      if (ntohl (dev->packet_data[1]) == PKT_END_DATA)
-		{
-		  dev->status = STATUS_IDLE;
-		  DBG(100,"End of scan encountered on device %s\n",dev->devname);
-		  send_pkt (PKT_GO_IDLE, 0, dev);
-		  wait_ack (dev, NULL);
-		  wait_ack (dev, NULL);
-		  send_pkt (PKT_UNKNOW_1, 0, dev);
-		  wait_ack (dev, NULL);
-		  send_pkt (PKT_RESET, 0, dev);
-		  sleep (2);	/* Time for the scanning head to go back home */
-		  return SANE_STATUS_EOF;
-		}
-	    }
-	}
+      if (ntohl (dev->packet_data[0]) == MAGIC_NUMBER)
+      {
+        if (ntohl (dev->packet_data[1]) == PKT_DATA)
+          break;
+        if (ntohl (dev->packet_data[1]) == PKT_END_DATA)
+        {
+          dev->status = STATUS_IDLE;
+          DBG(100,"End of scan encountered on device %s\n",dev->devname);
+          send_pkt (PKT_GO_IDLE, 0, dev);
+          wait_ack (dev, NULL);
+          wait_ack (dev, NULL);
+          send_pkt (PKT_UNKNOW_1, 0, dev);
+          wait_ack (dev, NULL);
+          send_pkt (PKT_RESET, 0, dev);
+          sleep (2);    /* Time for the scanning head to go back home */
+          return SANE_STATUS_EOF;
+        }
+      }
     }
-  while (1);
+  } while (1);
   packet_size = ntohl (dev->packet_data[5]);
-  if (!dev->buffer)
-    {
-      dev->bufs = packet_size - 24 /* size of header */ ;
-      if (dev->optionw[COLOR_OFFSET] == RGB)
-	dev->bufs *= 3;
-      dev->buffer = malloc (dev->bufs);
-      if (!dev->buffer)
-	return SANE_STATUS_NO_MEM;
-      dev->write_offset_r = 0;
-      dev->write_offset_g = 1;
-      dev->write_offset_b = 2;
-
-    }
+  if (! dev->buf_r.buffer)
+  {
+    /*
+      For some reason scanner sends packets in order:
+        <start> R G B ... R G B R G B RRR GGG BBB <end>
+      To hanle the last triple portion create a triple size buffer
+    */
+    int buf_size = (packet_size - 24) * 3; /* 24 - size of header */ ;
+    if (create_buffers(dev, buf_size) != SANE_STATUS_GOOD)
+      return SANE_STATUS_NO_MEM;
+  }
   /* Get the "data header" */
   do
-    {
-      size = 24;
-      sanei_usb_read_bulk (dev->dn, buffer, &size);
-    }
-  while (!size);
+  {
+    size = 24;
+    sanei_usb_read_bulk (dev->dn, buffer, &size);
+  } while (!size);
   color = ntohl (dev->packet_data[0]);
   packet_size -= size;
-  dev->width = ntohl (dev->packet_data[5]);
-  DBG(100,"Got data size %d on device %s. Scan width: %d\n",packet_size, dev->devname, dev->width);
+  dev->width = ntohl (dev->packet_data[4]);
+  dev->height = dev->height_h * dev->optionw[RES_OFFSET] / 100;
+  dev->data_width = ntohl (dev->packet_data[5]);
+  DBG(100,"Got data size %d on device %s. Scan width: %d, data width: %d\n",packet_size, dev->devname, dev->width, dev->data_width);
   /* Now, read the data */
   do
+  {
+    int ret;
+    do
     {
-      int j;
-      int i;
-      int ret;
-      do
-	{
-	  size = packet_size > 512 ? 512 : packet_size;
-	  ret = sanei_usb_read_bulk (dev->dn, buffer, &size);
-	}
-      while (!size || ret != SANE_STATUS_GOOD);
-      packet_size -= size;
-      switch (color)
-	{
-	case RED_LAYER:
-	  DBG(101,"Got red layer data on device %s\n",dev->devname);
-	  i = dev->write_offset_r + 3 * size;
-	  if (i > dev->bufs)
-	    i = dev->bufs;
-	  for (j = 0; dev->write_offset_r < i; dev->write_offset_r += 3)
-	    dev->buffer[dev->write_offset_r] = buffer[j++];
-	  break;
-	case GREEN_LAYER:
-	  DBG(101,"Got green layer data on device %s\n",dev->devname);
-	  i = dev->write_offset_g + 3 * size;
-	  if (i > dev->bufs)
-	    i = dev->bufs;
-	  for (j = 0; dev->write_offset_g < i; dev->write_offset_g += 3)
-	    dev->buffer[dev->write_offset_g] = buffer[j++];
-	  break;
-	case BLUE_LAYER:
-          DBG(101,"Got blue layer data on device %s\n",dev->devname);
-	  i = dev->write_offset_b + 3 * size;
-	  if (i > dev->bufs)
-	    i = dev->bufs;
-	  for (j = 0; dev->write_offset_b < i; dev->write_offset_b += 3)
-	    dev->buffer[dev->write_offset_b] = buffer[j++];
-	  break;
-	case GRAY_LAYER:
-	  DBG(101,"Got gray layer data on device %s\n",dev->devname);
-	  if (dev->write_offset_r + (int)size >= dev->bufs)
-	    size = dev->bufs - dev->write_offset_r;
-	  memcpy (dev->buffer + dev->write_offset_r, buffer, size);
-	  dev->write_offset_r += size;
-	  break;
-	}
+      size = packet_size > 512 ? 512 : packet_size;
+      ret = sanei_usb_read_bulk (dev->dn, buffer, &size);
+    } while (!size || ret != SANE_STATUS_GOOD);
+    packet_size -= size;
+    struct buffer_s * current_buf;
+    char color_char;
+    switch (color)
+    {
+      case GRAY_LAYER:
+        color_char = 'g';
+        current_buf = &dev->buf_r;
+        break;
+      case RED_LAYER:
+        color_char = 'R';
+        current_buf = &dev->buf_r;
+        break;
+      case GREEN_LAYER:
+        color_char = 'G';
+        current_buf = &dev->buf_g;
+        break;
+      case BLUE_LAYER:
+        color_char = 'B';
+        current_buf = &dev->buf_b;
+        break;
+      default:
+        DBG(101, "Unknown color code: %d \n", color);
+        return SANE_STATUS_IO_ERROR;
     }
+    DBG(101,"Got %c layer data on device %s\n", color_char, dev->devname);
+    if (current_buf->w_offset + size > current_buf->size) {
+      DBG(100, "buffer overflow\n");
+      return SANE_STATUS_IO_ERROR;
+    }
+    memcpy(current_buf->buffer + current_buf->w_offset, buffer, size);
+    current_buf->w_offset += size;
+  }
   while (packet_size > 0);
   return SANE_STATUS_GOOD;
 }
@@ -943,13 +927,8 @@ sane_start (SANE_Handle h)
   size_t size;
 
   dev->read_offset = 0;
-  dev->write_offset_r = 0;
-  dev->write_offset_g = 1;
-  dev->write_offset_b = 2;
-
-  free (dev->buffer);
-  dev->buffer = NULL;
-
+  dev->scanned_pixels = 0;
+  remove_buffers(dev);
 
   send_pkt (PKT_RESET, 0, dev);
   send_pkt (PKT_READ_STATUS, 0, dev);
@@ -992,21 +971,32 @@ static void
 do_cancel(struct device_s *dev)
 {
   while (get_data (dev) == SANE_STATUS_GOOD);
-  free (dev->buffer);
-  dev->buffer = NULL;
+  remove_buffers(dev);
 }
 
 static int
 min3 (int r, int g, int b)
 {
-  /* Optimize me ! */
-  g--;
-  b -= 2;
   if (r < g && r < b)
     return r;
   if (b < r && b < g)
     return b;
   return g;
+}
+
+static int
+min_buf_w_offset (struct device_s * dev)
+{
+  if (dev->optionw[COLOR_OFFSET] == RGB)
+    return min3 (dev->buf_r.w_offset, dev->buf_g.w_offset, dev->buf_b.w_offset);
+  return dev->buf_r.w_offset;
+}
+
+static int is_buf_synchronized(struct device_s * dev) {
+  if (dev->optionw[COLOR_OFFSET] == RGB)
+    return dev->buf_r.w_offset == dev->buf_g.w_offset
+      && dev->buf_r.w_offset == dev->buf_b.w_offset;
+  return 1;
 }
 
 SANE_Status
@@ -1015,51 +1005,62 @@ sane_read (SANE_Handle h, SANE_Byte * buf, SANE_Int maxlen, SANE_Int * len)
   struct device_s *dev = (struct device_s *) h;
   int available;
   int ret;
+  if (dev->optionw[COLOR_OFFSET] == RGB) {
+    maxlen /= 3;
+  }
   *len = 0;
   if (dev->status == STATUS_IDLE)
+  {
+    DBG(101, "STATUS == IDLE\n");
     return SANE_STATUS_IO_ERROR;
-  if (dev->optionw[COLOR_OFFSET] == RGB)
+  }
+  while (min_buf_w_offset(dev) <= dev->read_offset)
+  {
+    ret = get_data (dev);
+    if (ret != SANE_STATUS_GOOD)
     {
-      while (min3 (dev->write_offset_r, dev->write_offset_g,
-		   dev->write_offset_b) <= dev->read_offset)
-	{
-	  ret = get_data (dev);
-	  if (ret != SANE_STATUS_GOOD)
-	    {
-	      if (min3 (dev->write_offset_r,
-			dev->write_offset_g,
-			dev->write_offset_b) <= dev->read_offset)
-		return ret;
-	    }
-	}
-      available = min3 (dev->write_offset_r, dev->write_offset_g,
-			dev->write_offset_b);
+      if (min_buf_w_offset(dev) <= dev->read_offset) {
+        return ret;
+      }
     }
-  else
+  }
+  available = min_buf_w_offset(dev);
+  int pixel_len = available - dev->read_offset;
+  if (pixel_len > maxlen)
+    pixel_len = maxlen;
+  int img_size = dev->width * dev->height;
+  for(int i=0; i<pixel_len; ++i)
+  {
+    int pos = dev->read_offset+i;
+    if (pos % dev->data_width >= dev->width)
+      continue;
+    if (dev->scanned_pixels >= img_size)
     {
-      while (dev->write_offset_r <= dev->read_offset)
-	{
-	  ret = get_data (dev);
-	  if (ret != SANE_STATUS_GOOD)
-	    if (dev->write_offset_r <= dev->read_offset)
-	      return ret;
-	}
-      available = dev->write_offset_r;
+      DBG(101, "Extra pixels received.\n");
+      break;
     }
-  *len = available - dev->read_offset;
-  if (*len > maxlen)
-    *len = maxlen;
-  memcpy (buf, dev->buffer + dev->read_offset, *len);
-  dev->read_offset += *len;
-  if (dev->read_offset == dev->bufs)
+    dev->scanned_pixels++;
+    buf[(*len)++] = dev->buf_r.buffer[pos];
+    if (dev->optionw[COLOR_OFFSET] == RGB)
     {
-      free (dev->buffer);
-      dev->buffer = NULL;
-      dev->read_offset = 0;
-      dev->write_offset_r = 0;
-      dev->write_offset_g = 1;
-      dev->write_offset_b = 2;
+      buf[(*len)++] = dev->buf_g.buffer[pos];
+      buf[(*len)++] = dev->buf_b.buffer[pos];
     }
+  }
+  DBG(101, "Moved %d pixels to buffer. Total pixel scanned: %d \n", *len, dev->scanned_pixels);
+  if (dev->scanned_pixels == img_size)
+    DBG(100, "Full image received\n");
+  dev->read_offset += pixel_len;
+
+  /*
+    If w_offset is the same in all buffers and has already been completely transferred
+    to the common buffer - flush buffer. It will be recreated in get_data with a reserve
+    for the last triple portions
+  */
+  if (is_buf_synchronized(dev) && available == dev->read_offset)
+  {
+    remove_buffers(dev);
+  }
 
   /* Special case where sane_cancel is called while scanning */
   if (dev->status == STATUS_CANCELING)
@@ -1082,8 +1083,7 @@ sane_cancel (SANE_Handle h)
       return;
     }
 
-  free (dev->buffer);
-  dev->buffer = NULL;
+  remove_buffers(dev);
 }
 
 SANE_Status
