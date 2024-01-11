@@ -202,11 +202,11 @@ find_valor_of_array_variables(xmlNode *node, capabilities_t *scanner, int type)
     const char *name = (const char *)node->name;
     if (strcmp(name, "ColorMode") == 0) {
 	const char *color = (SANE_String_Const)xmlNodeGetContent(node);
-        if (type == PLATEN
 #if HAVE_POPPLER_GLIB
-		       	|| strcmp(color, "BlackAndWhite1")
+        if (type == PLATEN || strcmp(color, "BlackAndWhite1"))
+#else
+        if (strcmp(color, "BlackAndWhite1"))
 #endif
-		)
           scanner->caps[type].ColorModes = char_to_array(scanner->caps[type].ColorModes, &scanner->caps[type].ColorModesSize, (SANE_String_Const)xmlNodeGetContent(node), 1);
     }
     else if (strcmp(name, "ContentType") == 0)
