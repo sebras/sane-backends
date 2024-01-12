@@ -62,13 +62,6 @@
 # define UNUSED(v)
 #endif
 
-/* MAC OS X does not support timeouts in darwin/libusb interrupt reads
- * This is a very basic turnaround for MAC OS X
- * Button scan will not work with this wrapper */
-#ifdef __APPLE__
-# define sanei_usb_read_int sanei_usb_read_bulk
-#endif
-
 
 struct pixma_io_t
 {
