@@ -248,8 +248,16 @@ AC_DEFUN([SANE_CHECK_PTHREAD],
     AC_DEFINE(PTHREAD_T_IS_INTEGER, 1,
               [Define if pthread_t is integer.])
   else
-    # Until the sanei_thread implementation is fixed.
-    use_pthread=no
+    case "$host_os" in
+      darwin*)
+        # Always use pthreads on macOS
+        use_pthread=yes
+        ;;
+      *)
+        # Until the sanei_thread implementation is fixed.
+        use_pthread=no
+        ;;
+    esac
   fi
 
   if test "$have_pthread" = "yes" ; then
