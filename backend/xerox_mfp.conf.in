@@ -169,6 +169,10 @@ usb 0x04e8 0x3450
 #Samsung SCX-472x Series, Samsung SCX-4729FD
 usb 0x04e8 0x3453
 
+#Samsung SCX-4729FW, network mode
+# tcp HOST_NAME_OR_IP PORT
+#tcp scx4729fw 9400
+
 #Samsung CLX-6260 Series
 usb 0x04e8 0x3455
 
