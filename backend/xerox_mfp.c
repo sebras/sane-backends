@@ -503,7 +503,7 @@ static SANE_String_Const doc_sources[] = {
 };
 
 static int doc_source_to_code[] = {
-    0x40, 0x20, 0x80
+    DOC_FLATBED, DOC_ADF, DOC_AUTO
 };
 
 static SANE_String_Const scan_modes[] = {
