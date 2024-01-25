@@ -64,6 +64,7 @@ struct device {
     int state;			/* current state */
     int reserved;			/* CMD_RESERVE_UNIT */
     int reading;			/* READ_IMAGE is sent */
+    int has_adf;			/* ADF is present */
 
     SANE_Byte *data;		/* postprocessing cyclic buffer 64k */
     int datalen;			/* how data in buffer */
