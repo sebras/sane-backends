@@ -253,7 +253,7 @@
 :status :complete
 :comment "300, 600, 1200 dpi resolutions supported in flatbed scanning mode; 300, 600, 1200, 2400, 4800 dpi resolutions are supported in transparency and infrared transparency scanning modes"
 
-:model "CanoScan 700F"
+:model "CanoScan LiDE 700F"
 :interface "USB"
 :usbid "0x04a9" "0x1907"
 :status :basic
