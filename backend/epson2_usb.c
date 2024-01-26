@@ -172,6 +172,7 @@ SANE_Word sanei_epson_usb_product_ids[] = {
   0x08ca, /* L850 Series */
   0x08cd, /* WF-R4640 Series, WF-R5690 Series */
   0x08d0, /* PX-M350F, WF-M5690 Series */
+  0x08d1, /* L360 Series */
   0x08d2, /* L365 Series, L366 Series */
   0x1102, /* PX-048A Series, XP-230 Series, XP-235 Series */
   0x1105, /* ET-2500 Series, L375 Series */
