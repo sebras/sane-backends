@@ -1,22 +1,22 @@
 # Copyright (C) 2009
 # This file is distributed under the same license as the sane-backends package.
 #
-# Yuri Chornoivan <yurchor@ukr.net>, 2009-2021, 2023.
+# Yuri Chornoivan <yurchor@ukr.net>, 2009-2021, 2023, 2024.
 msgid ""
 msgstr ""
 "Project-Id-Version: sane-backends 1.0.32\n"
 "Report-Msgid-Bugs-To: sane-devel@alioth-lists.debian.net\n"
-"POT-Creation-Date: 2024-01-29 10:10-0800\n"
-"PO-Revision-Date: 2023-02-01 18:52+0200\n"
+"POT-Creation-Date: 2024-01-29 21:48+0200\n"
+"PO-Revision-Date: 2024-01-29 22:20+0200\n"
 "Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
 "Language-Team: Ukrainian <trans-uk@lists.fedoraproject.org>\n"
 "Language: uk\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Lokalize 20.12.0\n"
-"Plural-Forms:  nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
-"n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"X-Generator: Lokalize 23.04.1\n"
+"Plural-Forms:  nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
+"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 
 #: include/sane/saneopts.h:157
 #, no-c-format
@@ -428,9 +428,9 @@ msgid "Autofocus"
 msgstr "Автофокус"
 
 #: include/sane/saneopts.h:237
-#, fuzzy, no-c-format
+#, no-c-format
 msgid "Infrared scan"
-msgstr "Інфрачервоне"
+msgstr "Інфрачервоне сканування"
 
 #: include/sane/saneopts.h:252
 #, no-c-format
@@ -542,8 +542,7 @@ msgstr "Визначає роздільну здатність сканован�
 #: include/sane/saneopts.h:302
 #, no-c-format
 msgid "Sets the horizontal resolution of the scanned image."
-msgstr ""
-"Визначає горизонтальну роздільну здатність засканованого зображення."
+msgstr "Визначає горизонтальну роздільну здатність засканованого зображення."
 
 #: include/sane/saneopts.h:305
 #, no-c-format
@@ -566,8 +565,7 @@ msgstr "Визначає висоту носія."
 
 #: include/sane/saneopts.h:315
 #, no-c-format
-msgid ""
-"Determines whether a builtin or a custom gamma-table should be used."
+msgid "Determines whether a builtin or a custom gamma-table should be used."
 msgstr "Визначає буде використано вбудовану чи нетипову таблицю гами."
 
 #: include/sane/saneopts.h:319
@@ -669,17 +667,14 @@ msgstr ""
 
 #: include/sane/saneopts.h:374
 #, no-c-format
-msgid ""
-"Selects what green radiance level should be considered \"full green\"."
+msgid "Selects what green radiance level should be considered \"full green\"."
 msgstr ""
 "Визначає рівень світності зеленого, який слід вважати «цілком зеленим»."
 
 #: include/sane/saneopts.h:377
 #, no-c-format
-msgid ""
-"Selects what blue radiance level should be considered \"full blue\"."
-msgstr ""
-"Визначає рівень світності синього, який слід вважати «цілком синім»."
+msgid "Selects what blue radiance level should be considered \"full blue\"."
+msgstr "Визначає рівень світності синього, який слід вважати «цілком синім»."
 
 #: include/sane/saneopts.h:381
 #, no-c-format
@@ -721,8 +716,7 @@ msgstr ""
 #: include/sane/saneopts.h:400
 #, no-c-format
 msgid "Use same values for X and Y resolution"
-msgstr ""
-"Використовувати однакові значення для роздільних здатностей за X та Y"
+msgstr "Використовувати однакові значення для роздільних здатностей за X та Y"
 
 #: include/sane/saneopts.h:402
 #, no-c-format
@@ -850,9 +844,9 @@ msgid "Perform autofocus before scan"
 msgstr "Виконати автофокусування до сканування"
 
 #: include/sane/saneopts.h:454
-#, fuzzy, no-c-format
+#, no-c-format
 msgid "Perform infrared scan"
-msgstr "Виконати автофокусування до сканування"
+msgstr "Виконати інфрачервоне сканування"
 
 #: include/sane/saneopts.h:458
 #, no-c-format
@@ -1053,24 +1047,24 @@ msgid "Miscellaneous"
 msgstr "Різне"
 
 #: backend/avision.h:74
-#, fuzzy, no-c-format
+#, no-c-format
 msgid "Installed options"
-msgstr "Цілочисельні параметри перевірки"
+msgstr "Встановлені можливості"
 
 #: backend/avision.h:76
-#, fuzzy, no-c-format
+#, no-c-format
 msgid "Overscan top"
-msgstr "Поля"
+msgstr "Пересканування вгорі"
 
 #: backend/avision.h:77
-#, fuzzy, no-c-format
+#, no-c-format
 msgid "Overscan bottom"
-msgstr "Поля"
+msgstr "Пересканування внизу"
 
 #: backend/avision.h:78
-#, fuzzy, no-c-format
+#, no-c-format
 msgid "Background raster lines"
-msgstr "Ліній повернення"
+msgstr "Фонові лінії растру"
 
 #: backend/avision.h:79 backend/microtek2.h:624
 #: backend/snapscan-options.c:435
@@ -1079,49 +1073,49 @@ msgid "Quality scan"
 msgstr "Якісне сканування"
 
 #: backend/avision.h:80
-#, fuzzy, no-c-format
+#, no-c-format
 msgid "Exposure"
-msgstr "Час експозиції"
+msgstr "Витримка"
 
 #: backend/avision.h:81
 #, no-c-format
 msgid "Multi-sample"
-msgstr ""
+msgstr "Декілька зразків"
 
 #: backend/avision.h:82
-#, fuzzy, no-c-format
+#, no-c-format
 msgid "Power save timer control"
-msgstr "Кнопка «Заощадження енергії»"
+msgstr "Керування таймером заощадження енергії"
 
 #: backend/avision.h:83
-#, fuzzy, no-c-format
+#, no-c-format
 msgid "Message text from the scanner"
-msgstr "Скинути параметри сканера"
+msgstr "Текст повідомлення від сканера"
 
 #: backend/avision.h:84
 #, no-c-format
 msgid "Obtain NVRAM values"
-msgstr ""
+msgstr "Отримати значення NVRAM"
 
 #: backend/avision.h:85
 #, no-c-format
 msgid "Use paper length"
-msgstr ""
+msgstr "Використати довжину паперу"
 
 #: backend/avision.h:86
-#, fuzzy, no-c-format
+#, no-c-format
 msgid "Flip document after duplex scanning"
-msgstr "Виштовхнути документ після сканування"
+msgstr "Перевернути документ після двобічного сканування"
 
 #: backend/avision.h:87
-#, fuzzy, no-c-format
+#, no-c-format
 msgid "ADF installed"
-msgstr "Стан АПД"
+msgstr "Встановлено АПД"
 
 #: backend/avision.h:88
 #, no-c-format
 msgid "Lightbox installed"
-msgstr ""
+msgstr "Встановлено лайтбокс"
 
 #: backend/avision.h:91
 #, no-c-format
@@ -1129,6 +1123,8 @@ msgid ""
 "The top overscan controls the additional area to scan before the paper "
 "is detected."
 msgstr ""
+"Пересканування вгорі визначає додаткову область сканування перед виявлення"
+" початку паперу."
 
 #: backend/avision.h:94
 #, no-c-format
@@ -1136,6 +1132,8 @@ msgid ""
 "The bottom overscan controls the additional area to scan after the paper "
 "end is detected."
 msgstr ""
+"Пересканування внизу визначає додаткову область сканування після виявлення"
+" кінця паперу."
 
 #: backend/avision.h:97
 #, no-c-format
@@ -1143,21 +1141,23 @@ msgid ""
 "The background raster controls the additional background lines to scan "
 "before the paper is feed through the scanner."
 msgstr ""
+"Фоновий растр визначає додаткові фонові лінії, які слід сканувати до того,"
+" як папір буде подано до сканера."
 
 #: backend/avision.h:100
 #, no-c-format
 msgid "Turn on quality scanning (slower but better)."
-msgstr ""
+msgstr "Увімкнути високоякісне сканування (повільніше або якісніше)."
 
 #: backend/avision.h:102
-#, fuzzy, no-c-format
+#, no-c-format
 msgid "Manual exposure adjustment."
-msgstr "Калібрувати час витримки"
+msgstr "Коригування витримки вручну"
 
 #: backend/avision.h:104
-#, fuzzy, no-c-format
+#, no-c-format
 msgid "Enable multi-sample scan mode."
-msgstr "Увімкнути/Вимкнути режим довгого паперу"
+msgstr "Увімкнути режим сканування декількох зразків."
 
 #: backend/avision.h:106
 #, no-c-format
@@ -1165,6 +1165,8 @@ msgid ""
 "Allows control of the scanner's power save timer, dimming or turning off "
 "the light."
 msgstr ""
+"Надає змогу керувати таймером заощадження енергії сканера, притлумленням або"
+" вимиканням лампи."
 
 #: backend/avision.h:109
 #, no-c-format
@@ -1172,6 +1174,8 @@ msgid ""
 "This text contains device specific options controlled by the user on the "
 "scanner hardware."
 msgstr ""
+"Цей текст містить специфічні для пристрою параметри керування обладнанням"
+" сканера, якими керує користувач."
 
 #: backend/avision.h:112
 #, no-c-format
@@ -1179,6 +1183,8 @@ msgid ""
 "Allows access obtaining the scanner's NVRAM values as pretty printed "
 "text."
 msgstr ""
+"Уможливлює доступ до отримання значень NVRAM сканера у вигляді форматованого"
+" тексту."
 
 #: backend/avision.h:115
 #, no-c-format
@@ -1187,6 +1193,9 @@ msgid ""
 "However some others (DM152) can get confused during media flush if it is "
 "set."
 msgstr ""
+"Новіші сканери здатні використовувати цю довжину паперу для виявлення подачі"
+" двох аркушів. Втім, деякі інші сканери (DM152) можуть неправильно сприйняти"
+" значення цього параметра, якщо його встановлено."
 
 #: backend/avision.h:118
 #, no-c-format
@@ -1196,16 +1205,20 @@ msgid ""
 "this off might make scanning a little faster if you don't care about "
 "manually flipping the pages afterwards."
 msgstr ""
+"Наказує сканерам із перевертанням сторінок документа повернути папір до"
+" початкової орієнтації до викидання його до лотка опрацьованих документів."
+" Вимикання такого перевертання може дещо пришвидшити сканування, якщо ви"
+" повертаєте аркуші документа до початкового стану вручну."
 
 #: backend/avision.h:123
 #, no-c-format
 msgid "ADF option is detected as installed."
-msgstr ""
+msgstr "Виявлено встановлений механізм АПД."
 
 #: backend/avision.h:125
 #, no-c-format
 msgid "Lightbox option is detected as installed."
-msgstr ""
+msgstr "Виявлено встановлений лайтбокс."
 
 #: backend/avision.h:897
 #, no-c-format
@@ -1224,8 +1237,7 @@ msgstr "Двобічне сканування"
 
 #: backend/avision.h:902
 #, no-c-format
-msgid ""
-"Duplex scan provides a scan of the front and back side of the document"
+msgid "Duplex scan provides a scan of the front and back side of the document"
 msgstr ""
 "За використання двобічного сканування ви отримаєте одразу зображення "
 "лицьового та зворотного боків документа"
@@ -1427,8 +1439,7 @@ msgstr "Помилка парності SCSI"
 #: backend/canon.c:502
 #, no-c-format
 msgid "initiator detected error message received"
-msgstr ""
-"Отримано повідомлення про помилку виявлення інструменту ініціалізації"
+msgstr "Отримано повідомлення про помилку виявлення інструменту ініціалізації"
 
 #: backend/canon.c:507
 #, no-c-format
@@ -1604,8 +1615,7 @@ msgstr "Виштовхувати плівку після кожного скан
 #: backend/canon.c:1678
 #, no-c-format
 msgid "Automatically eject the film from the device after each scan"
-msgstr ""
-"Автоматично виштовхувати плівку з пристрою після кожного сканування"
+msgstr "Автоматично виштовхувати плівку з пристрою після кожного сканування"
 
 #: backend/canon.c:1689
 #, no-c-format
@@ -1643,8 +1653,7 @@ msgstr "Лише планшетний"
 #: backend/canon.c:1717
 #, no-c-format
 msgid "Disable auto document feeder and use flatbed only"
-msgstr ""
-"Вимкнути автоматичну подачу, використовувати лише планшетний механізм"
+msgstr "Вимкнути автоматичну подачу, використовувати лише планшетний механізм"
 
 #: backend/canon.c:1727 backend/canon.c:1737
 #, no-c-format
@@ -2333,8 +2342,7 @@ msgstr "Позиція фокусування"
 
 #: backend/epson.h:71 backend/epson2.h:75
 #, no-c-format
-msgid ""
-"Sets the focus position to either the glass or 2.5mm above the glass"
+msgid "Sets the focus position to either the glass or 2.5mm above the glass"
 msgstr ""
 "Визначає позицію фокусування на рівень від поверхні скла до висоти 2,5 "
 "мм над склом"
@@ -2650,8 +2658,7 @@ msgstr "Порогова крива"
 
 #: backend/fujitsu.c:3425
 #, no-c-format
-msgid ""
-"Threshold curve, from light to dark, but upper two may not be linear"
+msgid "Threshold curve, from light to dark, but upper two may not be linear"
 msgstr ""
 "Порогова крива, від світлого до темного, але верхні дві не можуть бути "
 "лінійними"
@@ -2871,8 +2878,7 @@ msgstr "Колір тла"
 
 #: backend/fujitsu.c:3867
 #, no-c-format
-msgid ""
-"Set color of background for scans. May conflict with overscan option"
+msgid "Set color of background for scans. May conflict with overscan option"
 msgstr ""
 "Встановити колір для тла сканованих зображень. Може конфліктувати із "
 "параметром полів."
@@ -2939,8 +2945,7 @@ msgstr "Таймер присипляння"
 
 #: backend/fujitsu.c:3971
 #, no-c-format
-msgid ""
-"Time in minutes until the internal power supply switches to sleep mode"
+msgid "Time in minutes until the internal power supply switches to sleep mode"
 msgstr ""
 "Час у хвилинах, по завершенню якого внутрішнє живлення буде переведено у "
 "режим сну"
@@ -4349,8 +4354,7 @@ msgstr "Документ доступний у АПД"
 #: backend/hp5590.c:126
 #, no-c-format
 msgid "Get state of document-available indicator in ADF (read only)"
-msgstr ""
-"Отримати стан індикатора доступності документа у АПД (лише читання)"
+msgstr "Отримати стан індикатора доступності документа у АПД (лише читання)"
 
 #: backend/hp5590.c:128
 #, no-c-format
@@ -4359,8 +4363,7 @@ msgstr "Приховувати кінцевий піксель сторінки"
 
 #: backend/hp5590.c:129
 #, no-c-format
-msgid ""
-"Hide end-of-page indicator pixels and overwrite with neighbor pixels"
+msgid "Hide end-of-page indicator pixels and overwrite with neighbor pixels"
 msgstr ""
 "Приховувати пікселі-індикатори кінця сторінки і перезаписувати їх "
 "сусідніми пікселями"
@@ -4383,8 +4386,7 @@ msgstr ""
 #: backend/hp5590.c:135
 #, no-c-format
 msgid "RGB or gray color value for filling mode 'color'"
-msgstr ""
-"Значення кольору у RGB або тонах сірого для режиму заповнення «color»"
+msgstr "Значення кольору у RGB або тонах сірого для режиму заповнення «color»"
 
 #: backend/hp5590.c:136
 #, no-c-format
@@ -4838,8 +4840,7 @@ msgstr "Обернути зображення за год. стрілкою"
 #: backend/kvs1025_opt.c:861
 #, no-c-format
 msgid "Request driver to rotate pages by a fixed amount"
-msgstr ""
-"Вимагати від драйвера обертання сторінок на фіксований вказаний кут"
+msgstr "Вимагати від драйвера обертання сторінок на фіксований вказаний кут"
 
 #: backend/kvs1025_opt.c:873
 #, no-c-format
@@ -5303,8 +5304,7 @@ msgstr "Калібрування програмою обробки"
 
 #: backend/microtek2.h:615
 #, no-c-format
-msgid ""
-"If checked the color calibration before a scan is done by the backend"
+msgid "If checked the color calibration before a scan is done by the backend"
 msgstr ""
 "Якщо позначено цей пункт, калібрування кольорів перед скануванням "
 "виконується програмою обробки"
@@ -5383,8 +5383,7 @@ msgstr "Скалярна гама червоного"
 #: backend/microtek2.h:653
 #, no-c-format
 msgid "Selects a value for scalar gamma correction (red channel)"
-msgstr ""
-"Визначає значення для скалярного виправлення гами (канал червоного)."
+msgstr "Визначає значення для скалярного виправлення гами (канал червоного)."
 
 #: backend/microtek2.h:657
 #, no-c-format
@@ -5394,8 +5393,7 @@ msgstr "Скалярна гама зеленого"
 #: backend/microtek2.h:658
 #, no-c-format
 msgid "Selects a value for scalar gamma correction (green channel)"
-msgstr ""
-"Визначає значення для скалярного виправлення гами (канал зеленого)."
+msgstr "Визначає значення для скалярного виправлення гами (канал зеленого)."
 
 #: backend/microtek2.h:662
 #, no-c-format
@@ -5416,8 +5414,7 @@ msgstr "Канал"
 #, no-c-format
 msgid ""
 "Selects the colour band, \"Master\" means that all colours are affected."
-msgstr ""
-"Визначає зв’язок кольорів. «Основний» визначає зв’язок всіх кольорів."
+msgstr "Визначає зв’язок кольорів. «Основний» визначає зв’язок всіх кольорів."
 
 #: backend/microtek2.h:672
 #, no-c-format
@@ -5909,11 +5906,11 @@ msgstr ""
 "автоматичної подачі документів, протягом вказаної кількості секунд."
 
 #: backend/pixma/pixma_sane_options.c:407
-#, fuzzy, no-c-format
+#, no-c-format
 msgid ""
 "When to perform scanner calibration. If you choose \"Once\" it will be "
 "performed a single time per driver init for single page scans, and for "
-"the first page for each ADF scan."
+"the first page for each ADF scans."
 msgstr ""
 "Визначає, коли слід виконувати калібрування сканера. Якщо ви виберете "
 "«Лише раз», його буде виконано один раз під час ініціалізації сканера "
@@ -6143,8 +6140,7 @@ msgstr ""
 
 #: backend/pnm.c:281
 #, no-c-format
-msgid ""
-"Set default values for enhancement controls (brightness & contrast)."
+msgid "Set default values for enhancement controls (brightness & contrast)."
 msgstr ""
 "Встановити типові значення керування покращенням (яскравістю і "
 "контрастністю)."
@@ -6507,8 +6503,7 @@ msgstr "Другий запис"
 msgid ""
 "This is the very long third entry. Maybe the frontend has an idea how to "
 "display it"
-msgstr ""
-"Третій запис є затримується. Можливо, оболонка не може його показати."
+msgstr "Третій запис є затримується. Можливо, оболонка не може його показати."
 
 #: backend/test.c:419
 #, no-c-format
