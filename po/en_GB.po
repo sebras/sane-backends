@@ -7,15 +7,15 @@ msgstr ""
 "Project-Id-Version: sane-backends 1.2.1\n"
 "Report-Msgid-Bugs-To: sane-devel@alioth-lists.debian.net\n"
 "POT-Creation-Date: 2024-01-29 10:10-0800\n"
-"PO-Revision-Date: 2023-02-04 09:36-0800\n"
+"PO-Revision-Date: 2024-01-29 10:19-0800\n"
 "Last-Translator: Ralph Little <skelband@gmail.com>\n"
 "Language-Team: British English <kde-i18n-doc@kde.org>\n"
 "Language: en_GB\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 2.3\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: Poedit 3.0.1\n"
 
 #: include/sane/saneopts.h:157
 #, no-c-format
@@ -427,9 +427,9 @@ msgid "Autofocus"
 msgstr "Autofocus"
 
 #: include/sane/saneopts.h:237
-#, fuzzy, no-c-format
+#, no-c-format
 msgid "Infrared scan"
-msgstr "Infrared"
+msgstr "Infrared scan"
 
 #: include/sane/saneopts.h:252
 #, no-c-format
@@ -841,9 +841,9 @@ msgid "Perform autofocus before scan"
 msgstr "Perform autofocus before scan"
 
 #: include/sane/saneopts.h:454
-#, fuzzy, no-c-format
+#, no-c-format
 msgid "Perform infrared scan"
-msgstr "Perform autofocus before scan"
+msgstr "Perform infrared scan"
 
 #: include/sane/saneopts.h:458
 #, no-c-format
@@ -1042,24 +1042,24 @@ msgid "Miscellaneous"
 msgstr "Miscellaneous"
 
 #: backend/avision.h:74
-#, fuzzy, no-c-format
+#, no-c-format
 msgid "Installed options"
-msgstr "Int test options"
+msgstr "Installed options"
 
 #: backend/avision.h:76
-#, fuzzy, no-c-format
+#, no-c-format
 msgid "Overscan top"
-msgstr "Overscan"
+msgstr "Overscan top"
 
 #: backend/avision.h:77
-#, fuzzy, no-c-format
+#, no-c-format
 msgid "Overscan bottom"
-msgstr "Overscan"
+msgstr "Overscan bottom"
 
 #: backend/avision.h:78
-#, fuzzy, no-c-format
+#, no-c-format
 msgid "Background raster lines"
-msgstr "Backtrack lines"
+msgstr "Background raster lines"
 
 #: backend/avision.h:79 backend/microtek2.h:624
 #: backend/snapscan-options.c:435
@@ -1068,49 +1068,49 @@ msgid "Quality scan"
 msgstr "Quality scan"
 
 #: backend/avision.h:80
-#, fuzzy, no-c-format
+#, no-c-format
 msgid "Exposure"
-msgstr "Exposure time"
+msgstr "Exposure"
 
 #: backend/avision.h:81
 #, no-c-format
 msgid "Multi-sample"
-msgstr ""
+msgstr "Multi-sample"
 
 #: backend/avision.h:82
-#, fuzzy, no-c-format
+#, no-c-format
 msgid "Power save timer control"
-msgstr "Power Save button"
+msgstr "Power save timer control"
 
 #: backend/avision.h:83
-#, fuzzy, no-c-format
+#, no-c-format
 msgid "Message text from the scanner"
-msgstr "Reset the scanner"
+msgstr "Message text from the scanner"
 
 #: backend/avision.h:84
 #, no-c-format
 msgid "Obtain NVRAM values"
-msgstr ""
+msgstr "Obtain NVRAM values"
 
 #: backend/avision.h:85
 #, no-c-format
 msgid "Use paper length"
-msgstr ""
+msgstr "Use paper length"
 
 #: backend/avision.h:86
-#, fuzzy, no-c-format
+#, no-c-format
 msgid "Flip document after duplex scanning"
-msgstr "Eject document after scanning"
+msgstr "Flip document after duplex scanning"
 
 #: backend/avision.h:87
-#, fuzzy, no-c-format
+#, no-c-format
 msgid "ADF installed"
-msgstr "ADF status"
+msgstr "ADF installed"
 
 #: backend/avision.h:88
 #, no-c-format
 msgid "Lightbox installed"
-msgstr ""
+msgstr "Lightbox installed"
 
 #: backend/avision.h:91
 #, no-c-format
@@ -1118,6 +1118,8 @@ msgid ""
 "The top overscan controls the additional area to scan before the paper "
 "is detected."
 msgstr ""
+"The top overscan controls the additional area to scan before the paper "
+"is detected."
 
 #: backend/avision.h:94
 #, no-c-format
@@ -1125,6 +1127,8 @@ msgid ""
 "The bottom overscan controls the additional area to scan after the paper "
 "end is detected."
 msgstr ""
+"The bottom overscan controls the additional area to scan after the paper "
+"end is detected."
 
 #: backend/avision.h:97
 #, no-c-format
@@ -1132,21 +1136,23 @@ msgid ""
 "The background raster controls the additional background lines to scan "
 "before the paper is feed through the scanner."
 msgstr ""
+"The background raster controls the additional background lines to scan "
+"before the paper is feed through the scanner."
 
 #: backend/avision.h:100
 #, no-c-format
 msgid "Turn on quality scanning (slower but better)."
-msgstr ""
+msgstr "Turn on quality scanning (slower but better)."
 
 #: backend/avision.h:102
-#, fuzzy, no-c-format
+#, no-c-format
 msgid "Manual exposure adjustment."
-msgstr "Cal. exposure-time"
+msgstr "Manual exposure adjustment."
 
 #: backend/avision.h:104
-#, fuzzy, no-c-format
+#, no-c-format
 msgid "Enable multi-sample scan mode."
-msgstr "Enable/Disable long paper mode"
+msgstr "Enable multi-sample scan mode."
 
 #: backend/avision.h:106
 #, no-c-format
@@ -1154,6 +1160,8 @@ msgid ""
 "Allows control of the scanner's power save timer, dimming or turning off "
 "the light."
 msgstr ""
+"Allows control of the scanner's power save timer, dimming or turning off "
+"the light."
 
 #: backend/avision.h:109
 #, no-c-format
@@ -1161,6 +1169,8 @@ msgid ""
 "This text contains device specific options controlled by the user on the "
 "scanner hardware."
 msgstr ""
+"This text contains device specific options controlled by the user on the "
+"scanner hardware."
 
 #: backend/avision.h:112
 #, no-c-format
@@ -1168,6 +1178,8 @@ msgid ""
 "Allows access obtaining the scanner's NVRAM values as pretty printed "
 "text."
 msgstr ""
+"Allows access obtaining the scanner's NVRAM values as pretty printed "
+"text."
 
 #: backend/avision.h:115
 #, no-c-format
@@ -1176,6 +1188,9 @@ msgid ""
 "However some others (DM152) can get confused during media flush if it is "
 "set."
 msgstr ""
+"Newer scanners can utilise this paper length to detect double feeds. "
+"However some others (DM152) can get confused during media flush if it is "
+"set."
 
 #: backend/avision.h:118
 #, no-c-format
@@ -1185,16 +1200,20 @@ msgid ""
 "this off might make scanning a little faster if you don't care about "
 "manually flipping the pages afterwards."
 msgstr ""
+"Tells page-flipping document scanners to flip the paper back to its "
+"original orientation before dropping it in the output tray.  Turning "
+"this off might make scanning a little faster if you don't care about "
+"manually flipping the pages afterwards."
 
 #: backend/avision.h:123
 #, no-c-format
 msgid "ADF option is detected as installed."
-msgstr ""
+msgstr "ADF option is detected as installed."
 
 #: backend/avision.h:125
 #, no-c-format
 msgid "Lightbox option is detected as installed."
-msgstr ""
+msgstr "Lightbox option is detected as installed."
 
 #: backend/avision.h:897
 #, no-c-format
