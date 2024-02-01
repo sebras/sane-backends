@@ -1,21 +1,21 @@
 # Copyright (C) YEAR The SANE developers
 # This file is distributed under the same license as the sane-backends package.
 #
-# Tyson Tan <tysontan@tysontan.com>, 2021.
+# SPDX-FileCopyrightText: 2021, 2024 Tyson Tan <tysontan@tysontan.com>
 msgid ""
 msgstr ""
 "Project-Id-Version: sane-backends 1.0.32.60-2b0e4\n"
 "Report-Msgid-Bugs-To: sane-devel@alioth-lists.debian.net\n"
 "POT-Creation-Date: 2024-01-29 10:10-0800\n"
-"PO-Revision-Date: 2021-05-21 21:01+0800\n"
-"Last-Translator: Tyson Tan <tysontan@tysontan.com>\n"
-"Language-Team: Simplified Chinese <kde-i18n-doc@kde.org>\n"
+"PO-Revision-Date: 2024-02-01 11:19+0800\n"
+"Last-Translator: Tyson Tan <tds00@qq.com>\n"
+"Language-Team: Chinese <kde-i18n-doc@kde.org>\n"
 "Language: zh_CN\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Lokalize 21.04.1\n"
+"X-Generator: Lokalize 23.08.4\n"
 
 #: include/sane/saneopts.h:157
 #, no-c-format
@@ -427,9 +427,9 @@ msgid "Autofocus"
 msgstr "自动对焦"
 
 #: include/sane/saneopts.h:237
-#, fuzzy, no-c-format
+#, no-c-format
 msgid "Infrared scan"
-msgstr "红外"
+msgstr "红外扫描"
 
 #: include/sane/saneopts.h:252
 #, no-c-format
@@ -485,8 +485,8 @@ msgid ""
 "Number of bits per sample, typical values are 1 for \"line-art\" and 8 "
 "for multibit scans."
 msgstr ""
-"每个采样像素的色彩位深。“线稿”模式的典型数值为 1，多位扫描的典型数值为 "
-"8。"
+"每个采样像素的色彩位深。 "
+"“线稿”模式的典型数值为 1，多位扫描的典型数值为 8。"
 
 #: include/sane/saneopts.h:275
 #, no-c-format
@@ -557,8 +557,7 @@ msgstr "指定媒介的高度。"
 
 #: include/sane/saneopts.h:315
 #, no-c-format
-msgid ""
-"Determines whether a builtin or a custom gamma-table should be used."
+msgid "Determines whether a builtin or a custom gamma-table should be used."
 msgstr "决定使用内建还是自定义伽玛值表。"
 
 #: include/sane/saneopts.h:319
@@ -655,14 +654,12 @@ msgstr "选择被视作纯红的红通道亮度级别。"
 
 #: include/sane/saneopts.h:374
 #, no-c-format
-msgid ""
-"Selects what green radiance level should be considered \"full green\"."
+msgid "Selects what green radiance level should be considered \"full green\"."
 msgstr "选择被视作纯绿的绿通道亮度级别。"
 
 #: include/sane/saneopts.h:377
 #, no-c-format
-msgid ""
-"Selects what blue radiance level should be considered \"full blue\"."
+msgid "Selects what blue radiance level should be considered \"full blue\"."
 msgstr "选择被视作纯蓝的蓝通道亮度级别。"
 
 #: include/sane/saneopts.h:381
@@ -675,8 +672,7 @@ msgstr "控制捕获图像的色相 (蓝度)。"
 msgid ""
 "The saturation level controls the amount of \"blooming\" that occurs "
 "when acquiring an image with a camera. Larger values cause more blooming."
-msgstr ""
-"饱和度级别控制使用相机捕获图像时的颜色鲜艳程度。数值越大，颜色越鲜艳。"
+msgstr "饱和度级别控制使用相机捕获图像时的颜色鲜艳程度。数值越大，颜色越鲜艳。"
 
 #: include/sane/saneopts.h:389
 #, no-c-format
@@ -827,9 +823,9 @@ msgid "Perform autofocus before scan"
 msgstr "扫描前执行自动对焦"
 
 #: include/sane/saneopts.h:454
-#, fuzzy, no-c-format
+#, no-c-format
 msgid "Perform infrared scan"
-msgstr "扫描前执行自动对焦"
+msgstr "执行红外扫描"
 
 #: include/sane/saneopts.h:458
 #, no-c-format
@@ -1027,24 +1023,24 @@ msgid "Miscellaneous"
 msgstr "其他"
 
 #: backend/avision.h:74
-#, fuzzy, no-c-format
+#, no-c-format
 msgid "Installed options"
-msgstr "整数测试选项"
+msgstr "已安装的选项"
 
 #: backend/avision.h:76
-#, fuzzy, no-c-format
+#, no-c-format
 msgid "Overscan top"
-msgstr "过扫描"
+msgstr "过扫描 (顶部)"
 
 #: backend/avision.h:77
-#, fuzzy, no-c-format
+#, no-c-format
 msgid "Overscan bottom"
-msgstr "过扫描"
+msgstr "过扫描 (底部)"
 
 #: backend/avision.h:78
-#, fuzzy, no-c-format
+#, no-c-format
 msgid "Background raster lines"
-msgstr "反退线数"
+msgstr "背景光栅行数"
 
 #: backend/avision.h:79 backend/microtek2.h:624
 #: backend/snapscan-options.c:435
@@ -1053,106 +1049,106 @@ msgid "Quality scan"
 msgstr "高品质扫描"
 
 #: backend/avision.h:80
-#, fuzzy, no-c-format
+#, no-c-format
 msgid "Exposure"
-msgstr "曝光时间"
+msgstr "曝光"
 
 #: backend/avision.h:81
 #, no-c-format
 msgid "Multi-sample"
-msgstr ""
+msgstr "多重采样"
 
 #: backend/avision.h:82
-#, fuzzy, no-c-format
+#, no-c-format
 msgid "Power save timer control"
-msgstr "节能按钮"
+msgstr "省电计时器控制"
 
 #: backend/avision.h:83
-#, fuzzy, no-c-format
+#, no-c-format
 msgid "Message text from the scanner"
-msgstr "重置扫描仪"
+msgstr "来自扫描仪的消息文本"
 
 #: backend/avision.h:84
 #, no-c-format
 msgid "Obtain NVRAM values"
-msgstr ""
+msgstr "获取 NVRAM 值"
 
 #: backend/avision.h:85
 #, no-c-format
 msgid "Use paper length"
-msgstr ""
+msgstr "用户纸张长度"
 
 #: backend/avision.h:86
-#, fuzzy, no-c-format
+#, no-c-format
 msgid "Flip document after duplex scanning"
-msgstr "扫描后退出文稿"
+msgstr "双面扫描后翻转文稿"
 
 #: backend/avision.h:87
-#, fuzzy, no-c-format
+#, no-c-format
 msgid "ADF installed"
-msgstr "自动输稿器状态"
+msgstr "自动输稿器已安装"
 
 #: backend/avision.h:88
 #, no-c-format
 msgid "Lightbox installed"
-msgstr ""
+msgstr "灯箱已安装"
 
 #: backend/avision.h:91
 #, no-c-format
 msgid ""
 "The top overscan controls the additional area to scan before the paper "
 "is detected."
-msgstr ""
+msgstr "过扫描 (顶部) 控制在检测到纸张开头之前要扫描的额外区域。"
 
 #: backend/avision.h:94
 #, no-c-format
 msgid ""
 "The bottom overscan controls the additional area to scan after the paper "
 "end is detected."
-msgstr ""
+msgstr "过扫描 (底部) 控制在检测到纸张末尾之后要扫描的额外区域。"
 
 #: backend/avision.h:97
 #, no-c-format
 msgid ""
 "The background raster controls the additional background lines to scan "
 "before the paper is feed through the scanner."
-msgstr ""
+msgstr "背景光栅行数用于控制在纸张通过扫描仪之前要扫描的额外背景行数。"
 
 #: backend/avision.h:100
 #, no-c-format
 msgid "Turn on quality scanning (slower but better)."
-msgstr ""
+msgstr "启用高品质扫描功能 (速度较慢但画质更好)。"
 
 #: backend/avision.h:102
-#, fuzzy, no-c-format
+#, no-c-format
 msgid "Manual exposure adjustment."
-msgstr "校准曝光时间"
+msgstr "手动曝光时间调整。"
 
 #: backend/avision.h:104
-#, fuzzy, no-c-format
+#, no-c-format
 msgid "Enable multi-sample scan mode."
-msgstr "启用/禁用加长纸张模式"
+msgstr "启用多重采样扫描模式。"
 
 #: backend/avision.h:106
 #, no-c-format
 msgid ""
 "Allows control of the scanner's power save timer, dimming or turning off "
 "the light."
-msgstr ""
+msgstr "用于控制扫描仪的省电计时器，调暗灯光亮度或者关闭灯光。"
 
 #: backend/avision.h:109
 #, no-c-format
 msgid ""
 "This text contains device specific options controlled by the user on the "
 "scanner hardware."
-msgstr ""
+msgstr "此文本包含了设备特有的选项，它们由扫描仪硬件的用户控制。"
 
 #: backend/avision.h:112
 #, no-c-format
 msgid ""
 "Allows access obtaining the scanner's NVRAM values as pretty printed "
 "text."
-msgstr ""
+msgstr "允许获取扫描仪的 NVRAM 值，并显示为美观的输出文本。"
 
 #: backend/avision.h:115
 #, no-c-format
@@ -1161,6 +1157,8 @@ msgid ""
 "However some others (DM152) can get confused during media flush if it is "
 "set."
 msgstr ""
+"较新款的扫描仪可以使用此纸张长度来检测双张进纸。 "
+"但某些其他扫描仪 (DM152) 在设置此选项后可能会在媒体清除时出错。 "
 
 #: backend/avision.h:118
 #, no-c-format
@@ -1170,16 +1168,19 @@ msgid ""
 "this off might make scanning a little faster if you don't care about "
 "manually flipping the pages afterwards."
 msgstr ""
+"让页面翻转文稿扫描仪在排出纸张之前先将它翻转回原始朝向。 "
+"如果您不介意在扫描后人工把纸张翻转回来， "
+"关闭此选项可能会让扫描速度略微加快。"
 
 #: backend/avision.h:123
 #, no-c-format
 msgid "ADF option is detected as installed."
-msgstr ""
+msgstr "自动输稿器选项检测到已安装。"
 
 #: backend/avision.h:125
 #, no-c-format
 msgid "Lightbox option is detected as installed."
-msgstr ""
+msgstr "灯箱选项检测到已安装。"
 
 #: backend/avision.h:897
 #, no-c-format
@@ -1198,8 +1199,7 @@ msgstr "双向扫描"
 
 #: backend/avision.h:902
 #, no-c-format
-msgid ""
-"Duplex scan provides a scan of the front and back side of the document"
+msgid "Duplex scan provides a scan of the front and back side of the document"
 msgstr "双向扫描将同时扫描文稿的正反两面"
 
 #: backend/canon-sane.c:674 backend/canon.c:169
@@ -1582,8 +1582,7 @@ msgstr "退出程序前退出胶片"
 
 #: backend/canon.c:1690
 #, no-c-format
-msgid ""
-"Automatically eject the film from the device before exiting the program"
+msgid "Automatically eject the film from the device before exiting the program"
 msgstr "退出程序前自动从设备中退出胶片"
 
 #: backend/canon.c:1699
@@ -1804,27 +1803,27 @@ msgstr "JPEG"
 #: backend/canon_dr.c:460
 #, no-c-format
 msgid "8x12"
-msgstr ""
+msgstr "8x12"
 
 #: backend/canon_dr.c:461
 #, no-c-format
 msgid "12x12"
-msgstr ""
+msgstr "12x12"
 
 #: backend/canon_dr.c:463
 #, no-c-format
 msgid "Black-on-White"
-msgstr ""
+msgstr "白底黑字"
 
 #: backend/canon_dr.c:464
 #, no-c-format
 msgid "Black-on-Image"
-msgstr ""
+msgstr "图像黑字"
 
 #: backend/canon_dr.c:465
 #, no-c-format
 msgid "White-on-Black"
-msgstr ""
+msgstr "黑底白字"
 
 #: backend/canon_dr.c:2788 backend/fujitsu.c:4144 backend/kvs1025_opt.c:910
 #, no-c-format
@@ -1837,14 +1836,14 @@ msgid "Request driver to discard pages with low percentage of dark pixels"
 msgstr "请求驱动程序丢弃暗色比例较低的页面"
 
 #: backend/canon_dr.c:2908
-#, fuzzy, no-c-format
+#, no-c-format
 msgid "Imprinter Options"
-msgstr "打印选项"
+msgstr "压印机选项"
 
 #: backend/canon_dr.c:2909
-#, fuzzy, no-c-format
+#, no-c-format
 msgid "Controls for imprinter units"
-msgstr "背书器模块控制"
+msgstr "控制压印机单元的功能"
 
 #: backend/canon_lide70.c:342 backend/epson.c:2811 backend/epson2.c:967
 #: backend/genesys/genesys.cpp:4524 backend/gt68xx.c:449
@@ -2291,8 +2290,7 @@ msgstr "对焦位置"
 
 #: backend/epson.h:71 backend/epson2.h:75
 #, no-c-format
-msgid ""
-"Sets the focus position to either the glass or 2.5mm above the glass"
+msgid "Sets the focus position to either the glass or 2.5mm above the glass"
 msgstr "设置对焦位置为玻璃表面还是玻璃表面上方 2.5mm"
 
 #: backend/epson.h:73 backend/epson2.h:77
@@ -2358,14 +2356,14 @@ msgid "Enables ADF skew correction"
 msgstr "启用自动输稿器倾斜纠正"
 
 #: backend/epsonds.c:2069
-#, fuzzy, no-c-format
+#, no-c-format
 msgid "ADF CRP Correction"
-msgstr "自动输稿器倾斜纠正"
+msgstr "自动输稿器裁切纠正"
 
 #: backend/epsonds.c:2071
-#, fuzzy, no-c-format
+#, no-c-format
 msgid "Enables ADF auto cropping"
-msgstr "启用自动输稿器倾斜纠正"
+msgstr "启用自动输稿器的自动裁切"
 
 #: backend/fujitsu.c:704 backend/hp-option.c:3325 backend/hp-option.c:3338
 #, no-c-format
@@ -2602,8 +2600,7 @@ msgstr "阈值曲线"
 
 #: backend/fujitsu.c:3425
 #, no-c-format
-msgid ""
-"Threshold curve, from light to dark, but upper two may not be linear"
+msgid "Threshold curve, from light to dark, but upper two may not be linear"
 msgstr "阈值曲线，由亮到暗，但最上面的两项可能不是线性"
 
 #: backend/fujitsu.c:3447
@@ -2810,8 +2807,7 @@ msgstr "背景色"
 
 #: backend/fujitsu.c:3867
 #, no-c-format
-msgid ""
-"Set color of background for scans. May conflict with overscan option"
+msgid "Set color of background for scans. May conflict with overscan option"
 msgstr "设置扫描图像的背景色。可能与过扫描选项冲突"
 
 #: backend/fujitsu.c:3887
@@ -2868,8 +2864,7 @@ msgstr "睡眠计时器"
 
 #: backend/fujitsu.c:3971
 #, no-c-format
-msgid ""
-"Time in minutes until the internal power supply switches to sleep mode"
+msgid "Time in minutes until the internal power supply switches to sleep mode"
 msgstr "扫描仪内部电源切换为睡眠模式的计时器，单位为分钟"
 
 #: backend/fujitsu.c:3989
@@ -2992,8 +2987,7 @@ msgstr "取消时挂起"
 
 #: backend/fujitsu.c:4162
 #, no-c-format
-msgid ""
-"Request driver to halt the paper feed instead of eject during a cancel."
+msgid "Request driver to halt the paper feed instead of eject during a cancel."
 msgstr "请求驱动程序在取消时挂起送纸操作而不是退纸。"
 
 #: backend/fujitsu.c:4173
@@ -3096,8 +3090,7 @@ msgstr "背书器字串"
 msgid ""
 "Endorser alphanumeric print format. %05ud or %08ud at the end will be "
 "replaced by counter value."
-msgstr ""
-"背书器英文数字打印格式。位于末尾的 %05ud 或 %08ud 将被替换为计数器数值。"
+msgstr "背书器英文数字打印格式。位于末尾的 %05ud 或 %08ud 将被替换为计数器数值。"
 
 #: backend/fujitsu.c:4410
 #, no-c-format
@@ -3172,12 +3165,12 @@ msgstr "名片槽含有纸张"
 #: backend/fujitsu.c:4518
 #, no-c-format
 msgid "Power saving"
-msgstr "节能"
+msgstr "省电"
 
 #: backend/fujitsu.c:4519
 #, no-c-format
 msgid "Scanner in power saving mode"
-msgstr "扫描仪处于节能模式"
+msgstr "扫描仪处于省电模式"
 
 #: backend/fujitsu.c:4542
 #, no-c-format
@@ -3348,29 +3341,29 @@ msgid "Extra button"
 msgstr "额外功能按钮"
 
 #: backend/genesys/genesys.cpp:4900 backend/genesys/genesys.cpp:4901
-#, fuzzy, no-c-format
+#, no-c-format
 msgid "Transparency button"
-msgstr "透扫器"
+msgstr "透扫器按钮"
 
 #: backend/genesys/genesys.cpp:4912 backend/genesys/genesys.cpp:4913
-#, fuzzy, no-c-format
+#, no-c-format
 msgid "PDF function button 1"
-msgstr "PDF 按钮"
+msgstr "PDF 功能按钮 1"
 
 #: backend/genesys/genesys.cpp:4924 backend/genesys/genesys.cpp:4925
-#, fuzzy, no-c-format
+#, no-c-format
 msgid "PDF function button 2"
-msgstr "PDF 按钮"
+msgstr "PDF 功能按钮 2"
 
 #: backend/genesys/genesys.cpp:4936 backend/genesys/genesys.cpp:4937
-#, fuzzy, no-c-format
+#, no-c-format
 msgid "PDF function button 3"
-msgstr "PDF 按钮"
+msgstr "PDF 功能按钮 3"
 
 #: backend/genesys/genesys.cpp:4948 backend/genesys/genesys.cpp:4949
-#, fuzzy, no-c-format
+#, no-c-format
 msgid "PDF function button 4"
-msgstr "PDF 按钮"
+msgstr "PDF 功能按钮 4"
 
 #: backend/genesys/genesys.cpp:4960 backend/gt68xx.c:753
 #, no-c-format
@@ -4052,12 +4045,12 @@ msgstr "用于额外选项和配置的按钮"
 #: backend/hp5400_sane.c:465
 #, no-c-format
 msgid "power-save"
-msgstr "节能"
+msgstr "省电"
 
 #: backend/hp5400_sane.c:466
 #, no-c-format
 msgid "Power Save button"
-msgstr "节能按钮"
+msgstr "省电按钮"
 
 #: backend/hp5400_sane.c:467
 #, no-c-format
@@ -4236,8 +4229,7 @@ msgstr "隐藏页面末尾像素"
 
 #: backend/hp5590.c:129
 #, no-c-format
-msgid ""
-"Hide end-of-page indicator pixels and overwrite with neighbor pixels"
+msgid "Hide end-of-page indicator pixels and overwrite with neighbor pixels"
 msgstr "隐藏页面末尾指示像素，用相邻的相符覆盖它"
 
 #: backend/hp5590.c:131
@@ -5156,8 +5148,7 @@ msgstr "由后端程序进行校准"
 
 #: backend/microtek2.h:615
 #, no-c-format
-msgid ""
-"If checked the color calibration before a scan is done by the backend"
+msgid "If checked the color calibration before a scan is done by the backend"
 msgstr "勾选后将在每次扫描前由后端程序进行色彩校准"
 
 #: backend/microtek2.h:619
@@ -5468,8 +5459,7 @@ msgstr "使用快速灰阶模式扫描 (低品质)。"
 msgid ""
 "Request that all previews are done in the fastest (low-quality) mode. "
 "This may be a non-color mode or a low resolution mode."
-msgstr ""
-"请求所有预览均在最快模式 (低品质) 扫描。它可以是单色模式或低分辨率模式。"
+msgstr "请求所有预览均在最快模式 (低品质) 扫描。它可以是单色模式或低分辨率模式。"
 
 #: backend/mustek.c:4332
 #, no-c-format
@@ -5732,18 +5722,18 @@ msgstr "自动输稿器等待时间"
 msgid ""
 "When set, the scanner waits up to the specified time in seconds for a "
 "new document inserted into the automatic document feeder."
-msgstr ""
-"设置后，扫描仪将等待指定的时间 (单位为秒)以便新文稿能够装入自动输稿器。"
+msgstr "设置后，扫描仪将等待指定的时间 (单位为秒)以便新文稿能够装入自动输稿器。"
 
 #: backend/pixma/pixma_sane_options.c:407
-#, fuzzy, no-c-format
+#, no-c-format
 msgid ""
 "When to perform scanner calibration. If you choose \"Once\" it will be "
 "performed a single time per driver init for single page scans, and for "
 "the first page for each ADF scan."
 msgstr ""
-"执行扫描仪校准的时机。“一次”意味着每次驱动程序初始化单张页面扫描时，或者"
-"自动输稿器扫描第一张页面时。"
+"设置扫描仪在何时进行校准。如果设置为“一次”， 扫描仪将在 "
+"每次单页扫描或者自动输稿器扫描第一页之前的驱动程序初始化阶段 "
+"进行校准。"
 
 #: backend/plustek.c:233 backend/plustek_pp.c:202 backend/u12.c:154
 #, no-c-format
@@ -5945,8 +5935,7 @@ msgstr "三遍扫描模拟"
 msgid ""
 "Simulate a three-pass scanner by returning 3 separate frames.  For "
 "kicks, it returns green, then blue, then red."
-msgstr ""
-"通过返回三个独立扫描帧来模拟三遍式扫描仪。例如按顺序返回绿、蓝、红三帧。"
+msgstr "通过返回三个独立扫描帧来模拟三遍式扫描仪。例如按顺序返回绿、蓝、红三帧。"
 
 #: backend/pnm.c:265
 #, no-c-format
@@ -5965,8 +5954,7 @@ msgstr ""
 
 #: backend/pnm.c:281
 #, no-c-format
-msgid ""
-"Set default values for enhancement controls (brightness & contrast)."
+msgid "Set default values for enhancement controls (brightness & contrast)."
 msgstr "设置增强控制默认值 (亮度/对比度)。"
 
 #: backend/pnm.c:293
@@ -6021,8 +6009,7 @@ msgstr "返回 SANE_STATUS_JAMMED"
 msgid ""
 "Force the backend to return the status code SANE_STATUS_JAMMED after "
 "sane_read() has been called."
-msgstr ""
-"在调用sane_read() 之后强制后端程序返回状态代码 SANE_STATUS_JAMMED。"
+msgstr "在调用sane_read() 之后强制后端程序返回状态代码 SANE_STATUS_JAMMED。"
 
 #: backend/pnm.c:428
 #, no-c-format
@@ -6034,8 +6021,7 @@ msgstr "返回 SANE_STATUS_NO_DOCS"
 msgid ""
 "Force the backend to return the status code SANE_STATUS_NO_DOCS after "
 "sane_read() has been called."
-msgstr ""
-"在调用sane_read() 之后强制后端程序返回状态代码 SANE_STATUS_NO_DOCS。"
+msgstr "在调用sane_read() 之后强制后端程序返回状态代码 SANE_STATUS_NO_DOCS。"
 
 #: backend/pnm.c:441
 #, no-c-format
@@ -6047,8 +6033,7 @@ msgstr "返回 SANE_STATUS_COVER_OPEN"
 msgid ""
 "Force the backend to return the status code SANE_STATUS_COVER_OPEN after "
 "sane_read() has been called."
-msgstr ""
-"在调用sane_read() 之后强制后端程序返回状态代码 SANE_STATUS_COVER_OPEN。"
+msgstr "在调用sane_read() 之后强制后端程序返回状态代码 SANE_STATUS_COVER_OPEN。"
 
 #: backend/pnm.c:454
 #, no-c-format
@@ -6060,8 +6045,7 @@ msgstr "返回 SANE_STATUS_IO_ERROR"
 msgid ""
 "Force the backend to return the status code SANE_STATUS_IO_ERROR after "
 "sane_read() has been called."
-msgstr ""
-"在调用sane_read() 之后强制后端程序返回状态代码 SANE_STATUS_IO_ERROR。"
+msgstr "在调用sane_read() 之后强制后端程序返回状态代码 SANE_STATUS_IO_ERROR。"
 
 #: backend/pnm.c:467
 #, no-c-format
@@ -6073,8 +6057,7 @@ msgstr "返回 SANE_STATUS_NO_MEM"
 msgid ""
 "Force the backend to return the status code SANE_STATUS_NO_MEM after "
 "sane_read() has been called."
-msgstr ""
-"在调用sane_read() 之后强制后端程序返回状态代码 SANE_STATUS_NO_MEM。"
+msgstr "在调用sane_read() 之后强制后端程序返回状态代码 SANE_STATUS_NO_MEM。"
 
 #: backend/pnm.c:481
 #, no-c-format
@@ -6419,8 +6402,7 @@ msgstr "读取限制大小"
 
 #: backend/test.c:570
 #, no-c-format
-msgid ""
-"The (maximum) amount of data transferred with each call to sane_read()."
+msgid "The (maximum) amount of data transferred with each call to sane_read()."
 msgstr "每次调用 sane_read() 时传输的最大数据量。"
 
 #: backend/test.c:585
@@ -6479,8 +6461,7 @@ msgstr "模糊参数"
 msgid ""
 "Return fuzzy lines and bytes per line when sane_parameters() is called "
 "before sane_start()."
-msgstr ""
-"当在 sane_start() 之前调用 sane_parameters() 时返回模糊线数和每线字节数。"
+msgstr "当在 sane_start() 之前调用 sane_parameters() 时返回模糊线数和每线字节数。"
 
 #: backend/test.c:676
 #, no-c-format
@@ -6504,8 +6485,7 @@ msgstr "启用测试选项"
 msgid ""
 "Enable various test options. This is for testing the ability of "
 "frontends to view and modify all the different SANE option types."
-msgstr ""
-"启用各种测试选项。用于测试前端程序的查看和调整不同 SANE 选项类型的能力。"
+msgstr "启用各种测试选项。用于测试前端程序的查看和调整不同 SANE 选项类型的能力。"
 
 #: backend/test.c:705
 #, no-c-format
@@ -6577,8 +6557,7 @@ msgstr "(4/6) 布尔软件检测"
 msgid ""
 "(4/6) Bool test option that has soft detect (and advanced) capabilities. "
 "That means the option is read-only."
-msgstr ""
-"(4/6) 具备软件检测 (和高级) 功能的布尔测试选项。这意味着该选项为只读。"
+msgstr "(4/6) 具备软件检测 (和高级) 功能的布尔测试选项。这意味着该选项为只读。"
 
 #: backend/test.c:869
 #, no-c-format
@@ -6613,81 +6592,81 @@ msgid "Int test options"
 msgstr "整数测试选项"
 
 #: backend/test.c:917
-#, fuzzy, no-c-format
+#, no-c-format
 msgid "(1/7) Int"
-msgstr "(1/6) 整数"
+msgstr "(1/7) 整数"
 
 #: backend/test.c:918
-#, fuzzy, no-c-format
+#, no-c-format
 msgid "(1/7) Int test option with no unit and no constraint set."
-msgstr "(1/6) 不带单位，不设约束条件的整数测试。"
+msgstr "(1/7) 整数测试选项，不带单位，不设约束条件。"
 
 #: backend/test.c:933
-#, fuzzy, no-c-format
+#, no-c-format
 msgid "(2/7) Int constraint range"
-msgstr "(2/6) 整数约束范围"
+msgstr "(2/7) 整数约束范围"
 
 #: backend/test.c:934
-#, fuzzy, no-c-format
+#, no-c-format
 msgid ""
 "(2/7) Int test option with unit pixel and constraint range set. Minimum "
 "is 4, maximum 192, and quant is 2."
 msgstr ""
-"(2/6) 带有单位像素，设有约束范围的整数测试选项。最小值为 4，最大值为 "
-"192，数量为 2。"
+"(2/7) 整数测试选项，带有单位像素，设有约束范围。 "
+"最小值为 4，最大值为 192，数量为 2。"
 
 #: backend/test.c:950
-#, fuzzy, no-c-format
+#, no-c-format
 msgid "(3/7) Int constraint word list"
-msgstr "(3/6) 整数约束单词列表"
+msgstr "(3/7) 整数约束单词列表"
 
 #: backend/test.c:951
-#, fuzzy, no-c-format
+#, no-c-format
 msgid "(3/7) Int test option with unit bits and constraint word list set."
-msgstr "(3/6) 带有单位比特，设有约束单词列表的整数测试选项。"
+msgstr "(3/7) 整数测试选项，带有单位比特，设有约束单词列表。"
 
 #: backend/test.c:966
-#, fuzzy, no-c-format
+#, no-c-format
 msgid "(4/7) Int array"
-msgstr "(4/6) 整数数组"
+msgstr "(4/7) 整数数组"
 
 #: backend/test.c:967
-#, fuzzy, no-c-format
+#, no-c-format
 msgid ""
 "(4/7) Int test option with unit mm and using an array without "
 "constraints."
-msgstr "(4/6) 带有单位毫米，使用不设约束条件数组的整数测试选项。"
+msgstr "(4/7) 整数测试选项，带有单位毫米，使用不设约束条件的数组。"
 
 #: backend/test.c:982
-#, fuzzy, no-c-format
+#, no-c-format
 msgid "(5/7) Int array constraint range"
-msgstr "(5/6) 整数数组约束范围"
+msgstr "(5/7) 整数数组约束范围"
 
 #: backend/test.c:983
-#, fuzzy, no-c-format
+#, no-c-format
 msgid ""
 "(5/7) Int test option with unit dpi and using an array with a range "
 "constraint. Minimum is 4, maximum 192, and quant is 2."
 msgstr ""
-"(5/6) 带有单位 DPI，使用设有范围约束的数组的测试选项。最小值为 4，最大值"
-"为 192，数量为 2。"
+"(5/7) 整数测试选项，带有单位 DPI，使用设有范围约束的数组。 "
+"最小值为 4，最大值为 192，数量为 2。"
 
 #: backend/test.c:1000
-#, fuzzy, no-c-format
+#, no-c-format
 msgid "(6/7) Int array constraint word list"
-msgstr "(6/6) 整数数组约束单词列表"
+msgstr "(6/7) 整数数组约束单词列表"
 
 #: backend/test.c:1001
-#, fuzzy, no-c-format
+#, no-c-format
 msgid ""
 "(6/7) Int test option with unit percent and using an array with a word "
 "list constraint."
-msgstr "(6/6) 带有单位百分比，使用设有单词列表约束数组的整数测试选项。"
+msgstr "(6/7) 整数测试选项，带有单位百分比，使用设有单词列表约束的数组。"
 
 #: backend/test.c:1017
 #, no-c-format
 msgid "(7/7) Int inexact"
-msgstr ""
+msgstr "(7/7) 整数不确切"
 
 #: backend/test.c:1018
 #, no-c-format
@@ -6695,6 +6674,8 @@ msgid ""
 "(7/7) Int test option that modifies the value and returns "
 "SANE_INFO_INEXACT."
 msgstr ""
+"(7/7) 整数测试选项 "
+"用于修改值并返回 SANE_INFO_INEXACT。"
 
 #: backend/test.c:1091
 #, no-c-format
