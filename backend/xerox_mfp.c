@@ -212,6 +212,7 @@ static int isSupportedDevice(struct device __sane_unused__ *dev)
         /* blacklist malfunctioning device(s) */
         if (!strncmp (dev->sane.model, "SCX-4500W", 9)
             || !strncmp (dev->sane.model, "C460", 4)
+            || !!strstr(dev->sane.model, "SCX-472")
             || !!strstr (dev->sane.model, "WorkCentre 3225")
             || !!strstr (dev->sane.model, "CLX-3170")
             || !!strstr (dev->sane.model, "4x24")
@@ -502,7 +503,7 @@ static SANE_String_Const doc_sources[] = {
 };
 
 static int doc_source_to_code[] = {
-    0x40, 0x20, 0x80
+    DOC_FLATBED, DOC_ADF, DOC_AUTO
 };
 
 static SANE_String_Const scan_modes[] = {
@@ -702,6 +703,14 @@ static void set_parameters(struct device *dev)
     }
 }
 
+/* determine if document is to be sourced from ADF */
+static int sourcing_from_adf(struct device *dev)
+{
+    return (dev->doc_source == DOC_ADF ||
+            (dev->doc_source == DOC_AUTO && dev->doc_loaded));
+}
+
+
 /* resolve all options related to scan window */
 /* called after option changed and in set_window */
 static int fix_window(struct device *dev)
@@ -731,11 +740,10 @@ static int fix_window(struct device *dev)
     dev->doc_source = doc_source_to_code[string_match_index(doc_sources, dev->val[OPT_SOURCE].s)];
 
     /* max window len is dependent of document source */
-    if (dev->doc_source == DOC_FLATBED ||
-        (dev->doc_source == DOC_AUTO && !dev->doc_loaded))
-        dev->max_len = dev->max_len_fb;
-    else
+    if (sourcing_from_adf(dev))
         dev->max_len = dev->max_len_adf;
+    else
+        dev->max_len = dev->max_len_fb;
 
     /* parameters */
     dev->win_y_range.max = SANE_FIX((double)dev->max_len / PNT_PER_MM);
@@ -879,8 +887,9 @@ dev_inquiry(struct device *dev)
                       dev->res[0x3f];
     dev->line_order = dev->res[0x31];
     dev->compressionTypes = dev->res[0x32];
-    dev->doc_loaded = (dev->res[0x35] == 0x02) &&
-                      (dev->res[0x26] & 0x03);
+    dev->has_adf = ((dev->res[0x26] & 0x03) != 0);
+    dev->doc_loaded = (dev->res[0x35] == 0x02)
+                       && dev->has_adf;
 
     init_options(dev);
     reset_options(dev);
@@ -890,6 +899,25 @@ dev_inquiry(struct device *dev)
 
     return SANE_STATUS_GOOD;
 }
+
+
+static SANE_Status
+dev_inquiry_adf_status(struct device *dev)
+{
+    if (!dev_cmd(dev, CMD_INQUIRY))
+        return SANE_STATUS_IO_ERROR;
+
+    dev->has_adf = ((dev->res[0x26] & 0x03) != 0);
+    dev->doc_loaded = (dev->res[0x35] == 0x02)
+                       && dev->has_adf;
+
+    DBG(3, "%s: ADF present: %s, loaded: %s\n", __func__,
+        (dev->has_adf ? "true" : "false"),
+        (dev->doc_loaded ? "true" : "false"));
+
+    return SANE_STATUS_GOOD;
+}
+
 
 const SANE_Option_Descriptor *
 sane_get_option_descriptor(SANE_Handle h, SANE_Int opt)
@@ -1361,7 +1389,10 @@ sane_read(SANE_Handle h, SANE_Byte *buf, SANE_Int maxlen, SANE_Int *lenp)
                 remove(encTmpFileName);
             }
             /* that's all */
-            dev_stop(dev);
+            /* finished receving the document; */
+            /* stop and release the unit, unless sourcing from ADF */
+            if (!sourcing_from_adf(dev))
+                dev_stop(dev);
             return SANE_STATUS_EOF;
         }
 
@@ -1465,7 +1496,6 @@ SANE_Status
 sane_start(SANE_Handle h)
 {
     struct device *dev = h;
-
     DBG(3, "%s: %p\n", __func__, h);
 
     dev->cancel = 0;
@@ -1476,20 +1506,22 @@ sane_start(SANE_Handle h)
     dev->blocks = 0;
 
     if (!dev->reserved) {
+        if (dev->has_adf
+            && (dev->doc_source == DOC_AUTO || dev->doc_source == DOC_ADF)) {
+            if (dev_inquiry_adf_status(dev) != SANE_STATUS_GOOD)
+                return dev_stop(dev);
+        }
+
         if (!dev_cmd_wait(dev, CMD_RESERVE_UNIT))
             return dev->state;
         dev->reserved++;
+
+        if (!dev_set_window(dev) ||
+            (dev->state && dev->state != SANE_STATUS_DEVICE_BUSY))
+            return dev_stop(dev);
     }
 
-    if (!dev_set_window(dev) ||
-        (dev->state && dev->state != SANE_STATUS_DEVICE_BUSY))
-        return dev_stop(dev);
-
     if (!dev_cmd_wait(dev, CMD_OBJECT_POSITION))
-        return dev_stop(dev);
-
-    if (!dev_cmd(dev, CMD_READ) ||
-        (dev->state && dev->state != SANE_STATUS_DEVICE_BUSY))
         return dev_stop(dev);
 
     dev->scanning = 1;
