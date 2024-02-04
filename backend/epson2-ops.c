@@ -1774,10 +1774,16 @@ e2_ext_read(struct Epson_Scanner *s)
 			return status;
 		}
 
-		if (e2_dev_model(dev, "GT-8200") || e2_dev_model(dev, "Perfection1650")) {
-			/* See http://bugs.debian.org/cgi-bin/bugreport.cgi?bug=597922#127 */
-			s->buf[buf_len] &= 0xc0;
-		}
+		/* Some scanners wrongly set FSG_STATUS_CANCEL_REQ. Mask it out.
+		 * https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=597922#127
+		 * https://gitlab.com/sane-project/backends/-/issues/716
+		 */
+		if (e2_dev_model(dev, "GT-8200") || e2_dev_model(dev, "Perfection1650") ||
+		    e2_dev_model(dev, "GT-10000") || e2_dev_model(dev, "ES-6000") ||
+		    e2_dev_model(dev, "Perfection610") || e2_dev_model(dev, "GT-6600") ||
+		    e2_dev_model(dev, "Perfection1200") || e2_dev_model(dev, "GT-7600") ||
+		    e2_dev_model(dev, "Expression1600") || e2_dev_model(dev, "ES-2000"))
+			s->buf[buf_len] &= FSG_STATUS_FER | FSG_STATUS_NOT_READY;
 
 		if (s->buf[buf_len] & FSG_STATUS_CANCEL_REQ) {
 			DBG(0, "%s: cancel request received\n", __func__);
