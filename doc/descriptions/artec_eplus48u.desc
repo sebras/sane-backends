@@ -15,13 +15,13 @@
 :status :good
 :interface "USB"
 :usbid "0x05d8" "0x4003"
-:comment "CIS scanner based on the GT6816 chip. Apparently all other devices are re-badged Artec scanners."
+:comment "CIS scanner based on the GT6816 chip. Apparently all other devices are re-badged Artec scanners. Needs firmware 'Artec48.usb'"
 
 :model "E+ Pro"
 :status :minimal
 :interface "USB"
 :usbid "0x05d8" "0x4004"
-:comment "Works up to 600dpi, but not 1200. Needs better calibration. See bug #310490"
+:comment "Works up to 600dpi, but not 1200. Needs better calibration. See bug #310490. Needs firmware '1200.usb'"
 
 
 :mfg "Medion/Lifetec/Tevion/Cytron"
@@ -32,17 +32,19 @@
 :status :good
 :interface "USB"
 :usbid "0x05d8" "0x4003"
+:comment "Needs firmware 'Artec48.usb'"
 
 :model "MD9705"
 :status :good
 :interface "USB"
 :usbid "0x05d8" "0x4003"
+:comment "Needs firmware 'Artec48.usb'"
 
 :model "MD4394"
 :status :good
 :interface "USB"
 :usbid "0x05d8" "0x4003"
-:comment "Only scanners with product id 0x4003 will work; try the gt68xx backend, if your scanner has product id 0x4002 "
+:comment "Only scanners with product id 0x4003 will work; try the gt68xx backend, if your scanner has product id 0x4002 . Needs firmware 'Artec48.usb'"
 
 
 :mfg "Trust"
@@ -52,12 +54,13 @@
 :status :good
 :interface "USB"
 :usbid "0x05d8" "0x4006"
+:comment "Needs firmware 'Artec48.usb'"
 
 :model "240H Easy Webscan Gold"
 :status :basic
 :interface "USB"
 :usbid "0x05d8" "0x4007"
-:comment "Works up to 600 dpi"
+:comment "Works up to 600 dpi. Needs firmware 'Artec48.usb'"
 
 
 :mfg "Memorex"
@@ -67,6 +70,7 @@
 :status :good
 :interface "USB"
 :usbid "0x05d8" "0x4005"
+:comment "Needs firmware 'Artec48.usb'"
 
 
 :mfg "Microstar"
@@ -76,6 +80,7 @@
 :status :good
 :interface "USB"
 :usbid "0x05d8" "0x4003"
+:comment "Needs firmware 'Artec48.usb'"
 
 
 :mfg "UMAX"
@@ -90,11 +95,13 @@
 :status :good
 :interface "USB"
 :usbid "0x05d8" "0x4009"
+:comment "Needs firmware 'Artec48.usb'"
 
 :model "AstraSlim 1200 SE"
 :status :good
 :interface "USB"
 :usbid "0x05d8" "0x4010"
+:comment "Needs firmware '1200.usb'"
 
 
 :mfg "Yakumo"
@@ -104,3 +111,4 @@
 :status :good
 :interface "USB"
 :usbid "0x05d8" "0x4011"
+:comment "Needs firmware 'Artec48.usb'"
