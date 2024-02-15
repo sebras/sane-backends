@@ -14,7 +14,7 @@
 :interface "USB"
 :usbid "0x05d8" "0x4002"
 :status :good
-:comment "Works, only product id 0x4002 is supported"
+:comment "Works, only product id 0x4002 is supported. Needs firmware 'Gt680xfw.usb'"
 
 :model "Ultima 2000 e+"
 :interface "USB"
@@ -52,17 +52,19 @@
 :interface "USB"
 :usbid "0x0458" "0x201e"
 :status :untested
-:comment "Untested but should work."
+:comment "Untested but should work. Needs firmware 'Cis3r5b1.fw'"
 
-:model "Colorpage SF600"
+:model "ColorPage SF600"
 :interface "USB"
 :usbid "0x0458" "0x2021"
 :status :basic
+:comment "Needs firmware 'cism216.fw'"
 
 :model "Colorpage Vivid3x"
 :interface "USB"
 :usbid "0x0458"	"0x2011"
 :status :good
+:comment "Needs firmware 'ccd548.fw'"
 
 :model "Colorpage Vivid3 V2"
 :interface "USB"
@@ -74,35 +76,42 @@
 :interface "USB"
 :usbid "0x0458"	"0x2017"
 :status :good
+:comment "Needs firmware 'ccd548.fw'"
 
-:model "Colorpage Vivid4"
+:model "ColorPage Vivid 4"
 :usbid "0x0458"	"0x2014"
 :interface "USB"
 :status :good
+:comment "Needs firmware 'ccd68861.fw'"
 
 :model "Colorpage Vivid4x"
 :usbid "0x0458"	"0x201b"
 :interface "USB"
 :status :good
+:comment "Needs firmware 'ccd548.fw'"
 
 :model "Colorpage Vivid4xe"
 :usbid "0x0458"	"0x201a"
 :interface "USB"
 :status :good
+:comment "Needs firmware 'ccd548.fw'"
 
 :model "Colorpage Vivid 1200 X"
 :interface "USB"
 :usbid "0x0458"	"0x201d"
 :status :good
+:comment "Needs firmware 'ccd569.fw'"
 
 :model "Colorpage Vivid 1200 XE"
 :interface "USB"
 :usbid "0x0458"	"0x201f"
 :status :good
+:comment "Needs firmware 'ccd569.fw'"
 
 ; -----------------------------------------------------------------------------
 
 :mfg "Googlegear"
+
 :model "2000"
 :interface "USB"
 :usbid "0x05d8" "0x4002"
@@ -123,7 +132,7 @@
 :interface "USB"
 :usbid "0x043d" "0x002d"
 :status :good
-:comment "Works, some resolutions fail at 16 bit, same as X70"
+:comment "Works, some resolutions fail at 16 bit, same as X70. Needs firmware 'OSLO3071b2.usb'"
 
 ; -----------------------------------------------------------------------------
 
@@ -177,22 +186,25 @@
 :interface "USB"
 :usbid "0x05d8" "0x4002"
 :status :good
+:comment "Needs firmware 'PS1fw.usb'"
 
-:model "BearPaw 1200 CU Plus"
+:model "Bearpaw 1200 CU Plus"
 :interface "USB"
 :usbid "0x055f" "0x021b"
 :status :good
+:comment "Needs firmware 'PS1Gfw.usb'"
 
-:model "BearPaw 1200 CU Plus"
+:model "Bearpaw 1200 CU Plus"
 :interface "USB"
 :usbid "0x055f" "0x021c"
 :status :good
+:comment "Needs firmware 'PS1Dfw.usb'"
 
 :model "BearPaw 1200 TA"
 :interface "USB"
 :usbid "0x055f" "0x021e"
 :status :good
-:comment "Transparency adapter supported"
+:comment "Transparency adapter supported. Needs firmware 'A1fw.usb'"
 
 :model "BearPaw 1248 CU"
 :interface "USB"
@@ -216,24 +228,25 @@
 :interface "USB"
 :usbid "0x05d8" "0x4002"
 :status :basic
-:comment "Works, but is slow"
+:comment "Works, but is slow. Needs firmware 'PS2fw.usb'"
 
 :model "BearPaw 2400 CU Plus"
 :interface "USB"
 :usbid "0x055f" "0x021d"
 :status :good
+:comment "Needs firmware 'PS2Dfw.usb'"
 
 :model "BearPaw 2400 TA"
 :interface "USB"
 :usbid "0x055f" "0x0218"
 :status :good
-:comment "Transparency adapter supported"
+:comment "Transparency adapter supported. Needs firmware 'A2fw.usb'"
 
 :model "BearPaw 2400 TA Plus"
 :interface "USB"
 :usbid "0x055f" "0x0219"
 :status :good
-:comment "Transparency adapter supported"
+:comment "Transparency adapter supported. Needs firmware 'A2Dfw.usb'"
 
 :model "BearPaw 2448 CS Plus"
 :interface "USB"
@@ -245,7 +258,7 @@
 :interface "USB"
 :usbid "0x055f" "0x021a"
 :status :basic
-:comment "Slow. Transparency adapter supported. Slow. Brightness depends on resolution?"
+:comment "Slow. Transparency adapter supported. Slow. Brightness depends on resolution?. Needs firmware 'A2Nfw.usb'"
 
 :model "Plug-n-Scan 2400 MT"
 :interface "USB"
@@ -263,23 +276,25 @@
 :interface "USB"
 :usbid "0x05d8" "0x4002"
 :status :good
+:comment "Needs firmware 'SBfw.usb'"
 
 :model "ScanExpress 1248 UB"
 :interface "USB"
 :usbid "0x055f" "0x021f"
 :status :complete
+:comment "Needs firmware 'SBSfw.usb'"
 
 :model "ScanExpress 2400 USB"
 :interface "USB"
 :usbid "0x05d8" "0x4002"
 :status :minimal
-:comment "Should be detected but may need some more work in the code. Testers welcome. Please contact me if you own this scanner."
+:comment "Should be detected but may need some more work in the code. Testers welcome. Please contact me if you own this scanner. Needs firmware 'P9fw.usb'"
 
 :model "ScanExpress A3 USB"
 :interface "USB"
 :usbid "0x055f" "0x0210"
 :status :basic
-:comment "Still some vertical stripes."
+:comment "Still some vertical stripes. Needs firmware 'A32fw.usb'"
 
 :model "ScanMagic 1200 UB Plus"
 :interface "USB"
@@ -349,16 +364,19 @@
 :interface "USB"
 :usbid "0x07b3" "0x0400"
 :status :good
+:comment "Needs firmware 'ccd548.fw'"
 
 :model "OpticPro 1248U"
 :interface "USB"
 :usbid "0x07b3" "0x0401"
 :status :good
+:comment "Needs firmware 'ccd548.fw'"
 
 :model "OpticPro U16B"
 :interface "USB"
 :usbid "0x07b3" "0x0402"
 :status :good
+:comment "Needs firmware 'ccd68861.fw'"
 
 :model "OpticPro U16B+"
 :interface "USB"
@@ -375,13 +393,13 @@
 :interface "USB"
 :usbid "0x07b3" "0x040b"
 :status :good
-:comment "Product ID 0x040b only."
+:comment "Product ID 0x040b only. Needs firmware 'ccd548.fw'"
 
 :model "OpticPro S24"
 :interface "USB"
 :usbid "0x07b3" "0x040e"
 :status :good
-:comment "Product ID 0x040e only. Is reported to work."
+:comment "Product ID 0x040e only. Is reported to work. Needs firmware 'ccd569.fw'"
 
 :model "OpticPro ST12"
 :interface "USB"
@@ -393,12 +411,13 @@
 :interface "USB"
 :usbid "0x07b3" "0x0413"
 :status :good
+:comment "Needs firmware 'cism216.fw'"
 
 :model "OpticSlim 2400"
 :interface "USB"
 :usbid "0x07b3" "0x0422"
 :status :good
-:comment "Works up to 1200 dpi."
+:comment "Works up to 1200 dpi. Needs firmware 'cis3R5B1.fw'"
 
 :model "OpticSlim 2400 plus"
 :interface "USB"
@@ -406,24 +425,24 @@
 :status :good
 :comment "Same as OpticSlim 2400."
 
-:model "OpticSlim 500 plus"
+:model "OpticSlim 500 Plus"
 :interface "USB"
 :usbid "0x07b3" "0x046e"
 :status :good
-:comment "Need firmware from windows driver. Image is upside down because hardware in this model is upside down. Buttons not tested."
+:comment "Image is upside down because hardware in this model is upside down. Buttons not tested. Needs firmware 'cis3R5B1.fw'"
 
 :model "Iriscan Express 2"
 :interface "USB"
 :usbid "0x07b3" "0x045f"
 :status :complete
-:comment "Works up to 1200 dpi. Calibration with external calibration sheet supported"
+:comment "Works up to 1200 dpi. Calibration with external calibration sheet supported. Needs firmware 'cism216.fw'"
 ; -----------------------------------------------------------------------------
 
 :model "OpticSlim M12"
 :interface "USB"
 :usbid "0x07b3" "0x0412"
 :status :complete
-:comment "Works up to 1200 dpi. Calibration with external calibration sheet supported"
+:comment "Works up to 1200 dpi. Calibration with external calibration sheet supported. Needs firmware 'cism216.fw'"
 ; -----------------------------------------------------------------------------
 
 :mfg "RevScan"
@@ -473,6 +492,6 @@
 :interface "USB"
 :usbid "0x04a7" "0x0444"
 :status :good
-:comment "Works up to 1200 dpi and 12 bits/color."
+:comment "Works up to 1200 dpi and 12 bits/color. Needs firmware 'Cis3r5b1.fw'"
 
 ; -----------------------------------------------------------------------------
