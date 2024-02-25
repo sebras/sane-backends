@@ -254,6 +254,7 @@ static int debug;
 static int run_mode;
 static int run_foreground;
 static int run_once;
+static int allow_network;
 static int data_connect_timeout = 4000;
 static Handle *handle;
 static char *bind_addr;
@@ -1869,7 +1870,7 @@ process_request (Wire * w)
 
 	reply.status =
 	  sane_get_devices ((const SANE_Device ***) &reply.device_list,
-			    SANE_TRUE);
+			    !allow_network);
 	sanei_w_reply (w, (WireCodecFunc) sanei_w_get_devices_reply, &reply);
       }
       break;
@@ -3436,6 +3437,7 @@ static void usage(char *me, int err)
        "  -a, --alone[=user]	        equal to `-l -D -u user'\n"
        "  -l, --listen		        run in standalone mode (listen for connection)\n"
        "  -u, --user=user	        run as `user'\n"
+       "  -n, --allow-network	        allow saned to use network scanners\n"
        "  -D, --daemonize	        run in background\n"
        "  -o, --once		        exit after first client disconnects\n"
        "  -d, --debug=level	        set debug level `level' (default is 2)\n"
@@ -3457,6 +3459,7 @@ static struct option long_options[] =
   {"alone",             optional_argument,      0, 'a'},
   {"listen",            no_argument,            0, 'l'},
   {"user",              required_argument,      0, 'u'},
+  {"allow-network",     no_argument,            0, 'n'},
   {"daemonize",         no_argument,            0, 'D'},
   {"once",              no_argument,            0, 'o'},
   {"debug",             required_argument,      0, 'd'},
@@ -3488,8 +3491,9 @@ main (int argc, char *argv[])
   run_mode = SANED_RUN_INETD;
   run_foreground = SANE_TRUE;
   run_once = SANE_FALSE;
+  allow_network = SANE_FALSE;
 
-  while((c = getopt_long(argc, argv,"ha::lu:Dod:eb:p:B:", long_options, &long_index )) != -1)
+  while((c = getopt_long(argc, argv,"ha::lu:nDod:eb:p:B:", long_options, &long_index )) != -1)
     {
       switch(c) {
       case 'a':
@@ -3503,6 +3507,9 @@ main (int argc, char *argv[])
 	break;
       case 'u':
 	user = optarg;
+	break;
+      case 'n':
+	allow_network = SANE_TRUE;
 	break;
       case 'D':
 	run_foreground = SANE_FALSE;
