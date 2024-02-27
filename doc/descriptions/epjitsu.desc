@@ -26,46 +26,46 @@
 :interface "USB"
 :status :good
 :usbid "0x04c5" "0x10c7"
-:comment "A6-size flatbed. Hardware provides 150/200/300/400/600 dpi in color. Software creates other resolutions, plus grayscale and binary modes. Hardware grayscale mode is not used due to poor calibration."
+:comment "A6-size flatbed. Hardware provides 150/200/300/400/600 dpi in color. Software creates other resolutions, plus grayscale and binary modes. Hardware grayscale mode is not used due to poor calibration. Needs firmware '60f_0A00.nal'"
 
 :model "ScanSnap S300"
 :interface "USB"
 :status :good
 :usbid "0x04c5" "0x1156"
-:comment "Letter-size ADF. Hardware provides duplex, 150/225/300/600 dpi in color on AC or USB power. Software creates other resolutions, plus grayscale and binary modes. All buttons and sensors are exposed. Scanner always scans in _triplex_ color, fast USB required."
+:comment "Letter-size ADF. Hardware provides duplex, 150/225/300/600 dpi in color on AC or USB power. Software creates other resolutions, plus grayscale and binary modes. All buttons and sensors are exposed. Scanner always scans in _triplex_ color, fast USB required. Needs firmware '300_0C00.nal'"
 
 :model "ScanSnap S300M"
 :interface "USB"
 :status :good
 :usbid "0x04c5" "0x117f"
-:comment "Same as S300, with different usb id"
+:comment "Same as S300, with different usb id. Needs firmware '300M_0C00.nal'"
 
 :model "fi-65F"
 :interface "USB"
 :status :good
 :usbid "0x04c5" "0x11bd"
-:comment "Same as fi-60f, with different usb id. Button support untested."
+:comment "Same as fi-60f, with different usb id. Button support untested. Needs firmware '65f_0A01.nal'"
 
 :model "ScanSnap S1300"
 :interface "USB"
 :status :good
 :usbid "0x04c5" "0x11ed"
-:comment "Same as S300, with different usb id"
+:comment "Same as S300, with different usb id. Needs firmware '1300_0C26.nal'"
 
 :model "ScanSnap S1100"
 :interface "USB"
 :status :good
 :usbid "0x04c5" "0x1200"
-:comment "Letter-size ADF. Hardware provides simplex, 300/600 dpi in color on USB power. Software creates other resolutions, plus grayscale and binary modes. All buttons and sensors are exposed. Scanner always scans in _triplex_ color, fast USB required."
+:comment "Letter-size ADF. Hardware provides simplex, 300/600 dpi in color on USB power. Software creates other resolutions, plus grayscale and binary modes. All buttons and sensors are exposed. Scanner always scans in _triplex_ color, fast USB required. Needs firmware '1100_0B00.nal'"
 
 :model "ScanSnap S1300i"
 :interface "USB"
 :status :good
 :usbid "0x04c5" "0x128d"
-:comment "Same as S300, with different usb id"
+:comment "Same as S300, with different usb id. Needs firmware '1300i_0D12.nal'"
 
 :model "ScanSnap S1100i"
 :interface "USB"
 :status :good
 :usbid "0x04c5" "0x1447"
-:comment "Same as S1100, with different usb id"
+:comment "Same as S1100, with different usb id. Needs firmware '1100i_0A00.nal'"
