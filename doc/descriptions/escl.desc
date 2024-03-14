@@ -23,6 +23,11 @@
 :status :good
 :comment "All resolutions supported."
 
+:model "MFC-J453DW"
+:interface "Ethernet WiFi"
+:status :good
+:comment "All resolutions supported, Flatbed and ADF supported."
+
 :model "MFC-J985DW"
 :interface "Ethernet WiFi"
 :status :good
