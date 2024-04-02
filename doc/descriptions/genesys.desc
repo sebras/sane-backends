@@ -71,6 +71,12 @@
 :status :complete
 :comment "900, 1800, 3600 and 7200 dpi resolutions are supported in both regular transparency and infrared modes"
 
+:model "OpticFilm 8200i"
+:interface "USB"
+:usbid "0x07b3" "0x1825"
+:status :unsupported
+:comment "GL128 based"
+
 ; -----------------------------------------------------------------------------
 
 :mfg "Medion/Lifetec/Tevion/Cytron"

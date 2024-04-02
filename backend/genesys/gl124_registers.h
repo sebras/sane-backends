@@ -290,4 +290,4 @@ static constexpr RegAddr REG_TRUEB = 0x112;
 } // namespace gl124
 } // namespace genesys
 
-#endif // BACKEND_GENESYS_GL843_REGISTERS_H
+#endif // BACKEND_GENESYS_GL124_REGISTERS_H
