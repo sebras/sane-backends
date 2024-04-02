@@ -109,7 +109,7 @@ static scsiblk inquiry = {
 static void
 usage (char *msg)
 {
-  fprintf (stderr, "Usage: %s [-hvqf] [devname ...]\n", prog_name);
+  fprintf (stderr, "Usage: %s [-hvqfp] [devname ...]\n", prog_name);
   fprintf (stderr, "\t-h: print this help message\n");
   fprintf (stderr, "\t-v: be more verbose (can be used multiple times)\n");
   fprintf (stderr, "\t-q: be quiet (print only devices, no comments)\n");

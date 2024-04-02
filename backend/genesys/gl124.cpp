@@ -83,8 +83,8 @@ gl124_init_registers (Genesys_Device * dev)
     dev->reg.init_reg(0x05, 0x00);
 
     if(dev->model->sensor_id == SensorId::CIS_CANON_LIDE_120) {
-    dev->reg.init_reg(0x06, 0x50);
-    dev->reg.init_reg(0x07, 0x00);
+        dev->reg.init_reg(0x06, 0x50);
+        dev->reg.init_reg(0x07, 0x00);
     } else {
         dev->reg.init_reg(0x03, 0x50 & ~REG_0x03_AVEENB);
         dev->reg.init_reg(0x06, 0x50 | REG_0x06_GAIN4);
