@@ -1345,7 +1345,7 @@ sane_cancel(SANE_Handle h)
     }
     handler->scanner->work = SANE_FALSE;
     handler->cancel = SANE_TRUE;
-    escl_scanner(handler->device, handler->scanner->scanJob, handler->result);
+    escl_scanner(handler->device, handler->scanner->scanJob, handler->result, SANE_TRUE);
     free(handler->result);
     handler->result = NULL;
     free(handler->scanner->scanJob);
@@ -1566,6 +1566,7 @@ sane_start(SANE_Handle h)
     handler->decompress_scan_data = SANE_FALSE;
     handler->end_read = SANE_FALSE;
     if (handler->scanner->work == SANE_FALSE) {
+       escl_reset_all_jobs(handler->device);
        SANE_Status st = escl_status(handler->device,
                                     handler->scanner->source,
                                     NULL,

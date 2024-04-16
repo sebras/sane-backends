@@ -44,7 +44,32 @@ write_callback(void __sane_unused__*str,
  *        This function is called in the 'sane_cancel' function.
  */
 void
-escl_scanner(const ESCL_Device *device, char *scanJob, char *result)
+escl_delete(const ESCL_Device *device, char *uri)
+{
+    CURL *curl_handle = NULL;
+    long answer = 0;
+
+    if (uri == NULL)
+        return;
+    curl_handle = curl_easy_init();
+    if (curl_handle != NULL) {
+        escl_curl_url(curl_handle, device, uri);
+	curl_easy_setopt(curl_handle, CURLOPT_CUSTOMREQUEST, "DELETE");
+        if (curl_easy_perform(curl_handle) == CURLE_OK) {
+            curl_easy_getinfo(curl_handle, CURLINFO_RESPONSE_CODE, &answer);
+            return;
+        }
+        curl_easy_cleanup(curl_handle);
+    }
+}
+
+/**
+ * \fn void escl_scanner(const ESCL_Device *device, char *result)
+ * \brief Function that resets the scanner after each scan, using curl.
+ *        This function is called in the 'sane_cancel' function.
+ */
+void
+escl_scanner(const ESCL_Device *device, char *scanJob, char *result,  SANE_Bool status)
 {
     CURL *curl_handle = NULL;
     const char *scan_jobs = "/eSCL/";
@@ -70,10 +95,15 @@ CURL_CALL:
             if (i >= 15) return;
         }
         curl_easy_cleanup(curl_handle);
-        if (SANE_STATUS_GOOD != escl_status(device,
-                                            PLATEN,
-                                            NULL,
-                                            NULL))
-            goto CURL_CALL;
+	char* end = strrchr(scan_cmd, '/');
+	*end = 0;
+        escl_delete(device, scan_cmd);
+	if (status) {
+            if (SANE_STATUS_GOOD != escl_status(device,
+                                                PLATEN,
+                                                NULL,
+                                                NULL))
+                goto CURL_CALL;
+	}
     }
 }
