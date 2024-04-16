@@ -248,7 +248,11 @@ SANE_Status escl_scan(capabilities_t *scanner,
 
 void escl_scanner(const ESCL_Device *device,
                   char *scanJob,
-                  char *result);
+                  char *result,
+                  SANE_Bool status);
+
+SANE_Status escl_reset_all_jobs(ESCL_Device *device);
+
 
 typedef void CURL;
 

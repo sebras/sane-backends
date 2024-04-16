@@ -29,6 +29,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
 
 #include <libxml/parser.h>
 
@@ -269,4 +270,136 @@ clean_data:
        goto reload;
     }
     return (status);
+}
+
+static void
+print_xml_job_finish(xmlNode *node,
+                     SANE_Status *job)
+{
+    while (node) {
+        if (node->type == XML_ELEMENT_NODE) {
+            if (find_nodes_s(node)) {
+                if (strcmp((const char *)node->name, "JobState") == 0) {
+                    const char *state = (const char *)xmlNodeGetContent(node);
+                    if (!strcmp(state, "Canceled")) {
+                        *job = SANE_STATUS_GOOD;
+                        DBG(10, "jobId Completed SANE_STATUS_GOOD\n");
+                    }
+                    else if (!strcmp(state, "Aborted")) {
+                        *job = SANE_STATUS_GOOD;
+                        DBG(10, "jobId Completed SANE_STATUS_GOOD\n");
+                    }
+                    else if (!strcmp(state, "Completed")) {
+                        *job = SANE_STATUS_GOOD;
+                        DBG(10, "jobId Completed SANE_STATUS_GOOD\n");
+                    }
+                }
+            }
+        }
+        print_xml_job_finish(node->children, job);
+        node = node->next;
+    }
+}
+
+static void
+print_xml_reset_all_jobs (xmlNode *node,
+                          ESCL_Device *device)
+{
+    DBG(10, "print_xml_reset_all_jobs\n");
+    SANE_Status status = SANE_STATUS_DEVICE_BUSY;
+    while (node) {
+        if (node->type == XML_ELEMENT_NODE) {
+            if (find_nodes_s(node)) {
+                if (strcmp((const char *)node->name, "JobUri") == 0) {
+                    DBG(10, "print_xml_reset_all_jobs: %s\n", node->name);
+		    if (device != NULL) {
+			print_xml_job_finish (node, &status);
+			if (status == SANE_STATUS_DEVICE_BUSY) {
+			    char *jobUri = (char *)xmlNodeGetContent(node);
+			    char *job = strrchr((const char *)jobUri, '/');
+			    char *scanj = NULL;
+			    if (job != NULL) {
+			        if (strstr(jobUri,"ScanJobs"))
+			           scanj = strdup("ScanJobs");
+			        else
+			           scanj = strdup("ScanJob");
+                                DBG(10, "print_xml_reset_all_jobs: %s/%s\n", scanj, job);
+                                escl_scanner(device, scanj, job, SANE_FALSE);
+			        free(scanj);
+			    }
+                            DBG(10, "print_xml_reset_all_jobs: sleep to finish the job\n");
+		        }
+		    }
+                }
+            }
+        }
+        print_xml_reset_all_jobs (node->children,
+                                  device);
+        node = node->next;
+    }
+}
+
+/**
+ * \fn SANE_Status escl_reset_all_jobs (ESCL_Device *device, , char *scanJob)
+ * \brief Function that forces the end of jobs, using curl.
+ *          This function is called in the 'sane_start' function.
+ *
+ * \return status (if everything is OK, status = SANE_STATUS_GOOD, otherwise, SANE_STATUS_NO_MEM/SANE_STATUS_INVAL)
+ */
+SANE_Status
+escl_reset_all_jobs(ESCL_Device *device)
+{
+    CURL *curl_handle = NULL;
+    xmlDoc *data = NULL;
+    xmlNode *node = NULL;
+    struct idle *var = NULL;
+    const char *scanner_status = "/eSCL/ScannerStatus";
+    SANE_Status status = SANE_STATUS_DEVICE_BUSY;
+
+    DBG(10, "escl_reset_all_jobs\n");
+    if (device == NULL)
+        return (SANE_STATUS_NO_MEM);
+    DBG(10, "1 - escl_reset_all_jobs\n");
+    var = (struct idle*)calloc(1, sizeof(struct idle));
+    if (var == NULL)
+        return (SANE_STATUS_NO_MEM);
+    DBG(10, "2 - escl_reset_all_jobs\n");
+    var->memory = malloc(1);
+    var->size = 0;
+    curl_handle = curl_easy_init();
+
+    escl_curl_url(curl_handle, device, scanner_status);
+    curl_easy_setopt(curl_handle, CURLOPT_WRITEFUNCTION, memory_callback_s);
+    curl_easy_setopt(curl_handle, CURLOPT_WRITEDATA, (void *)var);
+    curl_easy_setopt(curl_handle, CURLOPT_FOLLOWLOCATION, 1L);
+    curl_easy_setopt(curl_handle, CURLOPT_MAXREDIRS, 3L);
+    CURLcode res = curl_easy_perform(curl_handle);
+    if (res != CURLE_OK) {
+        DBG( 1, "The scanner didn't respond: %s\n", curl_easy_strerror(res));
+        status = SANE_STATUS_INVAL;
+        goto clean_data1;
+    }
+    DBG(10, "3 - escl_reset_all_jobs\n");
+    DBG( 10, "eSCL : Status : %s.\n", var->memory);
+    data = xmlReadMemory(var->memory, var->size, "file.xml", NULL, 0);
+    if (data == NULL) {
+        status = SANE_STATUS_NO_MEM;
+        goto clean_data1;
+    }
+    node = xmlDocGetRootElement(data);
+    if (node == NULL) {
+        status = SANE_STATUS_NO_MEM;
+        goto clean1;
+    }
+    print_xml_reset_all_jobs (node, device);
+    status = SANE_STATUS_GOOD;
+clean1:
+    xmlFreeDoc(data);
+clean_data1:
+    xmlCleanupParser();
+    xmlMemoryDump();
+    curl_easy_cleanup(curl_handle);
+    free(var->memory);
+    free(var);
+    return status;
 }
