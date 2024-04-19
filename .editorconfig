@@ -6,7 +6,8 @@
 # Your editor may need a plugin for this configuration to take effect.
 # See http://editorconfig.org/#download for details.
 
-root = true                     ; look no further
+; look no further
+root = true
 
 [*]
 charset = utf-8
