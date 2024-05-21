@@ -201,10 +201,8 @@ find_valor_of_array_variables(xmlNode *node, capabilities_t *scanner, int type)
 {
     const char *name = (const char *)node->name;
     if (strcmp(name, "ColorMode") == 0) {
+#ifndef HAVE_POPPLER_GLIB
 	const char *color = (SANE_String_Const)xmlNodeGetContent(node);
-#if HAVE_POPPLER_GLIB
-        if (type == PLATEN || strcmp(color, "BlackAndWhite1"))
-#else
         if (strcmp(color, "BlackAndWhite1"))
 #endif
           scanner->caps[type].ColorModes = char_to_array(scanner->caps[type].ColorModes, &scanner->caps[type].ColorModesSize, (SANE_String_Const)xmlNodeGetContent(node), 1);
@@ -235,14 +233,14 @@ find_valor_of_array_variables(xmlNode *node, capabilities_t *scanner, int type)
             }
 #endif
 #if(defined HAVE_TIFFIO_H)
-            else if(type == PLATEN && !strcmp(scanner->caps[type].DocumentFormats[i], "image/tiff"))
+            else if(!strcmp(scanner->caps[type].DocumentFormats[i], "image/tiff"))
             {
                have_tiff = SANE_TRUE;
 	       scanner->caps[type].have_tiff = i;
             }
 #endif
 #if HAVE_POPPLER_GLIB
-            else if(type == PLATEN && !strcmp(scanner->caps[type].DocumentFormats[i], "application/pdf"))
+            else if(!strcmp(scanner->caps[type].DocumentFormats[i], "application/pdf"))
             {
                have_pdf = SANE_TRUE;
 	       scanner->caps[type].have_pdf = i;
