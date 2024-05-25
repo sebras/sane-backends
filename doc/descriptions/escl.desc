@@ -151,6 +151,16 @@
 :status :good
 :comment "All resolutions supported."
 
+:model "PIXMA TS5100"
+:interface "WiFi"
+:status :good
+:comment "All resolutions supported."
+
+:model "PIXMA TS5150"
+:interface "WiFi"
+:status :good
+:comment "All resolutions supported."
+
 :model "PIXMA TS5350 Series"
 :interface "WiFi"
 :status :good
