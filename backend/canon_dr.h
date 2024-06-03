@@ -80,6 +80,7 @@ enum scanner_Option
   OPT_TOTALCOUNTER,
   OPT_ADF_LOADED,
   OPT_CARD_LOADED,
+  OPT_FUNCTION_NUMBER,
 
   /* must come last: */
   NUM_OPTIONS
@@ -250,6 +251,7 @@ struct scanner
   int has_hwcrop;
   int has_pre_imprinter;
   int has_post_imprinter;
+  int has_function_number;
   int can_read_sensors;
   int can_read_panel;
   int can_write_panel;
@@ -445,6 +447,7 @@ struct scanner
   int panel_bypass_mode;
   int panel_enable_led;
   int panel_counter;
+  int panel_function_number;
   int sensor_adf_loaded;
   int sensor_card_loaded;
   int roller_counter;

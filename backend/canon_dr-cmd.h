@@ -247,6 +247,7 @@ putnbyte (unsigned char *pnt, unsigned int value, unsigned int nbytes)
 #define get_R_PANEL_count_only(in)	getbitfield(in+1, 1, 1)
 #define get_R_PANEL_bypass_mode(in)	getbitfield(in+1, 1, 2)
 #define get_R_PANEL_enable_led(in)	getbitfield(in+2, 1, 0)
+#define get_R_PANEL_function_number(in)	getbitfield(in+3, 0xf, 0)
 #define get_R_PANEL_counter(in)         getnbyte(in + 0x04, 4)
 
 /*sensors*/
