@@ -64,7 +64,7 @@ get_PNG_data(capabilities_t *scanner, int *width, int *height, int *bps)
 	// check for valid magic number
 	if (!png_check_sig (magic, sizeof (magic)))
 	{
-		DBG( 1, "Escl Png : PNG error is not a valid PNG image!\n");
+		DBG( 10, "Escl Png : PNG error is not a valid PNG image!\n");
                 status = SANE_STATUS_INVAL;
                 goto close_file;
 	}
@@ -73,7 +73,7 @@ get_PNG_data(capabilities_t *scanner, int *width, int *height, int *bps)
 		(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
 	if (!png_ptr)
 	{
-		DBG( 1, "Escl Png : PNG error create a png read struct\n");
+		DBG( 10, "Escl Png : PNG error create a png read struct\n");
                 status = SANE_STATUS_INVAL;
                 goto close_file;
 	}
@@ -81,7 +81,7 @@ get_PNG_data(capabilities_t *scanner, int *width, int *height, int *bps)
 	png_infop info_ptr = png_create_info_struct (png_ptr);
 	if (!info_ptr)
 	{
-		DBG( 1, "Escl Png : PNG error create a png info struct\n");
+		DBG( 10, "Escl Png : PNG error create a png info struct\n");
 		png_destroy_read_struct (&png_ptr, NULL, NULL);
                 status = SANE_STATUS_INVAL;
                 goto close_file;
@@ -93,7 +93,7 @@ get_PNG_data(capabilities_t *scanner, int *width, int *height, int *bps)
 		png_destroy_read_struct (&png_ptr, &info_ptr, NULL);
 		if (surface)
 		  free (surface);
-		DBG( 1, "Escl Png : PNG read error.\n");
+		DBG( 10, "Escl Png : PNG read error.\n");
                 status = SANE_STATUS_INVAL;
                 goto close_file;
 	}
@@ -145,7 +145,7 @@ get_PNG_data(capabilities_t *scanner, int *width, int *height, int *bps)
     surface = (unsigned char *)malloc (sizeof (unsigned char) * w
                     * h * components);
     if (!surface) {
-        DBG( 1, "Escl Png : texels Memory allocation problem\n");
+        DBG( 10, "Escl Png : texels Memory allocation problem\n");
         status = SANE_STATUS_NO_MEM;
 	goto close_file;
     }
@@ -153,7 +153,7 @@ get_PNG_data(capabilities_t *scanner, int *width, int *height, int *bps)
     // setup a pointer array.  Each one points at the begening of a row.
     row_pointers = (png_bytep *)malloc (sizeof (png_bytep) * h);
     if (!row_pointers) {
-        DBG( 1, "Escl Png : row_pointers Memory allocation problem\n");
+        DBG( 10, "Escl Png : row_pointers Memory allocation problem\n");
         free(surface);
         status = SANE_STATUS_NO_MEM;
 	goto close_file;
@@ -169,7 +169,7 @@ get_PNG_data(capabilities_t *scanner, int *width, int *height, int *bps)
     // If necessary, trim the image.
     surface = escl_crop_surface(scanner, surface, w, h, components, width, height);
     if (!surface)  {
-        DBG( 1, "Escl Png : Surface Memory allocation problem\n");
+        DBG( 10, "Escl Png : Surface Memory allocation problem\n");
         status = SANE_STATUS_NO_MEM;
 	goto close_file;
     }

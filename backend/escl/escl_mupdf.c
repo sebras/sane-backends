@@ -220,7 +220,7 @@ get_PDF_data(capabilities_t *scanner, int *width, int *height, int *bps)
     // If necessary, trim the image.
     surface = escl_crop_surface(scanner, surface, pix->w, pix->h, pix->n, width, height);
     if (!surface)  {
-        DBG( 1, "Escl Pdf : Surface Memory allocation problem\n");
+        DBG( 10, "Escl Pdf : Surface Memory allocation problem\n");
         status = SANE_STATUS_NO_MEM;
 	goto drop_pix;
     }

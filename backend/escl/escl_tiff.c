@@ -65,7 +65,7 @@ get_TIFF_data(capabilities_t *scanner, int *width, int *height, int *bps)
     lseek(fileno(scanner->tmp), 0, SEEK_SET);
     tif = TIFFFdOpen(fileno(scanner->tmp), "temp", "r");
     if (!tif) {
-        DBG( 1, "Escl Tiff : Can not open, or not a TIFF file.\n");
+        DBG( 10, "Escl Tiff : Can not open, or not a TIFF file.\n");
         status = SANE_STATUS_INVAL;
 	goto close_file;
     }
@@ -76,14 +76,14 @@ get_TIFF_data(capabilities_t *scanner, int *width, int *height, int *bps)
     surface = (unsigned char*) malloc(npixels * sizeof (uint32_t));
     if (surface == NULL)
     {
-        DBG( 1, "Escl Tiff : raster Memory allocation problem.\n");
+        DBG( 10, "Escl Tiff : raster Memory allocation problem.\n");
         status = SANE_STATUS_INVAL;
 	goto close_tiff;
     }
 
     if (!TIFFReadRGBAImage(tif, w, h, (uint32_t *)surface, 0))
     {
-        DBG( 1, "Escl Tiff : Problem reading image data.\n");
+        DBG( 10, "Escl Tiff : Problem reading image data.\n");
         status = SANE_STATUS_INVAL;
         free(surface);
 	goto close_tiff;
@@ -94,7 +94,7 @@ get_TIFF_data(capabilities_t *scanner, int *width, int *height, int *bps)
     // If necessary, trim the image.
     surface = escl_crop_surface(scanner, surface, w, h, components, width, height);
     if (!surface)  {
-        DBG( 1, "Escl Tiff : Surface Memory allocation problem\n");
+        DBG( 10, "Escl Tiff : Surface Memory allocation problem\n");
         status = SANE_STATUS_INVAL;
     }
 

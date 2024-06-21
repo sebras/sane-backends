@@ -96,7 +96,7 @@ download_callback(void *str, size_t size, size_t nmemb, void *userp)
     char *content = realloc(download->memory, download->size + realsize + 1);
 
     if (content == NULL) {
-        DBG( 1, "Not enough memory (realloc returned NULL)\n");
+        DBG( 10, "Not enough memory (realloc returned NULL)\n");
         return (0);
     }
     download->memory = content;
@@ -144,19 +144,19 @@ escl_newjob (capabilities_t *scanner, const ESCL_Device *device, SANE_Status *st
     *status = SANE_STATUS_GOOD;
     if (device == NULL || scanner == NULL) {
         *status = SANE_STATUS_NO_MEM;
-        DBG( 1, "Create NewJob : the name or the scan are invalid.\n");
+        DBG( 10, "Create NewJob : the name or the scan are invalid.\n");
         return (NULL);
     }
     upload = (struct downloading *)calloc(1, sizeof(struct downloading));
     if (upload == NULL) {
         *status = SANE_STATUS_NO_MEM;
-        DBG( 1, "Create NewJob : memory allocation failure\n");
+        DBG( 10, "Create NewJob : memory allocation failure\n");
         return (NULL);
     }
     download = (struct downloading *)calloc(1, sizeof(struct downloading));
     if (download == NULL) {
         free(upload);
-        DBG( 1, "Create NewJob : memory allocation failure\n");
+        DBG( 10, "Create NewJob : memory allocation failure\n");
         *status = SANE_STATUS_NO_MEM;
         return (NULL);
     }
@@ -205,7 +205,7 @@ escl_newjob (capabilities_t *scanner, const ESCL_Device *device, SANE_Status *st
 		       "   <scan:Duplex>%s</scan:Duplex>",
 		       scanner->source == ADFDUPLEX ? "true" : "false");
     }
-    DBG( 1, "Create NewJob : %s\n", scanner->caps[scanner->source].default_format);
+    DBG( 10, "Create NewJob : %s\n", scanner->caps[scanner->source].default_format);
     if (scanner->caps[scanner->source].pos_x > scanner->caps[scanner->source].width)
          off_x = (scanner->caps[scanner->source].pos_x > scanner->caps[scanner->source].width) / 2;
     if (scanner->caps[scanner->source].pos_y > scanner->caps[scanner->source].height)
@@ -278,7 +278,7 @@ escl_newjob (capabilities_t *scanner, const ESCL_Device *device, SANE_Status *st
     upload->memory = strdup(cap_data);
     upload->size = strlen(cap_data);
 wake_up_device:
-    DBG( 1, "Create NewJob : %s\n", cap_data);
+    DBG( 10, "Create NewJob : %s\n", cap_data);
     download->memory = malloc(1);
     download->size = 0;
     curl_handle = curl_easy_init();
@@ -293,7 +293,7 @@ wake_up_device:
         curl_easy_setopt(curl_handle, CURLOPT_MAXREDIRS, 3L);
         CURLcode res = curl_easy_perform(curl_handle);
         if (res != CURLE_OK) {
-            DBG( 1, "Create NewJob : the scanner responded incorrectly: %s\n", curl_easy_strerror(res));
+            DBG( 10, "Create NewJob : the scanner responded incorrectly: %s\n", curl_easy_strerror(res));
             *status = SANE_STATUS_INVAL;
         }
         else {
@@ -308,7 +308,7 @@ wake_up_device:
                        location = strrchr(tmp_location,'/');
                        if (location) {
                           result = strdup(location);
-                          DBG( 1, "Create NewJob : %s\n", result);
+                          DBG( 10, "Create NewJob : %s\n", result);
                           *temporary = '\n';
                           *location = '\0';
                           location = strrchr(tmp_location,'/');
@@ -316,7 +316,7 @@ wake_up_device:
                           if (location) {
                              location++;
                              scanner->scanJob = strdup(location);
-                             DBG( 1, "Full location header [%s]\n", scanner->scanJob);
+                             DBG( 10, "Full location header [%s]\n", scanner->scanJob);
                           }
                           else
                              scanner->scanJob = strdup("ScanJobs");
@@ -324,14 +324,14 @@ wake_up_device:
                        }
                     }
                     if (result == NULL) {
-                        DBG( 1, "Error : Create NewJob, no location: %s\n", download->memory);
+                        DBG( 10, "Error : Create NewJob, no location: %s\n", download->memory);
                         *status = SANE_STATUS_INVAL;
                     }
                     free(download->memory);
                     download->memory = NULL;
                 }
                 else {
-                    DBG( 1, "Create NewJob : The creation of the failed job: %s\n", download->memory);
+                    DBG( 10, "Create NewJob : The creation of the failed job: %s\n", download->memory);
                     // If "409 Conflict" appear it means that there is no paper in feeder
                     if (strstr(download->memory, "409 Conflict") != NULL)
                         *status = SANE_STATUS_NO_DOCS;
@@ -346,7 +346,7 @@ wake_up_device:
             }
             else {
                 *status = SANE_STATUS_NO_MEM;
-                DBG( 1, "Create NewJob : The creation of the failed job\n");
+                DBG( 10, "Create NewJob : The creation of the failed job\n");
                 return (NULL);
             }
         }
