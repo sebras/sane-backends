@@ -179,7 +179,7 @@ get_JPEG_data(capabilities_t *scanner, int *width, int *height, int *bps)
         if (surface != NULL)
             free(surface);
 	fseek(scanner->tmp, start, SEEK_SET);
-        DBG( 1, "Escl Jpeg : Error reading jpeg\n");
+        DBG( 10, "Escl Jpeg : Error reading jpeg\n");
         if (scanner->tmp) {
            fclose(scanner->tmp);
            scanner->tmp = NULL;
@@ -241,7 +241,7 @@ get_JPEG_data(capabilities_t *scanner, int *width, int *height, int *bps)
     surface = malloc(cinfo.output_width * cinfo.output_height * cinfo.output_components);
     if (surface == NULL) {
         jpeg_destroy_decompress(&cinfo);
-        DBG( 1, "Escl Jpeg : Memory allocation problem\n");
+        DBG( 10, "Escl Jpeg : Memory allocation problem\n");
         if (scanner->tmp) {
            fclose(scanner->tmp);
            scanner->tmp = NULL;

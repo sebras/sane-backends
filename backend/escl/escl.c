@@ -416,7 +416,7 @@ convertFromESCLDev(ESCL_Device *cdev)
              unix_path, cdev->https ? "s" : "", cdev->ip_address, cdev->port_nb);
     sdev->name = tmp;
 
-    DBG( 1, "Escl add device : %s\n", tmp);
+    DBG( 10, "Escl add device : %s\n", tmp);
     sdev->vendor = get_vendor(cdev->model_name);
 
     if (!sdev->vendor)
@@ -1888,24 +1888,24 @@ escl_curl_url(CURL *handle, const ESCL_Device *device, SANE_String_Const path)
              (device->https ? "https" : "http"), device->ip_address,
              device->port_nb, path);
 
-    DBG( 1, "escl_curl_url: URL: %s\n", url );
+    DBG( 10, "escl_curl_url: URL: %s\n", url );
     curl_easy_setopt(handle, CURLOPT_URL, url);
     free(url);
-    DBG( 1, "Before use hack\n");
+    DBG( 10, "Before use hack\n");
     if (device->hack) {
-        DBG( 1, "Use hack\n");
+        DBG( 10, "Use hack\n");
         curl_easy_setopt(handle, CURLOPT_HTTPHEADER, device->hack);
     }
-    DBG( 1, "After use hack\n");
+    DBG( 10, "After use hack\n");
     if (device->https) {
-        DBG( 1, "Ignoring safety certificates, use https\n");
+        DBG( 10, "Ignoring safety certificates, use https\n");
         curl_easy_setopt(handle, CURLOPT_SSL_VERIFYPEER, 0L);
         curl_easy_setopt(handle, CURLOPT_SSL_VERIFYHOST, 0L);
         if (device->tls > 0)
            curl_easy_setopt(handle, CURLOPT_SSLVERSION, device->tls);
     }
     if (device->unix_socket != NULL) {
-        DBG( 1, "Using local socket %s\n", device->unix_socket );
+        DBG( 10, "Using local socket %s\n", device->unix_socket );
         curl_easy_setopt(handle, CURLOPT_UNIX_SOCKET_PATH,
                          device->unix_socket);
     }

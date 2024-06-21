@@ -44,7 +44,7 @@ escl_crop_surface(capabilities_t *scanner,
     int real_h = 0;
     unsigned char *surface_crop = NULL;
 
-    DBG( 1, "Escl Image Crop\n");
+    DBG( 10, "Escl Image Crop\n");
     ratio = (double)w / (double)scanner->caps[scanner->source].width;
     scanner->caps[scanner->source].width = w;
     if (scanner->caps[scanner->source].pos_x < 0)
@@ -62,18 +62,18 @@ escl_crop_surface(capabilities_t *scanner,
        y_off = (int)((double)scanner->caps[scanner->source].pos_y * ratio);
     real_h = scanner->caps[scanner->source].height - y_off;
 
-    DBG( 1, "Escl Image Crop [%dx%d|%dx%d]\n", scanner->caps[scanner->source].pos_x, scanner->caps[scanner->source].pos_y,
+    DBG( 10, "Escl Image Crop [%dx%d|%dx%d]\n", scanner->caps[scanner->source].pos_x, scanner->caps[scanner->source].pos_y,
 		    scanner->caps[scanner->source].width, scanner->caps[scanner->source].height);
 
     *width = real_w;
     *height = real_h;
-    DBG( 1, "Escl Image Crop [%dx%d]\n", *width, *height);
+    DBG( 10, "Escl Image Crop [%dx%d]\n", *width, *height);
     if (x_off > 0 || real_w < scanner->caps[scanner->source].width ||
         y_off > 0 || real_h < scanner->caps[scanner->source].height) {
           surface_crop = (unsigned char *)malloc (sizeof (unsigned char) * real_w
                      * real_h * bps);
 	  if(!surface_crop) {
-             DBG( 1, "Escl Crop : Surface_crop Memory allocation problem\n");
+             DBG( 10, "Escl Crop : Surface_crop Memory allocation problem\n");
 	     free(surface);
 	     surface = NULL;
 	     goto finish;
