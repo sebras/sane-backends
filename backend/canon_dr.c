@@ -3216,6 +3216,22 @@ sane_get_option_descriptor (SANE_Handle handle, SANE_Int option)
       opt->cap = SANE_CAP_INACTIVE;
   }
 
+  if(option==OPT_FUNCTION_NUMBER){
+    opt->name = "function-number";
+    opt->title = "Function number";
+    opt->desc = "Function number set on panel";
+    opt->type = SANE_TYPE_INT;
+    opt->unit = SANE_UNIT_NONE;
+    opt->constraint_type = SANE_CONSTRAINT_RANGE;
+    opt->constraint.range = &s->counter_range;
+    s->counter_range.min=1;
+    s->counter_range.max=9;
+    s->counter_range.quant=1;
+    opt->cap = SANE_CAP_SOFT_DETECT | SANE_CAP_HARD_SELECT | SANE_CAP_ADVANCED;
+    if(!s->can_read_panel || !s->has_function_number)
+      opt->cap = SANE_CAP_INACTIVE;
+  }
+
   if(option==OPT_ADF_LOADED){
     opt->name = "adf-loaded";
     opt->title = "ADF Loaded";
@@ -3235,22 +3251,6 @@ sane_get_option_descriptor (SANE_Handle handle, SANE_Int option)
     opt->unit = SANE_UNIT_NONE;
     opt->cap = SANE_CAP_SOFT_DETECT | SANE_CAP_HARD_SELECT | SANE_CAP_ADVANCED;
     if(!s->can_read_sensors || !s->has_card)
-      opt->cap = SANE_CAP_INACTIVE;
-  }
-
-  if(option==OPT_FUNCTION_NUMBER){
-    opt->name = "function-number";
-    opt->title = "Function number";
-    opt->desc = "Function number set on panel";
-    opt->type = SANE_TYPE_INT;
-    opt->unit = SANE_UNIT_NONE;
-    opt->constraint_type = SANE_CONSTRAINT_RANGE;
-    opt->constraint.range = &s->counter_range;
-    s->counter_range.min=1;
-    s->counter_range.max=9;
-    s->counter_range.quant=1;
-    opt->cap = SANE_CAP_SOFT_DETECT | SANE_CAP_HARD_SELECT | SANE_CAP_ADVANCED;
-    if(!s->can_read_panel || !s->has_function_number)
       opt->cap = SANE_CAP_INACTIVE;
   }
 
@@ -3672,6 +3672,11 @@ sane_control_option (SANE_Handle handle, SANE_Int option,
           *val_p = s->total_counter;
           return ret;
 
+        case OPT_FUNCTION_NUMBER:
+          ret = read_panel(s, OPT_FUNCTION_NUMBER);
+          *val_p = s->panel_function_number;
+          return ret;
+
         case OPT_ADF_LOADED:
           ret = read_sensors(s,OPT_ADF_LOADED);
           *val_p = s->sensor_adf_loaded;
@@ -3681,11 +3686,6 @@ sane_control_option (SANE_Handle handle, SANE_Int option,
           ret = read_sensors(s,OPT_CARD_LOADED);
           *val_p = s->sensor_card_loaded;
           return ret;
-
-	case OPT_FUNCTION_NUMBER:
-	  ret = read_panel(s, OPT_FUNCTION_NUMBER);
-	  *val_p = s->panel_function_number;
-	  return ret;
       }
   }
   else if (action == SANE_ACTION_SET_VALUE) {

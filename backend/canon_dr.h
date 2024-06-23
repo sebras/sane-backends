@@ -78,9 +78,9 @@ enum scanner_Option
   OPT_COUNTER,
   OPT_ROLLERCOUNTER,
   OPT_TOTALCOUNTER,
+  OPT_FUNCTION_NUMBER,
   OPT_ADF_LOADED,
   OPT_CARD_LOADED,
-  OPT_FUNCTION_NUMBER,
 
   /* must come last: */
   NUM_OPTIONS
@@ -454,7 +454,7 @@ struct scanner
   int total_counter;
 
   /* values which are used to track the frontend's access to sensors  */
-  char panel_read[OPT_COUNTER - OPT_START + 1];
+  char panel_read[OPT_FUNCTION_NUMBER - OPT_START + 1];
   char sensors_read[OPT_CARD_LOADED - OPT_ADF_LOADED + 1];
 };
 
