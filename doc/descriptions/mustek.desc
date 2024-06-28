@@ -123,10 +123,10 @@
 :interface "SCSI"
 :status :good
 
-:model "Paragon 1200 A3 Pro"
+:model "Paragon 1200 A3 Pro/1200 A3 Pro"
 :interface "SCSI"
 :status :complete
-:comment "ADF and TA untested. Please contact me if you own such equipment."
+:comment "ADF and TA untested. Both Paragon branded and not. Please contact me if you own such equipment."
 
 :model "Paragon 600 II N"
 :interface "Proprietary"
