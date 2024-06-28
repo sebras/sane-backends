@@ -35,7 +35,7 @@ ScanExpress A3 SP
 .br
 Paragon 1200 SP Pro
 .br
-Paragon 1200 A3 Pro
+Paragon 1200 A3 Pro/1200 A3 Pro
 .br
 Paragon 600 II EP
 .br
@@ -57,7 +57,7 @@ More details can be found on the Mustek SCSI backend homepage
 .IR http://www.meier\-geinitz.de/sane/mustek\-backend/ .
 .PP
 Don't mix up MFS (Paragon), Pro and ScanExpress models! They're
-completely different. Check the exact model name!
+completely different. Check the exact model name! Note that we have encountered some Mustek models that are not specifically Paragon branded (e.g. "1200 A3 Pro"), but are also known to work.
 .PP
 Note that most of the above scanners come with a SCSI interface.  The only
 non-SCSI scanners that have some support at this point is the 600 II N and 600
