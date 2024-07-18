@@ -363,6 +363,12 @@
 #define TS7700A_PID 0x1111
 #define GX6500_PID 0x1148
 
+/* 2024 new device (untested) */
+#define TS3600_PID 0x1156
+#define TS3700_PID 0x1158
+#define E3600_PID 0x1157
+
+
 /* Generation 4 XML messages that encapsulates the Pixma protocol messages */
 #define XML_START_1   \
 "<?xml version=\"1.0\" encoding=\"utf-8\" ?>\
@@ -2016,6 +2022,10 @@ const pixma_config_t pixma_mp150_devices[] = {
   DEVICE ("Canon PIXMA TS7700i series", "TS7700i", TS7700i_PID, 0, 1200, 0, 0, 638, 877, PIXMA_CAP_CIS),
   DEVICE ("Canon PIXMA TS7700A series", "TS7700A", TS7700A_PID, 0, 1200, 0, 0, 638, 877, PIXMA_CAP_CIS),
   DEVICE ("Canon PIXMA GX6500 series", "GX6500", GX6500_PID, 0, 1200, 0, 0, 638, 877, PIXMA_CAP_CIS | PIXMA_CAP_ADF),
+
+  DEVICE ("Canon PIXMA TS3600 Series", "TS3600", TS2400_PID, 0, 1200, 0, 0, 638, 877, PIXMA_CAP_CIS),
+  DEVICE ("Canon PIXMA TS3700 Series", "TS3700", TS2600_PID, 0, 1200, 0, 0, 638, 877, PIXMA_CAP_CIS),
+  DEVICE ("Canon PIXMA E3400 Series", "E3400", E3400_PID, 0, 600, 0, 0, 638, 877, PIXMA_CAP_CIS | PIXMA_CAP_ADF),
 
   END_OF_DEVICE_LIST
 };
