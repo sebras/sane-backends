@@ -115,7 +115,7 @@ get_PNG_data(capabilities_t *scanner, int *width, int *height, int *bps)
 		png_set_palette_to_rgb (png_ptr);
 	else if (color_type != PNG_COLOR_TYPE_RGB && color_type != PNG_COLOR_TYPE_RGB_ALPHA)
 	{
-                DBG(1, "PNG format not supported.\n");
+                DBG(10, "PNG format not supported.\n");
                 status = SANE_STATUS_NO_MEM;
                 goto close_file;
 	}

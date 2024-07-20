@@ -523,7 +523,7 @@ attach_one_config(SANEI_Config __sane_unused__ *config, const char *line,
         line = sanei_config_get_string(line + 6, &name_str);
         DBG (10, "New Escl_Device URL [%s].\n", (name_str ? name_str : "VIDE"));
         if (!name_str || !*name_str) {
-            DBG (1, "Escl_Device URL missing.\n");
+            DBG(10, "Escl_Device URL missing.\n");
             return SANE_STATUS_INVAL;
         }
         if (*line) {
@@ -1163,19 +1163,19 @@ escl_parse_name(SANE_String_Const name, ESCL_Device *device)
         device->type = strdup("http");
         host = name + 7;
     } else {
-        DBG(1, "Unknown URL scheme in %s", name);
+        DBG(10, "Unknown URL scheme in %s", name);
         return SANE_STATUS_INVAL;
     }
 
     port_str = strchr(host, ':');
     if (port_str == NULL) {
-        DBG(1, "Port missing from URL: %s", name);
+        DBG(10, "Port missing from URL: %s", name);
         return SANE_STATUS_INVAL;
     }
     port_str++;
     device->port_nb = atoi(port_str);
     if (device->port_nb < 1 || device->port_nb > 65535) {
-        DBG(1, "Invalid port number in URL: %s", name);
+        DBG(10, "Invalid port number in URL: %s", name);
         return SANE_STATUS_INVAL;
     }
 
@@ -1201,7 +1201,7 @@ _get_hack(SANE_String_Const name, ESCL_Device *device)
   fp = sanei_config_open (ESCL_CONFIG_FILE);
   if (!fp)
     {
-      DBG (2, "_get_hack: couldn't access %s\n", ESCL_CONFIG_FILE);
+      DBG(4, "_get_hack: couldn't access %s\n", ESCL_CONFIG_FILE);
       DBG (3, "_get_hack: exit\n");
     }
 
@@ -1236,7 +1236,7 @@ _get_blacklist_pdf(void)
   fp = sanei_config_open (ESCL_CONFIG_FILE);
   if (!fp)
     {
-      DBG (2, "_get_blacklit: couldn't access %s\n", ESCL_CONFIG_FILE);
+      DBG(4, "_get_blacklit: couldn't access %s\n", ESCL_CONFIG_FILE);
       DBG (3, "_get_blacklist: exit\n");
     }
 
@@ -1558,7 +1558,7 @@ sane_start(SANE_Handle h)
     int bps = 0;
 
     if (handler->device == NULL) {
-        DBG(1, "Missing handler device.\n");
+        DBG(10, "Missing handler device.\n");
         return (SANE_STATUS_INVAL);
     }
     handler->cancel = SANE_FALSE;

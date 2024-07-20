@@ -121,21 +121,21 @@ get_PDF_data(capabilities_t *scanner, int *width, int *height, int *bps)
 
     file = g_mapped_file_new_from_fd (fileno (scanner->tmp), 0, NULL);
     if (!file) {
-                DBG(1, "Error : g_mapped_file_new_from_fd");
+                DBG(10, "Error : g_mapped_file_new_from_fd");
                 status =  SANE_STATUS_INVAL;
                 goto close_file;
         }
 
     bytes = g_mapped_file_get_bytes (file);
     if (!bytes) {
-                DBG(1, "Error : g_mapped_file_get_bytes");
+                DBG(10, "Error : g_mapped_file_get_bytes");
                 status =  SANE_STATUS_INVAL;
                 goto free_file;
         }
 
     doc = poppler_document_new_from_bytes (bytes, NULL, NULL);
     if (!doc) {
-                DBG(1, "Error : poppler_document_new_from_bytes");
+                DBG(10, "Error : poppler_document_new_from_bytes");
                 status =  SANE_STATUS_INVAL;
                 goto free_bytes;
         }
@@ -145,14 +145,14 @@ get_PDF_data(capabilities_t *scanner, int *width, int *height, int *bps)
 
     data = (char*)set_file_in_buffer(scanner->tmp, &size);
     if (!data) {
-                DBG(1, "Error : set_file_in_buffer");
+                DBG(10, "Error : set_file_in_buffer");
                 status =  SANE_STATUS_INVAL;
                 goto close_file;
         }
 
     doc = poppler_document_new_from_data (data, size, NULL, NULL);
     if (!doc) {
-                DBG(1, "Error : poppler_document_new_from_data");
+                DBG(10, "Error : poppler_document_new_from_data");
                 status =  SANE_STATUS_INVAL;
                 goto free_data;
         }
@@ -160,7 +160,7 @@ get_PDF_data(capabilities_t *scanner, int *width, int *height, int *bps)
 
     page = poppler_document_get_page (doc, 0);
     if (!page) {
-                DBG(1, "Error : poppler_document_get_page");
+                DBG(10, "Error : poppler_document_get_page");
                 status =  SANE_STATUS_INVAL;
                 goto free_doc;
         }
@@ -172,14 +172,14 @@ get_PDF_data(capabilities_t *scanner, int *width, int *height, int *bps)
     h = (int)ceil(dh);
     cairo_surface = cairo_image_surface_create (CAIRO_FORMAT_ARGB32, w, h);
     if (!cairo_surface) {
-                DBG(1, "Error : cairo_image_surface_create");
+                DBG(10, "Error : cairo_image_surface_create");
                 status =  SANE_STATUS_INVAL;
                 goto free_page;
         }
 
     cr = cairo_create (cairo_surface);
     if (!cairo_surface) {
-                DBG(1, "Error : cairo_create");
+                DBG(10, "Error : cairo_create");
                 status =  SANE_STATUS_INVAL;
                 goto free_surface;
         }
@@ -196,26 +196,26 @@ get_PDF_data(capabilities_t *scanner, int *width, int *height, int *bps)
     int st = cairo_status(cr);
     if (st)
     {
-        DBG(1, "%s", cairo_status_to_string (st));
+        DBG(10, "%s", cairo_status_to_string (st));
                 status =  SANE_STATUS_INVAL;
         goto destroy_cr;
     }
 
     *bps = 3;
 
-    DBG(1, "Escl Pdf : Image Size [%dx%d]\n", w, h);
+    DBG(10, "Escl Pdf : Image Size [%dx%d]\n", w, h);
 
     surface = cairo_surface_to_pixels (cairo_surface, *bps);
     if (!surface)  {
         status = SANE_STATUS_NO_MEM;
-        DBG(1, "Escl Pdf : Surface Memory allocation problem");
+        DBG(10, "Escl Pdf : Surface Memory allocation problem");
         goto destroy_cr;
     }
 
     // If necessary, trim the image.
     surface = escl_crop_surface(scanner, surface, w, h, *bps, width, height);
     if (!surface)  {
-        DBG(1, "Escl Pdf Crop: Surface Memory allocation problem");
+        DBG(10, "Escl Pdf Crop: Surface Memory allocation problem");
         status = SANE_STATUS_NO_MEM;
     }
 
