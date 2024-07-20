@@ -137,7 +137,7 @@ get_PDF_data(capabilities_t *scanner, int *width, int *height, int *bps)
     ctx = fz_new_context(NULL, NULL, FZ_STORE_UNLIMITED);
     if (!ctx)
     {
-    	DBG(1, "cannot create mupdf context\n");
+    	DBG(10, "cannot create mupdf context\n");
     	status =  SANE_STATUS_INVAL;
 	goto close_file;
     }
@@ -147,7 +147,7 @@ get_PDF_data(capabilities_t *scanner, int *width, int *height, int *bps)
     	fz_register_document_handlers(ctx);
     fz_catch(ctx)
     {
-    	DBG(1, "cannot register document handlers: %s\n", fz_caught_message(ctx));
+    	DBG(10, "cannot register document handlers: %s\n", fz_caught_message(ctx));
     	status =  SANE_STATUS_INVAL;
 	goto drop_context;
     }
@@ -157,7 +157,7 @@ get_PDF_data(capabilities_t *scanner, int *width, int *height, int *bps)
         stream = fz_open_file_ptr_escl(ctx, scanner->tmp);
     fz_catch(ctx)
     {
-    	DBG(1, "cannot open stream: %s\n", fz_caught_message(ctx));
+    	DBG(10, "cannot open stream: %s\n", fz_caught_message(ctx));
     	status =  SANE_STATUS_INVAL;
 	goto drop_context;
     }
@@ -167,7 +167,7 @@ get_PDF_data(capabilities_t *scanner, int *width, int *height, int *bps)
         fz_seek(ctx, stream, 0, SEEK_SET);
     fz_catch(ctx)
     {
-    	DBG(1, "cannot seek stream: %s\n", fz_caught_message(ctx));
+    	DBG(10, "cannot seek stream: %s\n", fz_caught_message(ctx));
     	status =  SANE_STATUS_INVAL;
 	goto drop_stream;
     }
@@ -177,7 +177,7 @@ get_PDF_data(capabilities_t *scanner, int *width, int *height, int *bps)
         doc = fz_open_document_with_stream(ctx, "filename.pdf", stream);
     fz_catch(ctx)
     {
-	DBG(1, "cannot open document: %s\n", fz_caught_message(ctx));
+	DBG(10, "cannot open document: %s\n", fz_caught_message(ctx));
     	status =  SANE_STATUS_INVAL;
 	goto drop_stream;
     }
@@ -187,14 +187,14 @@ get_PDF_data(capabilities_t *scanner, int *width, int *height, int *bps)
 	page_count = fz_count_pages(ctx, doc);
     fz_catch(ctx)
     {
-	DBG(1, "cannot count number of pages: %s\n", fz_caught_message(ctx));
+	DBG(10, "cannot count number of pages: %s\n", fz_caught_message(ctx));
     	status =  SANE_STATUS_INVAL;
 	goto drop_document;
     }
 
     if (page_number < 0 || page_number >= page_count)
     {
-	DBG(1, "page number out of range: %d (page count %d)\n", page_number + 1, page_count);
+	DBG(10, "page number out of range: %d (page count %d)\n", page_number + 1, page_count);
     	status =  SANE_STATUS_INVAL;
 	goto drop_document;
     }
@@ -209,7 +209,7 @@ get_PDF_data(capabilities_t *scanner, int *width, int *height, int *bps)
     pix = fz_new_pixmap_from_page_number(ctx, doc, 0, &ctm, fz_device_rgb(ctx), 0);
     fz_catch(ctx)
     {
-	DBG(1, "cannot render page: %s\n", fz_caught_message(ctx));
+	DBG(10, "cannot render page: %s\n", fz_caught_message(ctx));
 	status =  SANE_STATUS_INVAL;
 	goto drop_document;
     }

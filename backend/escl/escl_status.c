@@ -53,7 +53,7 @@ memory_callback_s(void *contents, size_t size, size_t nmemb, void *userp)
 
     char *str = realloc(mem->memory, mem->size + realsize + 1);
     if (str == NULL) {
-        DBG(1, "not enough memory (realloc returned NULL)\n");
+        DBG(10, "not enough memory (realloc returned NULL)\n");
         return (0);
     }
     mem->memory = str;
