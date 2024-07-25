@@ -93,6 +93,18 @@ will request
 to detach from the console and run in the background.
 
 .TP
+.BR \-n ", " \-\-allow\-network
+allows
+.B saned
+to use network scanners. By default this is forbidden to prevent
+.B saned
+from contacting itself. When enabled, the configuration of the
+.BR sane-net (5)
+backend should not mention the address on which
+.B saned
+is listening.
+
+.TP
 .BR \-o ", " \-\-once
 requests that
 .B saned
