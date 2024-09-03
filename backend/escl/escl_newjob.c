@@ -298,7 +298,7 @@ wake_up_device:
         }
         else {
             if (download->memory != NULL) {
-                char *tmp_location = strstr(download->memory, "Location:");
+                char *tmp_location = strcasestr(download->memory, "Location:");
                 if (tmp_location) {
                     temporary = strchr(tmp_location, '\r');
                     if (temporary == NULL)
