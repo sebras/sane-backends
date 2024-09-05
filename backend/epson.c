@@ -853,7 +853,7 @@ static SANE_Status get_identity_information (SANE_Handle handle);
 static SANE_Status get_identity2_information (SANE_Handle handle);
 static int scanner_send (Epson_Scanner * s, void *buf, size_t buf_size,
                  SANE_Status * status);
-static ssize_t receive (Epson_Scanner * s, void *buf, ssize_t buf_size,
+static ssize_t scanner_receive (Epson_Scanner * s, void *buf, ssize_t buf_size,
                         SANE_Status * status);
 static SANE_Status color_shuffle (SANE_Handle handle, int *new_length);
 static SANE_Status request_focus_position (SANE_Handle handle,
@@ -933,7 +933,7 @@ scanner_send (Epson_Scanner * s, void *buf, size_t buf_size, SANE_Status * statu
  */
 
 static ssize_t
-receive (Epson_Scanner * s, void *buf, ssize_t buf_size, SANE_Status * status)
+scanner_receive (Epson_Scanner * s, void *buf, ssize_t buf_size, SANE_Status * status)
 {
   ssize_t n = 0;
 
@@ -1044,7 +1044,7 @@ expect_ack (Epson_Scanner * s)
 
   len = sizeof (result);
 
-  receive (s, result, len, &status);
+  scanner_receive (s, result, len, &status);
 
   if (SANE_STATUS_GOOD != status)
     return status;
@@ -1659,7 +1659,7 @@ close_scanner (Epson_Scanner * s)
     param[1] = s->hw->cmd->request_status;
     param[2]='\0';
     scanner_send(s,param,2,&status);
-    receive(s,result,4,&status);
+    scanner_receive(s,result,4,&status);
   }
 
 
@@ -1883,18 +1883,18 @@ command (Epson_Scanner * s, u_char * cmd, size_t cmd_size,
 
   if (s->hw->connection == SANE_EPSON_SCSI)
   {
-    receive (s, buf, 4, status);
+    scanner_receive (s, buf, 4, status);
     buf += 4;
   }
   else if (s->hw->connection == SANE_EPSON_USB)
   {
     int bytes_read;
-    bytes_read = receive (s, buf, 4, status);
+    bytes_read = scanner_receive (s, buf, 4, status);
     buf += bytes_read;
   }
   else
   {
-    receive (s, buf, 1, status);
+    scanner_receive (s, buf, 1, status);
     buf += 1;
   }
 
@@ -1923,7 +1923,7 @@ command (Epson_Scanner * s, u_char * cmd, size_t cmd_size,
     }
     else
     {
-      receive (s, buf, 3, status);
+      scanner_receive (s, buf, 3, status);
       /*              buf += 3; */
     }
 
@@ -1948,7 +1948,7 @@ command (Epson_Scanner * s, u_char * cmd, size_t cmd_size,
     head = &(hdrunion->hdr);
 
     buf = head->buf;
-    receive (s, buf, count, status);
+    scanner_receive (s, buf, count, status);
 
     if (SANE_STATUS_GOOD != *status)
       return (EpsonHdrUnion) 0;
@@ -4964,14 +4964,14 @@ sane_start (SANE_Handle handle)
     {
       len = 4;                  /* receive header */
 
-      receive (s, result, len, &status);
+      scanner_receive (s, result, len, &status);
       if (SANE_STATUS_GOOD != status)
         return status;
 
       len = result[3] << 8 | result[2];
       buf = alloca (len);
 
-      receive (s, buf, len, &status);   /* receive actual status data */
+      scanner_receive (s, buf, len, &status);   /* receive actual status data */
 
       if (buf[0] & 0x80)
       {
@@ -5005,14 +5005,14 @@ sane_start (SANE_Handle handle)
       return status;
 
     len = 4;
-    receive (s, result, len, &status);
+    scanner_receive (s, result, len, &status);
 
     if (SANE_STATUS_GOOD != status)
       return status;
 
     len = result[3] << 8 | result[2];
     buf = alloca (len);
-    receive (s, buf, len, &status);
+    scanner_receive (s, buf, len, &status);
 
     if (SANE_STATUS_GOOD != status)
       return status;
@@ -5142,7 +5142,7 @@ read_data_block (Epson_Scanner * s, EpsonDataRec * result)
   SANE_Status status;
   u_char param[3];
 
-  receive (s, result, s->block ? 6 : 4, &status);
+  scanner_receive (s, result, s->block ? 6 : 4, &status);
 
   if (SANE_STATUS_GOOD != status)
     return status;
@@ -5338,7 +5338,7 @@ START_READ:
         break;
       }
 
-      receive (s, s->buf + index * s->params.pixels_per_line, buf_len,
+      scanner_receive (s, s->buf + index * s->params.pixels_per_line, buf_len,
                &status);
 
       if (SANE_STATUS_GOOD != status)
@@ -5378,7 +5378,7 @@ START_READ:
         break;
       }
 
-      receive (s, s->buf + index * s->params.pixels_per_line, buf_len,
+      scanner_receive (s, s->buf + index * s->params.pixels_per_line, buf_len,
                &status);
 
       if (SANE_STATUS_GOOD != status)
@@ -5420,7 +5420,7 @@ START_READ:
         break;
       }
 
-      receive (s, s->buf + index * s->params.pixels_per_line, buf_len,
+      scanner_receive (s, s->buf + index * s->params.pixels_per_line, buf_len,
                &status);
 
       if (SANE_STATUS_GOOD != status)
@@ -5442,7 +5442,7 @@ START_READ:
         reorder = SANE_TRUE;
       }
 
-      receive (s, s->buf, buf_len, &status);
+      scanner_receive (s, s->buf, buf_len, &status);
 
       if (SANE_STATUS_GOOD != status)
       {
@@ -6139,14 +6139,14 @@ get_identity2_information (SANE_Handle handle)
 
   len = 4;                      /* receive header */
 
-  receive (s, result, len, &status);
+  scanner_receive (s, result, len, &status);
   if (SANE_STATUS_GOOD != status)
     return status;
 
   len = result[3] << 8 | result[2];
   buf = alloca (len);
 
-  receive (s, buf, len, &status);       /* receive actual status data */
+  scanner_receive (s, buf, len, &status);       /* receive actual status data */
 
   /* the first two bytes of the buffer contain the optical resolution */
   s->hw->optical_res = buf[1] << 8 | buf[0];
@@ -6241,14 +6241,14 @@ request_focus_position (SANE_Handle handle, u_char * position)
 
   len = 4;                      /* receive header */
 
-  receive (s, result, len, &status);
+  scanner_receive (s, result, len, &status);
   if (SANE_STATUS_GOOD != status)
     return status;
 
   len = result[3] << 8 | result[2];
   buf = alloca (len);
 
-  receive (s, buf, len, &status);       /* receive actual status data */
+  scanner_receive (s, buf, len, &status);       /* receive actual status data */
 
   *position = buf[1];
   DBG (1, "Focus position = 0x%x\n", buf[1]);
@@ -6297,14 +6297,14 @@ request_push_button_status (SANE_Handle handle, SANE_Bool * theButtonStatus)
 
   len = 4;                      /* receive header */
 
-  receive (s, result, len, &status);
+  scanner_receive (s, result, len, &status);
   if (SANE_STATUS_GOOD != status)
     return status;
 
   len = result[3] << 8 | result[2];     /* this should be 1 for scanners with one button */
   buf = alloca (len);
 
-  receive (s, buf, len, &status);       /* receive actual status data */
+  scanner_receive (s, buf, len, &status);       /* receive actual status data */
 
   DBG (1, "Push button status = %d\n", buf[0] & 0x01);
   *theButtonStatus = ((buf[0] & 0x01) != 0);
