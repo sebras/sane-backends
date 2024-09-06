@@ -74,7 +74,7 @@
 static char *dir_list;
 
 const char *
-sanei_config_get_paths ()
+sanei_config_get_paths (void)
 {
 #ifdef __BEOS__
   char result[PATH_MAX];

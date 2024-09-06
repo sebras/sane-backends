@@ -618,7 +618,7 @@ RTS_Free (struct st_device *dev)
 }
 
 static struct st_device *
-RTS_Alloc ()
+RTS_Alloc (void)
 {
   /* this function allocates space for device's variable */
 
@@ -6304,7 +6304,7 @@ Gamma_GetTables (struct st_device *dev, SANE_Byte * Gamma_buffer)
 }
 
 static void
-Gamma_FreeTables ()
+Gamma_FreeTables (void)
 {
   SANE_Int c;
 
@@ -11319,7 +11319,7 @@ Head_Relocate (struct st_device *dev, SANE_Int speed, SANE_Int direction,
 }
 
 static SANE_Int
-Calib_CreateFixedBuffers ()
+Calib_CreateFixedBuffers (void)
 {
   SANE_Byte channel;
   SANE_Int ret;
@@ -14002,7 +14002,7 @@ Free_Constrains (struct st_device *dev)
 }
 
 static void
-RTS_DebugInit ()
+RTS_DebugInit (void)
 {
   /* Default values */
   RTS_Debug->dev_model = HP3970;

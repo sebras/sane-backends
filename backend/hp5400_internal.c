@@ -109,7 +109,7 @@ static TScannerModel Model_HP54xx =
 
 HP5400_SANE_STATIC
 int
-InitHp5400_internal() {
+InitHp5400_internal(void) {
 
 	MatchVersions = malloc( sizeof(versionString) * numVersions );
 	strcpy( MatchVersions[0].strVersion, "SilitekIBlizd C3 ScannerV0.84");
@@ -121,7 +121,7 @@ InitHp5400_internal() {
 
 HP5400_SANE_STATIC
 int
-FreeHp5400_internal() {
+FreeHp5400_internal(void) {
 
 	free(MatchVersions);
 	MatchVersions = NULL;

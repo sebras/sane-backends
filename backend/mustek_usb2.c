@@ -537,7 +537,7 @@ Return value:
 	return FALSE
 ***********************************************************************/
 static SANE_Bool
-GetDeviceStatus ()
+GetDeviceStatus (void)
 {
   DBG (DBG_FUNC, "GetDeviceStatus: start\n");
   return MustScanner_GetScannerState ();
@@ -576,7 +576,7 @@ Return value:
 	return FALSE
 ***********************************************************************/
 static SANE_Bool
-CarriageHome ()
+CarriageHome (void)
 {
   DBG (DBG_FUNC, "CarriageHome: start\n");
   return MustScanner_BackHome ();
@@ -914,7 +914,7 @@ Return value:
 	return FALSE
 ***********************************************************************/
 static SANE_Bool
-StartScan ()
+StartScan (void)
 {
   DBG (DBG_FUNC, "StartScan: start\n");
   if (ST_Reflective == g_ScanType)
@@ -1099,7 +1099,7 @@ Return value:
 	return FALSE
 ***********************************************************************/
 static SANE_Bool
-StopScan ()
+StopScan (void)
 {
   SANE_Bool rt;
   int i;
@@ -1159,7 +1159,7 @@ Return value:
 	return FALSE
 ***********************************************************************/
 static SANE_Bool
-IsTAConnected ()
+IsTAConnected (void)
 {
   SANE_Bool hasTA;
 

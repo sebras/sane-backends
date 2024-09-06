@@ -624,7 +624,7 @@ attach_one (SANE_String_Const devname)
 }
 
 SANE_Status
-scan_devices(){
+scan_devices(void){
   DBG (2, "scan_devices\n");
   SANE_Char config_line[PATH_MAX];
   FILE *fp;

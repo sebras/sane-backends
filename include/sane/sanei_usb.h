@@ -217,12 +217,12 @@ extern SANE_Status sanei_usb_testing_enable_record(SANE_String_Const path,
  * Returns backend name for the file registered in sanei_usb_testing_enable.
  * The caller is responsible for freeing it.
  */
-extern SANE_String sanei_usb_testing_get_backend();
+extern SANE_String sanei_usb_testing_get_backend(void);
 
 /** Returns SANE_TRUE if replay testing mode is enabled, i.e. whether we are working with fake
  * scan data.
  */
-extern SANE_Bool sanei_usb_is_replay_mode_enabled();
+extern SANE_Bool sanei_usb_is_replay_mode_enabled(void);
 
 /** Clears currently recorded data.
 
@@ -235,7 +235,7 @@ extern SANE_Bool sanei_usb_is_replay_mode_enabled();
     This function may only be called when no USB devices are open, otherwise the behavior is
     unpredictable.
  */
-extern void sanei_usb_testing_record_clear();
+extern void sanei_usb_testing_record_clear(void);
 
 /** Records a debug message in the captured USB data if testing mode is enabled. If testing mode
  * is not enabled, this function does nothing.

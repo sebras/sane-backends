@@ -529,7 +529,7 @@ SANE_Status sanei_usb_testing_enable_replay(SANE_String_Const path,
     fail_test();                                                               \
   } while (0)
 
-void fail_test()
+static void fail_test(void)
 {
 }
 
@@ -671,12 +671,12 @@ static int sanei_xml_is_known_commands_end(xmlNode* node)
   return xmlStrcmp(node->name, (const xmlChar*)"known_commands_end") == 0;
 }
 
-static xmlNode* sanei_xml_peek_next_tx_node()
+static xmlNode* sanei_xml_peek_next_tx_node(void)
 {
   return testing_xml_next_tx_node;
 }
 
-static xmlNode* sanei_xml_get_next_tx_node()
+static xmlNode* sanei_xml_get_next_tx_node(void)
 {
   xmlNode* next = testing_xml_next_tx_node;
 
@@ -906,7 +906,7 @@ static void sanei_xml_record_seq(xmlNode* node)
     testing_last_known_seq = seq;
 }
 
-static void sanei_xml_break()
+static void sanei_xml_break(void)
 {
 }
 
@@ -1030,7 +1030,7 @@ static int sanei_usb_check_data_equal(xmlNode* node,
   return 0;
 }
 
-SANE_String sanei_usb_testing_get_backend()
+SANE_String sanei_usb_testing_get_backend(void)
 {
   if (testing_xml_doc == NULL)
     return NULL;
@@ -1054,7 +1054,7 @@ SANE_String sanei_usb_testing_get_backend()
   return ret;
 }
 
-SANE_Bool sanei_usb_is_replay_mode_enabled()
+SANE_Bool sanei_usb_is_replay_mode_enabled(void)
 {
   if (testing_mode == sanei_usb_testing_mode_replay)
     return SANE_TRUE;
@@ -1123,7 +1123,7 @@ static void sanei_usb_replay_debug_msg(SANE_String_Const message)
     }
 }
 
-extern void sanei_usb_testing_record_clear()
+extern void sanei_usb_testing_record_clear(void)
 {
   if (testing_mode != sanei_usb_testing_mode_record)
     return;
@@ -1153,7 +1153,7 @@ static void sanei_usb_add_endpoint(device_list_type* device,
                                    SANE_Int ep_address,
                                    SANE_Int ep_direction);
 
-static SANE_Status sanei_usb_testing_init()
+static SANE_Status sanei_usb_testing_init(void)
 {
   DBG_INIT();
 
@@ -1311,7 +1311,7 @@ static SANE_Status sanei_usb_testing_init()
   return SANE_STATUS_GOOD;
 }
 
-static void sanei_usb_testing_exit()
+static void sanei_usb_testing_exit(void)
 {
   if (testing_development_mode || testing_mode == sanei_usb_testing_mode_record)
     {

@@ -143,7 +143,7 @@ typedef struct
 
 /* Initialize structure where we remember out open file descriptors */
 void
-sanei_hp_init_openfd ()
+sanei_hp_init_openfd (void)
 {int iCount;
  memset (asHpOpenFd, 0, sizeof (asHpOpenFd));
 

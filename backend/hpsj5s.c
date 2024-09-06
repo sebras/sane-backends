@@ -648,7 +648,7 @@ DetectScanner (void)
 }
 
 static void
-StandByScanner ()
+StandByScanner (void)
 {
   WriteScannerRegister (0x74, 0x80);
   WriteScannerRegister (0x75, 0x0C);
@@ -678,7 +678,7 @@ SwitchHardwareState (SANE_Byte mask, SANE_Byte invert_mask)
 
 /*return value: 0 - no paper, 1 - paper loaded.*/
 static int
-CheckPaperPresent ()
+CheckPaperPresent (void)
 {
   if ((CallFunctionWithRetVal (0xB2) & 0x10) == 0)
     return 1;			/*Ok - paper present. */
@@ -686,7 +686,7 @@ CheckPaperPresent ()
 }
 
 static int
-ReleasePaper ()
+ReleasePaper (void)
 {
   int i;
 
@@ -874,7 +874,7 @@ TurnOnPaperPulling (enumColorDepth enColor, SANE_Word wResolution)
 }
 
 static void
-TurnOffPaperPulling ()
+TurnOffPaperPulling (void)
 {
   CallFunctionWithParameter (0x91, 0);
 }
@@ -884,7 +884,7 @@ TurnOffPaperPulling ()
         While paper not loaded this is base "white point".
 */
 static SANE_Byte
-GetCalibration ()
+GetCalibration (void)
 {
   int i;
   int Result;
@@ -1041,7 +1041,7 @@ PaperFeed (SANE_Word wLinesToFeed)
 
 /*For now we do no calibrate elements - just set maximum limits. FIX ME?*/
 static void
-CalibrateScanElements ()
+CalibrateScanElements (void)
 {
   /*Those arrays will be used in future for correct calibration. */
   /*Then we need to transfer UP brightness border, we use these registers */
@@ -1260,7 +1260,7 @@ CalibrateScanElements ()
 
 /*Returns 0 in case of fail and 1 in success.*/
 static int
-OutputCheck ()
+OutputCheck (void)
 {
   int i;
 
@@ -1277,7 +1277,7 @@ OutputCheck ()
 }
 
 static int
-InputCheck ()
+InputCheck (void)
 {
   int i;
   SANE_Byte Buffer[256];
@@ -1298,7 +1298,7 @@ InputCheck ()
 }
 
 static int
-CallCheck ()
+CallCheck (void)
 {
   int i;
   SANE_Byte Buffer[256];
@@ -1331,7 +1331,7 @@ CallCheck ()
 }
 
 static void
-LoadingPaletteToScanner ()
+LoadingPaletteToScanner (void)
 {
   /*For now we have statical gamma. */
   SANE_Byte Gamma[256];
@@ -1394,7 +1394,7 @@ CallFunctionWithRetVal (SANE_Byte Function)
 }
 
 static SANE_Byte
-ReadDataByte ()
+ReadDataByte (void)
 {
   SANE_Byte Result;
 

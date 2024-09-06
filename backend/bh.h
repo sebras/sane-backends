@@ -544,9 +544,8 @@ static SANE_String_Const paper_list[] =
   0
 };
 
-static /* inline */ int _is_host_little_endian(void);
 static /* inline */ int
-_is_host_little_endian()
+_is_host_little_endian(void)
 {
   SANE_Int val = 255;
   unsigned char *firstbyte = (unsigned char *) &val;

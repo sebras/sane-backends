@@ -313,7 +313,7 @@ add_device (const char *name, Net_Device ** ndp)
 #endif /* NET_USES_AF_INDEP */
 
 /* Calls getpwuid_r(). The return value must be freed by the caller. */
-char* get_current_username()
+static char* get_current_username(void)
 {
   long bufsize = sysconf(_SC_GETPW_R_SIZE_MAX);
   if (bufsize == -1)

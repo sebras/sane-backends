@@ -1255,7 +1255,7 @@ fail:
 }
 
 static void
-cleanup_initial_string_values ()
+cleanup_initial_string_values (void)
 {
   // Cleanup backing memory for initial values of string options.
   free (init_mode);
