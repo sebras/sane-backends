@@ -22,7 +22,7 @@
 extern int sanei_debug_xerox_mfp;
 
 static int
-xerox_need_clear_halt()
+xerox_need_clear_halt(void)
 {
     char *env;
     int workaround = 0;

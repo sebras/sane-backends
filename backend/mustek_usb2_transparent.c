@@ -73,7 +73,7 @@ Return value:
 	return FALSE
 ***********************************************************************/
 static SANE_Bool
-Transparent_Reset ()
+Transparent_Reset (void)
 {
   DBG (DBG_FUNC, "Transparent_Reset: call in\n");
 
@@ -502,7 +502,7 @@ Return value:
 	return FALSE
 ***********************************************************************/
 static SANE_Bool
-Transparent_StopScan ()
+Transparent_StopScan (void)
 {
   DBG (DBG_FUNC, "Transparent_StopScan: call in\n");
 
@@ -613,7 +613,7 @@ Return value:
 	return FALSE
 ***********************************************************************/
 static SANE_Bool
-Transparent_AdjustAD ()
+Transparent_AdjustAD (void)
 {
   SANE_Byte * lpCalData;
   unsigned short wCalWidth;
@@ -1659,7 +1659,7 @@ Return value:
 	return FALSE
 ***********************************************************************/
 static SANE_Bool
-Transparent_PrepareScan ()
+Transparent_PrepareScan (void)
 {
   DBG (DBG_FUNC, "Transparent_PrepareScan: call in\n");
 

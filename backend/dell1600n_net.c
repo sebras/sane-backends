@@ -907,7 +907,7 @@ sane_get_select_fd (SANE_Handle __sane_unused__ handle,
 
 /* Clears the contents of gKnownDevices and zeros it */
 void
-ClearKnownDevices ()
+ClearKnownDevices (void)
 {
 
   int i;

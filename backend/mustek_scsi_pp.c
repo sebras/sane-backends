@@ -78,7 +78,7 @@ static int mustek_scsi_pp_timeout = 5000;
 
 /* FIXME: use same method as mustek.c ? */
 static int
-mustek_scsi_pp_get_time ()
+mustek_scsi_pp_get_time (void)
 {
   struct timeval tv;
   int retval;

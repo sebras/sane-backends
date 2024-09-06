@@ -2497,7 +2497,7 @@ sanei_lexmark_low_find_start_line (Lexmark_Device * dev)
    */
 
 
-  int blackLineCount = 0;
+//  int blackLineCount = 0;
   int whiteLineCount = 0;
   int blackByteCounter = 0;
   unsigned char max_byte = 0;
@@ -2838,14 +2838,14 @@ sanei_lexmark_low_find_start_line (Lexmark_Device * dev)
       if (blackByteCounter > 0)
 	{
 	  /* This was a black line */
-	  blackLineCount++;
+//	  blackLineCount++;
 	  whiteLineCount = 0;
 	}
       else
 	{
 	  /* This is a white line */
 	  whiteLineCount++;
-	  blackLineCount = 0;
+//	  blackLineCount = 0;
 	}
     }				/* end for buffer */
 

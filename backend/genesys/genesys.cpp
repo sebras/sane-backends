@@ -840,7 +840,8 @@ void scanner_move(Genesys_Device& dev, ScanMethod scan_method, unsigned steps, D
 
     // FIXME: should porbably wait for some timeout
     Status status;
-    for (unsigned i = 0;; ++i) {
+//    for (unsigned i = 0;; ++i) {
+    for(;;) {
         status = scanner_read_status(dev);
         if (status.is_feeding_finished || (
             direction == Direction::BACKWARD && status.is_at_home))

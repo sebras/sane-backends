@@ -1752,7 +1752,7 @@ sane_init (SANE_Int * version_code, SANE_Auth_Callback authorize)
   SANE_Char line[PATH_MAX];
   SANE_Char *str = NULL;
   SANE_String_Const proper_str;
-  SANE_Int nline = 0;
+  //SANE_Int nline = 0;
 
   /* Initialize debug */
   DBG_INIT ();
@@ -1771,7 +1771,7 @@ sane_init (SANE_Int * version_code, SANE_Auth_Callback authorize)
     {
       while (sanei_config_read (line, sizeof (line), conf_fp))
 	{
-	  nline++;
+	  //nline++;
 	  if (str)
 	    free (str);
 

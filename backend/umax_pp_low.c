@@ -1496,7 +1496,7 @@ ECPFifoMode (void)
 /* wait for ack bit */
 /* return 1 on success, 0 on error */
 static int
-waitAck ()
+waitAck (void)
 {
   unsigned char breg = 0;
   int i = 0;

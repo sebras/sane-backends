@@ -457,7 +457,7 @@ static int enqueue_bq(int fd,const void *src, size_t src_size)
     return 0;
 }
 
-static void dequeue_bq()
+static void dequeue_bq(void)
 {
     static const char me[] = "dequeue_bq";
     struct usb_busy_queue *tbqe;

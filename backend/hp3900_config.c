@@ -3813,7 +3813,7 @@ static SANE_Int cfg_timing_get(SANE_Int sensortype, SANE_Int tm, struct st_timin
 
 /** SEC: Motor curves ---------- */
 
-static SANE_Int *bq5550_motor()
+static SANE_Int *bq5550_motor(void)
 {
 	SANE_Int *rst = NULL;
 	SANE_Int steps[]  =
@@ -3835,7 +3835,7 @@ static SANE_Int *bq5550_motor()
 	return rst;
 }
 
-static SANE_Int *hp4370_motor()
+static SANE_Int *hp4370_motor(void)
 {
 	SANE_Int *rst = NULL;
 	SANE_Int steps[]  =
@@ -3936,7 +3936,7 @@ static SANE_Int *hp4370_motor()
 	return rst;
 }
 
-static SANE_Int *hp3970_motor()
+static SANE_Int *hp3970_motor(void)
 {
 	SANE_Int *rst = NULL;
 	SANE_Int steps[]  =
@@ -4037,7 +4037,7 @@ static SANE_Int *hp3970_motor()
 	return rst;
 }
 
-static SANE_Int *hp3800_motor()
+static SANE_Int *hp3800_motor(void)
 {
 	SANE_Int *rst = NULL;
 	SANE_Int steps[]  =
@@ -4182,7 +4182,7 @@ static SANE_Int *hp3800_motor()
 	return rst;
 }
 
-static SANE_Int *cfg_motorcurve_get()
+static SANE_Int *cfg_motorcurve_get(void)
 {
 	/* returns motor setting buffer for a device */
 

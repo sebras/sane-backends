@@ -2053,7 +2053,7 @@ issue (struct req *req)
     fdp->sane_qhead = fdp->sane_qtail = 0;
   }
 
-  void sanei_scsi_req_flush_all ()
+  void sanei_scsi_req_flush_all (void)
   {
     int fd, i, j = 0;
 

@@ -422,7 +422,7 @@ static Bool ioP98OpenScanPath( pScanData ps )
 {
     Byte  tmp;
     ULong dw;
-	ULong dwTime = 1;
+//	ULong dwTime = 1;	// Doesn't seem to be used. [RL]
 
 	if( 0 == ps->IO.bOpenCount ) {
 
@@ -457,7 +457,7 @@ static Bool ioP98OpenScanPath( pScanData ps )
 				ps->IO.bOpenCount = 0;
 			}
 
-			dwTime++;
+//			dwTime++;	// Doesn't seem to be used. [RL]
 		}
 		DBG( DBG_IO, "ioP98OpenScanPath() failed!\n" );
 		return _FALSE;

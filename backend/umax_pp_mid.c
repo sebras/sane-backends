@@ -449,7 +449,7 @@ sanei_umax_pp_status (void)
 }
 
 int
-sanei_umax_pp_close ()
+sanei_umax_pp_close (void)
 {
 #ifdef HAVE_LINUX_PPDEV_H
   int fd;

@@ -876,7 +876,7 @@ pa4s2_close (int fd, SANE_Status * status)
 }
 
 const char **
-sanei_pa4s2_devices()
+sanei_pa4s2_devices(void)
 {
 
   SANE_Status status;

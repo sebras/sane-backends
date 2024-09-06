@@ -199,7 +199,7 @@ Return value:
 	return FALSE
 ***********************************************************************/
 static SANE_Bool
-MustScanner_Init ()
+MustScanner_Init (void)
 {
   DBG (DBG_FUNC, "MustScanner_Init: Call in\n");
 
@@ -260,7 +260,7 @@ Return value:
 	return FASLE
 ***********************************************************************/
 static SANE_Bool
-MustScanner_GetScannerState ()
+MustScanner_GetScannerState (void)
 {
 
   if (SANE_STATUS_GOOD != Asic_Open (&g_chip, g_pDeviceFile))
@@ -343,7 +343,7 @@ Return value:
 	return FALSE
 ***********************************************************************/
 static SANE_Bool
-MustScanner_BackHome ()
+MustScanner_BackHome (void)
 {
   DBG (DBG_FUNC, "MustScanner_BackHome: call in \n");
 
@@ -3081,7 +3081,7 @@ Return value:
 	the lines of scanned
 ***********************************************************************/
 static unsigned int
-GetScannedLines ()
+GetScannedLines (void)
 {
   unsigned int dwScannedLines = 0;
 
@@ -3103,7 +3103,7 @@ Return value:
 	the lines which pass to superstratum
 ***********************************************************************/
 static unsigned int
-GetReadyLines ()
+GetReadyLines (void)
 {
   unsigned int dwReadyLines = 0;
 
@@ -3143,7 +3143,7 @@ Return value:
 	none
 ***********************************************************************/
 static void
-AddReadyLines ()
+AddReadyLines (void)
 {
   pthread_mutex_lock (&g_readyLinesMutex);
   g_wtheReadyLines++;

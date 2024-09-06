@@ -3809,7 +3809,7 @@ hp_optset_isEnabled (HpOptSet this, HpData data, const char *name,
 SANE_Status
 sanei_hp_optset_download (HpOptSet this, HpData data, HpScsi scsi)
 {
-  int i, errcount = 0;
+  int i; //, errcount = 0;
 
   DBG(3, "Start downloading parameters to scanner\n");
 
@@ -3839,7 +3839,7 @@ sanei_hp_optset_download (HpOptSet this, HpData data, HpScsi scsi)
 
         if ( sanei_hp_scl_errcheck (scsi) != SANE_STATUS_GOOD )
         {
-          errcount++;
+          //errcount++;
           DBG(3, "Option %s generated scanner error\n",
               this->options[i]->descriptor->name);
 
