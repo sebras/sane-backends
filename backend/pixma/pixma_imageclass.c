@@ -953,6 +953,7 @@ const pixma_config_t pixma_iclass_devices[] = {
   DEV ("Canon i-SENSYS MF4700 Series", "MF4700", MF4700_PID, 600, 0, 640, 1050, PIXMA_CAP_ADF),
   DEV ("Canon i-SENSYS MF4800 Series", "MF4800", MF4800_PID, 600, 0, 640, 1050, PIXMA_CAP_ADF),
   DEV ("Canon imageCLASS MF4570dw", "MF4570dw", MF4570_PID, 600, 0, 640, 877, 0),
+  DEV ("Canon imageClass MF4500w Series", "MF4500w", MF4570_PID, 600, 0, 640, 877, 0),
   DEV ("Canon i-SENSYS MF8200C Series", "MF8200C", MF8200_PID, 600, 300, 640, 1050, PIXMA_CAP_ADF),
   DEV ("Canon i-SENSYS MF8300 Series", "MF8300", MF8300_PID, 600, 0, 640, 1050, PIXMA_CAP_ADF),
   DEV ("Canon imageCLASS D530", "D530", D530_PID, 600, 0, 640, 877, 0),
