@@ -72,7 +72,8 @@
 #define SENSOR_TYPE_XPA		1	/* sensor for hp4470 sold with XPA */
 #define SENSOR_TYPE_4400	2	/* sensor for hp4400               */
 #define SENSOR_TYPE_4400_BARE	3	/* sensor for hp4400               */
-#define SENSOR_TYPE_MAX         3       /* maximum sensor number value     */
+#define SENSOR_TYPE_UMAX	4	/* sensor for Umax Astra 4400/4450 */
+#define SENSOR_TYPE_MAX         4       /* maximum sensor number value     */
 
 /* Forward typedefs */
 typedef struct Rts8891_Device Rts8891_Device;
@@ -130,6 +131,8 @@ typedef struct Rts8891_Model
   /* default sensor type */
   SANE_Int sensor;
 
+  SANE_Int calibration_width;
+
   /* default gamma table */
   SANE_Word gamma[256];
   SANE_Int buttons;		/* number of buttons for the scanner */
@@ -173,6 +176,7 @@ struct Rts8891_Device
   SANE_Bool initialized;	/* true if device has been initialized */
   SANE_Bool needs_warming;	/* true if device needs warming up    */
   SANE_Bool parking;	        /* true if device is parking head     */
+  SANE_Bool has_uta;		/* true if UTA is connected */
 
   /* values detected during find origin */
   /* TODO these are currently unused after detection */

@@ -83,6 +83,7 @@
 #include <string.h>
 #include <ctype.h>
 #include <time.h>
+#include <math.h>
 
 #include <sys/types.h>
 #include <unistd.h>
@@ -108,12 +109,6 @@
 #define GAIN_MARGIN		  2	/* acceptable margin for gain average */
 
 #define MARGIN_LEVEL            128	/* white level for margin detection */
-
-/* width used for calibration */
-#define CALIBRATION_WIDTH       637
-
-/* data size for calibration: one RGB line*/
-#define CALIBRATION_SIZE        CALIBRATION_WIDTH*3
 
 /* #define FAST_INIT 1 */
 
@@ -232,6 +227,8 @@ static SANE_Status find_origin (struct Rts8891_Device *dev,
 				SANE_Bool * changed);
 static SANE_Status find_margin (struct Rts8891_Device *dev);
 static SANE_Status dark_calibration (struct Rts8891_Device *dev, int mode,
+				     int light);
+static SANE_Status lamp_warm_up (struct Rts8891_Device *dev, int mode,
 				     int light);
 static SANE_Status gain_calibration (struct Rts8891_Device *dev, int mode,
 				     int light);
@@ -1051,6 +1048,8 @@ static char *sensor_name (int sensor)
       return "SENSOR_TYPE_4400";
     case SENSOR_TYPE_4400_BARE:
       return "SENSOR_TYPE_4400_BARE";
+    case SENSOR_TYPE_UMAX:
+      return "SENSOR_TYPE_UMAX";
     default:
       return "BOGUS";
     }
@@ -1136,7 +1135,7 @@ sane_start (SANE_Handle handle)
   init_lamp (dev);
 
   /* do warming up if needed: just detected or at sane_open() */
-  if (dev->needs_warming == SANE_TRUE)
+  if (dev->needs_warming == SANE_TRUE && dev->sensor != SENSOR_TYPE_UMAX)
     {
       DBG (DBG_info, "sane_start: warming lamp ...\n");
 #ifdef HAVE_SYS_TIME_H
@@ -1213,6 +1212,11 @@ sane_start (SANE_Handle handle)
 		   "sane_start: sensor changed to type 'SENSOR_TYPE_4400'!\n");
 	      dev->sensor = SENSOR_TYPE_4400;
 	      break;
+	    case SENSOR_TYPE_UMAX:
+	      DBG (DBG_info,
+		   "sane_start: sensor changed to type 'SENSOR_TYPE_XPA'!\n");
+	      dev->sensor = SENSOR_TYPE_XPA;
+	      break;
 	    }
 	}
     }
@@ -1226,6 +1230,7 @@ sane_start (SANE_Handle handle)
       mode = 0x20;
       break;
     case SENSOR_TYPE_BARE:
+    case SENSOR_TYPE_UMAX:
       light = 0x3b;
       mode = 0x20;
       break;
@@ -1271,6 +1276,21 @@ sane_start (SANE_Handle handle)
   dev->regs[LAMP_BRIGHT_REG] = 0xA7;
   sanei_rts88xx_write_reg (dev->devnum, LAMP_BRIGHT_REG,
 			   dev->regs + LAMP_BRIGHT_REG);
+
+  /* step 3a: lamp warm-up (UMAX-only) */
+  if (dev->sensor == SENSOR_TYPE_UMAX)
+    {
+      status = lamp_warm_up(dev, mode, light);
+      if (status != SANE_STATUS_GOOD)
+        {
+          if (dev->conf.allowsharing == SANE_TRUE)
+            {
+              sanei_usb_release_interface (dev->devnum, 0);
+            }
+          DBG (DBG_error, "sane_start: lamp warm-up failed!\n");
+          return status;
+        }
+    }
 
   /* step 4: gain calibration */
   status = gain_calibration (dev, mode, light);
@@ -1771,8 +1791,11 @@ sane_read (SANE_Handle handle, SANE_Byte * buf,
       return SANE_STATUS_EOF;
     }
 
-  dev->regs[LAMP_REG] = 0xad;
-  sanei_rts88xx_write_reg (dev->devnum, LAMP_REG, &(dev->regs[LAMP_REG]));
+  if (dev->sensor != SENSOR_TYPE_UMAX)
+    {
+      dev->regs[LAMP_REG] = 0xad;
+      sanei_rts88xx_write_reg (dev->devnum, LAMP_REG, &(dev->regs[LAMP_REG]));
+    }
 
   /* byte length for high dpi mode */
   length = (session->params.bytes_per_line * 8) / session->params.depth;
@@ -1830,8 +1853,11 @@ sane_read (SANE_Handle handle, SANE_Byte * buf,
       dev->current = dev->start;
     }
 
-  dev->regs[LAMP_REG] = 0x8d;
-  sanei_rts88xx_write_reg (dev->devnum, LAMP_REG, &(dev->regs[LAMP_REG]));
+  if (dev->sensor != SENSOR_TYPE_UMAX)
+    {
+      dev->regs[LAMP_REG] = 0x8d;
+      sanei_rts88xx_write_reg (dev->devnum, LAMP_REG, &(dev->regs[LAMP_REG]));
+    }
 
   /* it seems there is no gray or lineart hardware mode for the rts8891 */
   if (session->params.format == SANE_FRAME_GRAY
@@ -2912,6 +2938,15 @@ average_area (int color, SANE_Byte * data, int width, int height,
   return global;
 }
 
+static void
+gamma_correction (unsigned char *data, int length, float gamma)
+{
+  int i;
+
+  for (i = 0; i < length; i++)
+    data[i] = 255 * pow(data[i] / 255.0, 1/gamma);
+}
+
 
 /**
  * Sets lamp brightness (hum, maybe some timing before light off)
@@ -2921,6 +2956,11 @@ set_lamp_brightness (struct Rts8891_Device *dev, int level)
 {
   SANE_Status status = SANE_STATUS_GOOD;
   SANE_Byte reg;
+
+  if (dev->sensor == SENSOR_TYPE_UMAX)
+    {
+      return status;
+    }
 
   reg = 0xA0 | (level & 0x0F);
   sanei_rts88xx_write_reg (dev->devnum, LAMP_BRIGHT_REG, &reg);
@@ -2945,7 +2985,12 @@ set_lamp_brightness (struct Rts8891_Device *dev, int level)
   sanei_rts88xx_get_status (dev->devnum, dev->regs);
   DBG (DBG_io, "set_lamp_brightness: status=0x%02x 0x%02x\n", dev->regs[0x10],
        dev->regs[0x11]);
-  if (dev->sensor != SENSOR_TYPE_4400)
+  if (dev->sensor == SENSOR_TYPE_UMAX)
+    {
+      dev->regs[0x10] = 0x20;
+      dev->regs[0x11] = 0x3b;
+    }
+  else if (dev->sensor != SENSOR_TYPE_4400)
     {
       dev->regs[0x10] = 0x28;
       dev->regs[0x11] = 0x3f;
@@ -2988,7 +3033,12 @@ init_lamp (struct Rts8891_Device *dev)
   sanei_rts88xx_write_regs (dev->devnum, 0x14, dev->regs + 0x14, 2);
   sanei_rts88xx_write_control (dev->devnum, 0x00);
   sanei_rts88xx_write_control (dev->devnum, 0x00);
-  if (dev->sensor != SENSOR_TYPE_4400 && dev->sensor != SENSOR_TYPE_4400_BARE)
+  if (dev->sensor == SENSOR_TYPE_UMAX)
+    {
+      sanei_rts88xx_set_status (dev->devnum, dev->regs, 0x20, 0x3b);
+      dev->regs[0x11] = 0x3b;
+    }
+  else if (dev->sensor != SENSOR_TYPE_4400 && dev->sensor != SENSOR_TYPE_4400_BARE)
     {
       sanei_rts88xx_set_status (dev->devnum, dev->regs, 0x28, 0x3f);
       dev->regs[0x11] = 0x3f;
@@ -2998,11 +3048,14 @@ init_lamp (struct Rts8891_Device *dev)
       sanei_rts88xx_set_status (dev->devnum, dev->regs, 0x10, 0x22);
       dev->regs[0x11] = 0x22;
     }
-  reg = 0x8d;
-  sanei_rts88xx_write_reg (dev->devnum, LAMP_REG, &reg);
-  dev->regs[LAMP_REG] = 0xa2;
-  dev->regs[LAMP_BRIGHT_REG] = 0xa0;
-  rts8891_write_all (dev->devnum, dev->regs, dev->reg_count);
+  if (dev->sensor != SENSOR_TYPE_UMAX)
+    {
+      reg = 0x8d;
+      sanei_rts88xx_write_reg (dev->devnum, LAMP_REG, &reg);
+      dev->regs[LAMP_REG] = 0xa2;
+      dev->regs[LAMP_BRIGHT_REG] = 0xa0;
+      rts8891_write_all (dev->devnum, dev->regs, dev->reg_count);
+    }
   return set_lamp_brightness (dev, 7);
 }
 
@@ -3022,7 +3075,7 @@ find_origin (struct Rts8891_Device *dev, SANE_Bool * changed)
   int startx = 300;
   int width = 1200;
   int x, y, sum, current;
-  int starty = 18;
+  int starty = (dev->sensor == SENSOR_TYPE_UMAX) ? 42 : 18;
   int height = 180;
   int timing;
 
@@ -3152,6 +3205,38 @@ find_origin (struct Rts8891_Device *dev, SANE_Bool * changed)
       dev->regs[0xd7] = 0x30;	/* 0x10 */
       dev->regs[0xda] = 0xa7;	/* 0xa0 */
     }
+  if (dev->sensor == SENSOR_TYPE_UMAX)
+    {
+      dev->regs[0x14] = 0xf0;
+      dev->regs[0x16] = 0x0f;
+      dev->regs[0x23] = 0x00;
+      dev->regs[0x35] = 0x0e;
+      dev->regs[0x36] = 0x2c;
+      dev->regs[0x3a] = 0x0e;
+      dev->regs[0xc0] = 0x87;
+      dev->regs[0xc1] = 0x07;
+      dev->regs[0xc2] = 0xf8;
+      dev->regs[0xc3] = 0x78;
+      dev->regs[0xc4] = 0xf8;
+      dev->regs[0xc5] = 0x07;
+      dev->regs[0xc6] = 0x87;
+      dev->regs[0xc7] = 0x07;
+      dev->regs[0xc8] = 0xf8;
+      dev->regs[0xc9] = 0xfc;
+      dev->regs[0xca] = 0x0f;
+      dev->regs[0xcd] = 0x00;
+      dev->regs[0xce] = 0x80;
+      dev->regs[0xcf] = 0xe2;
+      dev->regs[0xd0] = 0xe4;
+      dev->regs[0xd7] = 0x10;
+      dev->regs[0xd8] = 0xa6;
+      dev->regs[0xd9] = 0x2d;
+      dev->regs[0xda] = 0x00;
+      dev->regs[0xe2] = 0x03;
+      SET_DOUBLE (dev->regs, EXPOSURE_REG, 2061);
+      /* dev->regs[0xe5] = 0x0d;
+         dev->regs[0xe6] = 0x08;     080d=2061 */
+    }
   SET_DOUBLE (dev->regs, TIMING_REG, timing);
   SET_DOUBLE (dev->regs, TIMING1_REG, timing+1);
   SET_DOUBLE (dev->regs, TIMING2_REG, timing+2);
@@ -3180,8 +3265,11 @@ find_origin (struct Rts8891_Device *dev, SANE_Bool * changed)
   sanei_rts88xx_set_gain (dev->regs, 0x10, 0x10, 0x10);
 
   /* gray level scan */
-  dev->regs[LAMP_REG] = 0xad;
-  sanei_rts88xx_write_reg (dev->devnum, LAMP_REG, dev->regs + LAMP_REG);
+  if (dev->sensor != SENSOR_TYPE_UMAX)
+    {
+      dev->regs[LAMP_REG] = 0xad;
+      sanei_rts88xx_write_reg (dev->devnum, LAMP_REG, dev->regs + LAMP_REG);
+    }
   if (dev->sensor != SENSOR_TYPE_4400
       && (dev->sensor != SENSOR_TYPE_4400_BARE))
     {
@@ -3206,6 +3294,16 @@ find_origin (struct Rts8891_Device *dev, SANE_Bool * changed)
   if (DBG_LEVEL > DBG_io2)
     {
       write_gray_data (data, "find_origin.pnm", width, height);
+    }
+
+  /* strong gamma correction (16) for reliable detection with cold lamp */
+  if (dev->sensor == SENSOR_TYPE_UMAX)
+    {
+      gamma_correction(data, total, 16);
+      if (DBG_LEVEL > DBG_io2)
+        {
+          write_gray_data (data, "find_origin_gamma.pnm", width, height);
+        }
     }
 
   /* now we have the data, search for the black area so that we can      */
@@ -3291,6 +3389,20 @@ find_origin (struct Rts8891_Device *dev, SANE_Bool * changed)
 	     dev->regs[0xe6] = 0x08;     0x10 080d=2061=1030*2+1 */
 	  SET_DOUBLE (dev->regs, EXPOSURE_REG, 2061);
 	}
+      else if (dev->sensor == SENSOR_TYPE_UMAX)
+        {
+	  dev->regs[0x36] = 0x24;	/* direction reverse (& ~0x08) */
+	  dev->regs[0xb2] = 0x02;
+	  dev->regs[0xd9] = 0x2d;
+	  dev->regs[0xda] = 0x00;
+	  dev->regs[0xe2] = 0x07;
+
+	  /*
+	     dev->regs[0xe5] = 0x06;
+	     dev->regs[0xe6] = 0x04;     406=1030 */
+	  SET_DOUBLE (dev->regs, EXPOSURE_REG, 1030);
+	  sum -= 32;
+        }
       else
 	{
 	  dev->regs[0x11] = 0x3f;	/* 0x3b */
@@ -3306,6 +3418,7 @@ find_origin (struct Rts8891_Device *dev, SANE_Bool * changed)
 	}
 
       /* move by a fixed amount relative to the 'top' of the scanner */
+      DBG (DBG_info, "find_origin: moving back %d lines\n", height - sum + 10);
       sanei_rts88xx_set_scan_area (dev->regs, height - sum + 10,
 				   height - sum + 11, 637, 893);
       rts8891_write_all (dev->devnum, dev->regs, dev->reg_count);
@@ -3341,6 +3454,7 @@ find_margin (struct Rts8891_Device *dev)
   int height = 1;
   SANE_Byte reg = 0xa2;
   int timing=0;
+  unsigned char margin_level = MARGIN_LEVEL;
 
   DBG (DBG_proc, "find_margin: start\n");
 
@@ -3352,12 +3466,25 @@ find_margin (struct Rts8891_Device *dev)
     {
       sanei_rts88xx_set_status (dev->devnum, dev->regs, 0x10, 0x23);
     }
+  else if (dev->sensor == SENSOR_TYPE_UMAX)
+    {
+      sanei_rts88xx_set_status (dev->devnum, dev->regs, 0x20, 0x3b);
+    }
   else
     {
       sanei_rts88xx_set_status (dev->devnum, dev->regs, 0x28, 0x3b);
     }
 
-  sanei_rts88xx_set_gain (dev->regs, 0x3f, 0x3f, 0x3f);
+  if (dev->sensor == SENSOR_TYPE_UMAX)
+    {
+      sanei_rts88xx_set_offset (dev->regs, 0xad, 0xb2, 0xb1);
+      sanei_rts88xx_set_gain (dev->regs, 0x00, 0x00, 0x00);
+      startx = 66;
+    }
+  else
+    {
+      sanei_rts88xx_set_gain (dev->regs, 0x3f, 0x3f, 0x3f);
+    }
 
   /* set scan parameters */
   dev->regs[0x33] = 0x01;
@@ -3447,6 +3574,49 @@ find_margin (struct Rts8891_Device *dev)
       dev->regs[0x8d] = 0x3b;	/* 0x00 */
       timing=0x00b0;
     }
+  if (dev->sensor == SENSOR_TYPE_UMAX)
+    {
+      dev->regs[0x35] = 0x0e;
+      dev->regs[0x3a] = 0x0e;
+      dev->regs[0x40] = 0x20;
+      dev->regs[0x72] = 0xe1;
+      dev->regs[0x73] = 0x14;
+      dev->regs[0x74] = 0x18;
+      dev->regs[0x7a] = 0x01;
+      dev->regs[0x8d] = 0x07;
+      timing=0x32;
+      dev->regs[0xc1] = 0x07;
+      dev->regs[0xc2] = 0x80;
+      dev->regs[0xc4] = 0xf8;
+      dev->regs[0xc5] = 0x7f;
+      dev->regs[0xc6] = 0xff;
+      dev->regs[0xc7] = 0x07;
+      dev->regs[0xc8] = 0x80;
+      dev->regs[0xc9] = 0x00;
+      dev->regs[0xca] = 0x0f;
+      dev->regs[0xcb] = 0x00;
+      dev->regs[0xcc] = 0xfe;
+      dev->regs[0xcd] = 0x00;
+      dev->regs[0xce] = 0x00;
+      dev->regs[0xcf] = 0xf7;
+      dev->regs[0xd0] = 0xe1;
+      dev->regs[0xd1] = 0xea;
+      dev->regs[0xd2] = 0x0b;
+      dev->regs[0xd3] = 0x03;
+      dev->regs[0xd4] = 0x05;
+      dev->regs[0xd6] = 0xab;
+      dev->regs[0xd7] = 0x10;
+      dev->regs[0xd8] = 0xa6;
+      dev->regs[0xda] = 0x00;
+      dev->regs[0xe2] = 0x03;
+      dev->regs[0xee] = 0x00;
+      dev->regs[0xf1] = 0x00;
+
+      /* dev->regs[0xe5] = 0xbd;
+         dev->regs[0xe6] = 0x0a;     0abd=2749 */
+      SET_DOUBLE (dev->regs, EXPOSURE_REG, 2749);
+      margin_level = 32;
+    }
   SET_DOUBLE (dev->regs, TIMING_REG, timing);
   SET_DOUBLE (dev->regs, TIMING1_REG, timing+1);
   SET_DOUBLE (dev->regs, TIMING2_REG, timing+2);
@@ -3480,11 +3650,28 @@ find_margin (struct Rts8891_Device *dev)
       write_gray_data (data, "find_margin.pnm", width, height);
     }
 
-  /* we search from left to right the first white pixel */
+  /* gamma correction (2) for reliable detection with cold lamp */
+  if (dev->sensor == SENSOR_TYPE_UMAX)
+    {
+      gamma_correction(data, total, 2);
+      if (DBG_LEVEL > DBG_io2)
+        {
+          write_gray_data (data, "find_margin_gamma.pnm", width, height);
+        }
+    }
+
+  /* search from left for the first white pixel (4 consecutive for UMAX) */
   x = 0;
-  while (x < width && data[x] < MARGIN_LEVEL)
-    x++;
-  if (x == width)
+  if (dev->sensor == SENSOR_TYPE_UMAX)
+    while (x < width - 3 && (data[x] < margin_level ||
+                             data[x + 1] < margin_level ||
+                             data[x + 2] < margin_level ||
+                             data[x + 3] < margin_level))
+      x++;
+  else
+    while (x < width && data[x] < margin_level)
+      x++;
+  if (x == width || (dev->sensor == SENSOR_TYPE_UMAX && x == width - 3))
     {
       DBG (DBG_warn, "find_margin: failed to find left margin!\n");
       DBG (DBG_warn, "find_margin: using default...\n");
@@ -3679,7 +3866,10 @@ initialize_device (struct Rts8891_Device *dev)
   dev->regs[0xd5] = 0x86;	/* 0x06 */
   dev->regs[0xd7] = 0x30;	/* 0x10 */
   dev->regs[0xd8] = 0xf6;	/* 0x7a */
-  dev->regs[0xd9] = 0x80;	/* 0x00 */
+  if (dev->sensor != SENSOR_TYPE_UMAX)
+    {
+      dev->regs[0xd9] = 0x80;	/* 0x00 */
+    }
   dev->regs[0xda] = 0x00;	/* 0x15 */
   dev->regs[0xe2] = 0x01;	/* 0x00 */
   /* dev->regs[0xe5] = 0x14;     0x0f */
@@ -4011,6 +4201,38 @@ int i;
 	  dev->regs[0x90] = 0x80;	/* 0x00 */
 	}
       break;
+    case SENSOR_TYPE_UMAX:
+      for (i = 0; i < dev->reg_count; i++)
+	dev->regs[i] = 0x00;
+      dev->regs[0x00] = 0xe5;
+      dev->regs[0x01] = 0x41;
+      dev->regs[0x0b] = 0x70;
+      dev->regs[0x10] = 0xd0;
+      dev->regs[0x11] = 0x1b;
+      dev->regs[0x13] = 0x20;
+      dev->regs[0x15] = 0x20;
+      dev->regs[0x1d] = 0x20;
+      dev->regs[0x20] = 0x3a;
+      dev->regs[0x21] = 0xf2;
+      dev->regs[0x34] = 0x10;
+      dev->regs[0x36] = 0x07;
+      dev->regs[0x40] = 0x20;
+      dev->regs[0x44] = 0x8c;
+      dev->regs[0x45] = 0x76;
+      dev->regs[0x8d] = 0x80;
+      dev->regs[0x8e] = 0x68;
+      dev->regs[0x93] = 0x02;
+      dev->regs[0x94] = 0x0e;
+      dev->regs[0xa3] = 0xcc;
+      dev->regs[0xa4] = 0x27;
+      dev->regs[0xa5] = 0x64;
+      dev->regs[0xb2] = 0x02;
+      dev->regs[0xd5] = 0x86;
+      dev->regs[0xd6] = 0x1b;
+      dev->regs[0xd8] = 0xff;
+      dev->regs[0xe2] = 0x01;
+      dev->regs[0xe5] = 0x14;
+      break;
     }
   return SANE_STATUS_GOOD;
 }
@@ -4093,6 +4315,14 @@ init_device (struct Rts8891_Device *dev)
   DBG (DBG_io, "init_device: status=0x%02x 0x%02x\n", dev->regs[0x10],
        dev->regs[0x11]);
 
+  if (dev->model->sensor == SENSOR_TYPE_UMAX)
+    {
+      /* bit 7 in reg 0x10 is set on USB plug when UTA is attached
+       * we keep track of it and set it back on exit so we can detect UTA next time
+       */
+      dev->has_uta = (dev->regs[0x10] & 0x80) ? SANE_TRUE : SANE_FALSE;
+      DBG (DBG_io, "init_device: UMAX UTA (Transparency adapter) %s\n", dev->has_uta ? "detected":"not detected");
+    }
   /* reads lamp status and sensor information */
   sanei_rts88xx_get_lamp_status (dev->devnum, dev->regs);
   DBG (DBG_io, "init_device: lamp status=0x%02x\n", dev->regs[0x8e]);
@@ -4194,39 +4424,77 @@ init_device (struct Rts8891_Device *dev)
       DBG (DBG_warn, "init_device: got unexpected id 0x%02x\n", id);
     }
 
+  if (dev->sensor == SENSOR_TYPE_UMAX)
+    {
+      dev->regs[0x10] = 0x28;
+      dev->regs[0x11] = 0x28;
+      dev->regs[0x12] = 0xff;
+      dev->regs[0x14] = 0xf0; /* GPIO/buttons direction? */
+      dev->regs[0x15] = 0x28;
+      dev->regs[0x16] = 0x0f; /* GPIO/buttons direction? */
+      dev->regs[0x18] = 0xff;
+      dev->regs[0x24] = 0xff;
+      dev->regs[0x72] = 0xe1;
+      dev->regs[0x73] = 0x14;
+      dev->regs[0x74] = 0x18;
+      dev->regs[0x75] = 0x15;
+      dev->regs[0xc0] = 0x87;
+      dev->regs[0xc1] = 0x07;
+      dev->regs[0xc2] = 0xf8;
+      dev->regs[0xc3] = 0x78;
+      dev->regs[0xc4] = 0xf8;
+      dev->regs[0xc5] = 0x07;
+      dev->regs[0xc6] = 0x87;
+      dev->regs[0xc7] = 0x07;
+      dev->regs[0xc8] = 0xf8;
+      dev->regs[0xc9] = 0xfc;
+      dev->regs[0xca] = 0x0f;
+      dev->regs[0xce] = 0x80;
+      dev->regs[0xcf] = 0xe2;
+      dev->regs[0xd0] = 0xe4;
+      dev->regs[0xd1] = 0xea;
+      dev->regs[0xd2] = 0x0b;
+      dev->regs[0xd3] = 0x03;
+      dev->regs[0xd4] = 0x05;
+      dev->regs[0xd7] = 0x10;
+      dev->regs[0xd8] = 0xa6;
+    }
+  else
+    {
+      dev->regs[0x12] = 0xff;
+      dev->regs[0x14] = 0xf8;
+      dev->regs[0x15] = 0x28;
+      dev->regs[0x16] = 0x07;
+      dev->regs[0x18] = 0xff;
+      dev->regs[0x23] = 0xff;
+      dev->regs[0x24] = 0xff;
 
-  dev->regs[0x12] = 0xff;
-  dev->regs[0x14] = 0xf8;
-  dev->regs[0x15] = 0x28;
-  dev->regs[0x16] = 0x07;
-  dev->regs[0x18] = 0xff;
-  dev->regs[0x23] = 0xff;
-  dev->regs[0x24] = 0xff;
+      dev->regs[0x72] = 0xe1;
+      dev->regs[0x73] = 0x14;
+      dev->regs[0x74] = 0x18;
+      dev->regs[0x75] = 0x15;
+      dev->regs[0xc0] = 0xff;
+      dev->regs[0xc1] = 0x0f;
+      dev->regs[0xc3] = 0xff;
+      dev->regs[0xc4] = 0xff;
+      dev->regs[0xc5] = 0xff;
+      dev->regs[0xc6] = 0xff;
+      dev->regs[0xc7] = 0xff;
+      dev->regs[0xc8] = 0xff;
+      dev->regs[0xca] = 0x0e;
+      dev->regs[0xcd] = 0xf0;
+      dev->regs[0xce] = 0xff;
+      dev->regs[0xcf] = 0xf5;
+      dev->regs[0xd0] = 0xf7;
+      dev->regs[0xd1] = 0xea;
+      dev->regs[0xd2] = 0x0b;
+      dev->regs[0xd3] = 0x03;
+      dev->regs[0xd4] = 0x05;
+      dev->regs[0xd7] = 0x30;
+      dev->regs[0xd8] = 0xf6;
+      dev->regs[0xd9] = 0x80;
+    }
 
-  dev->regs[0x72] = 0xe1;
-  dev->regs[0x73] = 0x14;
-  dev->regs[0x74] = 0x18;
-  dev->regs[0x75] = 0x15;
-  dev->regs[0xc0] = 0xff;
-  dev->regs[0xc1] = 0x0f;
-  dev->regs[0xc3] = 0xff;
-  dev->regs[0xc4] = 0xff;
-  dev->regs[0xc5] = 0xff;
-  dev->regs[0xc6] = 0xff;
-  dev->regs[0xc7] = 0xff;
-  dev->regs[0xc8] = 0xff;
-  dev->regs[0xca] = 0x0e;
-  dev->regs[0xcd] = 0xf0;
-  dev->regs[0xce] = 0xff;
-  dev->regs[0xcf] = 0xf5;
-  dev->regs[0xd0] = 0xf7;
-  dev->regs[0xd1] = 0xea;
-  dev->regs[0xd2] = 0x0b;
-  dev->regs[0xd3] = 0x03;
-  dev->regs[0xd4] = 0x05;
-  dev->regs[0xd7] = 0x30;
-  dev->regs[0xd8] = 0xf6;
-  dev->regs[0xd9] = 0x80;
   rts8891_write_all (dev->devnum, dev->regs, dev->reg_count);
 
   /* now we are writing and reading back from memory, it is surely a memory test since the written data
@@ -4370,14 +4638,17 @@ init_device (struct Rts8891_Device *dev)
 	  return SANE_STATUS_IO_ERROR;
 	}
     }
-  reg = 0x80;
-  sanei_rts88xx_write_reg (dev->devnum, LAMP_REG, &reg);
-  reg = 0xad;
-  sanei_rts88xx_write_reg (dev->devnum, LAMP_REG, &reg);
-  sanei_rts88xx_read_regs (dev->devnum, 0x14, dev->regs + 0x14, 2);
-  /* we expect 0xF8 0x28 here */
-  dev->regs[0x14] = dev->regs[0x14] & 0x7F;
-  sanei_rts88xx_write_regs (dev->devnum, 0x14, dev->regs + 0x14, 2);
+  if (dev->sensor != SENSOR_TYPE_UMAX)
+    {
+      reg = 0x80;
+      sanei_rts88xx_write_reg (dev->devnum, LAMP_REG, &reg);
+      reg = 0xad;
+      sanei_rts88xx_write_reg (dev->devnum, LAMP_REG, &reg);
+      sanei_rts88xx_read_regs (dev->devnum, 0x14, dev->regs + 0x14, 2);
+      /* we expect 0xF8 0x28 here */
+      dev->regs[0x14] = dev->regs[0x14] & 0x7F;
+      sanei_rts88xx_write_regs (dev->devnum, 0x14, dev->regs + 0x14, 2);
+    }
 
   /* reads scanner status */
   sanei_rts88xx_get_status (dev->devnum, dev->regs);
@@ -4387,10 +4658,13 @@ init_device (struct Rts8891_Device *dev)
   DBG (DBG_io, "init_device: link=0x%02x\n", control);
   sanei_rts88xx_read_reg (dev->devnum, CONTROL_REG, &control);
   sanei_rts88xx_reset_lamp (dev->devnum, dev->regs);
-  reg = 0x8d;
-  sanei_rts88xx_write_reg (dev->devnum, LAMP_REG, &reg);
-  reg = 0xad;
-  sanei_rts88xx_write_reg (dev->devnum, LAMP_REG, &reg);
+  if (dev->sensor != SENSOR_TYPE_UMAX)
+    {
+      reg = 0x8d;
+      sanei_rts88xx_write_reg (dev->devnum, LAMP_REG, &reg);
+      reg = 0xad;
+      sanei_rts88xx_write_reg (dev->devnum, LAMP_REG, &reg);
+    }
 
   /* here, we are in iddle state */
 
@@ -4480,19 +4754,25 @@ init_device (struct Rts8891_Device *dev)
   dev->regs[0x12] = 0xff;
   dev->regs[0x13] = 0x20;
   sanei_rts88xx_write_regs (dev->devnum, 0x12, dev->regs + 0x12, 2);
-  dev->regs[0x14] = 0xf8;
-  dev->regs[0x15] = 0x28;
-  sanei_rts88xx_write_regs (dev->devnum, 0x14, dev->regs + 0x14, 2);
+  if (dev->sensor != SENSOR_TYPE_UMAX)
+    {
+      dev->regs[0x14] = 0xf8;
+      dev->regs[0x15] = 0x28;
+      sanei_rts88xx_write_regs (dev->devnum, 0x14, dev->regs + 0x14, 2);
+    }
   reg = 0;
   sanei_rts88xx_write_control (dev->devnum, 0x00);
   sanei_rts88xx_write_control (dev->devnum, 0x00);
   sanei_rts88xx_set_status (dev->devnum, dev->regs, 0x28, 0x28);
-  reg = 0x80;
-  sanei_rts88xx_write_reg (dev->devnum, LAMP_REG, &reg);
+  if (dev->sensor != SENSOR_TYPE_UMAX)
+    {
+      reg = 0x80;
+      sanei_rts88xx_write_reg (dev->devnum, LAMP_REG, &reg);
+      dev->regs[LAMP_REG] = 0xad;
+    }
 
   dev->regs[0x8b] = 0xff;
   dev->regs[0x8c] = 0x3f;
-  dev->regs[LAMP_REG] = 0xad;
   rts8891_write_all (dev->devnum, dev->regs, dev->reg_count);
 
   set_lamp_brightness (dev, 0);
@@ -4601,7 +4881,7 @@ detect_device (struct Rts8891_Device *dev)
 /**
  * Do dark calibration. We scan a well defined area until average pixel value
  * of the black area is about 0x03 for each color channel. This calibration is
- * currently done at 75 dpi regardless of the final scan dpi.
+ * currently done at 75 dpi (100 for UMAX) regardless of the final scan dpi.
  */
 static SANE_Status
 dark_calibration (struct Rts8891_Device *dev, int mode, int light)
@@ -4611,7 +4891,7 @@ dark_calibration (struct Rts8891_Device *dev, int mode, int light)
   int ro = 250, tro = 250, bro = 0;
   int bo = 250, tbo = 250, bbo = 0;
   int go = 250, tgo = 250, bgo = 0;
-  unsigned char image[CALIBRATION_SIZE];
+  unsigned char image[dev->model->calibration_width * 3];
   float global, ra, ga, ba;
   int num = 0;
   char name[32];
@@ -4628,7 +4908,15 @@ dark_calibration (struct Rts8891_Device *dev, int mode, int light)
 
   /* set up starting values */
   sanei_rts88xx_set_gain (dev->regs, 0, 0, 0);
-  sanei_rts88xx_set_scan_area (dev->regs, 1, 2, 4, 4 + CALIBRATION_WIDTH);
+  if (dev->sensor == SENSOR_TYPE_UMAX)
+    {
+      /* UMAX calibratration area is 1500 but the width is halved by reg. 0x7a */
+      sanei_rts88xx_set_scan_area (dev->regs, 1, 2, 2, 2 + 2 * dev->model->calibration_width);
+    }
+  else
+    {
+      sanei_rts88xx_set_scan_area (dev->regs, 1, 2, 4, 4 + dev->model->calibration_width);
+    }
 
   sanei_rts88xx_set_status (dev->devnum, dev->regs, mode, light);
 
@@ -4743,6 +5031,51 @@ dark_calibration (struct Rts8891_Device *dev, int mode, int light)
       dev->regs[0xef] = 0x02;	/* 0x03 */
       dev->regs[0xf0] = 0xa8;	/* 0x70 */
     }
+  if (dev->sensor == SENSOR_TYPE_UMAX)
+    {
+      dev->regs[0x33] = 0x01;
+      dev->regs[0x35] = 0x47;
+      dev->regs[0x40] = 0xa0;
+      dev->regs[0x7a] = 0x02;
+      dev->regs[0x8d] = 0x46;
+      dev->regs[0xc0] = 0x66;
+      dev->regs[0xc1] = 0xc0;
+      dev->regs[0xc2] = 0x7f;
+      dev->regs[0xc3] = 0x99;
+      dev->regs[0xc4] = 0x3f;
+      dev->regs[0xc5] = 0x80;
+      dev->regs[0xc6] = 0x66;
+      dev->regs[0xc7] = 0xc0;
+      dev->regs[0xc8] = 0x7f;
+      dev->regs[0xc9] = 0xff;
+      dev->regs[0xcb] = 0x00;
+      dev->regs[0xcc] = 0x00;
+      dev->regs[0xcd] = 0x80;
+      dev->regs[0xce] = 0xff;
+      dev->regs[0xcf] = 0xe3;
+      dev->regs[0xd0] = 0xe8;
+      dev->regs[0xd1] = 0xee;
+      dev->regs[0xd2] = 0x0f;
+      dev->regs[0xd3] = 0x0b;
+      dev->regs[0xd4] = 0x0d;
+      dev->regs[0xd8] = 0xa6;
+      dev->regs[0xe2] = 0x07;
+
+      /*dev->regs[0xe5] = 0x1b;      28=40
+         dev->regs[0xe6] = 0x01; */
+      SET_DOUBLE (dev->regs, EXPOSURE_REG, 283);
+
+      dev->regs[0xe7] = 0x4b;
+      dev->regs[0xe9] = 0x40;
+      dev->regs[0xea] = 0x7d;
+      dev->regs[0xeb] = 0x04;
+      dev->regs[0xec] = 0x18;
+      dev->regs[0xed] = 0x85;
+      dev->regs[0xee] = 0x02;
+      dev->regs[0xef] = 0x0a;
+      dev->regs[0xf0] = 0x81;
+      dev->regs[0xf1] = 0x01;
+    }
 
   /* we loop scanning a 637 (1911 bytes) pixels wide area in color mode
    * until each black average reaches the desired value */
@@ -4757,7 +5090,7 @@ dark_calibration (struct Rts8891_Device *dev, int mode, int light)
       /* do scan */
       status =
 	rts8891_simple_scan (dev->devnum, dev->regs, dev->reg_count, 0x02,
-			     CALIBRATION_SIZE, image);
+			     dev->model->calibration_width * 3, image);
       if (status != SANE_STATUS_GOOD)
 	{
 	  DBG (DBG_error, "dark_calibration: failed to scan\n");
@@ -4768,12 +5101,13 @@ dark_calibration (struct Rts8891_Device *dev, int mode, int light)
       if (DBG_LEVEL >= DBG_io2)
 	{
 	  sprintf (name, "dark%03d.pnm", num);
-	  write_rgb_data (name, image, CALIBRATION_WIDTH, 1);
+	  write_rgb_data (name, image, dev->model->calibration_width, 1);
 	  num++;
 	}
 
       /* we now compute the average of red pixels from the first 15 pixels */
       global = average_area (SANE_TRUE, image, 15, 1, &ra, &ga, &ba);
+//      global = average_area (SANE_TRUE, image, dev->model->calibration_width, 1, &ra, &ga, &ba);
       DBG (DBG_info,
 	   "dark_calibration: global=%.2f, channels=(%.2f,%.2f,%.2f)\n",
 	   global, ra, ga, ba);
@@ -4855,6 +5189,133 @@ dark_calibration (struct Rts8891_Device *dev, int mode, int light)
 }
 
 /*
+ * wait until lamp is warmed up enough. We repeat 6 single-line scans at
+ * 1200dpi until the average value change between first and last is below
+ * 0.3 %
+ */
+static SANE_Status
+lamp_warm_up (struct Rts8891_Device *dev, int mode, int light)
+{
+  SANE_Status status = SANE_STATUS_GOOD;
+  int num = 0;
+  char name[32];
+  unsigned char image[9600 * 3];
+  float global, ra, ga, ba, first = 0;
+  int seq = 1;
+#define LAMP_MAX_CYCLES	360	/* max. 2 minutes (120s/2s * 6) */
+
+  DBG (DBG_proc, "lamp_warm_up: start\n");
+
+  sanei_rts88xx_set_gain (dev->regs, 0, 0, 0);
+  sanei_rts88xx_set_scan_area (dev->regs, 1, 2, 400, 400 + 9600); /* why 400? */
+
+  sanei_rts88xx_set_status (dev->devnum, dev->regs, mode, light);
+
+  dev->regs[0x00] = 0xe5;	/* scan */
+  dev->regs[0x32] = 0x00;
+  dev->regs[0x33] = 0x03;
+  dev->regs[0x35] = 0x0e;
+  dev->regs[0x36] = 0x22;
+  dev->regs[0x3a] = 0x0e;
+  dev->regs[0x40] = 0x20;
+
+  dev->regs[0x7a] = 0x01;
+
+  dev->regs[0x8d] = 0x84;
+  dev->regs[0x8e] = 0x63;
+
+  dev->regs[0xb2] = 0x02;
+
+  dev->regs[0xc0] = 0x1f;
+  dev->regs[0xc1] = 0x00;
+  dev->regs[0xc2] = 0xfe;
+  dev->regs[0xc3] = 0xe0;
+  dev->regs[0xc4] = 0xff;
+  dev->regs[0xc5] = 0x01;
+  dev->regs[0xc6] = 0x1f;
+  dev->regs[0xc7] = 0x00;
+  dev->regs[0xc8] = 0xfe;
+  dev->regs[0xc9] = 0x00;
+  dev->regs[0xca] = 0x00;
+  dev->regs[0xcb] = 0x1c;
+  dev->regs[0xcc] = 0x00;
+  dev->regs[0xcd] = 0xc0;
+  dev->regs[0xce] = 0x01;
+  dev->regs[0xcf] = 0xeb;
+  dev->regs[0xd0] = 0xed;
+  dev->regs[0xd1] = 0xe1;
+  dev->regs[0xd2] = 0x02;
+  dev->regs[0xd3] = 0x12;
+  dev->regs[0xd4] = 0xf4;
+  dev->regs[0xd5] = 0x86;
+  dev->regs[0xd6] = 0x1b;
+  dev->regs[0xd7] = 0x10;
+  dev->regs[0xd8] = 0xa6;
+  dev->regs[0xd9] = 0x2d;
+  dev->regs[0xda] = 0x00;
+  dev->regs[0xe2] = 0x00;
+
+  /*dev->regs[0xe5] = 0xf7;
+  dev->regs[0xe6] = 0x2a; */
+  SET_DOUBLE (dev->regs, EXPOSURE_REG, 0x2af7);
+
+  dev->regs[0xe7] = 0x00;
+  dev->regs[0xe8] = 0x00;
+  dev->regs[0xe9] = 0x00;
+  dev->regs[0xea] = 0x00;
+  dev->regs[0xeb] = 0x00;
+  dev->regs[0xec] = 0x00;
+  dev->regs[0xed] = 0x00;
+  dev->regs[0xef] = 0x00;
+  dev->regs[0xf0] = 0x00;
+  dev->regs[0xf2] = 0x00;
+
+  /* scan 9600 pixels wide area in color mode 6 times
+   * if average value difference between first and last scan is 0.3% or greater,
+   * retry after 2 seconds */
+  sanei_rts88xx_set_status (dev->devnum, dev->regs, mode, light);
+  while (seq < LAMP_MAX_CYCLES)
+    {
+      /* do scan */
+      status =
+	rts8891_simple_scan (dev->devnum, dev->regs, dev->reg_count, 0x12,
+			     9600 * 3, image);
+      if (status != SANE_STATUS_GOOD)
+	{
+	  DBG (DBG_error, "lamp_warm_up: failed to scan\n");
+	  return status;
+	}
+
+      /* save scanned picture for data debugging */
+      if (DBG_LEVEL >= DBG_io2)
+	{
+	  sprintf (name, "warm%03d.pnm", num);
+	  write_rgb_data (name, image, 9600, 1);
+	  num++;
+	}
+      global = average_area (SANE_TRUE, image, 9600, 1, &ra, &ga, &ba);
+      if (seq % 6 == 1)
+        first = global;
+      if (seq % 6 == 0)
+        {
+          DBG (DBG_info, "lamp_warm_up: change=%f\n", global / first);
+          if (global / first < 1.003)
+            break;
+          sleep(2);
+        }
+      seq++;
+    }
+  if (seq >= LAMP_MAX_CYCLES)
+    {
+      DBG (DBG_error0, "lamp_warm_up: timed out waiting for lamp to stabilize\n");
+      /* continue anyway */
+    }
+
+  DBG (DBG_proc, "lamp_warm_up: exit\n");
+  return status;
+}
+
+/*
  * do gain calibration. We do scans until averaged values of the area match
  * the target code. We're doing a dichotomy again.
  */
@@ -4871,9 +5332,9 @@ gain_calibration (struct Rts8891_Device *dev, int mode, int light)
   int trg, tbg, tgg, bgg, brg, bbg;
   int num = 0;
   char name[32];
-  int width = CALIBRATION_WIDTH;
-  int length = CALIBRATION_SIZE;
-  unsigned char image[CALIBRATION_SIZE];
+  int width = dev->model->calibration_width;
+  int length = dev->model->calibration_width * 3;
+  unsigned char image[dev->model->calibration_width * 3];
   int pass = 0;
   int timing=0;
 
@@ -4882,7 +5343,10 @@ gain_calibration (struct Rts8891_Device *dev, int mode, int light)
   DBG (DBG_proc, "gain_calibration: start\n");
 
   /* set up starting values */
-  sanei_rts88xx_set_scan_area (dev->regs, 1, 2, xstart, xstart + width);
+  if (dev->sensor == SENSOR_TYPE_UMAX)
+    sanei_rts88xx_set_scan_area (dev->regs, 1, 2, xstart, xstart + 2 * width);
+  else
+    sanei_rts88xx_set_scan_area (dev->regs, 1, 2, xstart, xstart + width);
   sanei_rts88xx_set_offset (dev->regs, dev->red_offset, dev->green_offset,
 			    dev->blue_offset);
 
@@ -5023,6 +5487,54 @@ gain_calibration (struct Rts8891_Device *dev, int mode, int light)
       dev->regs[0x87] = 0x00;
       dev->regs[0x88] = 0x06;
     }
+  if (dev->sensor == SENSOR_TYPE_UMAX)
+    {
+      dev->regs[0x33] = 0x01;
+      dev->regs[0x35] = 0x47;
+      dev->regs[0x40] = 0xa0;
+      dev->regs[0x7a] = 0x02;
+      timing = 0x32;
+      dev->regs[0x8d] = 0x4f;
+      dev->regs[0xc0] = 0x66;
+      dev->regs[0xc1] = 0xc0;
+      dev->regs[0xc2] = 0x7f;
+      dev->regs[0xc3] = 0x99;
+      dev->regs[0xc4] = 0x3f;
+      dev->regs[0xc5] = 0x80;
+      dev->regs[0xc6] = 0x66;
+      dev->regs[0xc7] = 0xc0;
+      dev->regs[0xc8] = 0x7f;
+      dev->regs[0xc9] = 0xff;
+      dev->regs[0xcb] = 0x00;
+      dev->regs[0xcc] = 0x00;
+      dev->regs[0xcd] = 0x80;
+      dev->regs[0xce] = 0xff;
+      dev->regs[0xcf] = 0xe3;
+      dev->regs[0xd0] = 0xe8;
+      dev->regs[0xd1] = 0xee;
+      dev->regs[0xd2] = 0x0f;
+      dev->regs[0xd3] = 0x0b;
+      dev->regs[0xd4] = 0x0d;
+      dev->regs[0xd7] = 0x10;
+      dev->regs[0xd8] = 0xa6;
+      dev->regs[0xda] = 0x00;
+      dev->regs[0xe2] = 0x07;
+
+      /*dev->regs[0xe5] = 0x1b;      28=40
+         dev->regs[0xe6] = 0x01; */
+      SET_DOUBLE (dev->regs, EXPOSURE_REG, 283);
+
+      dev->regs[0xe7] = 0x4b;
+      dev->regs[0xe9] = 0x40;
+      dev->regs[0xea] = 0x7d;
+      dev->regs[0xeb] = 0x04;
+      dev->regs[0xec] = 0x18;
+      dev->regs[0xed] = 0x85;
+      dev->regs[0xee] = 0x02;
+      dev->regs[0xef] = 0x0a;
+      dev->regs[0xf0] = 0x81;
+      dev->regs[0xf1] = 0x01;
+    }
   SET_DOUBLE (dev->regs, TIMING_REG, timing);
   SET_DOUBLE (dev->regs, TIMING1_REG, timing+1);
   SET_DOUBLE (dev->regs, TIMING2_REG, timing+2);
@@ -5039,9 +5551,18 @@ gain_calibration (struct Rts8891_Device *dev, int mode, int light)
   bgg = 0;
   bbg = 0;
   /* top values */
-  trg = 0x1f;
-  tgg = 0x1f;
-  tbg = 0x1f;
+  if (dev->sensor == SENSOR_TYPE_UMAX)
+    {
+      trg = 0x3f;
+      tgg = 0x3f;
+      tbg = 0x3f;
+    }
+  else
+    {
+      trg = 0x1f;
+      tgg = 0x1f;
+      tbg = 0x1f;
+    }
 
   /* loop on gain calibration until we find until we find stable value
    * or we do more than 20 tries */
@@ -5228,7 +5749,7 @@ offset_calibration (struct Rts8891_Device *dev, int mode, int light)
   int ro = 250, tro = 250, bro = 123;
   int go = 250, tgo = 250, bgo = 123;
   int bo = 250, tbo = 250, bbo = 123;
-  unsigned char image[CALIBRATION_SIZE];
+  unsigned char image[dev->model->calibration_width * 3];
   float global, ra, ga, ba;
   int num = 0;
   char name[32];
@@ -5239,7 +5760,10 @@ offset_calibration (struct Rts8891_Device *dev, int mode, int light)
   /* gains from previous step are a little higher than the one used */
   sanei_rts88xx_set_gain (dev->regs, dev->red_gain, dev->green_gain,
 			  dev->blue_gain);
-  sanei_rts88xx_set_scan_area (dev->regs, 1, 2, 4, 4 + CALIBRATION_WIDTH);
+  if (dev->sensor == SENSOR_TYPE_UMAX)
+    sanei_rts88xx_set_scan_area (dev->regs, 1, 2, 4, 4 + 2 * dev->model->calibration_width);
+  else
+    sanei_rts88xx_set_scan_area (dev->regs, 1, 2, 4, 4 + dev->model->calibration_width);
 
   dev->regs[0x32] = 0x00;
   dev->regs[0x33] = 0x03;
@@ -5341,6 +5865,52 @@ offset_calibration (struct Rts8891_Device *dev, int mode, int light)
       dev->regs[0xef] = 0x02;	/* 0x03 */
       dev->regs[0xf0] = 0xa8;	/* 0x70 */
     }
+  if (dev->sensor == SENSOR_TYPE_UMAX)
+    {
+      dev->regs[0x33] = 0x01;
+      dev->regs[0x35] = 0x47;
+      dev->regs[0x40] = 0xa0;
+      dev->regs[0x7a] = 0x02;
+      /* timing = 0x32; */
+      dev->regs[0x8d] = 0x46;
+      dev->regs[0xc0] = 0x66;
+      dev->regs[0xc1] = 0xc0;
+      dev->regs[0xc2] = 0x7f;
+      dev->regs[0xc3] = 0x99;
+      dev->regs[0xc4] = 0x3f;
+      dev->regs[0xc5] = 0x80;
+      dev->regs[0xc6] = 0x66;
+      dev->regs[0xc7] = 0xc0;
+      dev->regs[0xc8] = 0x7f;
+      dev->regs[0xc9] = 0xff;
+      dev->regs[0xcb] = 0x00;
+      dev->regs[0xcc] = 0x00;
+      dev->regs[0xcd] = 0x80;
+      dev->regs[0xce] = 0xff;
+      dev->regs[0xcf] = 0xe3;
+      dev->regs[0xd0] = 0xe8;
+      dev->regs[0xd1] = 0xee;
+      dev->regs[0xd2] = 0x0f;
+      dev->regs[0xd3] = 0x0b;
+      dev->regs[0xd4] = 0x0d;
+      dev->regs[0xd8] = 0xa6;
+      dev->regs[0xe2] = 0x07;
+
+      /*dev->regs[0xe5] = 0x1b;      28=40
+         dev->regs[0xe6] = 0x01; */
+      SET_DOUBLE (dev->regs, EXPOSURE_REG, 283);
+
+      dev->regs[0xe7] = 0x4b;
+      dev->regs[0xe9] = 0x40;
+      dev->regs[0xea] = 0x7d;
+      dev->regs[0xeb] = 0x04;
+      dev->regs[0xec] = 0x18;
+      dev->regs[0xed] = 0x85;
+      dev->regs[0xee] = 0x02;
+      dev->regs[0xef] = 0x0a;
+      dev->regs[0xf0] = 0x81;
+      dev->regs[0xf1] = 0x01;
+    }
 
   /* we loop scanning a 637 (1911 bytes) pixels wide area in color mode until each black average
    * reaches the desired value */
@@ -5351,13 +5921,13 @@ offset_calibration (struct Rts8891_Device *dev, int mode, int light)
       sanei_rts88xx_set_offset (dev->regs, ro, go, bo);
       sanei_rts88xx_set_status (dev->devnum, dev->regs, mode, light);
       rts8891_simple_scan (dev->devnum, dev->regs, dev->reg_count, 0x02,
-			   CALIBRATION_SIZE, image);
+			   dev->model->calibration_width * 3, image);
 
       /* save scanned picture for data debugging */
       if (DBG_LEVEL >= DBG_io2)
 	{
 	  sprintf (name, "offset%03d.pnm", num);
-	  write_rgb_data (name, image, CALIBRATION_WIDTH, 1);
+	  write_rgb_data (name, image, dev->model->calibration_width, 1);
 	  num++;
 	}
 
@@ -5465,7 +6035,7 @@ setup_shading_calibration (struct Rts8891_Device *dev, int mode, int *light, int
       *status1 |= 0x08;
     }
 
-  /* we default to 75 dpi then override needed registers */
+  /* we default to 75 dpi (100 for UMAX) then override needed registers */
   timing=0x00b0;
   regs[0x32] = 0x20;
   regs[0x33] = 0x83;
@@ -5543,10 +6113,25 @@ setup_shading_calibration (struct Rts8891_Device *dev, int mode, int *light, int
       regs[0xe2] = 0x02;	/* 0x05 */
       exposure=443;
     }
+  if (dev->sensor == SENSOR_TYPE_UMAX)
+    {
+      regs[0x36] = 0x29;
+      regs[0x7a] = 0x02;
+      timing = 0x32;
+      regs[0x8d] = 0x4f;
+      regs[0xe2] = 0x00;
+      /* regs[0xe5] = 0xdf;
+         regs[0xe6] = 0x08;    8df =2271 */
+      exposure=2271;
+      regs[0xee] = 00;
+      regs[0xf1] = 00;
+    }
 
   switch (dev->xdpi)
     {
     case 75:
+    case 100:
+    case 200:
       break;
 
     case 150:
@@ -5796,6 +6381,37 @@ setup_shading_calibration (struct Rts8891_Device *dev, int mode, int *light, int
 	       "setup_shading_calibration: setting up SENSOR_TYPE_4400_BARE for 300 dpi\n");
 	  return SANE_STATUS_INVAL;
 	  break;
+	case SENSOR_TYPE_UMAX:
+	  DBG (DBG_io,
+	       "setup_shading_calibration: setting up SENSOR_TYPE_UMAX for 300 dpi\n");
+	  regs[0x36] = 0x2c;
+	  regs[0x40] = 0x20;
+	  regs[0x7a] = 0x01;
+	  regs[0x8d] = 0x12;
+	  regs[0xc0] = 0x87;
+	  regs[0xc1] = 0x07;
+	  regs[0xc2] = 0xf8;
+	  regs[0xc3] = 0x78;
+	  regs[0xc4] = 0xf8;
+	  regs[0xc5] = 0x07;
+	  regs[0xc6] = 0x87;
+	  regs[0xc7] = 0x07;
+	  regs[0xc8] = 0xf8;
+	  regs[0xc9] = 0xfc;
+	  regs[0xca] = 0x0f;
+	  regs[0xcd] = 0x00;
+	  regs[0xce] = 0x80;
+	  regs[0xcf] = 0xe2;
+	  regs[0xd0] = 0xe4;
+	  regs[0xd1] = 0xea;
+	  regs[0xd2] = 0x0b;
+	  regs[0xd3] = 0x17;
+	  regs[0xd4] = 0x01;
+	  regs[0xe2] = 0x07;
+	  /* regs[0xe5] = 0xc9;
+	     regs[0xe6] = 0x01;    0x1c9=457 */
+          exposure=457;
+	  break;
 	}
       break;
 
@@ -5950,6 +6566,46 @@ setup_shading_calibration (struct Rts8891_Device *dev, int mode, int *light, int
 	       "setup_shading_calibration: setting up SENSOR_TYPE_4400_BARE for 600 dpi\n");
 	  return SANE_STATUS_INVAL;
 	  break;
+	case SENSOR_TYPE_UMAX:
+	  DBG (DBG_io,
+	       "setup_shading_calibration: setting up SENSOR_TYPE_UMAX for 600 dpi\n");
+	  *status1 = 0x20;
+
+	  regs[0x36] = 0x2c;
+	  regs[0x40] = 0x20;
+	  regs[0x7a] = 0x01;
+	  regs[0x8d] = 0x24;
+	  regs[0xc0] = 0xff;
+	  regs[0xc1] = 0x07;
+	  regs[0xc2] = 0x80;
+	  regs[0xc3] = 0x00;
+	  regs[0xc4] = 0xf8;
+	  regs[0xc5] = 0x7f;
+	  regs[0xc6] = 0xff;
+	  regs[0xc7] = 0x07;
+	  regs[0xc8] = 0x80;
+	  regs[0xc9] = 0x00;
+	  regs[0xca] = 0x0f;
+	  regs[0xcc] = 0xfe;
+	  regs[0xcd] = 0x00;
+	  regs[0xce] = 0x00;
+	  regs[0xcf] = 0xd7;
+	  regs[0xd0] = 0x61;
+	  regs[0xd1] = 0xaa;
+	  regs[0xd2] = 0x0b;
+	  regs[0xd3] = 0x03;
+	  regs[0xd4] = 0x05;
+	  regs[0xd5] = 0x86;
+	  regs[0xd6] = 0x1b;
+	  regs[0xd7] = 0x10;
+	  regs[0xd8] = 0xa6;
+	  regs[0xd9] = 0x2d;
+
+	  regs[0xe2] = 0x07;
+	  /* regs[0xe5] = 0xae;
+	     regs[0xe6] = 0x02;*/
+          exposure=0x02ae;
+	  break;
 	}
       break;
 
@@ -6100,6 +6756,44 @@ setup_shading_calibration (struct Rts8891_Device *dev, int mode, int *light, int
 	       "setup_shading_calibration: setting up SENSOR_TYPE_4400_BARE for 1200 dpi\n");
 	  return SANE_STATUS_INVAL;
 	  break;
+
+	case SENSOR_TYPE_UMAX:
+	  DBG (DBG_io,
+	       "setup_shading_calibration: setting up SENSOR_TYPE_UMAX for 1200 dpi\n");
+	  *status1 = 0x20;
+	  regs[0x36] = 0x2c;
+	  regs[0x40] = 0x20;
+	  regs[0x7a] = 0x01;
+	  regs[0x8d] = 0x48;
+
+	  regs[0xc0] = 0x1f;
+	  regs[0xc1] = 0x00;
+	  regs[0xc2] = 0xfe;
+	  regs[0xc3] = 0xe0;
+	  regs[0xc4] = 0xff;
+	  regs[0xc5] = 0x01;
+	  regs[0xc6] = 0x1f;
+	  regs[0xc7] = 0x00;
+	  regs[0xc8] = 0xfe;
+	  regs[0xc9] = 0x00;
+	  regs[0xca] = 0x00;
+	  regs[0xcb] = 0x1c;
+	  regs[0xcc] = 0x00;
+	  regs[0xcd] = 0xc0;
+	  regs[0xce] = 0x01;
+	  regs[0xcf] = 0xeb;
+	  regs[0xd0] = 0xed;
+	  regs[0xd1] = 0xe1;
+	  regs[0xd2] = 0x02;
+	  /* regs[0xd3] = 0x12; */
+	  regs[0xd4] = 0xf4;
+	  regs[0xd5] = 0x86;
+	  regs[0xd6] = 0x1b;
+	  regs[0xe2] = 0x07;
+	  /* regs[0xe5] = 0x5e;
+	     regs[0xe6] = 0x05;         0x55e=1374 */
+          exposure=1374;
+	  break;
 	}
       break;
     }
@@ -6113,7 +6807,10 @@ setup_shading_calibration (struct Rts8891_Device *dev, int mode, int *light, int
   /* in logs, the driver use the computed offset minus 2 */
   sanei_rts88xx_set_offset (regs, dev->red_offset, dev->green_offset, dev->blue_offset);
   sanei_rts88xx_set_gain (regs, dev->red_gain, dev->green_gain, dev->blue_gain);
-  sanei_rts88xx_set_scan_area (regs, 1, 1 + lines, dev->xstart, dev->xstart + dev->pixels);
+  if (dev->sensor == SENSOR_TYPE_UMAX && dev->xdpi == 100)
+    sanei_rts88xx_set_scan_area (regs, 1, 1 + lines, dev->xstart, dev->xstart + 2 * dev->pixels);
+  else
+    sanei_rts88xx_set_scan_area (regs, 1, 1 + lines, dev->xstart, dev->xstart + dev->pixels);
 
   DBG (DBG_proc, "setup_shading_calibration: exit\n");
   return status;
@@ -6153,7 +6850,10 @@ shading_calibration (struct Rts8891_Device *dev, SANE_Bool color, int mode, int 
     }
   if (dev->shading_data != NULL)
     free (dev->shading_data);
-  dev->shading_data = (unsigned char *) malloc (dev->bytes_per_line);
+  if (dev->sensor == SENSOR_TYPE_UMAX && dev->xdpi == 100)
+    dev->shading_data = (unsigned char *) malloc (2 * dev->bytes_per_line);
+  else
+    dev->shading_data = (unsigned char *) malloc (dev->bytes_per_line);
   if (dev->shading_data == NULL)
     {
       free (image);
@@ -6217,7 +6917,13 @@ shading_calibration (struct Rts8891_Device *dev, SANE_Bool color, int mode, int 
 	{
 	  sum += image[x + y * width];
 	}
-      dev->shading_data[x] = sum / (lines - 13);
+      if (dev->sensor == SENSOR_TYPE_UMAX && dev->xdpi == 100)
+        {
+          dev->shading_data[2 * x] = sum / (lines - 13);
+          dev->shading_data[2 * x + 1] = sum / (lines - 13);
+        }
+      else
+        dev->shading_data[x] = sum / (lines - 13);
     }
   if (DBG_LEVEL >= DBG_io2)
     {
@@ -6292,10 +6998,17 @@ send_calibration_data (struct Rts8891_Session *session)
   /* 675 pixels at 75 DPI, 16 bits values, 3 color channels */
   /* 5400 pixels at max sensor 600 dpi                      */
   /* 3 16bits 256 value gamma tables plus start/end markers */
-  /* must multiple of 32 */
-  data_size = (675 * dev->xdpi) / 75;
-
-  width = dev->pixels;
+  /* must multple of 32 */
+  if (dev->sensor == SENSOR_TYPE_UMAX && dev->xdpi == 100)
+    {
+      data_size = (675 * 2 * dev->xdpi) / 75;
+      width = 2 * dev->pixels;
+    }
+  else
+    {
+      data_size = (675 * dev->xdpi) / 75;
+      width = dev->pixels;
+    }
 
   /* effective data calibration size */
   size = data_size * 2 * 3 + 3 * (512 + 2);
@@ -6563,7 +7276,11 @@ setup_scan_registers (struct Rts8891_Session *session, SANE_Byte *status1, SANE_
       DBG (DBG_warn,
 	   "setup_scan_registers: native gray modes not implemented for this model, failure expected\n");
     }
-  sanei_rts88xx_set_scan_area (regs, dev->ystart, dev->ystart + dev->lines, dev->xstart, dev->xstart + dev->pixels);
+  DBG (DBG_info, "setup_scan_registers: dev->xdpi = %d\n", dev->xdpi);
+  if (dev->sensor == SENSOR_TYPE_UMAX && dev->xdpi == 100)
+    sanei_rts88xx_set_scan_area (regs, dev->ystart, dev->ystart + dev->lines, dev->xstart, dev->xstart + 2 * dev->pixels);
+  else
+    sanei_rts88xx_set_scan_area (regs, dev->ystart, dev->ystart + dev->lines, dev->xstart, dev->xstart + dev->pixels);
   DBG (DBG_info, "setup_scan_registers: xstart=%d, pixels=%d\n", dev->xstart, dev->pixels);
   DBG (DBG_info, "setup_scan_registers: ystart=%d, lines =%d\n", dev->ystart, dev->lines);
 
@@ -6590,7 +7307,7 @@ setup_scan_registers (struct Rts8891_Session *session, SANE_Byte *status1, SANE_
       *status2 = 0x3b;
     }
 
-  /* default to 75 dpi color scan */
+  /* default to 75 dpi (100 for UMAX) color scan */
   regs[0x0b] = 0x70;
   regs[0x0c] = 0x00;
   regs[0x0d] = 0x00;
@@ -6923,9 +7640,73 @@ setup_scan_registers (struct Rts8891_Session *session, SANE_Byte *status1, SANE_
       regs[0xf0] = 0xa8;	/* 0x00 */
       regs[0xf2] = 0x01;	/* 0x00 */
     }
+  if (dev->sensor == SENSOR_TYPE_UMAX)
+    {
+      regs[0x14] = 0xf0;
+      regs[0x16] = 0x00;
+      regs[0x23] = 0x00;
+      regs[0x32] = 0x80;
+      regs[0x33] = 0x81;
+      regs[0x40] = 0xa4;
+      regs[0x7a] = 0x02;
+      timing=0x0182;
+      regs[0x85] = 0x10;
+      regs[0x86] = 0x14;
+      regs[0x87] = 0x20;
+      regs[0x88] = 0x22;
+      regs[0x8d] = 0x4f;
+      regs[0xc0] = 0x66;
+      regs[0xc1] = 0xc0;
+      regs[0xc2] = 0x7f;
+      regs[0xc3] = 0x99;
+      regs[0xc4] = 0x3f;
+      regs[0xc5] = 0x80;
+      regs[0xc6] = 0x66;
+      regs[0xc7] = 0xc0;
+      regs[0xc8] = 0x7f;
+      regs[0xc9] = 0xff;
+      regs[0xcb] = 0x00;
+      regs[0xcc] = 0x00;
+      regs[0xcd] = 0x80;
+      regs[0xce] = 0xff;
+      regs[0xcf] = 0xe3;
+      regs[0xd0] = 0xe8;
+      regs[0xd1] = 0xee;
+      regs[0xd2] = 0x0f;
+      /*regs[0xd3] = 0x0b;*/
+      regs[0xd4] = 0x0d;
+
+      regs[0xd6] = 0x0f;
+      regs[0xd7] = 0x10;	/* 4111 */
+
+      regs[0xd8] = 0xa6;	/* 0xa610=42512 */
+
+      regs[0xd9] = 0x2d;
+      regs[0xda] = 0x00;
+      regs[0xe2] = 0x07;
+      regs[0xe3] = 0xbd;
+      regs[0xe4] = 0x08;
+
+      /* regs[0xe5] = 0x1b;
+         regs[0xe6] = 0x01;     exposure time 0x011b=283 */
+      exposure=283;
+
+      regs[0xe7] = 0x4b;
+      regs[0xe9] = 0x40;
+      regs[0xea] = 0x7d;
+      regs[0xeb] = 0x04;
+      regs[0xec] = 0x18;
+      regs[0xed] = 0x85;
+      regs[0xee] = 0x02;
+      regs[0xef] = 0x0a;
+      regs[0xf0] = 0x81;
+      regs[0xf1] = 0x01;
+    }
   switch (dev->xdpi)
     {
     case 75:
+    case 100:
+    case 200:
       break;
     case 150:
       regs[0x35] = 0x45;
@@ -7042,6 +7823,48 @@ setup_scan_registers (struct Rts8891_Session *session, SANE_Byte *status1, SANE_
 	  regs[0xf0] = 0x02;
 	  regs[0xf2] = 0x00;
 	  break;
+	case SENSOR_TYPE_UMAX:
+          DBG (DBG_io, "setup_scan_registers: setting up SENSOR_TYPE_UMAX for 150 dpi\n");
+	  regs[0x32] = 0x20;
+	  regs[0x33] = 0x83;
+	  regs[0x40] = 0x2c;
+	  regs[0x7a] = 0x01;
+	  regs[0x8d] = 0x09;
+	  regs[0xc1] = 0x06;
+	  regs[0xc2] = 0x7e;
+	  regs[0xc4] = 0xf9;
+	  regs[0xc5] = 0x81;
+	  regs[0xc7] = 0x06;
+	  regs[0xc8] = 0x7e;
+	  regs[0xca] = 0x0f;
+	  regs[0xcb] = 0xc0;
+	  regs[0xcd] = 0x00;
+	  regs[0xce] = 0x30;
+	  regs[0xcf] = 0xe4;
+	  regs[0xd0] = 0xe6;
+	  regs[0xd1] = 0xea;
+	  regs[0xd2] = 0x0b;
+	  regs[0xd3] = 0x17;
+	  regs[0xd4] = 0x01;
+	  regs[0xe2] = 0x0f;
+	  regs[0xe3] = 0x89;
+	  regs[0xe4] = 0x03;
+	  /* regs[0xe5] = 0xaa;*/
+	  exposure = 170;
+
+	  regs[0xe7] = 0x00;
+	  regs[0xe8] = 0x79;
+	  regs[0xe9] = 0x01;
+	  regs[0xea] = 0x0b;
+	  regs[0xeb] = 0x58;
+	  regs[0xec] = 0x01;
+	  regs[0xed] = 0x04;
+	  regs[0xee] = 0xbc;
+	  regs[0xef] = 0x00;
+	  regs[0xf0] = 0x03;
+	  regs[0xf1] = 0x00;
+	  regs[0xf2] = 0x00;
+          break;
 	}
       break;
 
@@ -7193,6 +8016,59 @@ setup_scan_registers (struct Rts8891_Session *session, SANE_Byte *status1, SANE_
 	  regs[0xef] = 0x00;
 	  regs[0xf0] = 0x00;
 	  regs[0xf2] = 0x00;
+	  break;
+	case SENSOR_TYPE_UMAX:
+	  DBG (DBG_io, "setup_scan_registers: setting up SENSOR_TYPE_UMAX for 300 dpi\n");
+	  regs[0x32] = 0x20;
+	  regs[0x33] = 0x83;
+	  regs[0x35] = 0x0e;
+	  regs[0x3a] = 0x0e;
+	  regs[0x40] = 0x2c;
+	  regs[0x7a] = 0x01;
+	  timing=0x022b;
+	  regs[0x85] = 0x18;
+	  regs[0x86] = 0x1b;
+	  regs[0x87] = 0x30;
+	  regs[0x88] = 0x30;
+	  regs[0x8d] = 0x12;
+	  regs[0xc0] = 0x87;
+	  regs[0xc1] = 0x07;
+	  regs[0xc2] = 0xf8;
+	  regs[0xc3] = 0x78;
+	  regs[0xc4] = 0xf8;
+	  regs[0xc5] = 0x07;
+	  regs[0xc6] = 0x87;
+	  regs[0xc7] = 0x07;
+	  regs[0xc8] = 0xf8;
+	  regs[0xc9] = 0xfc;
+	  regs[0xca] = 0x0f;
+	  regs[0xcd] = 0x00;
+	  regs[0xce] = 0x80;
+	  regs[0xcf] = 0xe2;
+	  regs[0xd0] = 0xe4;
+	  regs[0xd1] = 0xea;
+	  regs[0xd2] = 0x0b;
+	  regs[0xd3] = 0x17;
+	  regs[0xd4] = 0x01;
+	  regs[0xe3] = 0x00;
+	  regs[0xe4] = 0x00;
+	  /*  regs[0xe5] = 0xc9;
+	  regs[0xe6] = 0x01; */
+	  exposure = 457;
+
+	  regs[0xe7] = 0x00;
+	  regs[0xe8] = 0x00;
+	  regs[0xe9] = 0x00;
+	  regs[0xea] = 0x00;
+	  regs[0xeb] = 0x00;
+	  regs[0xec] = 0x00;
+	  regs[0xed] = 0x00;
+	  regs[0xee] = 0x00;
+	  regs[0xef] = 0x00;
+	  regs[0xf0] = 0x00;
+	  regs[0xf1] = 0x00;
+	  regs[0xf2] = 0x00;
+
 	  break;
 	}
       break;
@@ -7391,6 +8267,75 @@ setup_scan_registers (struct Rts8891_Session *session, SANE_Byte *status1, SANE_
           DBG (DBG_io, "setup_scan_registers: setting up SENSOR_TYPE_4400_BARE for 600 dpi\n");
 	  return SANE_STATUS_INVAL;
 	  break;
+
+	case SENSOR_TYPE_UMAX:
+          DBG (DBG_io, "setup_scan_registers: setting up SENSOR_TYPE_UMAX for 600 dpi\n");
+/*	  *status1 = 0x10;
+	  *status2 = 0x23;*/
+
+	  regs[0x32] = 0x20;
+	  regs[0x33] = 0x83;
+	  regs[0x34] = 0xf0;
+	  regs[0x35] = 0x1b;
+	  regs[0x36] = 0x29;
+	  regs[0x3a] = 0x1b;
+	  regs[0x40] = 0x2c;
+	  regs[0x7a] = 0x01;
+	  regs[0x85] = 0x30;
+	  regs[0x86] = 0x30;
+	  regs[0x87] = 0x60;
+	  regs[0x88] = 0x5a;
+	  regs[0x8d] = 0x24;
+
+	  regs[0xc0] = 0xff;
+	  regs[0xc1] = 0x07;
+	  regs[0xc2] = 0x80;
+	  regs[0xc3] = 0x00;
+	  regs[0xc4] = 0xf8;
+	  regs[0xc5] = 0x7f;
+	  regs[0xc6] = 0xff;
+	  regs[0xc7] = 0x07;
+	  regs[0xc8] = 0x80;
+	  regs[0xc9] = 0x00;
+	  regs[0xca] = 0x0f;
+
+	  regs[0xcc] = 0xfe;
+	  regs[0xcd] = 0x00;
+	  regs[0xce] = 0x00;
+	  regs[0xcf] = 0xd7;
+	  regs[0xd0] = 0x61;
+	  regs[0xd1] = 0xaa;
+	  regs[0xd2] = 0x0b;
+	  regs[0xd3] = 0x03;
+	  regs[0xd4] = 0x05;
+	  regs[0xd5] = 0x86;
+	  regs[0xd6] = 0x1b;
+	  regs[0xd7] = 0x10;
+	  regs[0xd8] = 0xa6;
+	  regs[0xd9] = 0x2d;
+
+	  regs[0xe0] = 0x00;
+	  regs[0xe1] = 0x00;
+	  regs[0xe2] = 0x01;
+	  regs[0xe3] = 0x00;
+	  regs[0xe4] = 0x00;
+/*	  regs[0xe5] = 0xbd;
+	  regs[0xe6] = 0x0a;*/
+          exposure=0x0abd;
+	  regs[0xe7] = 0x00;
+	  regs[0xe8] = 0x00;
+	  regs[0xe9] = 0x00;
+	  regs[0xea] = 0x00;
+	  regs[0xeb] = 0x00;
+	  regs[0xec] = 0x00;
+	  regs[0xed] = 0x00;
+	  regs[0xee] = 0x00;
+	  regs[0xef] = 0x00;
+	  regs[0xf0] = 0x00;
+	  regs[0xf1] = 0x00;
+	  regs[0xf2] = 0x00;
+          timing=0x0425;
+	  break;
 	}
       break;
     case 1200:
@@ -7584,6 +8529,68 @@ setup_scan_registers (struct Rts8891_Session *session, SANE_Byte *status1, SANE_
           DBG (DBG_io, "setup_scan_registers: setting up SENSOR_TYPE_4400_BARE for 1200 dpi\n");
 	  return SANE_STATUS_INVAL;
 	  break;
+
+	case SENSOR_TYPE_UMAX:
+	  DBG (DBG_io, "setup_scan_registers: setting up SENSOR_TYPE_UMAX for 1200 dpi\n");
+	  regs[0x32] = 0x20;
+	  regs[0x33] = 0x83;
+	  regs[0x34] = 0xf0;
+	  regs[0x35] = 0x0e;
+	  regs[0x36] = 0x29;
+	  regs[0x3a] = 0x0e;
+	  regs[0x40] = 0x2c;
+	  regs[0x7a] = 0x01;
+	  timing=0x081a;
+	  regs[0x85] = 0x60;
+	  regs[0x86] = 0x5a;
+	  regs[0x87] = 0xc0;
+	  regs[0x88] = 0xae;
+	  regs[0x8d] = 0x48;
+
+	  regs[0xc0] = 0x1f;
+	  regs[0xc1] = 0x00;
+	  regs[0xc2] = 0xfe;
+	  regs[0xc3] = 0xe0;
+	  regs[0xc4] = 0xff;
+	  regs[0xc5] = 0x01;
+	  regs[0xc6] = 0x1f;
+	  regs[0xc7] = 0x00;
+	  regs[0xc8] = 0xfe;
+	  regs[0xc9] = 0x00;
+	  regs[0xca] = 0x00;
+	  regs[0xcb] = 0x1c;
+	  regs[0xcc] = 0x00;
+	  regs[0xcd] = 0xc0;
+	  regs[0xce] = 0x01;
+	  regs[0xcf] = 0xeb;
+	  regs[0xd0] = 0xed;
+	  regs[0xd1] = 0xe1;
+	  regs[0xd2] = 0x02;
+	  /*  regs[0xd3] = 0x12; */
+	  regs[0xd4] = 0xf4;
+	  regs[0xd5] = 0x86;
+	  regs[0xd6] = 0x1b;
+
+	  regs[0xe2] = 0x00;
+	  regs[0xe3] = 0x00;
+	  regs[0xe4] = 0x00;
+	  /* regs[0xe5] = 0xf7;
+	     regs[0xe6] = 0x2a; */
+          exposure=0x2af7;
+	  regs[0xe7] = 0x00;
+	  regs[0xe8] = 0x00;
+	  regs[0xe9] = 0x00;
+	  regs[0xea] = 0x00;
+	  regs[0xeb] = 0x00;
+	  regs[0xec] = 0x00;
+	  regs[0xed] = 0x00;
+	  regs[0xee] = 0x00;
+	  regs[0xef] = 0x00;
+	  regs[0xf0] = 0x00;
+	  regs[0xf1] = 0x00;
+	  regs[0xf2] = 0x00;
+
+	  break;
 	}
       break;
     }
@@ -7661,10 +8668,13 @@ park_head (struct Rts8891_Device *dev, SANE_Bool wait)
 
   DBG (DBG_proc, "park_head: start\n");
 
-  reg = 0x8d;
-  sanei_rts88xx_write_reg (dev->devnum, LAMP_REG, &reg);
-  reg = 0xad;
-  sanei_rts88xx_write_reg (dev->devnum, LAMP_REG, &reg);
+  if (dev->sensor != SENSOR_TYPE_UMAX)
+    {
+      reg = 0x8d;
+      sanei_rts88xx_write_reg (dev->devnum, LAMP_REG, &reg);
+      reg = 0xad;
+      sanei_rts88xx_write_reg (dev->devnum, LAMP_REG, &reg);
+    }
 
   status = sanei_rts88xx_read_reg (dev->devnum, CONTROL_REG, &control);
 
@@ -7684,10 +8694,13 @@ park_head (struct Rts8891_Device *dev, SANE_Bool wait)
     }
   sanei_rts88xx_write_regs (dev->devnum, 0x16, dev->regs + 0x16, 2);
 
-  reg = 0x8d;
-  sanei_rts88xx_write_reg (dev->devnum, LAMP_REG, &reg);
-  reg = 0xad;
-  sanei_rts88xx_write_reg (dev->devnum, LAMP_REG, &reg);
+  if (dev->sensor != SENSOR_TYPE_UMAX)
+    {
+      reg = 0x8d;
+      sanei_rts88xx_write_reg (dev->devnum, LAMP_REG, &reg);
+      reg = 0xad;
+      sanei_rts88xx_write_reg (dev->devnum, LAMP_REG, &reg);
+    }
 
   /* 0x20 expected */
   sanei_rts88xx_read_reg (dev->devnum, CONTROLER_REG, &reg);
@@ -7738,6 +8751,11 @@ update_button_status (struct Rts8891_Session *session)
   /* effective button reading */
   status = rts8891_read_buttons (session->dev->devnum, &mask);
 
+  if (session->dev->sensor == SENSOR_TYPE_UMAX)
+    {
+      mask >>= 8;
+    }
+
   /* release interface if needed */
   if (lock == SANE_TRUE)
     {
@@ -7776,6 +8794,11 @@ set_lamp_state (struct Rts8891_Session *session, int on)
 	  DBG (DBG_warn, "set_lamp_state: cannot claim usb interface\n");
 	  return SANE_STATUS_DEVICE_BUSY;
 	}
+    }
+
+  if (session->dev->sensor == SENSOR_TYPE_UMAX) /* main lamp on UMAX */
+    {
+      sanei_rts88xx_set_status (session->dev->devnum, session->dev->regs, session->dev->has_uta ? 0xa0 : 0x20, on ? 0x3b : 0x1b);
     }
 
   status = sanei_rts88xx_read_reg (session->dev->devnum, LAMP_REG, &reg);

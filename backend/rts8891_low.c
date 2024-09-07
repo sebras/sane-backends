@@ -132,10 +132,16 @@ rts8891_write_all (SANE_Int devnum, SANE_Byte * regs, SANE_Int count)
   buffer[1] = 0xb4;
   buffer[2] = 0x00;
   buffer[3] = size;
-  for (i = 0; i < size; i++)
-    buffer[i + 4] = regs[0xb4 + i];
+  j = 0;
+  for (i = 0; i < size; i++) {
+    buffer[i + 4 + j] = regs[0xb4 + i];
+    if (buffer[i + 4 + j] == 0xaa) {
+      j++;
+      buffer[i + 4 + j] = 0x00;
+    }
+  }
   /* the USB block is size + 4 bytes of header long */
-  size += 4;
+  size += 4 + j;
   if (sanei_usb_write_bulk (devnum, buffer, &size) != SANE_STATUS_GOOD)
     {
       DBG (DBG_error,
@@ -368,6 +374,28 @@ rts8891_data_format (SANE_Int dpi, int sensor)
 	  break;
 	}
     }
+  if (sensor == SENSOR_TYPE_UMAX)
+    {
+      switch (dpi)
+	{
+	case 100: /* emulated */
+	case 200:
+	  reg = 0x0b;
+	  break;
+	case 150:
+	  reg = 0x17;
+	  break;
+	case 300:
+	  reg = 0x17;
+	  break;
+	case 600:
+	  reg = 0x03;
+	  break;
+	case 1200:
+	  reg = 0x12;
+	  break;
+	}
+    }
   return reg;
 }
 
@@ -423,7 +451,12 @@ rts8891_move (struct Rts8891_Device *device, SANE_Byte * regs,
 
   /* prepare scan */
   rts8891_set_default_regs (regs);
-  if (device->sensor != SENSOR_TYPE_4400
+  if (device->sensor == SENSOR_TYPE_UMAX)
+    {
+      regs10 = 0x20;
+      regs11 = 0x3b;
+    }
+  else if (device->sensor != SENSOR_TYPE_4400
       && device->sensor != SENSOR_TYPE_4400_BARE)
     {
       regs10 = 0x20;
@@ -508,6 +541,29 @@ rts8891_move (struct Rts8891_Device *device, SANE_Byte * regs,
       regs[0xe2] = 0x0b;	/* 0x17 */
       regs[0xe5] = 0xf3;	/* 0xf9 */
       regs[0xe6] = 0x01;	/* 0x00 */
+    }
+  if (device->sensor == SENSOR_TYPE_UMAX)
+    {
+      regs[0x14] = 0xf0;
+      regs[0x16] = 0x0f;
+      regs[0x23] = 0x00;
+      regs[0x40] = 0xa0;
+      /* regs[0x7a] = 0x02; */
+      regs[0x80] = 0x83;
+      regs[0x81] = 0x01;
+      regs[0x82] = 0x84;
+      regs[0x83] = 0x01;
+      regs[0x85] = 0x10;
+      regs[0x86] = 0x14;
+      regs[0x87] = 0x20;
+      regs[0x88] = 0x22;
+      regs[0x89] = 0x85;
+      regs[0x8a] = 0x01;
+      regs[0x8d] = 0x4f;
+      regs[0xd9] = 0x2d;
+      regs[0xda] = 0x00;
+      regs[0xe5] = 0x1b;
+      regs[0xe6] = 0x01;
     }
 
   /* disable CCD */
@@ -661,11 +717,13 @@ read_data (struct Rts8891_Session *session, SANE_Byte * dest, SANE_Int length)
 	  /* come yet */
 	  if (session->non_blocking && count == 0)
 	    {
-
-	      dev->regs[LAMP_REG] = 0x8d;
-	      sanei_rts88xx_write_reg (dev->devnum, LAMP_REG,
+	      if (dev->sensor != SENSOR_TYPE_UMAX)
+		{
+		  dev->regs[LAMP_REG] = 0x8d;
+		  sanei_rts88xx_write_reg (dev->devnum, LAMP_REG,
 				       &(dev->regs[LAMP_REG]));
-	      DBG (DBG_io, "read_data: no data available\n");
+		}
+	      DBG (DBG_io, "read_data: no data vailable\n");
 	      DBG (DBG_proc, "read_data: end\n");
 	      return SANE_STATUS_DEVICE_BUSY;
 	    }
