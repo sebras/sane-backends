@@ -78,6 +78,7 @@ enum scanner_Option
   OPT_COUNTER,
   OPT_ROLLERCOUNTER,
   OPT_TOTALCOUNTER,
+  OPT_FUNCTION_NUMBER,
   OPT_ADF_LOADED,
   OPT_CARD_LOADED,
 
@@ -250,6 +251,7 @@ struct scanner
   int has_hwcrop;
   int has_pre_imprinter;
   int has_post_imprinter;
+  int has_function_number;
   int can_read_sensors;
   int can_read_panel;
   int can_write_panel;
@@ -445,13 +447,14 @@ struct scanner
   int panel_bypass_mode;
   int panel_enable_led;
   int panel_counter;
+  int panel_function_number;
   int sensor_adf_loaded;
   int sensor_card_loaded;
   int roller_counter;
   int total_counter;
 
   /* values which are used to track the frontend's access to sensors  */
-  char panel_read[OPT_COUNTER - OPT_START + 1];
+  char panel_read[OPT_FUNCTION_NUMBER - OPT_START + 1];
   char sensors_read[OPT_CARD_LOADED - OPT_ADF_LOADED + 1];
 };
 
