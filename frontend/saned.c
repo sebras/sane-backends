@@ -3264,10 +3264,10 @@ run_standalone (char *user)
       close (fd);
 
       setsid ();
-
-      signal(SIGINT, sig_int_term_handler);
-      signal(SIGTERM, sig_int_term_handler);
     }
+
+  signal(SIGINT, sig_int_term_handler);
+  signal(SIGTERM, sig_int_term_handler);
 
   if (user)
     runas_user(user);
