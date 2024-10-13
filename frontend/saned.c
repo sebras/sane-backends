@@ -2354,6 +2354,7 @@ add_child (pid_t pid)
   c->next = children;
 
   children = c;
+  numchildren++;
 
   return 0;
 }
