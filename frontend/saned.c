@@ -2317,7 +2317,7 @@ wait_child (pid_t pid, int *status, int options)
     }
 #endif /* WITH_AVAHI */
 
-  for (c = children; (c != NULL) && (c->next != NULL); p = c, c = c->next)
+  for (c = children; c != NULL; p = c, c = c->next)
     {
       if (c->pid == ret)
 	{
