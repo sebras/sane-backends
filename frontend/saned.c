@@ -2384,7 +2384,7 @@ handle_connection (int fd)
     p = getprotobyname ("tcp");
     if (p == 0)
       {
-	DBG (DBG_WARN, "handle_connection: cannot look up `tcp' protocol number");
+	DBG (DBG_WARN, "handle_connection: cannot look up `tcp' protocol number\n");
       }
     else
       level = p->p_proto;
@@ -2392,7 +2392,7 @@ handle_connection (int fd)
 # endif	/* SOL_TCP */
   if (level == -1
       || setsockopt (wire.io.fd, level, TCP_NODELAY, &on, sizeof (on)))
-    DBG (DBG_WARN, "handle_connection: failed to put socket in TCP_NODELAY mode (%s)",
+    DBG (DBG_WARN, "handle_connection: failed to put socket in TCP_NODELAY mode (%s)\n",
 	 strerror (errno));
 #endif /* !TCP_NODELAY */
 
@@ -3076,19 +3076,19 @@ do_bindings (int *nfds, struct pollfd **fds)
 
   DBG (DBG_DBG, "do_bindings: setsockopt ()\n");
   if (setsockopt (fd, SOL_SOCKET, SO_REUSEADDR, &on, sizeof (on)))
-    DBG (DBG_ERR, "do_bindings: failed to put socket in SO_REUSEADDR mode (%s)", strerror (errno));
+    DBG (DBG_ERR, "do_bindings: failed to put socket in SO_REUSEADDR mode (%s)\n", strerror (errno));
 
   DBG (DBG_DBG, "do_bindings: bind ()\n");
   if (bind (fd, (struct sockaddr *) &sin, sizeof (sin)) < 0)
     {
-      DBG (DBG_ERR, "do_bindings: bind failed: %s", strerror (errno));
+      DBG (DBG_ERR, "do_bindings: bind failed: %s\n", strerror (errno));
       bail_out (1);
     }
 
   DBG (DBG_DBG, "do_bindings: listen ()\n");
   if (listen (fd, 1) < 0)
     {
-      DBG (DBG_ERR, "do_bindings: listen failed: %s", strerror (errno));
+      DBG (DBG_ERR, "do_bindings: listen failed: %s\n", strerror (errno));
       bail_out (1);
     }
 
@@ -3326,7 +3326,7 @@ run_standalone (char *user)
 	  fd = accept (fdp->fd, 0, 0);
 	  if (fd < 0)
 	    {
-	      DBG (DBG_ERR, "run_standalone: accept failed: %s", strerror (errno));
+	      DBG (DBG_ERR, "run_standalone: accept failed: %s\n", strerror (errno));
 	      continue;
 	    }
 
@@ -3390,7 +3390,7 @@ run_inetd (char __sane_unused__ *sock)
 
           if (fd == -1)
       	    {
-              DBG (DBG_ERR, "run_inetd: duplicating fd failed: %s", strerror (errno));
+              DBG (DBG_ERR, "run_inetd: duplicating fd failed: %s\n", strerror (errno));
               return;
             }
         }
@@ -3400,7 +3400,7 @@ run_inetd (char __sane_unused__ *sock)
       dave_null = open ("/dev/null", O_RDWR);
       if (dave_null < 0)
         {
-          DBG (DBG_ERR, "run_inetd: could not open /dev/null: %s", strerror (errno));
+          DBG (DBG_ERR, "run_inetd: could not open /dev/null: %s\n", strerror (errno));
           return;
         }
 
