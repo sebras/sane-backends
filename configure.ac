@@ -313,6 +313,7 @@ AC_FUNC_MMAP
 AC_CHECK_FUNCS(atexit ioperm i386_set_ioperm \
     mkdir strftime strstr strtod  \
     cfmakeraw tcsendbreak strcasecmp strncasecmp _portaccess \
+    pidfd_open \
     getaddrinfo getnameinfo poll setitimer iopl getuid getpass)
 
 dnl sys/io.h might provide ioperm but not inb,outb (like for
