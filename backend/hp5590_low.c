@@ -99,9 +99,15 @@ struct usb_in_usb_ctrl_setup {
 #define CORE_FLAG_NOT_READY             1 << 1
 
 /* Bulk transfers are done in pages, below their respective sizes */
+/*
+ * Note that we limit the amount we can supply to sane_read() to avoid
+ * clashes with the size of the internal read buffer.
+ *
+ */
 #define BULK_WRITE_PAGE_SIZE            0x0f000
 #define BULK_READ_PAGE_SIZE             0x10000
-#define ALLOCATE_BULK_READ_PAGES        16      /* 16 * 65536 = 1Mb */
+#define ALLOCATE_BULK_READ_PAGES        17      /* 16 * 65536 = 1Mb */
+#define MAX_READ_PAGES			16	/* maximum that we will return to sane_read() */
 
 /* Structure describing bulk read state, because bulk reads will be done in
  * pages, but function caller uses its own buffer, whose size is certainly
