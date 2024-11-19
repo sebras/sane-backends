@@ -2154,6 +2154,24 @@ sane_read_internal (struct hp5590_scanner * scanner, SANE_Byte * data,
        max_length,
        scanner->transferred_image_size);
 
+  /*
+   * We will truncate down the buffer size to *under* what the
+   * internal USB reading buffer can supply. This will avoid page read issues
+   * at the end of the buffer.
+   *
+   * See: https://gitlab.com/sane-project/backends/-/issues/781
+   *
+   */
+  if (max_length > BULK_READ_PAGE_SIZE * MAX_READ_PAGES)
+    {
+      DBG (DBG_proc, "%s, truncating sane_read buffer from %u to %u\n",
+           __func__,
+           max_length,
+	   BULK_READ_PAGE_SIZE * MAX_READ_PAGES);
+
+      max_length = BULK_READ_PAGE_SIZE * MAX_READ_PAGES;
+    }
+
   SANE_Int length_limited = 0;
   *length = max_length;
   if ((unsigned long long) *length > scanner->transferred_image_size)
