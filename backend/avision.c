@@ -1321,6 +1321,15 @@ static Avision_HWEntry Avision_Device_List [] =
       /* status="complete" */
 
     { NULL, NULL,
+      0x262c, 0x2001,
+      "Xerox", "Book Scanner 4167",
+      AV_NON_INTERLACED_DUPLEX_300,
+      { 0, {0, 0}, {{0, 0}, {0, 0}} }
+    },
+    /* comment="1 pass, 1200 dpi, A3 - duplex! - zero edge! (rebadged Avision FB6080E)" */
+    /* status="complete" */
+
+    { NULL, NULL,
       0x04a7, 0x049C,
       "Xerox", "DocuMate150",
       AV_INT_BUTTON | AV_SOFT_SCALE | AV_DOES_KEEP_WINDOW | AV_DOES_KEEP_GAMMA | AV_BACKGROUND_QUIRK,
