@@ -754,6 +754,12 @@
 
 :mfg "Xerox"
 
+:model "Book Scanner 4167"
+:interface "USB"
+:usbid "0x262c" "0x2001"
+:comment "1 pass, 1200 dpi, A3 - duplex! - zero edge! (rebadged Avision FB6080E)"
+:status :complete
+
 :model "DocuMate150"
 :interface "USB"
 :usbid "0x04a7" "0x049c"
