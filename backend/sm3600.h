@@ -77,7 +77,11 @@ Start: 2.4.2001
 
 /* ====================================================================== */
 
+#if !defined(__STDC_VERSION__) || __STDC_VERSION__ < 202311L
 typedef enum { false, true } TBool;
+#else
+typedef bool TBool;
+#endif /* GCC < 15 */
 
 typedef SANE_Status TState;
 
