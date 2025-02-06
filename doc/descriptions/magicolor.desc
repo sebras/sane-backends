@@ -39,3 +39,13 @@
 :usbid      "ignore"
 :status     :unsupported
 :comment    "Uses a similar protocol as the magicolor 1690MF, according to Ilia Sotnikov."
+
+:mfg "Toshiba TEC"
+:url "https://toshibatec.com/"
+
+:model      "e-STUDIO2323AM"
+:interface  "Network"
+:usbid      "0x08a6" "0x8056"
+:status     :good
+:comment    "Multi-function laser printer, scanner and network interface"
+:url        "https://www.toshibatec.eu/products/multifunctional-systems-and-printers/e-studio2323am/"
