@@ -117,7 +117,7 @@ static struct MagicolorCap magicolor_cap[] = {
 
   /* KONICA MINOLTA magicolor 1690MF, USB ID 0x123b:2089 */
   {
-      0x2089, "mc1690mf", "KONICA MINOLTA magicolor 1690MF", ".1.3.6.1.4.1.18334.1.1.1.1.1.23.1.1",
+      0x2089, "mc1690mf", "magicolor 1690MF", ".1.3.6.1.4.1.18334.1.1.1.1.1.23.1.1",
       -1, 0x85,
       600, {150, 600, 0}, magicolor_default_resolutions, 3,  /* 600 dpi max, 3 resolutions */
       8, magicolor_default_depths,                          /* color depth 8 default, 1 and 8 possible */
@@ -129,7 +129,7 @@ static struct MagicolorCap magicolor_cap[] = {
 
   /* KONICA MINOLTA magicolor 4690MF, USB ID 0x132b:2079 */
   {
-      0x2079, "mc4690mf", "KONICA MINOLTA magicolor 4690MF",
+      0x2079, "mc4690mf", "magicolor 4690MF",
       "FIXME",                                              /* FIXME: fill in the correct OID! */
       0x03, 0x85,
       600, {150, 600, 0}, magicolor_default_resolutions, 3,  /* 600 dpi max, 3 resolutions */
@@ -1062,8 +1062,8 @@ mc_dev_init(Magicolor_Device *dev, const char *devname, int conntype)
 	dev->connection = conntype;
 	dev->sane.name = devname;
 	dev->sane.model = NULL;
-	dev->sane.type = "flatbed scanner";
-	dev->sane.vendor = "Magicolor";
+	dev->sane.type = "multi-function peripheral";
+	dev->sane.vendor = "Konica Minolta";
 	dev->cap = &magicolor_cap[MAGICOLOR_CAP_DEFAULT];
 	dev->cmd = &magicolor_cmd[MAGICOLOR_LEVEL_DEFAULT];
 	/* Change default level when using a network connection */
@@ -1075,8 +1075,10 @@ static SANE_Status
 mc_dev_post_init(struct Magicolor_Device *dev)
 {
 	DBG(5, "%s\n", __func__);
-	NOT_USED (dev);
 	/* Correct device parameters if needed */
+	if (dev->cap->id == 0x8056)
+		dev->sane.vendor = "Toshiba";
+
 	return SANE_STATUS_GOOD;
 }
 
