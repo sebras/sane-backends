@@ -797,8 +797,7 @@ cmd_finish_scan (SANE_Handle handle)
 		return status;
 	}
 	memset (&returned[0], 0x00, 0x0b);
-	/* e-STUDIO device returns 1 byte ack, while Magicolor 11 bytes */
-	status = mc_txrx (s, buf, buflen, returned, ESTUDIO_DEVICE(s) ? 1 : 0x0b);
+	status = mc_txrx (s, buf, buflen, returned, 0x0b);
 	free (buf);
 	if (status != SANE_STATUS_GOOD)
 		DBG(8, "%s: Data NOT successfully sent\n", __func__);
@@ -1340,7 +1339,8 @@ mc_scan_finish(Magicolor_Scanner * s)
 	s->buf = s->end = s->ptr = NULL;
 
 	/* TODO: Any magicolor command for "scan finished"? */
-	status = cmd_finish_scan (s);
+	if (!ESTUDIO_DEVICE(s))
+		status = cmd_finish_scan (s);
 
 	status = cmd_request_error(s);
 	if (status != SANE_STATUS_GOOD) {
