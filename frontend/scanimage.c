@@ -2372,7 +2372,7 @@ Parameters are separated by a blank from single-character options (e.g.\n\
                            %%n (newline)\n\
 -b, --batch[=FORMAT]       working in batch mode, FORMAT is `out%%d.pnm' `out%%d.tif'\n\
                            `out%%d.png' or `out%%d.jpg' by default depending on --format\n\
-                           This option is incompatible with --output-file.");
+                           This option is incompatible with --output-file.\n");
       printf ("\
     --batch-start=#        page number to start naming files with\n\
     --batch-count=#        how many pages to scan in batch mode\n\
