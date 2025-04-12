@@ -106,6 +106,7 @@ static struct MagicolorCmd magicolor_cmd[] = {
   {"mc1690mf", CMD, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f, 0x12, NET, 0x00, 0x01, 0x02, 0x03},
   {"mc4690mf", CMD, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f, 0x12, NET, 0x00, 0x01, 0x02, 0x03},
   {"es2323am", CMD, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f, 0x12, NET, 0x00, 0x01, 0x02, 0x03},
+  {"alcx16nf", CMD, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f, 0x12, NET, 0x00, 0x01, 0x02, 0x03},
 };
 
 static SANE_Int magicolor_default_resolutions[] = {150, 300, 600};
@@ -149,6 +150,18 @@ static struct MagicolorCap magicolor_cap[] = {
       {-100, 100, 0},
       {0, SANE_FIX(0x13f8 * MM_PER_INCH / 600), 0}, {0, SANE_FIX(0x1b9c * MM_PER_INCH / 600), 0},
       SANE_TRUE, SANE_TRUE,
+      {0, SANE_FIX(0x1390 * MM_PER_INCH / 600), 0}, {0, SANE_FIX(0x20dc * MM_PER_INCH / 600), 0},
+  },
+
+  /* Epson AcuLaser CX16NF, USB ID 0x04b8:0868 */
+  {
+      0x0868, "alcx16nf", "AcuLaser CX16NF", ".1.3.6.1.4.1.18334.1.1.1.1.1.23.1.1",
+      -1, 0x85,
+      600, {150, 600, 0}, magicolor_default_resolutions, 3,  /* 600 dpi max, 3 resolutions */
+      8, magicolor_default_depths,                           /* color depth 8 default, 1 and 8 possible */
+      {1, 9, 0},                                             /* brightness ranges (TODO!) */
+      {0, SANE_FIX(0x13f8 * MM_PER_INCH / 600), 0}, {0, SANE_FIX(0x1b9c * MM_PER_INCH / 600), 0}, /* FBF x/y ranges (TODO!) */
+      SANE_TRUE, SANE_FALSE, /* non-duplex ADF, x/y ranges (TODO!) */
       {0, SANE_FIX(0x1390 * MM_PER_INCH / 600), 0}, {0, SANE_FIX(0x20dc * MM_PER_INCH / 600), 0},
   },
 
@@ -404,10 +417,12 @@ sanei_magicolor_net_close(struct Magicolor_Scanner *s)
  ****************************************************************************/
 
 #define SANE_MAGICOLOR_VENDOR_ID	(0x132b)
+#define SANE_EPSON_VENDOR_ID		(0x04b8)
 
 SANE_Word sanei_magicolor_usb_product_ids[] = {
   0x2089, /* magicolor 1690MF */
   0x2079, /* magicolor 4690MF */
+  0x0868, /* epson AL CX16NF */
   0				/* last entry - this is used for devices that are specified
 				   in the config file as "usb <vendor> <product>" */
 };
@@ -1720,7 +1735,7 @@ detect_usb(struct Magicolor_Scanner *s)
 	}
 
 	/* check the vendor ID to see if we are dealing with an MAGICOLOR device */
-	if (vendor != SANE_MAGICOLOR_VENDOR_ID) {
+	if (vendor != SANE_MAGICOLOR_VENDOR_ID && vendor != SANE_EPSON_VENDOR_ID) {
 		/* this is not a supported vendor ID */
 		DBG(1, "not an Magicolor device at %s (vendor id=0x%x)\n",
 		    s->hw->sane.name, vendor);
@@ -2215,7 +2230,7 @@ attach_one_config(SANEI_Config __sane_unused__ *config, const char *line,
 
 		int numIds = sanei_magicolor_getNumberOfUSBProductIds();
 
-		if (vendor != SANE_MAGICOLOR_VENDOR_ID)
+		if (vendor != SANE_MAGICOLOR_VENDOR_ID && vendor != SANE_EPSON_VENDOR_ID)
 			return SANE_STATUS_INVAL; /* this is not a KONICA MINOLTA device */
 
 		sanei_magicolor_usb_product_ids[numIds - 1] = product;
