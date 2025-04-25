@@ -132,7 +132,7 @@ attach_bjnp (SANE_String_Const devname,
     return SANE_STATUS_NO_MEM;
 
   si->cfg = cfg;
-  sprintf(si->serial, "%s_%s", cfg->model, serial);
+  snprintf(si->serial, sizeof(si->serial), "%s_%s", cfg->model, serial);
   si -> interface = INT_BJNP;
   si->next = first_scanner;
   first_scanner = si;
@@ -188,7 +188,7 @@ u16tohex (uint16_t x, char *str)
 static void
 read_serial_number (scanner_info_t * si)
 {
-  uint8_t unicode[2 * (PIXMA_MAX_ID_LEN - 9) + 2];
+  uint8_t unicode[2 * (PIXMA_MAX_ID_LEN - 9) + 2];	// 9 = size of VID + PID + "_"
   uint8_t ddesc[18];
   int iSerialNumber;
   SANE_Int usb;

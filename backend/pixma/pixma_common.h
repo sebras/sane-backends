@@ -70,7 +70,7 @@
 #define PIXMA_STATUS_FAILED   0x1515
 #define PIXMA_STATUS_BUSY     0x1414
 
-#define PIXMA_MAX_ID_LEN 30
+#define PIXMA_MAX_ID_LEN 40
 
 /* These may have been defined elsewhere */
 #ifndef MIN
