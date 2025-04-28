@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sane-backends 1.3.1.86-9a695-dirty\n"
 "Report-Msgid-Bugs-To: sane-devel@alioth-lists.debian.net\n"
-"POT-Creation-Date: 2025-03-18 18:11+0300\n"
+"POT-Creation-Date: 2025-04-28 10:20-0700\n"
 "PO-Revision-Date: 2025-03-23 18:07+0300\n"
 "Last-Translator: Emir SARI <emir_sari@icloud.com>\n"
 "Language-Team: Turkish <kde-l10n-tr@kde.org>\n"
@@ -437,7 +437,8 @@ msgid ""
 "Read-only option that specifies how many options a specific device "
 "supports."
 msgstr ""
-"Belirli bir aygıtın kaç seçeneği desteklediğini belirten saltokunur seçenek."
+"Belirli bir aygıtın kaç seçeneği desteklediğini belirten saltokunur "
+"seçenek."
 
 #: include/sane/saneopts.h:255
 #, no-c-format
@@ -476,9 +477,9 @@ msgid ""
 "scanner this cuts down the number of passes to one and on a one-pass "
 "scanner, it reduces the memory requirements and scan-time of the preview."
 msgstr ""
-"Tüm önizlemelerin siyah–beyaz kipte yapılmasını isteyin. Üç geçişli bir tarayı"
-"cıda bu, geçiş sayısını bire düşürür ve tek geçişli bir tarayıcıda önizlemenin"
-" bellek gereksinimlerini ve tarama süresini azaltır."
+"Tüm önizlemelerin siyah–beyaz kipte yapılmasını isteyin. Üç geçişli bir "
+"tarayıcıda bu, geçiş sayısını bire düşürür ve tek geçişli bir tarayıcıda "
+"önizlemenin bellek gereksinimlerini ve tarama süresini azaltır."
 
 #: include/sane/saneopts.h:271
 #, no-c-format
@@ -486,13 +487,14 @@ msgid ""
 "Number of bits per sample, typical values are 1 for \"line-art\" and 8 "
 "for multibit scans."
 msgstr ""
-"Örnek başına bit sayısı, tipik değerler “çizgi sanatı” için 1 ve çok bitli tar"
-"amalar için 8’dir."
+"Örnek başına bit sayısı, tipik değerler “çizgi sanatı” için 1 ve çok "
+"bitli taramalar için 8’dir."
 
 #: include/sane/saneopts.h:275
 #, no-c-format
 msgid "Selects the scan mode (e.g., lineart, monochrome, or color)."
-msgstr "Tarama kipini seçer (örneğin çizgi sanatı, siyah–beyaz veya renkli)"
+msgstr ""
+"Tarama kipini seçer (örneğin çizgi sanatı, siyah–beyaz veya renkli)"
 
 #: include/sane/saneopts.h:278
 #, no-c-format
@@ -550,8 +552,8 @@ msgid ""
 "Specifies the width of the media.  Required for automatic centering of "
 "sheet-fed scans."
 msgstr ""
-"Ortamın genişliğini belirtir. Kendiliğinden ortalamalı veya sayfa beslemeli ta"
-"ramalar için zorunludur."
+"Ortamın genişliğini belirtir. Kendiliğinden ortalamalı veya sayfa "
+"beslemeli taramalar için zorunludur."
 
 #: include/sane/saneopts.h:312
 #, no-c-format
@@ -560,10 +562,11 @@ msgstr "Ortamın yükseliğini belirtir."
 
 #: include/sane/saneopts.h:315
 #, no-c-format
-msgid "Determines whether a builtin or a custom gamma-table should be used."
+msgid ""
+"Determines whether a builtin or a custom gamma-table should be used."
 msgstr ""
-"Yerleşik veya özel bir gama tablosunun kullanılıp kullanılmaması gerektiğini b"
-"elirler."
+"Yerleşik veya özel bir gama tablosunun kullanılıp kullanılmaması "
+"gerektiğini belirler."
 
 #: include/sane/saneopts.h:319
 #, no-c-format
@@ -572,8 +575,9 @@ msgid ""
 "red, green, and blue channels simultaneously (i.e., it is an intensity "
 "gamma table)."
 msgstr ""
-"Gama düzeltme tablosu. Renkli kipte bu seçenek kırmızı, yeşil ve mavi kanallar"
-"ı aynı anda eşit şekilde etkiler (yani, bir yoğunluk gama tablosudur)."
+"Gama düzeltme tablosu. Renkli kipte bu seçenek kırmızı, yeşil ve mavi "
+"kanalları aynı anda eşit şekilde etkiler (yani, bir yoğunluk gama "
+"tablosudur)."
 
 #: include/sane/saneopts.h:324
 #, no-c-format
@@ -606,8 +610,8 @@ msgid ""
 "Selects the \"graininess\" of the acquired image.  Smaller values result "
 "in sharper images."
 msgstr ""
-"Alınan görselin “tanecikliğini” denetler. Daha küçük değerler, daha keskin gör"
-"sellere neden olur."
+"Alınan görselin “tanecikliğini” denetler. Daha küçük değerler, daha "
+"keskin görsellere neden olur."
 
 #: include/sane/saneopts.h:343
 #, no-c-format
@@ -640,7 +644,8 @@ msgstr ""
 #: include/sane/saneopts.h:358
 #, no-c-format
 msgid "Selects what blue radiance level should be considered \"white\"."
-msgstr "Hangi mavi parlaklık düzeyinin “beyaz” olarak kabul edileceğini seçer."
+msgstr ""
+"Hangi mavi parlaklık düzeyinin “beyaz” olarak kabul edileceğini seçer."
 
 #: include/sane/saneopts.h:363
 #, no-c-format
@@ -657,24 +662,28 @@ msgstr ""
 #: include/sane/saneopts.h:367
 #, no-c-format
 msgid "Selects what blue radiance level should be considered \"black\"."
-msgstr "Hangi mavi parlaklık düzeyinin “siyah” olarak kabul edileceğini seçer."
+msgstr ""
+"Hangi mavi parlaklık düzeyinin “siyah” olarak kabul edileceğini seçer."
 
 #: include/sane/saneopts.h:372
 #, no-c-format
 msgid "Selects what red radiance level should be considered \"full red\"."
 msgstr ""
-"Hangi kırmızı parlaklık düzeyinin “tam kırmızı” olarak kabul edileceğini seçer"
-"."
+"Hangi kırmızı parlaklık düzeyinin “tam kırmızı” olarak kabul edileceğini "
+"seçer."
 
 #: include/sane/saneopts.h:374
 #, no-c-format
-msgid "Selects what green radiance level should be considered \"full green\"."
+msgid ""
+"Selects what green radiance level should be considered \"full green\"."
 msgstr ""
-"Hangi yeşil parlaklık düzeyinin “tam yeşil” olarak kabul edileceğini seçer."
+"Hangi yeşil parlaklık düzeyinin “tam yeşil” olarak kabul edileceğini "
+"seçer."
 
 #: include/sane/saneopts.h:377
 #, no-c-format
-msgid "Selects what blue radiance level should be considered \"full blue\"."
+msgid ""
+"Selects what blue radiance level should be considered \"full blue\"."
 msgstr ""
 "Hangi mavi parlaklık düzeyinin “tam mavi” olarak kabul edileceğini seçer."
 
@@ -689,9 +698,9 @@ msgid ""
 "The saturation level controls the amount of \"blooming\" that occurs "
 "when acquiring an image with a camera. Larger values cause more blooming."
 msgstr ""
-"Doygunluk düzeyi, bir kamerayla görsel elde edilirken oluşan “ışık saçılması” "
-"miktarını denetler. Daha büyük değerler daha fazla ışık saçılmasına neden olur"
-"."
+"Doygunluk düzeyi, bir kamerayla görsel elde edilirken oluşan “ışık "
+"saçılması” miktarını denetler. Daha büyük değerler daha fazla ışık "
+"saçılmasına neden olur."
 
 #: include/sane/saneopts.h:389
 #, no-c-format
@@ -704,16 +713,16 @@ msgid ""
 "Sets the size of the halftoning (dithering) pattern used when scanning "
 "halftoned images."
 msgstr ""
-"Yarı tonlu görselleri tararken kullanılan yarı tonlama (titreme) deseninin boy"
-"utunu ayarlar."
+"Yarı tonlu görselleri tararken kullanılan yarı tonlama (titreme) "
+"deseninin boyutunu ayarlar."
 
 #: include/sane/saneopts.h:396
 #, no-c-format
 msgid ""
 "Defines the halftoning (dithering) pattern for scanning halftoned images."
 msgstr ""
-"Yarı tonlu görselleri taramak için olan yarı tonlama (titreme) desenini tanıml"
-"ar."
+"Yarı tonlu görselleri taramak için olan yarı tonlama (titreme) desenini "
+"tanımlar."
 
 #: include/sane/saneopts.h:400
 #, no-c-format
@@ -1017,8 +1026,9 @@ msgid ""
 "If enabled, the device will be calibrated before the next scan. "
 "Otherwise, calibration is performed only before the first start."
 msgstr ""
-"Etkinleştirilirse aygıt bir sonraki tarama öncesinde kalibre edilecektir. Aksi"
-" takdirde, kalibrasyon yalnızca ilk başlatmadan önce gerçekleştirilir."
+"Etkinleştirilirse aygıt bir sonraki tarama öncesinde kalibre "
+"edilecektir. Aksi takdirde, kalibrasyon yalnızca ilk başlatmadan önce "
+"gerçekleştirilir."
 
 #: backend/artec_eplus48u.c:2943
 #, no-c-format
@@ -1032,9 +1042,10 @@ msgid ""
 "The default values for gain, offset and exposure time, either built-in "
 "or from the configuration file, are used."
 msgstr ""
-"Etkinleştirilirse kalibrasyon sırasında yalnızca gölgelendirme düzeltmesi gerç"
-"ekleştirilir. Kazanç, ofset ve pozlama süresi için yerleşik veya yapılandırma "
-"dosyasından gelen öntanımlı değerler kullanılır."
+"Etkinleştirilirse kalibrasyon sırasında yalnızca gölgelendirme "
+"düzeltmesi gerçekleştirilir. Kazanç, ofset ve pozlama süresi için "
+"yerleşik veya yapılandırma dosyasından gelen öntanımlı değerler "
+"kullanılır."
 
 #: backend/artec_eplus48u.c:2956
 #, no-c-format
@@ -1137,8 +1148,8 @@ msgid ""
 "The background raster controls the additional background lines to scan "
 "before the paper is feed through the scanner."
 msgstr ""
-"Arka plan rasteri, kâğıt tarayıcıya beslenmeden önce taranacak ek arka plan sa"
-"tırlarını denetler."
+"Arka plan rasteri, kâğıt tarayıcıya beslenmeden önce taranacak ek arka "
+"plan satırlarını denetler."
 
 #: backend/avision.h:100
 #, no-c-format
@@ -1161,8 +1172,8 @@ msgid ""
 "Allows control of the scanner's power save timer, dimming or turning off "
 "the light."
 msgstr ""
-"Tarayıcının güç tasarrufu zamanlayıcısını denetlemenizi, ışığı kısmanızı veya "
-"kapatmanızı sağlar."
+"Tarayıcının güç tasarrufu zamanlayıcısını denetlemenizi, ışığı kısmanızı "
+"veya kapatmanızı sağlar."
 
 #: backend/avision.h:109
 #, no-c-format
@@ -1170,8 +1181,8 @@ msgid ""
 "This text contains device specific options controlled by the user on the "
 "scanner hardware."
 msgstr ""
-"Bu metin, tarayıcı donanımında kullanıcı tarafından denetlenen aygıta özgü seç"
-"enekleri içerir."
+"Bu metin, tarayıcı donanımında kullanıcı tarafından denetlenen aygıta "
+"özgü seçenekleri içerir."
 
 #: backend/avision.h:112
 #, no-c-format
@@ -1179,8 +1190,8 @@ msgid ""
 "Allows access obtaining the scanner's NVRAM values as pretty printed "
 "text."
 msgstr ""
-"Tarayıcının NVRAM değerlerinin güzel yazdırılmış metin olarak elde edilmesine "
-"erişim sağlar."
+"Tarayıcının NVRAM değerlerinin güzel yazdırılmış metin olarak elde "
+"edilmesine erişim sağlar."
 
 #: backend/avision.h:115
 #, no-c-format
@@ -1189,9 +1200,9 @@ msgid ""
 "However some others (DM152) can get confused during media flush if it is "
 "set."
 msgstr ""
-"Daha yeni tarayıcılar, çift beslemeleri algılamak için bu kâğıt uzunluğunu kul"
-"lanabilir. Ancak bazıları (DM152) ayarlandığında ortam yıkaması sırasında karı"
-"şabilir."
+"Daha yeni tarayıcılar, çift beslemeleri algılamak için bu kâğıt "
+"uzunluğunu kullanabilir. Ancak bazıları (DM152) ayarlandığında ortam "
+"yıkaması sırasında karışabilir."
 
 #: backend/avision.h:118
 #, no-c-format
@@ -1201,9 +1212,10 @@ msgid ""
 "this off might make scanning a little faster if you don't care about "
 "manually flipping the pages afterwards."
 msgstr ""
-"Sayfa çevirmeli belge tarayıcılarına, kâğıdı çıkış tepsisine bırakmadan önce ö"
-"zgün yönüne geri çevirmelerini söyler. Bunu kapatmak, daha sonra sayfaları ell"
-"e çevirmekle ilgilenmiyorsanız taramayı biraz daha hızlı hale getirebilir."
+"Sayfa çevirmeli belge tarayıcılarına, kâğıdı çıkış tepsisine bırakmadan "
+"önce özgün yönüne geri çevirmelerini söyler. Bunu kapatmak, daha sonra "
+"sayfaları elle çevirmekle ilgilenmiyorsanız taramayı biraz daha hızlı "
+"hale getirebilir."
 
 #: backend/avision.h:123
 #, no-c-format
@@ -1232,8 +1244,10 @@ msgstr "Çift yönlü tarama"
 
 #: backend/avision.h:902
 #, no-c-format
-msgid "Duplex scan provides a scan of the front and back side of the document"
-msgstr "Çift yönlü tarama, belgenin ön ve arka tarafının taranmasını sağlar"
+msgid ""
+"Duplex scan provides a scan of the front and back side of the document"
+msgstr ""
+"Çift yönlü tarama, belgenin ön ve arka tarafının taranmasını sağlar"
 
 #: backend/canon-sane.c:674 backend/canon.c:169
 #, no-c-format
@@ -1615,7 +1629,8 @@ msgstr "Çıkmadan önce filmi çıkar"
 
 #: backend/canon.c:1690
 #, no-c-format
-msgid "Automatically eject the film from the device before exiting the program"
+msgid ""
+"Automatically eject the film from the device before exiting the program"
 msgstr "Programdan çıkmadan önce aygıttan filmi kendiliğinden çıkar"
 
 #: backend/canon.c:1699
@@ -1642,7 +1657,8 @@ msgstr "Yalnızca düz yatak"
 #, no-c-format
 msgid "Disable auto document feeder and use flatbed only"
 msgstr ""
-"Kendiliğinden belge beslemeyi devre dışı bırak ve yalnızca düz yatağı kullan"
+"Kendiliğinden belge beslemeyi devre dışı bırak ve yalnızca düz yatağı "
+"kullan"
 
 #: backend/canon.c:1727 backend/canon.c:1737
 #, no-c-format
@@ -1867,7 +1883,8 @@ msgstr "Yazılım boş atlama yüzdesi"
 #: backend/canon_dr.c:2791 backend/fujitsu.c:4145
 #, no-c-format
 msgid "Request driver to discard pages with low percentage of dark pixels"
-msgstr "Sürücüden düşük oranda koyu piksel içeren sayfaları atmasını isteyin."
+msgstr ""
+"Sürücüden düşük oranda koyu piksel içeren sayfaları atmasını isteyin."
 
 #: backend/canon_dr.c:2910
 #, no-c-format
@@ -1902,7 +1919,8 @@ msgstr "Engellemeyen G/Ç kullan"
 #, no-c-format
 msgid "Use non-blocking IO for sane_read() if supported by the frontend."
 msgstr ""
-"Ön uç tarafından destekleniyorsa sane_read() için engellemeyen G/Ç kullanın."
+"Ön uç tarafından destekleniyorsa sane_read() için engellemeyen G/Ç "
+"kullanın."
 
 #: backend/epson.c:489 backend/epson2.c:104 backend/kodakaio.c:611
 #: backend/magicolor.c:189
@@ -2315,8 +2333,8 @@ msgid ""
 "Selects the gamma correction value from a list of pre-defined devices or "
 "the user defined table, which can be downloaded to the scanner"
 msgstr ""
-"Tarayıcıya indirilebilen önceden tanımlanmış aygıtlar listesinden veya kullanı"
-"cı tarafından tanımlanan tablodan gama düzeltme değerini seçer"
+"Tarayıcıya indirilebilen önceden tanımlanmış aygıtlar listesinden veya "
+"kullanıcı tarafından tanımlanan tablodan gama düzeltme değerini seçer"
 
 #: backend/epson.h:70 backend/epson2.h:74
 #, no-c-format
@@ -2325,7 +2343,8 @@ msgstr "Odak konumu"
 
 #: backend/epson.h:71 backend/epson2.h:75
 #, no-c-format
-msgid "Sets the focus position to either the glass or 2.5mm above the glass"
+msgid ""
+"Sets the focus position to either the glass or 2.5mm above the glass"
 msgstr "Odak konumunu ya cama ya da camın 2,5 mm üzerine ayarlar"
 
 #: backend/epson.h:73 backend/epson2.h:77
@@ -2339,8 +2358,8 @@ msgid ""
 "After sending the scan command, wait until the button on the scanner is "
 "pressed to actually start the scan process."
 msgstr ""
-"Tarama komutunu gönderdikten sonra, asıl tarama işlemini başlatmak için tarayı"
-"cıdaki düğme basılana kadar bekle"
+"Tarama komutunu gönderdikten sonra, asıl tarama işlemini başlatmak için "
+"tarayıcıdaki düğme basılana kadar bekle"
 
 #: backend/epson2-ops.c:103 backend/epson2.c:113
 #, no-c-format
@@ -2568,7 +2587,8 @@ msgstr "Vurgu"
 #: backend/fujitsu.c:3300
 #, no-c-format
 msgid "Negative to smooth or positive to sharpen image"
-msgstr "Görseli pürüzsüzleştirmek için negatif, keskinleştirmek için pozitif"
+msgstr ""
+"Görseli pürüzsüzleştirmek için negatif, keskinleştirmek için pozitif"
 
 #: backend/fujitsu.c:3318
 #, no-c-format
@@ -2637,7 +2657,8 @@ msgstr "Eşik eğrisi"
 
 #: backend/fujitsu.c:3425
 #, no-c-format
-msgid "Threshold curve, from light to dark, but upper two may not be linear"
+msgid ""
+"Threshold curve, from light to dark, but upper two may not be linear"
 msgstr "Açıktan koyuya eşik eğrisi; ancak üst ikisi doğrusal olmayabilir"
 
 #: backend/fujitsu.c:3447
@@ -2703,7 +2724,8 @@ msgstr "Varyans"
 #: backend/fujitsu.c:3553
 #, no-c-format
 msgid "Set SDTC variance rate (sensitivity), 0 equals 127"
-msgstr "SDTC varyans oranını (duyarlılığını) ayarla; 0, 127 değerine eşittir"
+msgstr ""
+"SDTC varyans oranını (duyarlılığını) ayarla; 0, 127 değerine eşittir"
 
 #: backend/fujitsu.c:3586
 #, no-c-format
@@ -2724,8 +2746,8 @@ msgstr "Kendiliğinden uzunluk algılama"
 #, no-c-format
 msgid "Scanner detects paper lower edge. May confuse some frontends."
 msgstr ""
-"Tarayıcı kağıdın alt kenarını algılar. Kimi ön uçların kafasını karıştırabilir"
-"."
+"Tarayıcı kağıdın alt kenarını algılar. Kimi ön uçların kafasını "
+"karıştırabilir."
 
 #: backend/fujitsu.c:3631
 #, no-c-format
@@ -2735,7 +2757,8 @@ msgstr "Sıkıştırma"
 #: backend/fujitsu.c:3632
 #, no-c-format
 msgid "Enable compressed data. May crash your front-end program"
-msgstr "Sıkıştırılmış veriyi etkinleştirin. Ön uç programınızı çökertebilir."
+msgstr ""
+"Sıkıştırılmış veriyi etkinleştirin. Ön uç programınızı çökertebilir."
 
 #: backend/fujitsu.c:3652
 #, no-c-format
@@ -2748,8 +2771,8 @@ msgid ""
 "Level of JPEG compression. 1 is small file, 7 is large file. 0 (default) "
 "is same as 4"
 msgstr ""
-"JPEG sıkıştırmasının düzeyi. 1 küçük, 7 ise büyük dosya demektir. 0 (öntanımlı"
-"), 4 ile aynıdır."
+"JPEG sıkıştırmasının düzeyi. 1 küçük, 7 ise büyük dosya demektir. 0 "
+"(öntanımlı), 4 ile aynıdır."
 
 #: backend/fujitsu.c:3683
 #, no-c-format
@@ -2779,7 +2802,8 @@ msgstr "ÇB kalınlığı"
 #: backend/fujitsu.c:3720
 #, no-c-format
 msgid "Enable double feed error due to paper thickness"
-msgstr "Kâğıt kalınlığından dolayı oluşan çifte besleme hatasını etkinleştir"
+msgstr ""
+"Kâğıt kalınlığından dolayı oluşan çifte besleme hatasını etkinleştir"
 
 #: backend/fujitsu.c:3738
 #, no-c-format
@@ -2789,7 +2813,8 @@ msgstr "ÇB uzunluğu"
 #: backend/fujitsu.c:3739
 #, no-c-format
 msgid "Enable double feed error due to paper length"
-msgstr "Kâğıt uzunluğundan dolayı oluşan çifte besleme hatasını etkinleştir"
+msgstr ""
+"Kâğıt uzunluğundan dolayı oluşan çifte besleme hatasını etkinleştir"
 
 #: backend/fujitsu.c:3762
 #, no-c-format
@@ -2829,7 +2854,8 @@ msgstr "Gelişmiş kâğıt koruma"
 #: backend/fujitsu.c:3827
 #, no-c-format
 msgid "Request scanner to predict jams in the ADF using improved sensors"
-msgstr "Gelişmiş algılayıcılar kullanarak KBB’nin sıkışmaları öngörmesini iste"
+msgstr ""
+"Gelişmiş algılayıcılar kullanarak KBB’nin sıkışmaları öngörmesini iste"
 
 #: backend/fujitsu.c:3846
 #, no-c-format
@@ -2840,7 +2866,8 @@ msgstr "Zımba algılama"
 #, no-c-format
 msgid "Request scanner to detect jams in the ADF caused by staples"
 msgstr ""
-"Tarayıcının zımba teli tarafından meydana gelen sıkışmaları algılamasını iste"
+"Tarayıcının zımba teli tarafından meydana gelen sıkışmaları algılamasını "
+"iste"
 
 #: backend/fujitsu.c:3866
 #, no-c-format
@@ -2849,9 +2876,11 @@ msgstr "Arka plan rengi"
 
 #: backend/fujitsu.c:3867
 #, no-c-format
-msgid "Set color of background for scans. May conflict with overscan option"
+msgid ""
+"Set color of background for scans. May conflict with overscan option"
 msgstr ""
-"Tarama arka planının rengini ayarlayın. Fazla tarama seçeneğiyle çakışabilir."
+"Tarama arka planının rengini ayarlayın. Fazla tarama seçeneğiyle "
+"çakışabilir."
 
 #: backend/fujitsu.c:3887
 #, no-c-format
@@ -2864,8 +2893,8 @@ msgid ""
 "One-pass scanners use only one color during gray or binary scanning, "
 "useful for colored paper or ink"
 msgstr ""
-"Tek geçişli tarayıcılar, gri veya ikili tarama sırasında yalnızca tek bir renk"
-" kullanırlar; renkli sayfa veya mürekkep için yararlıdır."
+"Tek geçişli tarayıcılar, gri veya ikili tarama sırasında yalnızca tek "
+"bir renk kullanırlar; renkli sayfa veya mürekkep için yararlıdır."
 
 #: backend/fujitsu.c:3911
 #, no-c-format
@@ -2899,9 +2928,9 @@ msgid ""
 "ADF, and increase maximum scan area beyond paper size, to allow "
 "collection on remaining sides. May conflict with bgcolor option"
 msgstr ""
-"Kâğıt KBB’ye girmeden önce, taramanın üst tarafında birkaç mm arka plan toplay"
-"ın ve kalan kenarlarda toplamaya izin vermek için en büyük tarama alanını kağı"
-"t boyutunun ötesine çıkarın. bgcolor seçeneğiyle çakışabilir."
+"Kâğıt KBB’ye girmeden önce, taramanın üst tarafında birkaç mm arka plan "
+"toplayın ve kalan kenarlarda toplamaya izin vermek için en büyük tarama "
+"alanını kağıt boyutunun ötesine çıkarın. bgcolor seçeneğiyle çakışabilir."
 
 #: backend/fujitsu.c:3970
 #, no-c-format
@@ -2910,7 +2939,8 @@ msgstr "Uyku zamanlayıcısı"
 
 #: backend/fujitsu.c:3971
 #, no-c-format
-msgid "Time in minutes until the internal power supply switches to sleep mode"
+msgid ""
+"Time in minutes until the internal power supply switches to sleep mode"
 msgstr "İç güç kaynağı uyku kipine geçene kadar kalan dakika türünden süre"
 
 #: backend/fujitsu.c:3989
@@ -2924,8 +2954,9 @@ msgid ""
 "Time in minutes until the internal power supply switches the scanner "
 "off. Will be rounded to nearest 15 minutes. Zero means never power off."
 msgstr ""
-"İç güç kaynağı tarayıcıyı kapatana kadar kalan dakika türünden süre. En yakın "
-"15. dakikaya yuvarlanacaktır. 0, hiçbir zaman kapatılmayacağı anlamına gelir."
+"İç güç kaynağı tarayıcıyı kapatana kadar kalan dakika türünden süre. En "
+"yakın 15. dakikaya yuvarlanacaktır. 0, hiçbir zaman kapatılmayacağı "
+"anlamına gelir."
 
 #: backend/fujitsu.c:4008
 #, no-c-format
@@ -2970,10 +3001,11 @@ msgid ""
 "option 'side' can be used to determine correct image. This option should "
 "only be used with custom front-end software."
 msgstr ""
-"Gömülü sistemlerde kullanım için sürücü belleği kullanımını sınırlayın. Her sa"
-"ne_read çağrısında bazı çift yönlü aktarımların alternatif taraflara gitmesine"
-" neden olur. “side” seçeneğinin değeri doğru görseli belirlemek için kullanıla"
-"bilir. Bu seçenek yalnızca özel ön uç yazılımlarıyla kullanılmalıdır."
+"Gömülü sistemlerde kullanım için sürücü belleği kullanımını sınırlayın. "
+"Her sane_read çağrısında bazı çift yönlü aktarımların alternatif "
+"taraflara gitmesine neden olur. “side” seçeneğinin değeri doğru görseli "
+"belirlemek için kullanılabilir. Bu seçenek yalnızca özel ön uç "
+"yazılımlarıyla kullanılmalıdır."
 
 #: backend/fujitsu.c:4074
 #, no-c-format
@@ -2986,8 +3018,8 @@ msgid ""
 "Tells which side (0=front, 1=back) of a duplex scan the next call to "
 "sane_read will return."
 msgstr ""
-"sane_read’e yapılan bir sonraki çağrının, bir çift yön taramasının hangi taraf"
-"ını (0=ön, 1=arka) döndüreceğini söyler."
+"sane_read’e yapılan bir sonraki çağrının, bir çift yön taramasının hangi "
+"tarafını (0=ön, 1=arka) döndüreceğini söyler."
 
 #: backend/fujitsu.c:4086
 #, no-c-format
@@ -3038,10 +3070,11 @@ msgstr "İptalde durdur"
 
 #: backend/fujitsu.c:4162
 #, no-c-format
-msgid "Request driver to halt the paper feed instead of eject during a cancel."
+msgid ""
+"Request driver to halt the paper feed instead of eject during a cancel."
 msgstr ""
-"Bir iptal sırasında sürücünün çıkarma yerine kâğıt beslemesini durdurmasını is"
-"teyin."
+"Bir iptal sırasında sürücünün çıkarma yerine kâğıt beslemesini "
+"durdurmasını isteyin."
 
 #: backend/fujitsu.c:4173
 #, no-c-format
@@ -3131,7 +3164,8 @@ msgstr "Damgalayıcı yanı"
 #: backend/fujitsu.c:4357
 #, no-c-format
 msgid "Endorser printing side, requires hardware support to change"
-msgstr "Damgalayıcı yazdırma yanı, değişiklik için donanım desteği gerekir."
+msgstr ""
+"Damgalayıcı yazdırma yanı, değişiklik için donanım desteği gerekir."
 
 #: backend/fujitsu.c:4382
 #, no-c-format
@@ -3144,8 +3178,8 @@ msgid ""
 "Endorser alphanumeric print format. %05ud or %08ud at the end will be "
 "replaced by counter value."
 msgstr ""
-"Damgalayıcı alfanümerik yazdırma biçimi. Sondaki %05ud veya %08ud, sayaç değer"
-"iyle değiştirilir."
+"Damgalayıcı alfanümerik yazdırma biçimi. Sondaki %05ud veya %08ud, sayaç "
+"değeriyle değiştirilir."
 
 #: backend/fujitsu.c:4410
 #, no-c-format
@@ -3325,7 +3359,8 @@ msgstr "Renk süzgeci"
 #: backend/genesys/genesys.cpp:4726
 #, no-c-format
 msgid "When using gray or lineart this option selects the used color."
-msgstr "Gri veya çizgi sanatı kullanırken bu seçenek kullanılan rengi seçer."
+msgstr ""
+"Gri veya çizgi sanatı kullanırken bu seçenek kullanılan rengi seçer."
 
 #: backend/genesys/genesys.cpp:4750
 #, no-c-format
@@ -3348,9 +3383,9 @@ msgid ""
 "Time (in minutes) before a cached calibration expires. A value of 0 "
 "means cache is not used. A negative value means cache never expires."
 msgstr ""
-"Önbelleğe alınmış bir kalibrasyonun süresi dolmadan önceki süre (dakika türünd"
-"en). 0 değeri önbelleğin kullanılmadığı anlamına gelir. Negatif değer önbelleğ"
-"in asla süresinin dolmadığı anlamına gelir."
+"Önbelleğe alınmış bir kalibrasyonun süresi dolmadan önceki süre (dakika "
+"türünden). 0 değeri önbelleğin kullanılmadığı anlamına gelir. Negatif "
+"değer önbelleğin asla süresinin dolmadığı anlamına gelir."
 
 #: backend/genesys/genesys.cpp:4779
 #, no-c-format
@@ -3363,8 +3398,8 @@ msgid ""
 "The lamp will be turned off after the given time (in minutes). A value "
 "of 0 means, that the lamp won't be turned off."
 msgstr ""
-"Lamba, belirtilen süreden (dakika türünden) sonra kapatılacaktır. 0 değeri, la"
-"mbanın kapatılmayacağı anlamına gelir."
+"Lamba, belirtilen süreden (dakika türünden) sonra kapatılacaktır. 0 "
+"değeri, lambanın kapatılmayacağı anlamına gelir."
 
 #: backend/genesys/genesys.cpp:4792
 #, no-c-format
@@ -3469,7 +3504,8 @@ msgstr "Kalibrasyonu zorla"
 #, no-c-format
 msgid "Force calibration ignoring all and any calibration caches"
 msgstr ""
-"Tüm ve herhangi bir kalibrasyon önbelleğini yok sayarak kalibrasyonu zorla"
+"Tüm ve herhangi bir kalibrasyon önbelleğini yok sayarak kalibrasyonu "
+"zorla"
 
 #: backend/genesys/genesys.cpp:5018
 #, no-c-format
@@ -3481,7 +3517,8 @@ msgstr "İç ofsetleri yok say"
 msgid ""
 "Acquires the image including the internal calibration areas of the "
 "scanner"
-msgstr "Tarayıcının içsel kalibrasyon alanları içerilmek üzere görseli alır"
+msgstr ""
+"Tarayıcının içsel kalibrasyon alanları içerilmek üzere görseli alır"
 
 #: backend/genesys/genesys.h:56 backend/gt68xx.c:147 backend/ma1509.c:106
 #: backend/mustek.c:162 backend/snapscan-options.c:87 backend/umax.c:180
@@ -3503,7 +3540,8 @@ msgstr "Gri kipi rengi"
 #, no-c-format
 msgid "Selects which scan color is used gray mode (default: green)."
 msgstr ""
-"Gri kipi için hangi tarama renginin kullanılacağını seçer (öntanımlı: yeşil)."
+"Gri kipi için hangi tarama renginin kullanılacağını seçer (öntanımlı: "
+"yeşil)."
 
 #: backend/gt68xx.c:551 backend/hp3900_sane.c:1391
 #: backend/mustek_usb2.c:408
@@ -3522,8 +3560,8 @@ msgid ""
 "Warm-up until the lamp's brightness is constant instead of insisting on "
 "60 seconds warm-up time."
 msgstr ""
-"60 saniyelik ısınma süresinde ısrar etmek yerine, lambanın parlaklığı sabit ol"
-"uncaya kadar ısıtmaya çalışın."
+"60 saniyelik ısınma süresinde ısrar etmek yerine, lambanın parlaklığı "
+"sabit oluncaya kadar ısıtmaya çalışın."
 
 #: backend/gt68xx.c:576
 #, no-c-format
@@ -3536,8 +3574,8 @@ msgid ""
 "Scan the complete scanning area including calibration strip. Be careful. "
 "Don't select the full height. For testing only."
 msgstr ""
-"Kalibrasyon şeridi de içerilmek üzere tüm tarama alanını tarayın. Dikkatli olu"
-"n; bütün yüksekliği seçmeyin. Yalnızca sınama amaçlıdır."
+"Kalibrasyon şeridi de içerilmek üzere tüm tarama alanını tarayın. "
+"Dikkatli olun; bütün yüksekliği seçmeyin. Yalnızca sınama amaçlıdır."
 
 #: backend/gt68xx.c:589
 #, no-c-format
@@ -3551,9 +3589,10 @@ msgid ""
 "disabled, options for setting the analog frontend parameters manually "
 "are provided. This option is enabled by default. For testing only."
 msgstr ""
-"Tarama için kazancı ve ofseti kendiliğinden ayarlayın. Bu seçenek devre dışı b"
-"ırakılırsa analog ön uç parametrelerini elle ayarlama seçenekleri sağlanır. Bu"
-" seçenek öntanımlı olarak etkindir. Yalnızca sınama amaçlıdır."
+"Tarama için kazancı ve ofseti kendiliğinden ayarlayın. Bu seçenek devre "
+"dışı bırakılırsa analog ön uç parametrelerini elle ayarlama seçenekleri "
+"sağlanır. Bu seçenek öntanımlı olarak etkindir. Yalnızca sınama "
+"amaçlıdır."
 
 #: backend/gt68xx.c:610
 #, no-c-format
@@ -3567,9 +3606,10 @@ msgid ""
 "scanners and can save scanning time. If the image brightness is "
 "different with each scan, disable this option. For testing only."
 msgstr ""
-"Kaba kalibrasyon yalnızca ilk tarama için yapılır. Çoğu tarayıcıyla çalışır ve"
-" tarama süresinden tasarruf sağlayabilir. Görsel parlaklığı her taramada farkl"
-"ıysa bu seçeneği devre dışı bırakın. Yalnızca sınama amaçlıdır."
+"Kaba kalibrasyon yalnızca ilk tarama için yapılır. Çoğu tarayıcıyla "
+"çalışır ve tarama süresinden tasarruf sağlayabilir. Görsel parlaklığı "
+"her taramada farklıysa bu seçeneği devre dışı bırakın. Yalnızca sınama "
+"amaçlıdır."
 
 #: backend/gt68xx.c:645
 #, no-c-format
@@ -3584,10 +3624,10 @@ msgid ""
 "the data. Low values cause faster scans but increase the risk of "
 "omitting lines."
 msgstr ""
-"Geri izleme gerçekleştiğinde tarama sürgüsünün geri hareket ettiği satır sayıs"
-"ı. Bu, tarayıcının bilgisayarın veriyi alabileceğinden daha hızlı taradığı zam"
-"an olur. Düşük değerler daha hızlı taramalara neden olur; ancak satırların atl"
-"anma riskini artırır."
+"Geri izleme gerçekleştiğinde tarama sürgüsünün geri hareket ettiği satır "
+"sayısı. Bu, tarayıcının bilgisayarın veriyi alabileceğinden daha hızlı "
+"taradığı zaman olur. Düşük değerler daha hızlı taramalara neden olur; "
+"ancak satırların atlanma riskini artırır."
 
 #: backend/gt68xx.c:672 backend/mustek_usb2.c:450
 #, no-c-format
@@ -3747,7 +3787,8 @@ msgstr "Kendiliğinden eşikli"
 #, no-c-format
 msgid "Enable automatic determination of threshold for line-art scans."
 msgstr ""
-"Çizgi sanatı taramaları için eşiğin kendiliğinden algılanmasını etkinleştirin."
+"Çizgi sanatı taramaları için eşiğin kendiliğinden algılanmasını "
+"etkinleştirin."
 
 #: backend/hp-option.h:69
 #, no-c-format
@@ -3812,9 +3853,10 @@ msgid ""
 "negative film. For dark (underexposed) images you can increase this "
 "value."
 msgstr ""
-"Daha uzun pozlama süresi tarayıcının daha fazla ışık toplamasını sağlar. Öneri"
-"len kullanım baskılar için %175, normal slaytlar için %150 ve negatif film içi"
-"n “Negatif”tir. Koyu (az pozlanmış) görseller için bu değeri artırabilirsiniz."
+"Daha uzun pozlama süresi tarayıcının daha fazla ışık toplamasını sağlar. "
+"Önerilen kullanım baskılar için %175, normal slaytlar için %150 ve "
+"negatif film için “Negatif”tir. Koyu (az pozlanmış) görseller için bu "
+"değeri artırabilirsiniz."
 
 #: backend/hp-option.h:114 backend/hp-option.h:121
 #, no-c-format
@@ -3880,8 +3922,8 @@ msgstr "8 bit çıktı"
 #, no-c-format
 msgid "Use bit depth greater eight internally, but output only eight bits."
 msgstr ""
-"Bit derinliğini içsel olarak sekizden büyük kullanın; ancak yalnızca sekiz bit"
-" çıktılayın."
+"Bit derinliğini içsel olarak sekizden büyük kullanın; ancak yalnızca "
+"sekiz bit çıktılayın."
 
 #: backend/hp-option.h:159
 #, no-c-format
@@ -3921,7 +3963,8 @@ msgstr "Tarayıcı modeli"
 #: backend/hp3900_sane.c:1407
 #, no-c-format
 msgid "Allows one to test device behavior with other supported models"
-msgstr "Diğer desteklenen modellerle aygıt davranışını sınamaya izin verir."
+msgstr ""
+"Diğer desteklenen modellerle aygıt davranışını sınamaya izin verir."
 
 #: backend/hp3900_sane.c:1421
 #, no-c-format
@@ -3970,9 +4013,9 @@ msgid ""
 "image quality and then converted to the selected depth. This option "
 "avoids depth emulation."
 msgstr ""
-"Gama etkinleştirilirse görsel kalitesini iyileştirmek için taramalar her zaman"
-" 16 bit derinlikte yapılır ve ardından seçilen derinliğe dönüştürülür. Bu seçe"
-"nek, derinlik öykünmesini önler."
+"Gama etkinleştirilirse görsel kalitesini iyileştirmek için taramalar her "
+"zaman 16 bit derinlikte yapılır ve ardından seçilen derinliğe "
+"dönüştürülür. Bu seçenek, derinlik öykünmesini önler."
 
 #: backend/hp3900_sane.c:1498
 #, no-c-format
@@ -3986,9 +4029,9 @@ msgid ""
 "grayscale by software. This may improve image quality in some "
 "circumstances."
 msgstr ""
-"Etkinleştirilirse, görsel renkli kipte taranır ve ardından yazılım tarafından "
-"gri tonluya dönüştürülür. Bu, bazı durumlarda görsel kalitesini iyileştirebili"
-"r."
+"Etkinleştirilirse, görsel renkli kipte taranır ve ardından yazılım "
+"tarafından gri tonluya dönüştürülür. Bu, bazı durumlarda görsel "
+"kalitesini iyileştirebilir."
 
 #: backend/hp3900_sane.c:1515
 #, no-c-format
@@ -4001,8 +4044,8 @@ msgid ""
 "If enabled, some images involved in scanner processing are saved to "
 "analyze them."
 msgstr ""
-"Etkinleştirilirse tarama işlemesinde kullanılan kimi görseller, onları çözümle"
-"mek için kaydedilir."
+"Etkinleştirilirse tarama işlemesinde kullanılan kimi görseller, onları "
+"çözümlemek için kaydedilir."
 
 #: backend/hp3900_sane.c:1532
 #, no-c-format
@@ -4292,7 +4335,8 @@ msgstr "KBB’deki kullanılabilir belge"
 #: backend/hp5590.c:126
 #, no-c-format
 msgid "Get state of document-available indicator in ADF (read only)"
-msgstr "KBB’deki kullanılabilir belge göstergesinin durumunu al (saltokunur)"
+msgstr ""
+"KBB’deki kullanılabilir belge göstergesinin durumunu al (saltokunur)"
 
 #: backend/hp5590.c:128
 #, no-c-format
@@ -4301,8 +4345,10 @@ msgstr "Sayfa sonu pikselini gizle"
 
 #: backend/hp5590.c:129
 #, no-c-format
-msgid "Hide end-of-page indicator pixels and overwrite with neighbor pixels"
-msgstr "Sayfa sonu göstergesi pikselini gizle ve komşu piksellerle üzerine yaz"
+msgid ""
+"Hide end-of-page indicator pixels and overwrite with neighbor pixels"
+msgstr ""
+"Sayfa sonu göstergesi pikselini gizle ve komşu piksellerle üzerine yaz"
 
 #: backend/hp5590.c:131
 #, no-c-format
@@ -4315,8 +4361,9 @@ msgid ""
 "raw = raw scan data, last = repeat last scan line, raster = b/w raster, "
 "white = white color, black = black color, color = RGB or gray color value"
 msgstr ""
-"raw = ham tarama verisi, last = son tarama çizgisini yinele, raster = s–b rast"
-"er, white = beyaz renk, black = siyah renk, color = RGB veya gri renk değeri"
+"raw = ham tarama verisi, last = son tarama çizgisini yinele, raster = s–"
+"b raster, white = beyaz renk, black = siyah renk, color = RGB veya gri "
+"renk değeri"
 
 #: backend/hp5590.c:135
 #, no-c-format
@@ -4329,8 +4376,8 @@ msgid ""
 "Color value for trailing lines filling mode 'color'. RGB color as "
 "r*65536+256*g+b or gray value (default=violet or gray)"
 msgstr ""
-"“color” sonraki çizgileri doldurma kipi için renk değeri. r*65536+256*g+b ol"
-"arak RGB değeri veya gri değeri (default=mor veya gri)"
+"“color” sonraki çizgileri doldurma kipi için renk değeri. "
+"r*65536+256*g+b olarak RGB değeri veya gri değeri (default=mor veya gri)"
 
 #: backend/kvs1025.h:51 backend/kvs20xx_opt.c:295 backend/kvs40xx_opt.c:511
 #: backend/matsushita.h:213
@@ -5220,7 +5267,8 @@ msgstr ""
 
 #: backend/microtek2.h:615
 #, no-c-format
-msgid "If checked the color calibration before a scan is done by the backend"
+msgid ""
+"If checked the color calibration before a scan is done by the backend"
 msgstr ""
 
 #: backend/microtek2.h:619
@@ -5541,7 +5589,8 @@ msgstr "Lamba kapalı süresi (dakika)"
 #: backend/mustek.c:4333
 #, no-c-format
 msgid "Set the time (in minutes) after which the lamp is shut off."
-msgstr "Lambanın ne kadar süre sonra kapanacağını (dakika olarak) ayarlayın."
+msgstr ""
+"Lambanın ne kadar süre sonra kapanacağını (dakika olarak) ayarlayın."
 
 #: backend/mustek.c:4344
 #, no-c-format
@@ -5649,8 +5698,8 @@ msgid ""
 "Warm-up until the lamp's brightness is constant instead of insisting on "
 "40 seconds warm-up time."
 msgstr ""
-"40 saniyelik ısınma süresinde ısrar etmek yerine, lambanın parlaklığı sabit ol"
-"uncaya kadar ısıtmaya çalışın."
+"40 saniyelik ısınma süresinde ısrar etmek yerine, lambanın parlaklığı "
+"sabit oluncaya kadar ısıtmaya çalışın."
 
 #: backend/niash.c:675
 #, no-c-format
@@ -6015,10 +6064,11 @@ msgstr ""
 
 #: backend/pnm.c:281
 #, no-c-format
-msgid "Set default values for enhancement controls (brightness & contrast)."
+msgid ""
+"Set default values for enhancement controls (brightness & contrast)."
 msgstr ""
-"İyileştirme denetimleri için öntanımlı değerleri ayarlayın (parlaklık ve karşı"
-"tlık)."
+"İyileştirme denetimleri için öntanımlı değerleri ayarlayın (parlaklık ve "
+"karşıtlık)."
 
 #: backend/pnm.c:293
 #, no-c-format
@@ -6449,7 +6499,8 @@ msgstr ""
 
 #: backend/test.c:570
 #, no-c-format
-msgid "The (maximum) amount of data transferred with each call to sane_read()."
+msgid ""
+"The (maximum) amount of data transferred with each call to sane_read()."
 msgstr ""
 
 #: backend/test.c:585

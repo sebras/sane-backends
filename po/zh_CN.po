@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sane-backends 1.0.32.60-2b0e4\n"
 "Report-Msgid-Bugs-To: sane-devel@alioth-lists.debian.net\n"
-"POT-Creation-Date: 2024-01-29 10:10-0800\n"
+"POT-Creation-Date: 2025-04-28 10:20-0700\n"
 "PO-Revision-Date: 2024-02-01 11:19+0800\n"
 "Last-Translator: Tyson Tan <tds00@qq.com>\n"
 "Language-Team: Chinese <kde-i18n-doc@kde.org>\n"
@@ -29,7 +29,7 @@ msgstr "标准"
 
 #: include/sane/saneopts.h:160 backend/artec_eplus48u.c:2873
 #: backend/canon_lide70.c:416 backend/epson.c:3296 backend/epson2.c:1281
-#: backend/epsonds.c:1978 backend/genesys/genesys.cpp:4593
+#: backend/epsonds.c:1978 backend/genesys/genesys.cpp:4594
 #: backend/gt68xx.c:694 backend/hp-option.c:3295 backend/hp3500.c:1017
 #: backend/kvs1025_opt.c:639 backend/kvs20xx_opt.c:285
 #: backend/kvs40xx_opt.c:501 backend/leo.c:820 backend/lexmark.c:197
@@ -45,7 +45,7 @@ msgid "Geometry"
 msgstr "尺寸"
 
 #: include/sane/saneopts.h:161 backend/artec_eplus48u.c:2794
-#: backend/canon.c:1507 backend/genesys/genesys.cpp:4636
+#: backend/canon.c:1507 backend/genesys/genesys.cpp:4637
 #: backend/gt68xx.c:663 backend/hp-option.c:2951 backend/kvs1025_opt.c:703
 #: backend/leo.c:868 backend/ma1509.c:597 backend/matsushita.c:1186
 #: backend/microtek2.h:598 backend/mustek.c:4400 backend/mustek_usb.c:347
@@ -60,7 +60,7 @@ msgstr "增强"
 
 #: include/sane/saneopts.h:162 backend/epson.c:3195 backend/epson2.c:1206
 #: backend/kvs20xx_opt.c:366 backend/kvs40xx_opt.c:592
-#: backend/rts8891.c:2831 backend/snapscan-options.c:937
+#: backend/rts8891.c:2857 backend/snapscan-options.c:937
 #: backend/umax.c:5563
 #, no-c-format
 msgid "Advanced"
@@ -485,8 +485,8 @@ msgid ""
 "Number of bits per sample, typical values are 1 for \"line-art\" and 8 "
 "for multibit scans."
 msgstr ""
-"每个采样像素的色彩位深。 "
-"“线稿”模式的典型数值为 1，多位扫描的典型数值为 8。"
+"每个采样像素的色彩位深。 “线稿”模式的典型数值为 1，多位扫描的典型数值为 "
+"8。"
 
 #: include/sane/saneopts.h:275
 #, no-c-format
@@ -557,7 +557,8 @@ msgstr "指定媒介的高度。"
 
 #: include/sane/saneopts.h:315
 #, no-c-format
-msgid "Determines whether a builtin or a custom gamma-table should be used."
+msgid ""
+"Determines whether a builtin or a custom gamma-table should be used."
 msgstr "决定使用内建还是自定义伽玛值表。"
 
 #: include/sane/saneopts.h:319
@@ -654,12 +655,14 @@ msgstr "选择被视作纯红的红通道亮度级别。"
 
 #: include/sane/saneopts.h:374
 #, no-c-format
-msgid "Selects what green radiance level should be considered \"full green\"."
+msgid ""
+"Selects what green radiance level should be considered \"full green\"."
 msgstr "选择被视作纯绿的绿通道亮度级别。"
 
 #: include/sane/saneopts.h:377
 #, no-c-format
-msgid "Selects what blue radiance level should be considered \"full blue\"."
+msgid ""
+"Selects what blue radiance level should be considered \"full blue\"."
 msgstr "选择被视作纯蓝的蓝通道亮度级别。"
 
 #: include/sane/saneopts.h:381
@@ -672,7 +675,8 @@ msgstr "控制捕获图像的色相 (蓝度)。"
 msgid ""
 "The saturation level controls the amount of \"blooming\" that occurs "
 "when acquiring an image with a camera. Larger values cause more blooming."
-msgstr "饱和度级别控制使用相机捕获图像时的颜色鲜艳程度。数值越大，颜色越鲜艳。"
+msgstr ""
+"饱和度级别控制使用相机捕获图像时的颜色鲜艳程度。数值越大，颜色越鲜艳。"
 
 #: include/sane/saneopts.h:389
 #, no-c-format
@@ -1157,8 +1161,8 @@ msgid ""
 "However some others (DM152) can get confused during media flush if it is "
 "set."
 msgstr ""
-"较新款的扫描仪可以使用此纸张长度来检测双张进纸。 "
-"但某些其他扫描仪 (DM152) 在设置此选项后可能会在媒体清除时出错。 "
+"较新款的扫描仪可以使用此纸张长度来检测双张进纸。 但某些其他扫描仪 "
+"(DM152) 在设置此选项后可能会在媒体清除时出错。 "
 
 #: backend/avision.h:118
 #, no-c-format
@@ -1168,9 +1172,8 @@ msgid ""
 "this off might make scanning a little faster if you don't care about "
 "manually flipping the pages afterwards."
 msgstr ""
-"让页面翻转文稿扫描仪在排出纸张之前先将它翻转回原始朝向。 "
-"如果您不介意在扫描后人工把纸张翻转回来， "
-"关闭此选项可能会让扫描速度略微加快。"
+"让页面翻转文稿扫描仪在排出纸张之前先将它翻转回原始朝向。 如果您不介意在扫"
+"描后人工把纸张翻转回来， 关闭此选项可能会让扫描速度略微加快。"
 
 #: backend/avision.h:123
 #, no-c-format
@@ -1199,7 +1202,8 @@ msgstr "双向扫描"
 
 #: backend/avision.h:902
 #, no-c-format
-msgid "Duplex scan provides a scan of the front and back side of the document"
+msgid ""
+"Duplex scan provides a scan of the front and back side of the document"
 msgstr "双向扫描将同时扫描文稿的正反两面"
 
 #: backend/canon-sane.c:674 backend/canon.c:169
@@ -1582,7 +1586,8 @@ msgstr "退出程序前退出胶片"
 
 #: backend/canon.c:1690
 #, no-c-format
-msgid "Automatically eject the film from the device before exiting the program"
+msgid ""
+"Automatically eject the film from the device before exiting the program"
 msgstr "退出程序前自动从设备中退出胶片"
 
 #: backend/canon.c:1699
@@ -1701,7 +1706,7 @@ msgstr "选择伽玛值校正转移曲线"
 #: backend/fujitsu.c:690 backend/genesys/genesys.h:55 backend/gt68xx.c:146
 #: backend/hp3900_sane.c:417 backend/hp3900_sane.c:426
 #: backend/hp3900_sane.c:1016 backend/hp5590.c:90 backend/kodakaio.c:617
-#: backend/ma1509.c:106 backend/magicolor.c:181 backend/mustek.c:154
+#: backend/ma1509.c:106 backend/magicolor.c:196 backend/mustek.c:154
 #: backend/mustek.c:158 backend/mustek.c:162 backend/pixma/pixma.c:1026
 #: backend/pixma/pixma_sane_options.c:93 backend/snapscan-options.c:86
 #: backend/test.c:232 backend/umax.c:179
@@ -1825,28 +1830,28 @@ msgstr "图像黑字"
 msgid "White-on-Black"
 msgstr "黑底白字"
 
-#: backend/canon_dr.c:2788 backend/fujitsu.c:4144 backend/kvs1025_opt.c:910
+#: backend/canon_dr.c:2790 backend/fujitsu.c:4144 backend/kvs1025_opt.c:910
 #, no-c-format
 msgid "Software blank skip percentage"
 msgstr "软件空白页跳过百分比"
 
-#: backend/canon_dr.c:2789 backend/fujitsu.c:4145
+#: backend/canon_dr.c:2791 backend/fujitsu.c:4145
 #, no-c-format
 msgid "Request driver to discard pages with low percentage of dark pixels"
 msgstr "请求驱动程序丢弃暗色比例较低的页面"
 
-#: backend/canon_dr.c:2908
+#: backend/canon_dr.c:2910
 #, no-c-format
 msgid "Imprinter Options"
 msgstr "压印机选项"
 
-#: backend/canon_dr.c:2909
+#: backend/canon_dr.c:2911
 #, no-c-format
 msgid "Controls for imprinter units"
 msgstr "控制压印机单元的功能"
 
 #: backend/canon_lide70.c:342 backend/epson.c:2811 backend/epson2.c:967
-#: backend/genesys/genesys.cpp:4524 backend/gt68xx.c:449
+#: backend/genesys/genesys.cpp:4525 backend/gt68xx.c:449
 #: backend/hp-option.c:2912 backend/kvs1025_opt.c:521
 #: backend/kvs20xx_opt.c:171 backend/kvs40xx_opt.c:315 backend/ma1509.c:499
 #: backend/matsushita.c:1081 backend/microtek2.h:596 backend/mustek.c:4194
@@ -1870,14 +1875,14 @@ msgid "Use non-blocking IO for sane_read() if supported by the frontend."
 msgstr "如果前端程序支持，为 sane_read() 使用非块状传输。"
 
 #: backend/epson.c:489 backend/epson2.c:104 backend/kodakaio.c:611
-#: backend/magicolor.c:174
+#: backend/magicolor.c:189
 #, no-c-format
 msgid "Simplex"
 msgstr "单工"
 
 #: backend/epson.c:490 backend/epson2.c:105 backend/kodakaio.c:612
 #: backend/kvs1025.h:50 backend/kvs20xx_opt.c:204 backend/kvs40xx_opt.c:348
-#: backend/magicolor.c:175 backend/matsushita.h:212
+#: backend/magicolor.c:190 backend/matsushita.h:212
 #, no-c-format
 msgid "Duplex"
 msgstr "双工"
@@ -1889,7 +1894,7 @@ msgid "Transparency Unit"
 msgstr "透扫器"
 
 #: backend/epson.c:501 backend/epson2-ops.c:104 backend/epson2.c:114
-#: backend/epsonds.h:67 backend/kodakaio.c:618 backend/magicolor.c:182
+#: backend/epsonds.h:67 backend/kodakaio.c:618 backend/magicolor.c:197
 #: backend/mustek.c:158 backend/pixma/pixma.c:1031 backend/test.c:232
 #: backend/umax.c:181
 #, no-c-format
@@ -2253,13 +2258,13 @@ msgid "Eject document after scanning"
 msgstr "扫描后退出文稿"
 
 #: backend/epson.c:3455 backend/epson2.c:1424 backend/kodakaio.c:2857
-#: backend/magicolor.c:2454
+#: backend/magicolor.c:2497
 #, no-c-format
 msgid "ADF Mode"
 msgstr "自动输稿器模式"
 
 #: backend/epson.c:3457 backend/epson2.c:1426 backend/kodakaio.c:2859
-#: backend/magicolor.c:2456
+#: backend/magicolor.c:2499
 #, no-c-format
 msgid "Selects the ADF mode (simplex/duplex)"
 msgstr "选择自动输稿器模式 (单向/双向)"
@@ -2290,7 +2295,8 @@ msgstr "对焦位置"
 
 #: backend/epson.h:71 backend/epson2.h:75
 #, no-c-format
-msgid "Sets the focus position to either the glass or 2.5mm above the glass"
+msgid ""
+"Sets the focus position to either the glass or 2.5mm above the glass"
 msgstr "设置对焦位置为玻璃表面还是玻璃表面上方 2.5mm"
 
 #: backend/epson.h:73 backend/epson2.h:77
@@ -2600,7 +2606,8 @@ msgstr "阈值曲线"
 
 #: backend/fujitsu.c:3425
 #, no-c-format
-msgid "Threshold curve, from light to dark, but upper two may not be linear"
+msgid ""
+"Threshold curve, from light to dark, but upper two may not be linear"
 msgstr "阈值曲线，由亮到暗，但最上面的两项可能不是线性"
 
 #: backend/fujitsu.c:3447
@@ -2807,7 +2814,8 @@ msgstr "背景色"
 
 #: backend/fujitsu.c:3867
 #, no-c-format
-msgid "Set color of background for scans. May conflict with overscan option"
+msgid ""
+"Set color of background for scans. May conflict with overscan option"
 msgstr "设置扫描图像的背景色。可能与过扫描选项冲突"
 
 #: backend/fujitsu.c:3887
@@ -2864,7 +2872,8 @@ msgstr "睡眠计时器"
 
 #: backend/fujitsu.c:3971
 #, no-c-format
-msgid "Time in minutes until the internal power supply switches to sleep mode"
+msgid ""
+"Time in minutes until the internal power supply switches to sleep mode"
 msgstr "扫描仪内部电源切换为睡眠模式的计时器，单位为分钟"
 
 #: backend/fujitsu.c:3989
@@ -2987,7 +2996,8 @@ msgstr "取消时挂起"
 
 #: backend/fujitsu.c:4162
 #, no-c-format
-msgid "Request driver to halt the paper feed instead of eject during a cancel."
+msgid ""
+"Request driver to halt the paper feed instead of eject during a cancel."
 msgstr "请求驱动程序在取消时挂起送纸操作而不是退纸。"
 
 #: backend/fujitsu.c:4173
@@ -3090,7 +3100,8 @@ msgstr "背书器字串"
 msgid ""
 "Endorser alphanumeric print format. %05ud or %08ud at the end will be "
 "replaced by counter value."
-msgstr "背书器英文数字打印格式。位于末尾的 %05ud 或 %08ud 将被替换为计数器数值。"
+msgstr ""
+"背书器英文数字打印格式。位于末尾的 %05ud 或 %08ud 将被替换为计数器数值。"
 
 #: backend/fujitsu.c:4410
 #, no-c-format
@@ -3257,37 +3268,37 @@ msgstr "密度旋钮"
 msgid "Duplex switch"
 msgstr "双工开关"
 
-#: backend/genesys/genesys.cpp:4713 backend/pixma/pixma_sane_options.c:357
+#: backend/genesys/genesys.cpp:4714 backend/pixma/pixma_sane_options.c:357
 #, no-c-format
 msgid "Extras"
 msgstr "额外设置"
 
-#: backend/genesys/genesys.cpp:4722
+#: backend/genesys/genesys.cpp:4723
 #, no-c-format
 msgid "Color filter"
 msgstr "颜色滤镜"
 
-#: backend/genesys/genesys.cpp:4725
+#: backend/genesys/genesys.cpp:4726
 #, no-c-format
 msgid "When using gray or lineart this option selects the used color."
 msgstr "此选项选择灰阶或线稿模式使用的颜色。"
 
-#: backend/genesys/genesys.cpp:4749
+#: backend/genesys/genesys.cpp:4750
 #, no-c-format
 msgid "Calibration file"
 msgstr "校准文件"
 
-#: backend/genesys/genesys.cpp:4750
+#: backend/genesys/genesys.cpp:4751
 #, no-c-format
 msgid "Specify the calibration file to use"
 msgstr "指定要使用的校准文件"
 
-#: backend/genesys/genesys.cpp:4767
+#: backend/genesys/genesys.cpp:4768
 #, no-c-format
 msgid "Calibration cache expiration time"
 msgstr "校准缓存过期时间"
 
-#: backend/genesys/genesys.cpp:4768
+#: backend/genesys/genesys.cpp:4769
 #, no-c-format
 msgid ""
 "Time (in minutes) before a cached calibration expires. A value of 0 "
@@ -3296,12 +3307,12 @@ msgstr ""
 "已缓存校准的过期时间 (单位为分钟)。数值为 0 意味着不使用缓存。数值为负值"
 "意味着缓存永不过期。"
 
-#: backend/genesys/genesys.cpp:4778
+#: backend/genesys/genesys.cpp:4779
 #, no-c-format
 msgid "Lamp off time"
 msgstr "背光灯关闭时间"
 
-#: backend/genesys/genesys.cpp:4781
+#: backend/genesys/genesys.cpp:4782
 #, no-c-format
 msgid ""
 "The lamp will be turned off after the given time (in minutes). A value "
@@ -3310,116 +3321,116 @@ msgstr ""
 "背光灯将在经过指定的时间 (单位为分钟) 后关闭。数值为 0 时背光灯将永不关"
 "闭。"
 
-#: backend/genesys/genesys.cpp:4791
+#: backend/genesys/genesys.cpp:4792
 #, no-c-format
 msgid "Lamp off during scan"
 msgstr "扫描时关闭背光灯"
 
-#: backend/genesys/genesys.cpp:4792
+#: backend/genesys/genesys.cpp:4793
 #, no-c-format
 msgid "The lamp will be turned off during scan. "
 msgstr "扫描时背光灯将被关闭。"
 
-#: backend/genesys/genesys.cpp:4819 backend/genesys/genesys.cpp:4820
+#: backend/genesys/genesys.cpp:4820 backend/genesys/genesys.cpp:4821
 #, no-c-format
 msgid "File button"
 msgstr "文件按钮"
 
-#: backend/genesys/genesys.cpp:4864 backend/genesys/genesys.cpp:4865
+#: backend/genesys/genesys.cpp:4865 backend/genesys/genesys.cpp:4866
 #, no-c-format
 msgid "OCR button"
 msgstr "光学识别按钮"
 
-#: backend/genesys/genesys.cpp:4876 backend/genesys/genesys.cpp:4877
+#: backend/genesys/genesys.cpp:4877 backend/genesys/genesys.cpp:4878
 #, no-c-format
 msgid "Power button"
 msgstr "电源按钮"
 
-#: backend/genesys/genesys.cpp:4888 backend/genesys/genesys.cpp:4889
+#: backend/genesys/genesys.cpp:4889 backend/genesys/genesys.cpp:4890
 #, no-c-format
 msgid "Extra button"
 msgstr "额外功能按钮"
 
-#: backend/genesys/genesys.cpp:4900 backend/genesys/genesys.cpp:4901
+#: backend/genesys/genesys.cpp:4901 backend/genesys/genesys.cpp:4902
 #, no-c-format
 msgid "Transparency button"
 msgstr "透扫器按钮"
 
-#: backend/genesys/genesys.cpp:4912 backend/genesys/genesys.cpp:4913
+#: backend/genesys/genesys.cpp:4913 backend/genesys/genesys.cpp:4914
 #, no-c-format
 msgid "PDF function button 1"
 msgstr "PDF 功能按钮 1"
 
-#: backend/genesys/genesys.cpp:4924 backend/genesys/genesys.cpp:4925
+#: backend/genesys/genesys.cpp:4925 backend/genesys/genesys.cpp:4926
 #, no-c-format
 msgid "PDF function button 2"
 msgstr "PDF 功能按钮 2"
 
-#: backend/genesys/genesys.cpp:4936 backend/genesys/genesys.cpp:4937
+#: backend/genesys/genesys.cpp:4937 backend/genesys/genesys.cpp:4938
 #, no-c-format
 msgid "PDF function button 3"
 msgstr "PDF 功能按钮 3"
 
-#: backend/genesys/genesys.cpp:4948 backend/genesys/genesys.cpp:4949
+#: backend/genesys/genesys.cpp:4949 backend/genesys/genesys.cpp:4950
 #, no-c-format
 msgid "PDF function button 4"
 msgstr "PDF 功能按钮 4"
 
-#: backend/genesys/genesys.cpp:4960 backend/gt68xx.c:753
+#: backend/genesys/genesys.cpp:4961 backend/gt68xx.c:753
 #, no-c-format
 msgid "Needs calibration"
 msgstr "需要校准"
 
-#: backend/genesys/genesys.cpp:4961 backend/gt68xx.c:754 backend/p5.c:1928
+#: backend/genesys/genesys.cpp:4962 backend/gt68xx.c:754 backend/p5.c:1928
 #, no-c-format
 msgid "The scanner needs calibration for the current settings"
 msgstr "扫描仪需要为当前设置进行校准"
 
-#: backend/genesys/genesys.cpp:4972 backend/gt68xx.c:778
+#: backend/genesys/genesys.cpp:4973 backend/gt68xx.c:778
 #: backend/gt68xx.c:779 backend/p5.c:1937 backend/p5.c:1938
 #: backend/pixma/pixma_sane_options.c:227 backend/plustek.c:1078
 #, no-c-format
 msgid "Buttons"
 msgstr "按钮"
 
-#: backend/genesys/genesys.cpp:4981 backend/gt68xx.c:785
+#: backend/genesys/genesys.cpp:4982 backend/gt68xx.c:785
 #: backend/hp-option.h:92 backend/hp5400_sane.c:535 backend/niash.c:723
 #: backend/p5.c:1945 backend/plustek.c:939
 #, no-c-format
 msgid "Calibrate"
 msgstr "校准"
 
-#: backend/genesys/genesys.cpp:4983 backend/gt68xx.c:787 backend/p5.c:1947
+#: backend/genesys/genesys.cpp:4984 backend/gt68xx.c:787 backend/p5.c:1947
 #, no-c-format
 msgid "Start calibration using special sheet"
 msgstr "使用特殊纸张开始校准"
 
-#: backend/genesys/genesys.cpp:4995 backend/gt68xx.c:800 backend/p5.c:1958
+#: backend/genesys/genesys.cpp:4996 backend/gt68xx.c:800 backend/p5.c:1958
 #, no-c-format
 msgid "Clear calibration"
 msgstr "清除校准"
 
-#: backend/genesys/genesys.cpp:4996 backend/gt68xx.c:801 backend/p5.c:1960
+#: backend/genesys/genesys.cpp:4997 backend/gt68xx.c:801 backend/p5.c:1960
 #, no-c-format
 msgid "Clear calibration cache"
 msgstr "清除校准缓存"
 
-#: backend/genesys/genesys.cpp:5006
+#: backend/genesys/genesys.cpp:5007
 #, no-c-format
 msgid "Force calibration"
 msgstr "强制校准"
 
-#: backend/genesys/genesys.cpp:5007
+#: backend/genesys/genesys.cpp:5008
 #, no-c-format
 msgid "Force calibration ignoring all and any calibration caches"
 msgstr "强制校准并忽略所有校准缓存"
 
-#: backend/genesys/genesys.cpp:5017
+#: backend/genesys/genesys.cpp:5018
 #, no-c-format
 msgid "Ignore internal offsets"
 msgstr "忽略内部偏移"
 
-#: backend/genesys/genesys.cpp:5019
+#: backend/genesys/genesys.cpp:5020
 #, no-c-format
 msgid ""
 "Acquires the image including the internal calibration areas of the "
@@ -4229,7 +4240,8 @@ msgstr "隐藏页面末尾像素"
 
 #: backend/hp5590.c:129
 #, no-c-format
-msgid "Hide end-of-page indicator pixels and overwrite with neighbor pixels"
+msgid ""
+"Hide end-of-page indicator pixels and overwrite with neighbor pixels"
 msgstr "隐藏页面末尾指示像素，用相邻的相符覆盖它"
 
 #: backend/hp5590.c:131
@@ -5148,7 +5160,8 @@ msgstr "由后端程序进行校准"
 
 #: backend/microtek2.h:615
 #, no-c-format
-msgid "If checked the color calibration before a scan is done by the backend"
+msgid ""
+"If checked the color calibration before a scan is done by the backend"
 msgstr "勾选后将在每次扫描前由后端程序进行色彩校准"
 
 #: backend/microtek2.h:619
@@ -5459,7 +5472,8 @@ msgstr "使用快速灰阶模式扫描 (低品质)。"
 msgid ""
 "Request that all previews are done in the fastest (low-quality) mode. "
 "This may be a non-color mode or a low resolution mode."
-msgstr "请求所有预览均在最快模式 (低品质) 扫描。它可以是单色模式或低分辨率模式。"
+msgstr ""
+"请求所有预览均在最快模式 (低品质) 扫描。它可以是单色模式或低分辨率模式。"
 
 #: backend/mustek.c:4332
 #, no-c-format
@@ -5722,7 +5736,8 @@ msgstr "自动输稿器等待时间"
 msgid ""
 "When set, the scanner waits up to the specified time in seconds for a "
 "new document inserted into the automatic document feeder."
-msgstr "设置后，扫描仪将等待指定的时间 (单位为秒)以便新文稿能够装入自动输稿器。"
+msgstr ""
+"设置后，扫描仪将等待指定的时间 (单位为秒)以便新文稿能够装入自动输稿器。"
 
 #: backend/pixma/pixma_sane_options.c:407
 #, no-c-format
@@ -5731,9 +5746,8 @@ msgid ""
 "performed a single time per driver init for single page scans, and for "
 "the first page for each ADF scan."
 msgstr ""
-"设置扫描仪在何时进行校准。如果设置为“一次”， 扫描仪将在 "
-"每次单页扫描或者自动输稿器扫描第一页之前的驱动程序初始化阶段 "
-"进行校准。"
+"设置扫描仪在何时进行校准。如果设置为“一次”， 扫描仪将在 每次单页扫描或者"
+"自动输稿器扫描第一页之前的驱动程序初始化阶段 进行校准。"
 
 #: backend/plustek.c:233 backend/plustek_pp.c:202 backend/u12.c:154
 #, no-c-format
@@ -5935,7 +5949,8 @@ msgstr "三遍扫描模拟"
 msgid ""
 "Simulate a three-pass scanner by returning 3 separate frames.  For "
 "kicks, it returns green, then blue, then red."
-msgstr "通过返回三个独立扫描帧来模拟三遍式扫描仪。例如按顺序返回绿、蓝、红三帧。"
+msgstr ""
+"通过返回三个独立扫描帧来模拟三遍式扫描仪。例如按顺序返回绿、蓝、红三帧。"
 
 #: backend/pnm.c:265
 #, no-c-format
@@ -5954,7 +5969,8 @@ msgstr ""
 
 #: backend/pnm.c:281
 #, no-c-format
-msgid "Set default values for enhancement controls (brightness & contrast)."
+msgid ""
+"Set default values for enhancement controls (brightness & contrast)."
 msgstr "设置增强控制默认值 (亮度/对比度)。"
 
 #: backend/pnm.c:293
@@ -6009,7 +6025,8 @@ msgstr "返回 SANE_STATUS_JAMMED"
 msgid ""
 "Force the backend to return the status code SANE_STATUS_JAMMED after "
 "sane_read() has been called."
-msgstr "在调用sane_read() 之后强制后端程序返回状态代码 SANE_STATUS_JAMMED。"
+msgstr ""
+"在调用sane_read() 之后强制后端程序返回状态代码 SANE_STATUS_JAMMED。"
 
 #: backend/pnm.c:428
 #, no-c-format
@@ -6021,7 +6038,8 @@ msgstr "返回 SANE_STATUS_NO_DOCS"
 msgid ""
 "Force the backend to return the status code SANE_STATUS_NO_DOCS after "
 "sane_read() has been called."
-msgstr "在调用sane_read() 之后强制后端程序返回状态代码 SANE_STATUS_NO_DOCS。"
+msgstr ""
+"在调用sane_read() 之后强制后端程序返回状态代码 SANE_STATUS_NO_DOCS。"
 
 #: backend/pnm.c:441
 #, no-c-format
@@ -6033,7 +6051,8 @@ msgstr "返回 SANE_STATUS_COVER_OPEN"
 msgid ""
 "Force the backend to return the status code SANE_STATUS_COVER_OPEN after "
 "sane_read() has been called."
-msgstr "在调用sane_read() 之后强制后端程序返回状态代码 SANE_STATUS_COVER_OPEN。"
+msgstr ""
+"在调用sane_read() 之后强制后端程序返回状态代码 SANE_STATUS_COVER_OPEN。"
 
 #: backend/pnm.c:454
 #, no-c-format
@@ -6045,7 +6064,8 @@ msgstr "返回 SANE_STATUS_IO_ERROR"
 msgid ""
 "Force the backend to return the status code SANE_STATUS_IO_ERROR after "
 "sane_read() has been called."
-msgstr "在调用sane_read() 之后强制后端程序返回状态代码 SANE_STATUS_IO_ERROR。"
+msgstr ""
+"在调用sane_read() 之后强制后端程序返回状态代码 SANE_STATUS_IO_ERROR。"
 
 #: backend/pnm.c:467
 #, no-c-format
@@ -6057,7 +6077,8 @@ msgstr "返回 SANE_STATUS_NO_MEM"
 msgid ""
 "Force the backend to return the status code SANE_STATUS_NO_MEM after "
 "sane_read() has been called."
-msgstr "在调用sane_read() 之后强制后端程序返回状态代码 SANE_STATUS_NO_MEM。"
+msgstr ""
+"在调用sane_read() 之后强制后端程序返回状态代码 SANE_STATUS_NO_MEM。"
 
 #: backend/pnm.c:481
 #, no-c-format
@@ -6073,27 +6094,27 @@ msgstr ""
 "在调用sane_read() 之后强制后端程序返回状态代码 "
 "SANE_STATUS_ACCESS_DENIED。"
 
-#: backend/rts8891.c:2809
+#: backend/rts8891.c:2835
 #, no-c-format
 msgid "This option reflects the status of a scanner button."
 msgstr "此选项反映扫描仪按钮的状态。"
 
-#: backend/rts8891.c:2840 backend/umax.c:5793 backend/umax_pp.c:628
+#: backend/rts8891.c:2866 backend/umax.c:5793 backend/umax_pp.c:628
 #, no-c-format
 msgid "Lamp on"
 msgstr "背光灯开"
 
-#: backend/rts8891.c:2841 backend/umax.c:5794
+#: backend/rts8891.c:2867 backend/umax.c:5794
 #, no-c-format
 msgid "Turn on scanner lamp"
 msgstr "打开扫描仪背光灯"
 
-#: backend/rts8891.c:2851 backend/umax.c:5810 backend/umax1220u.c:246
+#: backend/rts8891.c:2877 backend/umax.c:5810 backend/umax1220u.c:246
 #, no-c-format
 msgid "Lamp off"
 msgstr "背光灯关"
 
-#: backend/rts8891.c:2852 backend/umax.c:5811 backend/umax1220u.c:247
+#: backend/rts8891.c:2878 backend/umax.c:5811 backend/umax1220u.c:247
 #, no-c-format
 msgid "Turn off scanner lamp"
 msgstr "关闭扫描仪背光灯"
@@ -6402,7 +6423,8 @@ msgstr "读取限制大小"
 
 #: backend/test.c:570
 #, no-c-format
-msgid "The (maximum) amount of data transferred with each call to sane_read()."
+msgid ""
+"The (maximum) amount of data transferred with each call to sane_read()."
 msgstr "每次调用 sane_read() 时传输的最大数据量。"
 
 #: backend/test.c:585
@@ -6461,7 +6483,8 @@ msgstr "模糊参数"
 msgid ""
 "Return fuzzy lines and bytes per line when sane_parameters() is called "
 "before sane_start()."
-msgstr "当在 sane_start() 之前调用 sane_parameters() 时返回模糊线数和每线字节数。"
+msgstr ""
+"当在 sane_start() 之前调用 sane_parameters() 时返回模糊线数和每线字节数。"
 
 #: backend/test.c:676
 #, no-c-format
@@ -6485,7 +6508,8 @@ msgstr "启用测试选项"
 msgid ""
 "Enable various test options. This is for testing the ability of "
 "frontends to view and modify all the different SANE option types."
-msgstr "启用各种测试选项。用于测试前端程序的查看和调整不同 SANE 选项类型的能力。"
+msgstr ""
+"启用各种测试选项。用于测试前端程序的查看和调整不同 SANE 选项类型的能力。"
 
 #: backend/test.c:705
 #, no-c-format
@@ -6557,7 +6581,8 @@ msgstr "(4/6) 布尔软件检测"
 msgid ""
 "(4/6) Bool test option that has soft detect (and advanced) capabilities. "
 "That means the option is read-only."
-msgstr "(4/6) 具备软件检测 (和高级) 功能的布尔测试选项。这意味着该选项为只读。"
+msgstr ""
+"(4/6) 具备软件检测 (和高级) 功能的布尔测试选项。这意味着该选项为只读。"
 
 #: backend/test.c:869
 #, no-c-format
@@ -6612,8 +6637,8 @@ msgid ""
 "(2/7) Int test option with unit pixel and constraint range set. Minimum "
 "is 4, maximum 192, and quant is 2."
 msgstr ""
-"(2/7) 整数测试选项，带有单位像素，设有约束范围。 "
-"最小值为 4，最大值为 192，数量为 2。"
+"(2/7) 整数测试选项，带有单位像素，设有约束范围。 最小值为 4，最大值为 "
+"192，数量为 2。"
 
 #: backend/test.c:950
 #, no-c-format
@@ -6648,8 +6673,8 @@ msgid ""
 "(5/7) Int test option with unit dpi and using an array with a range "
 "constraint. Minimum is 4, maximum 192, and quant is 2."
 msgstr ""
-"(5/7) 整数测试选项，带有单位 DPI，使用设有范围约束的数组。 "
-"最小值为 4，最大值为 192，数量为 2。"
+"(5/7) 整数测试选项，带有单位 DPI，使用设有范围约束的数组。 最小值为 4，最"
+"大值为 192，数量为 2。"
 
 #: backend/test.c:1000
 #, no-c-format
@@ -6673,9 +6698,7 @@ msgstr "(7/7) 整数不确切"
 msgid ""
 "(7/7) Int test option that modifies the value and returns "
 "SANE_INFO_INEXACT."
-msgstr ""
-"(7/7) 整数测试选项 "
-"用于修改值并返回 SANE_INFO_INEXACT。"
+msgstr "(7/7) 整数测试选项 用于修改值并返回 SANE_INFO_INEXACT。"
 
 #: backend/test.c:1091
 #, no-c-format

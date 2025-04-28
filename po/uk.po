@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: sane-backends 1.0.32\n"
 "Report-Msgid-Bugs-To: sane-devel@alioth-lists.debian.net\n"
-"POT-Creation-Date: 2024-01-29 21:48+0200\n"
+"POT-Creation-Date: 2025-04-28 10:20-0700\n"
 "PO-Revision-Date: 2024-01-29 22:20+0200\n"
 "Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
 "Language-Team: Ukrainian <trans-uk@lists.fedoraproject.org>\n"
@@ -15,8 +15,8 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: Lokalize 23.04.1\n"
-"Plural-Forms:  nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
-"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"Plural-Forms:  nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
+"n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 
 #: include/sane/saneopts.h:157
 #, no-c-format
@@ -30,7 +30,7 @@ msgstr "Типово"
 
 #: include/sane/saneopts.h:160 backend/artec_eplus48u.c:2873
 #: backend/canon_lide70.c:416 backend/epson.c:3296 backend/epson2.c:1281
-#: backend/epsonds.c:1978 backend/genesys/genesys.cpp:4593
+#: backend/epsonds.c:1978 backend/genesys/genesys.cpp:4594
 #: backend/gt68xx.c:694 backend/hp-option.c:3295 backend/hp3500.c:1017
 #: backend/kvs1025_opt.c:639 backend/kvs20xx_opt.c:285
 #: backend/kvs40xx_opt.c:501 backend/leo.c:820 backend/lexmark.c:197
@@ -46,7 +46,7 @@ msgid "Geometry"
 msgstr "Позиція і розміри"
 
 #: include/sane/saneopts.h:161 backend/artec_eplus48u.c:2794
-#: backend/canon.c:1507 backend/genesys/genesys.cpp:4636
+#: backend/canon.c:1507 backend/genesys/genesys.cpp:4637
 #: backend/gt68xx.c:663 backend/hp-option.c:2951 backend/kvs1025_opt.c:703
 #: backend/leo.c:868 backend/ma1509.c:597 backend/matsushita.c:1186
 #: backend/microtek2.h:598 backend/mustek.c:4400 backend/mustek_usb.c:347
@@ -61,7 +61,7 @@ msgstr "Покращення"
 
 #: include/sane/saneopts.h:162 backend/epson.c:3195 backend/epson2.c:1206
 #: backend/kvs20xx_opt.c:366 backend/kvs40xx_opt.c:592
-#: backend/rts8891.c:2831 backend/snapscan-options.c:937
+#: backend/rts8891.c:2857 backend/snapscan-options.c:937
 #: backend/umax.c:5563
 #, no-c-format
 msgid "Advanced"
@@ -542,7 +542,8 @@ msgstr "Визначає роздільну здатність сканован�
 #: include/sane/saneopts.h:302
 #, no-c-format
 msgid "Sets the horizontal resolution of the scanned image."
-msgstr "Визначає горизонтальну роздільну здатність засканованого зображення."
+msgstr ""
+"Визначає горизонтальну роздільну здатність засканованого зображення."
 
 #: include/sane/saneopts.h:305
 #, no-c-format
@@ -565,7 +566,8 @@ msgstr "Визначає висоту носія."
 
 #: include/sane/saneopts.h:315
 #, no-c-format
-msgid "Determines whether a builtin or a custom gamma-table should be used."
+msgid ""
+"Determines whether a builtin or a custom gamma-table should be used."
 msgstr "Визначає буде використано вбудовану чи нетипову таблицю гами."
 
 #: include/sane/saneopts.h:319
@@ -667,14 +669,17 @@ msgstr ""
 
 #: include/sane/saneopts.h:374
 #, no-c-format
-msgid "Selects what green radiance level should be considered \"full green\"."
+msgid ""
+"Selects what green radiance level should be considered \"full green\"."
 msgstr ""
 "Визначає рівень світності зеленого, який слід вважати «цілком зеленим»."
 
 #: include/sane/saneopts.h:377
 #, no-c-format
-msgid "Selects what blue radiance level should be considered \"full blue\"."
-msgstr "Визначає рівень світності синього, який слід вважати «цілком синім»."
+msgid ""
+"Selects what blue radiance level should be considered \"full blue\"."
+msgstr ""
+"Визначає рівень світності синього, який слід вважати «цілком синім»."
 
 #: include/sane/saneopts.h:381
 #, no-c-format
@@ -716,7 +721,8 @@ msgstr ""
 #: include/sane/saneopts.h:400
 #, no-c-format
 msgid "Use same values for X and Y resolution"
-msgstr "Використовувати однакові значення для роздільних здатностей за X та Y"
+msgstr ""
+"Використовувати однакові значення для роздільних здатностей за X та Y"
 
 #: include/sane/saneopts.h:402
 #, no-c-format
@@ -1123,8 +1129,8 @@ msgid ""
 "The top overscan controls the additional area to scan before the paper "
 "is detected."
 msgstr ""
-"Пересканування вгорі визначає додаткову область сканування перед виявлення"
-" початку паперу."
+"Пересканування вгорі визначає додаткову область сканування перед "
+"виявлення початку паперу."
 
 #: backend/avision.h:94
 #, no-c-format
@@ -1132,8 +1138,8 @@ msgid ""
 "The bottom overscan controls the additional area to scan after the paper "
 "end is detected."
 msgstr ""
-"Пересканування внизу визначає додаткову область сканування після виявлення"
-" кінця паперу."
+"Пересканування внизу визначає додаткову область сканування після "
+"виявлення кінця паперу."
 
 #: backend/avision.h:97
 #, no-c-format
@@ -1141,8 +1147,8 @@ msgid ""
 "The background raster controls the additional background lines to scan "
 "before the paper is feed through the scanner."
 msgstr ""
-"Фоновий растр визначає додаткові фонові лінії, які слід сканувати до того,"
-" як папір буде подано до сканера."
+"Фоновий растр визначає додаткові фонові лінії, які слід сканувати до "
+"того, як папір буде подано до сканера."
 
 #: backend/avision.h:100
 #, no-c-format
@@ -1165,8 +1171,8 @@ msgid ""
 "Allows control of the scanner's power save timer, dimming or turning off "
 "the light."
 msgstr ""
-"Надає змогу керувати таймером заощадження енергії сканера, притлумленням або"
-" вимиканням лампи."
+"Надає змогу керувати таймером заощадження енергії сканера, притлумленням "
+"або вимиканням лампи."
 
 #: backend/avision.h:109
 #, no-c-format
@@ -1174,8 +1180,8 @@ msgid ""
 "This text contains device specific options controlled by the user on the "
 "scanner hardware."
 msgstr ""
-"Цей текст містить специфічні для пристрою параметри керування обладнанням"
-" сканера, якими керує користувач."
+"Цей текст містить специфічні для пристрою параметри керування "
+"обладнанням сканера, якими керує користувач."
 
 #: backend/avision.h:112
 #, no-c-format
@@ -1183,8 +1189,8 @@ msgid ""
 "Allows access obtaining the scanner's NVRAM values as pretty printed "
 "text."
 msgstr ""
-"Уможливлює доступ до отримання значень NVRAM сканера у вигляді форматованого"
-" тексту."
+"Уможливлює доступ до отримання значень NVRAM сканера у вигляді "
+"форматованого тексту."
 
 #: backend/avision.h:115
 #, no-c-format
@@ -1193,9 +1199,9 @@ msgid ""
 "However some others (DM152) can get confused during media flush if it is "
 "set."
 msgstr ""
-"Новіші сканери здатні використовувати цю довжину паперу для виявлення подачі"
-" двох аркушів. Втім, деякі інші сканери (DM152) можуть неправильно сприйняти"
-" значення цього параметра, якщо його встановлено."
+"Новіші сканери здатні використовувати цю довжину паперу для виявлення "
+"подачі двох аркушів. Втім, деякі інші сканери (DM152) можуть неправильно "
+"сприйняти значення цього параметра, якщо його встановлено."
 
 #: backend/avision.h:118
 #, no-c-format
@@ -1205,10 +1211,11 @@ msgid ""
 "this off might make scanning a little faster if you don't care about "
 "manually flipping the pages afterwards."
 msgstr ""
-"Наказує сканерам із перевертанням сторінок документа повернути папір до"
-" початкової орієнтації до викидання його до лотка опрацьованих документів."
-" Вимикання такого перевертання може дещо пришвидшити сканування, якщо ви"
-" повертаєте аркуші документа до початкового стану вручну."
+"Наказує сканерам із перевертанням сторінок документа повернути папір до "
+"початкової орієнтації до викидання його до лотка опрацьованих "
+"документів. Вимикання такого перевертання може дещо пришвидшити "
+"сканування, якщо ви повертаєте аркуші документа до початкового стану "
+"вручну."
 
 #: backend/avision.h:123
 #, no-c-format
@@ -1237,7 +1244,8 @@ msgstr "Двобічне сканування"
 
 #: backend/avision.h:902
 #, no-c-format
-msgid "Duplex scan provides a scan of the front and back side of the document"
+msgid ""
+"Duplex scan provides a scan of the front and back side of the document"
 msgstr ""
 "За використання двобічного сканування ви отримаєте одразу зображення "
 "лицьового та зворотного боків документа"
@@ -1439,7 +1447,8 @@ msgstr "Помилка парності SCSI"
 #: backend/canon.c:502
 #, no-c-format
 msgid "initiator detected error message received"
-msgstr "Отримано повідомлення про помилку виявлення інструменту ініціалізації"
+msgstr ""
+"Отримано повідомлення про помилку виявлення інструменту ініціалізації"
 
 #: backend/canon.c:507
 #, no-c-format
@@ -1615,7 +1624,8 @@ msgstr "Виштовхувати плівку після кожного скан
 #: backend/canon.c:1678
 #, no-c-format
 msgid "Automatically eject the film from the device after each scan"
-msgstr "Автоматично виштовхувати плівку з пристрою після кожного сканування"
+msgstr ""
+"Автоматично виштовхувати плівку з пристрою після кожного сканування"
 
 #: backend/canon.c:1689
 #, no-c-format
@@ -1653,7 +1663,8 @@ msgstr "Лише планшетний"
 #: backend/canon.c:1717
 #, no-c-format
 msgid "Disable auto document feeder and use flatbed only"
-msgstr "Вимкнути автоматичну подачу, використовувати лише планшетний механізм"
+msgstr ""
+"Вимкнути автоматичну подачу, використовувати лише планшетний механізм"
 
 #: backend/canon.c:1727 backend/canon.c:1737
 #, no-c-format
@@ -1746,7 +1757,7 @@ msgstr "Визначити криву виправлення гами"
 #: backend/fujitsu.c:690 backend/genesys/genesys.h:55 backend/gt68xx.c:146
 #: backend/hp3900_sane.c:417 backend/hp3900_sane.c:426
 #: backend/hp3900_sane.c:1016 backend/hp5590.c:90 backend/kodakaio.c:617
-#: backend/ma1509.c:106 backend/magicolor.c:181 backend/mustek.c:154
+#: backend/ma1509.c:106 backend/magicolor.c:196 backend/mustek.c:154
 #: backend/mustek.c:158 backend/mustek.c:162 backend/pixma/pixma.c:1026
 #: backend/pixma/pixma_sane_options.c:93 backend/snapscan-options.c:86
 #: backend/test.c:232 backend/umax.c:179
@@ -1870,30 +1881,30 @@ msgstr "Чорне на зображенні"
 msgid "White-on-Black"
 msgstr "Біле на чорному"
 
-#: backend/canon_dr.c:2788 backend/fujitsu.c:4144 backend/kvs1025_opt.c:910
+#: backend/canon_dr.c:2790 backend/fujitsu.c:4144 backend/kvs1025_opt.c:910
 #, no-c-format
 msgid "Software blank skip percentage"
 msgstr "Порогове значення порожніх сторінок для програмного відкидання"
 
-#: backend/canon_dr.c:2789 backend/fujitsu.c:4145
+#: backend/canon_dr.c:2791 backend/fujitsu.c:4145
 #, no-c-format
 msgid "Request driver to discard pages with low percentage of dark pixels"
 msgstr ""
 "Вимагати від драйвера відкидання сторінок з надто низькою питомою "
 "кількістю темних пікселів"
 
-#: backend/canon_dr.c:2908
+#: backend/canon_dr.c:2910
 #, no-c-format
 msgid "Imprinter Options"
 msgstr "Параметри наддруку"
 
-#: backend/canon_dr.c:2909
+#: backend/canon_dr.c:2911
 #, no-c-format
 msgid "Controls for imprinter units"
 msgstr "Керування одиницям наддруку"
 
 #: backend/canon_lide70.c:342 backend/epson.c:2811 backend/epson2.c:967
-#: backend/genesys/genesys.cpp:4524 backend/gt68xx.c:449
+#: backend/genesys/genesys.cpp:4525 backend/gt68xx.c:449
 #: backend/hp-option.c:2912 backend/kvs1025_opt.c:521
 #: backend/kvs20xx_opt.c:171 backend/kvs40xx_opt.c:315 backend/ma1509.c:499
 #: backend/matsushita.c:1081 backend/microtek2.h:596 backend/mustek.c:4194
@@ -1919,14 +1930,14 @@ msgstr ""
 "підтримується оболонкою."
 
 #: backend/epson.c:489 backend/epson2.c:104 backend/kodakaio.c:611
-#: backend/magicolor.c:174
+#: backend/magicolor.c:189
 #, no-c-format
 msgid "Simplex"
 msgstr "Однобічна"
 
 #: backend/epson.c:490 backend/epson2.c:105 backend/kodakaio.c:612
 #: backend/kvs1025.h:50 backend/kvs20xx_opt.c:204 backend/kvs40xx_opt.c:348
-#: backend/magicolor.c:175 backend/matsushita.h:212
+#: backend/magicolor.c:190 backend/matsushita.h:212
 #, no-c-format
 msgid "Duplex"
 msgstr "Двобічна"
@@ -1938,7 +1949,7 @@ msgid "Transparency Unit"
 msgstr "Модуль для слайдів"
 
 #: backend/epson.c:501 backend/epson2-ops.c:104 backend/epson2.c:114
-#: backend/epsonds.h:67 backend/kodakaio.c:618 backend/magicolor.c:182
+#: backend/epsonds.h:67 backend/kodakaio.c:618 backend/magicolor.c:197
 #: backend/mustek.c:158 backend/pixma/pixma.c:1031 backend/test.c:232
 #: backend/umax.c:181
 #, no-c-format
@@ -2304,13 +2315,13 @@ msgid "Eject document after scanning"
 msgstr "Виштовхнути документ після сканування"
 
 #: backend/epson.c:3455 backend/epson2.c:1424 backend/kodakaio.c:2857
-#: backend/magicolor.c:2454
+#: backend/magicolor.c:2497
 #, no-c-format
 msgid "ADF Mode"
 msgstr "Режим протяжного пристрою"
 
 #: backend/epson.c:3457 backend/epson2.c:1426 backend/kodakaio.c:2859
-#: backend/magicolor.c:2456
+#: backend/magicolor.c:2499
 #, no-c-format
 msgid "Selects the ADF mode (simplex/duplex)"
 msgstr "Визначає режим протяжного пристрою (однобічний/двобічний)"
@@ -2342,7 +2353,8 @@ msgstr "Позиція фокусування"
 
 #: backend/epson.h:71 backend/epson2.h:75
 #, no-c-format
-msgid "Sets the focus position to either the glass or 2.5mm above the glass"
+msgid ""
+"Sets the focus position to either the glass or 2.5mm above the glass"
 msgstr ""
 "Визначає позицію фокусування на рівень від поверхні скла до висоти 2,5 "
 "мм над склом"
@@ -2658,7 +2670,8 @@ msgstr "Порогова крива"
 
 #: backend/fujitsu.c:3425
 #, no-c-format
-msgid "Threshold curve, from light to dark, but upper two may not be linear"
+msgid ""
+"Threshold curve, from light to dark, but upper two may not be linear"
 msgstr ""
 "Порогова крива, від світлого до темного, але верхні дві не можуть бути "
 "лінійними"
@@ -2878,7 +2891,8 @@ msgstr "Колір тла"
 
 #: backend/fujitsu.c:3867
 #, no-c-format
-msgid "Set color of background for scans. May conflict with overscan option"
+msgid ""
+"Set color of background for scans. May conflict with overscan option"
 msgstr ""
 "Встановити колір для тла сканованих зображень. Може конфліктувати із "
 "параметром полів."
@@ -2945,7 +2959,8 @@ msgstr "Таймер присипляння"
 
 #: backend/fujitsu.c:3971
 #, no-c-format
-msgid "Time in minutes until the internal power supply switches to sleep mode"
+msgid ""
+"Time in minutes until the internal power supply switches to sleep mode"
 msgstr ""
 "Час у хвилинах, по завершенню якого внутрішнє живлення буде переведено у "
 "режим сну"
@@ -3360,39 +3375,39 @@ msgstr "Набирач щільності"
 msgid "Duplex switch"
 msgstr "Перемикач двобічного"
 
-#: backend/genesys/genesys.cpp:4713 backend/pixma/pixma_sane_options.c:357
+#: backend/genesys/genesys.cpp:4714 backend/pixma/pixma_sane_options.c:357
 #, no-c-format
 msgid "Extras"
 msgstr "Додаткові"
 
-#: backend/genesys/genesys.cpp:4722
+#: backend/genesys/genesys.cpp:4723
 #, no-c-format
 msgid "Color filter"
 msgstr "Фільтр кольору"
 
-#: backend/genesys/genesys.cpp:4725
+#: backend/genesys/genesys.cpp:4726
 #, no-c-format
 msgid "When using gray or lineart this option selects the used color."
 msgstr ""
 "За використання друку у півтонах або штрихового друку за допомогою цього "
 "пункту можна обрати колір друку."
 
-#: backend/genesys/genesys.cpp:4749
+#: backend/genesys/genesys.cpp:4750
 #, no-c-format
 msgid "Calibration file"
 msgstr "Файл калібрування"
 
-#: backend/genesys/genesys.cpp:4750
+#: backend/genesys/genesys.cpp:4751
 #, no-c-format
 msgid "Specify the calibration file to use"
 msgstr "Вкажіть файл даних калібрування, які буде використано"
 
-#: backend/genesys/genesys.cpp:4767
+#: backend/genesys/genesys.cpp:4768
 #, no-c-format
 msgid "Calibration cache expiration time"
 msgstr "Строк дії кешу калібрування"
 
-#: backend/genesys/genesys.cpp:4768
+#: backend/genesys/genesys.cpp:4769
 #, no-c-format
 msgid ""
 "Time (in minutes) before a cached calibration expires. A value of 0 "
@@ -3403,12 +3418,12 @@ msgstr ""
 "Від’ємні значення означають, що обмежень на строк дії кешу не "
 "накладатиметься."
 
-#: backend/genesys/genesys.cpp:4778
+#: backend/genesys/genesys.cpp:4779
 #, no-c-format
 msgid "Lamp off time"
 msgstr "Час вимикання лампи"
 
-#: backend/genesys/genesys.cpp:4781
+#: backend/genesys/genesys.cpp:4782
 #, no-c-format
 msgid ""
 "The lamp will be turned off after the given time (in minutes). A value "
@@ -3417,117 +3432,117 @@ msgstr ""
 "Лампу буде вимкнено, коли спливе вказаний час (у хвилинах). Значення "
 "рівне 0 означатиме, що лампа не вимикатиметься."
 
-#: backend/genesys/genesys.cpp:4791
+#: backend/genesys/genesys.cpp:4792
 #, no-c-format
 msgid "Lamp off during scan"
 msgstr "Вимикання лампи під час сканування"
 
-#: backend/genesys/genesys.cpp:4792
+#: backend/genesys/genesys.cpp:4793
 #, no-c-format
 msgid "The lamp will be turned off during scan. "
 msgstr "Лампу буде вимкнено під час сканування. "
 
-#: backend/genesys/genesys.cpp:4819 backend/genesys/genesys.cpp:4820
+#: backend/genesys/genesys.cpp:4820 backend/genesys/genesys.cpp:4821
 #, no-c-format
 msgid "File button"
 msgstr "Кнопка «File»"
 
-#: backend/genesys/genesys.cpp:4864 backend/genesys/genesys.cpp:4865
+#: backend/genesys/genesys.cpp:4865 backend/genesys/genesys.cpp:4866
 #, no-c-format
 msgid "OCR button"
 msgstr "Кнопка «OCR»"
 
-#: backend/genesys/genesys.cpp:4876 backend/genesys/genesys.cpp:4877
+#: backend/genesys/genesys.cpp:4877 backend/genesys/genesys.cpp:4878
 #, no-c-format
 msgid "Power button"
 msgstr "Кнопка «Power»"
 
-#: backend/genesys/genesys.cpp:4888 backend/genesys/genesys.cpp:4889
+#: backend/genesys/genesys.cpp:4889 backend/genesys/genesys.cpp:4890
 #, no-c-format
 msgid "Extra button"
 msgstr "Додаткова кнопка"
 
-#: backend/genesys/genesys.cpp:4900 backend/genesys/genesys.cpp:4901
+#: backend/genesys/genesys.cpp:4901 backend/genesys/genesys.cpp:4902
 #, no-c-format
 msgid "Transparency button"
 msgstr "Кнопка прозорості"
 
-#: backend/genesys/genesys.cpp:4912 backend/genesys/genesys.cpp:4913
+#: backend/genesys/genesys.cpp:4913 backend/genesys/genesys.cpp:4914
 #, no-c-format
 msgid "PDF function button 1"
 msgstr "Функціональна кнопка PDF 1"
 
-#: backend/genesys/genesys.cpp:4924 backend/genesys/genesys.cpp:4925
+#: backend/genesys/genesys.cpp:4925 backend/genesys/genesys.cpp:4926
 #, no-c-format
 msgid "PDF function button 2"
 msgstr "Функціональна кнопка PDF 2"
 
-#: backend/genesys/genesys.cpp:4936 backend/genesys/genesys.cpp:4937
+#: backend/genesys/genesys.cpp:4937 backend/genesys/genesys.cpp:4938
 #, no-c-format
 msgid "PDF function button 3"
 msgstr "Функціональна кнопка PDF 3"
 
-#: backend/genesys/genesys.cpp:4948 backend/genesys/genesys.cpp:4949
+#: backend/genesys/genesys.cpp:4949 backend/genesys/genesys.cpp:4950
 #, no-c-format
 msgid "PDF function button 4"
 msgstr "Функціональна кнопка PDF 4"
 
-#: backend/genesys/genesys.cpp:4960 backend/gt68xx.c:753
+#: backend/genesys/genesys.cpp:4961 backend/gt68xx.c:753
 #, no-c-format
 msgid "Needs calibration"
 msgstr "Потребує калібрування"
 
-#: backend/genesys/genesys.cpp:4961 backend/gt68xx.c:754 backend/p5.c:1928
+#: backend/genesys/genesys.cpp:4962 backend/gt68xx.c:754 backend/p5.c:1928
 #, no-c-format
 msgid "The scanner needs calibration for the current settings"
 msgstr "Для застосування поточних параметрів потрібне калібрування"
 
-#: backend/genesys/genesys.cpp:4972 backend/gt68xx.c:778
+#: backend/genesys/genesys.cpp:4973 backend/gt68xx.c:778
 #: backend/gt68xx.c:779 backend/p5.c:1937 backend/p5.c:1938
 #: backend/pixma/pixma_sane_options.c:227 backend/plustek.c:1078
 #, no-c-format
 msgid "Buttons"
 msgstr "Кнопки"
 
-#: backend/genesys/genesys.cpp:4981 backend/gt68xx.c:785
+#: backend/genesys/genesys.cpp:4982 backend/gt68xx.c:785
 #: backend/hp-option.h:92 backend/hp5400_sane.c:535 backend/niash.c:723
 #: backend/p5.c:1945 backend/plustek.c:939
 #, no-c-format
 msgid "Calibrate"
 msgstr "Відкалібрувати"
 
-#: backend/genesys/genesys.cpp:4983 backend/gt68xx.c:787 backend/p5.c:1947
+#: backend/genesys/genesys.cpp:4984 backend/gt68xx.c:787 backend/p5.c:1947
 #, no-c-format
 msgid "Start calibration using special sheet"
 msgstr "Почати калібрування за допомогою спеціального аркуша"
 
-#: backend/genesys/genesys.cpp:4995 backend/gt68xx.c:800 backend/p5.c:1958
+#: backend/genesys/genesys.cpp:4996 backend/gt68xx.c:800 backend/p5.c:1958
 #, no-c-format
 msgid "Clear calibration"
 msgstr "Спорожнити дані калібрування"
 
-#: backend/genesys/genesys.cpp:4996 backend/gt68xx.c:801 backend/p5.c:1960
+#: backend/genesys/genesys.cpp:4997 backend/gt68xx.c:801 backend/p5.c:1960
 #, no-c-format
 msgid "Clear calibration cache"
 msgstr "Спорожнити кеш калібрування"
 
-#: backend/genesys/genesys.cpp:5006
+#: backend/genesys/genesys.cpp:5007
 #, no-c-format
 msgid "Force calibration"
 msgstr "Примусове калібрування"
 
-#: backend/genesys/genesys.cpp:5007
+#: backend/genesys/genesys.cpp:5008
 #, no-c-format
 msgid "Force calibration ignoring all and any calibration caches"
 msgstr ""
 "Примусове калібрування з ігноруванням усіх кешованих даних калібрування"
 
-#: backend/genesys/genesys.cpp:5017
+#: backend/genesys/genesys.cpp:5018
 #, no-c-format
 msgid "Ignore internal offsets"
 msgstr "Ігнорувати внутрішні відступи"
 
-#: backend/genesys/genesys.cpp:5019
+#: backend/genesys/genesys.cpp:5020
 #, no-c-format
 msgid ""
 "Acquires the image including the internal calibration areas of the "
@@ -4354,7 +4369,8 @@ msgstr "Документ доступний у АПД"
 #: backend/hp5590.c:126
 #, no-c-format
 msgid "Get state of document-available indicator in ADF (read only)"
-msgstr "Отримати стан індикатора доступності документа у АПД (лише читання)"
+msgstr ""
+"Отримати стан індикатора доступності документа у АПД (лише читання)"
 
 #: backend/hp5590.c:128
 #, no-c-format
@@ -4363,7 +4379,8 @@ msgstr "Приховувати кінцевий піксель сторінки"
 
 #: backend/hp5590.c:129
 #, no-c-format
-msgid "Hide end-of-page indicator pixels and overwrite with neighbor pixels"
+msgid ""
+"Hide end-of-page indicator pixels and overwrite with neighbor pixels"
 msgstr ""
 "Приховувати пікселі-індикатори кінця сторінки і перезаписувати їх "
 "сусідніми пікселями"
@@ -4386,7 +4403,8 @@ msgstr ""
 #: backend/hp5590.c:135
 #, no-c-format
 msgid "RGB or gray color value for filling mode 'color'"
-msgstr "Значення кольору у RGB або тонах сірого для режиму заповнення «color»"
+msgstr ""
+"Значення кольору у RGB або тонах сірого для режиму заповнення «color»"
 
 #: backend/hp5590.c:136
 #, no-c-format
@@ -4840,7 +4858,8 @@ msgstr "Обернути зображення за год. стрілкою"
 #: backend/kvs1025_opt.c:861
 #, no-c-format
 msgid "Request driver to rotate pages by a fixed amount"
-msgstr "Вимагати від драйвера обертання сторінок на фіксований вказаний кут"
+msgstr ""
+"Вимагати від драйвера обертання сторінок на фіксований вказаний кут"
 
 #: backend/kvs1025_opt.c:873
 #, no-c-format
@@ -5304,7 +5323,8 @@ msgstr "Калібрування програмою обробки"
 
 #: backend/microtek2.h:615
 #, no-c-format
-msgid "If checked the color calibration before a scan is done by the backend"
+msgid ""
+"If checked the color calibration before a scan is done by the backend"
 msgstr ""
 "Якщо позначено цей пункт, калібрування кольорів перед скануванням "
 "виконується програмою обробки"
@@ -5383,7 +5403,8 @@ msgstr "Скалярна гама червоного"
 #: backend/microtek2.h:653
 #, no-c-format
 msgid "Selects a value for scalar gamma correction (red channel)"
-msgstr "Визначає значення для скалярного виправлення гами (канал червоного)."
+msgstr ""
+"Визначає значення для скалярного виправлення гами (канал червоного)."
 
 #: backend/microtek2.h:657
 #, no-c-format
@@ -5393,7 +5414,8 @@ msgstr "Скалярна гама зеленого"
 #: backend/microtek2.h:658
 #, no-c-format
 msgid "Selects a value for scalar gamma correction (green channel)"
-msgstr "Визначає значення для скалярного виправлення гами (канал зеленого)."
+msgstr ""
+"Визначає значення для скалярного виправлення гами (канал зеленого)."
 
 #: backend/microtek2.h:662
 #, no-c-format
@@ -5414,7 +5436,8 @@ msgstr "Канал"
 #, no-c-format
 msgid ""
 "Selects the colour band, \"Master\" means that all colours are affected."
-msgstr "Визначає зв’язок кольорів. «Основний» визначає зв’язок всіх кольорів."
+msgstr ""
+"Визначає зв’язок кольорів. «Основний» визначає зв’язок всіх кольорів."
 
 #: backend/microtek2.h:672
 #, no-c-format
@@ -5906,11 +5929,11 @@ msgstr ""
 "автоматичної подачі документів, протягом вказаної кількості секунд."
 
 #: backend/pixma/pixma_sane_options.c:407
-#, no-c-format
+#, fuzzy, no-c-format
 msgid ""
 "When to perform scanner calibration. If you choose \"Once\" it will be "
 "performed a single time per driver init for single page scans, and for "
-"the first page for each ADF scans."
+"the first page for each ADF scan."
 msgstr ""
 "Визначає, коли слід виконувати калібрування сканера. Якщо ви виберете "
 "«Лише раз», його буде виконано один раз під час ініціалізації сканера "
@@ -6140,7 +6163,8 @@ msgstr ""
 
 #: backend/pnm.c:281
 #, no-c-format
-msgid "Set default values for enhancement controls (brightness & contrast)."
+msgid ""
+"Set default values for enhancement controls (brightness & contrast)."
 msgstr ""
 "Встановити типові значення керування покращенням (яскравістю і "
 "контрастністю)."
@@ -6273,27 +6297,27 @@ msgstr ""
 "Наказати серверу повертати код стану SANE_STATUS_ACCESS_DENIED після "
 "виклику sane_read()."
 
-#: backend/rts8891.c:2809
+#: backend/rts8891.c:2835
 #, no-c-format
 msgid "This option reflects the status of a scanner button."
 msgstr "Цей пункт відповідає стану кнопки сканування."
 
-#: backend/rts8891.c:2840 backend/umax.c:5793 backend/umax_pp.c:628
+#: backend/rts8891.c:2866 backend/umax.c:5793 backend/umax_pp.c:628
 #, no-c-format
 msgid "Lamp on"
 msgstr "Увімкнути лампу"
 
-#: backend/rts8891.c:2841 backend/umax.c:5794
+#: backend/rts8891.c:2867 backend/umax.c:5794
 #, no-c-format
 msgid "Turn on scanner lamp"
 msgstr "Увімкнути лампу сканера"
 
-#: backend/rts8891.c:2851 backend/umax.c:5810 backend/umax1220u.c:246
+#: backend/rts8891.c:2877 backend/umax.c:5810 backend/umax1220u.c:246
 #, no-c-format
 msgid "Lamp off"
 msgstr "Вимкнути лампу"
 
-#: backend/rts8891.c:2852 backend/umax.c:5811 backend/umax1220u.c:247
+#: backend/rts8891.c:2878 backend/umax.c:5811 backend/umax1220u.c:247
 #, no-c-format
 msgid "Turn off scanner lamp"
 msgstr "Вимкнути лампу сканера"
@@ -6503,7 +6527,8 @@ msgstr "Другий запис"
 msgid ""
 "This is the very long third entry. Maybe the frontend has an idea how to "
 "display it"
-msgstr "Третій запис є затримується. Можливо, оболонка не може його показати."
+msgstr ""
+"Третій запис є затримується. Можливо, оболонка не може його показати."
 
 #: backend/test.c:419
 #, no-c-format
