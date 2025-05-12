@@ -25,7 +25,7 @@ cat << EOF > release.json
 {
   "name": "SANE Backends $CI_COMMIT_TAG",
   "tag_name": "$CI_COMMIT_TAG",
-  "description": "$(sed '1,3d; //{s/.*//; q}' NEWS \
+  "description": "$(sed '1,3d; //,$d}' NEWS \
      | git stripspace \
      | sed 's/"/\\"/g; s/$/\\n/g' \
      | tr -d '\n')",
