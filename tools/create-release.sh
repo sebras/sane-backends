@@ -4,9 +4,7 @@
 #
 # License: GPL-3.0+
 
-GROUP=sane-project
-PROJECT=backends
-PROJECT_ID=$GROUP%2F$PROJECT
+PROJECT_ID=$CI_PROJECT_ID
 
 API_ENDPOINT=https://gitlab.com/api/v4
 
@@ -18,7 +16,7 @@ upload () {
          --request POST \
          $API_ENDPOINT/projects/$PROJECT_ID/uploads \
         | jq --raw-output .url \
-        | sed "s|^|https://gitlab.com/$GROUP/$PROJECT|"
+        | sed "s|^|https://gitlab.com/-/project/$PROJECT_ID|"
 }
 
 cat << EOF > release.json
