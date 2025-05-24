@@ -125,6 +125,8 @@ make-distcheck:
 upload:
   image: alpine
   stage: release
+  needs:
+    - job: make-dist
   before_script:
     - apk --no-cache add curl git jq
   script:
