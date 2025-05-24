@@ -7,6 +7,73 @@
 
 <!--(towncrier release notes start)-->
 
+## New with 1.4.0 (released 2025-05-11)
+
+### Backends
+
+- `avision`:
+    - Added support for Xerox Book Scanner 4167, which appears to be a rebadged Avision FB6080E using different USB ids.
+- `artec_eplus48u`:
+    - Added some firmware names to descriptions
+- `canon_dr`:
+    - Added "function-number" option, specifically for Canon DR-3010.
+- `epjitsu`:
+    - Added some firmware names to descriptions
+- `escl`:
+    - New validated working scanners:
+    - Brother MFC-J453DW
+    - Epson XP-4200 validated.
+    - Canon PIXMA TS5100
+    - Fix for Kyocera ECOSYS M3145dn reset to idle.
+    - Added lineart mode activation for ADF source.
+    - Diagnostic log rationalisation to make less "noisy".
+    - Fix for SSL/TLS issue encountered with the Canon GX6050 scanner.
+    - Fix for HTTP2 header tag case issue.
+- `gt68xx`:
+    - Added some firmware names to descriptions
+- `hp5590`:
+    - Fix for issue triggered by the default increase to buffer size. Incorrectly reported as a buffer size issue, it was merely an algorithmic error in the backend.
+- `magicolor`:
+    - Added support for Toshiba TEC e-STUDIO2323AM
+    - Small fixes for device definitions.
+    - Protocol fixes for ESTUDIO devices.
+- `pixma`:
+    - Added support for new models:
+        - PIXMA TS3600 Series
+        - PIXMA TS3700 Series
+        - PIXMA TS8800 series
+        - PIXMA E3400 Series
+        - imageClass MF4500w Series
+        - PIXMA G3080 series
+        - PIXMA G3090 series
+        - PIXMA G4080 series
+        - PIXMA G4090 series
+        - PIXUS XK130 series
+    - Buffer overflow issue fix for networked scanners.
+- `rts8891`:
+    - Merged older work for Umax Atra 4400/4450 support.
+
+### Frontends
+
+- `saned`:
+    - Added long-standing request for network scanner relay. See new options -n and --allow-network. Beware that there are potential recursive issues with the misuse of this option.
+    - Fixes for child process lifecycle management.
+
+- `scanimage`:
+    - Formatting fix for help text.
+
+### Build
+
+- Fix for build issues on MacOS and clang16 with conflicting function names.
+- CI builds on GitLab updated to more recent versions.
+- sm3600 backend had definitions for typedef "bool" which now forms part of C23 standard and conflicted. This has been fixed.
+- Clang warnings fixed, mostly due to pre-ANSI argumentless function definitions and declarations. All updated to ANSI standards.
+
+### Documentation
+
+- Added translations for newly support language Turkish.
+
+
 ## New with 1.3.1 (released 2024-05-22)
 
 ### Backends

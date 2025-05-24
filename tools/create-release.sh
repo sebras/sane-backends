@@ -23,7 +23,7 @@ cat << EOF > release.json
 {
   "name": "SANE Backends $CI_COMMIT_TAG",
   "tag_name": "$CI_COMMIT_TAG",
-  "description": $(sed '1,9d; //{s/.*//; q}' NEWS \
+  "description": $(sed '1,9d;/\x0c/,$d' NEWS \
      | git stripspace \
      | jq -Rs),
   "assets": {
