@@ -741,6 +741,13 @@ static SANE_Status capa_cb(void *userdata, char *token, int len)
 			eds_set_resolution_range(s->hw, min, max);
 
 			DBG(1, "resolution min/max %d/%d\n", min, max);
+		} else if (p[0] == 'd') { /*RSMRANGd050i0001200*/
+			int min = decode_value(p, 4);
+			int max = decode_value(p + 4, 8);
+
+			eds_set_resolution_range(s->hw, min, max);
+
+			DBG(1, "resolution min/max %d/%d\n", min, max);
 		}
 	}
 

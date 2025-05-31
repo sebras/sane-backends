@@ -712,7 +712,7 @@ EXTRA_DIST += epson2.conf.in
 
 libepsonds_la_SOURCES = epsonds.c epsonds.h epsonds-usb.c epsonds-usb.h epsonds-io.c epsonds-io.h \
 		epsonds-cmd.c epsonds-cmd.h epsonds-ops.c epsonds-ops.h epsonds-jpeg.c epsonds-jpeg.h \
-		epsonds-net.c epsonds-net.h
+		epsonds-net.c epsonds-net.h epsonds-tcp.c epsonds-tcp.h
 libepsonds_la_CPPFLAGS = $(AM_CPPFLAGS) -DBACKEND_NAME=epsonds
 
 nodist_libsane_epsonds_la_SOURCES = epsonds-s.c
@@ -724,13 +724,13 @@ libsane_epsonds_la_LIBADD = $(COMMON_LIBS) libepsonds.la ../sanei/sanei_init_deb
 				../sanei/sanei_config.lo ../sanei/sanei_config2.lo sane_strstatus.lo \
 				../sanei/sanei_usb.lo ../sanei/sanei_scsi.lo \
 				../sanei/sanei_tcp.lo ../sanei/sanei_udp.lo \
-				$(SANEI_SANEI_JPEG_LO) $(JPEG_LIBS) $(USB_LIBS) $(MATH_LIB) $(RESMGR_LIBS) $(SOCKET_LIBS) $(AVAHI_LIBS)
+				$(SANEI_SANEI_JPEG_LO) $(JPEG_LIBS) $(SSL_LIBS) $(USB_LIBS) $(MATH_LIB) $(RESMGR_LIBS) $(SOCKET_LIBS) $(AVAHI_LIBS)
 else
 libsane_epsonds_la_LIBADD = $(COMMON_LIBS) libepsonds.la ../sanei/sanei_init_debug.lo ../sanei/sanei_constrain_value.lo \
 				../sanei/sanei_config.lo ../sanei/sanei_config2.lo sane_strstatus.lo \
 				../sanei/sanei_usb.lo ../sanei/sanei_scsi.lo \
 				../sanei/sanei_tcp.lo ../sanei/sanei_udp.lo \
-				$(SANEI_SANEI_JPEG_LO) $(JPEG_LIBS) $(USB_LIBS) $(MATH_LIB) $(RESMGR_LIBS) $(SOCKET_LIBS)
+				$(SANEI_SANEI_JPEG_LO) $(JPEG_LIBS) $(USB_LIBS) $(SSL_LIBS) $(MATH_LIB) $(RESMGR_LIBS) $(SOCKET_LIBS)
 endif
 EXTRA_DIST += epsonds.conf.in
 
@@ -2045,6 +2045,7 @@ PRELOADABLE_BACKENDS_LIBS = \
     $(LIBV4L_LIBS) $(MATH_LIB) \
     $(IEEE1284_LIBS) \
     $(TIFF_LIBS) \
+    $(SSL_LIBS) \
     $(JPEG_LIBS) \
     $(GPHOTO2_LIBS) \
     $(SOCKET_LIBS) \

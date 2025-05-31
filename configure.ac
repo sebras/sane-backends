@@ -116,6 +116,7 @@ SANE_CHECK_IEEE1284
 SANE_CHECK_PTHREAD
 SANE_CHECK_LOCKING
 SANE_CHECK_GPHOTO2
+SANE_CHECK_SSL
 
 dnl **************************************************************
 dnl Check for V4L availability
@@ -863,6 +864,15 @@ echo "Avahi support: `eval eval echo ${with_avahi}`"
 echo "cURL support:  `eval eval echo ${with_libcurl}`"
 echo "POPPLER_GLIB support:  `eval eval echo ${with_poppler_glib}`"
 echo "SNMP support:  `eval eval echo ${with_snmp}`"
+echo -n "SSL support:   "
+if test "x$SSL_LIBS" != "x"; then
+	echo "yes"
+else
+	echo "no"
+fi
+
+
+
 echo "-> The following backends will be built:"
 for backend in ${BACKENDS} ; do
   echo $ECHO_N "${backend} "
