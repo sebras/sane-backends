@@ -27,6 +27,7 @@
 
 #include "epsonds.h"
 #include "epsonds-net.h"
+#include "epsonds-tcp.h"
 
 #include "byteorder.h"
 
@@ -34,10 +35,10 @@
 
 
 static ssize_t
-epsonds_net_read_raw(epsonds_scanner *s, unsigned char *buf, ssize_t wanted,
+epsonds_net_read_raw(epsonds_scanner *s, unsigned char *buf, size_t wanted,
 		       SANE_Status *status)
 {
-	DBG(15, "%s: wanted: %ld\n", __func__, wanted);
+	DBG(15, "%s: wanted: %zu\n", __func__, wanted);
 
 	if (wanted == 0)
 	{
@@ -45,27 +46,10 @@ epsonds_net_read_raw(epsonds_scanner *s, unsigned char *buf, ssize_t wanted,
 		return 0;
 	}
 
-	int ready;
 	ssize_t read = -1;
-	fd_set readable;
-	struct timeval tv;
+	read = epsonds_tcp_read(s, buf, wanted);
 
-	tv.tv_sec = 10;
-	tv.tv_usec = 0;
-
-	FD_ZERO(&readable);
-	FD_SET(s->fd, &readable);
-
-	ready = select(s->fd + 1, &readable, NULL, NULL, &tv);
-	if (ready > 0) {
-		read = sanei_tcp_read(s->fd, buf, wanted);
-	} else {
-		DBG(15, "%s: select failed: %d\n", __func__, ready);
-	}
-
-	*status = SANE_STATUS_GOOD;
-
-	if (read < wanted) {
+	if ((read < 0) || ((size_t)read < wanted)) {
 		*status = SANE_STATUS_IO_ERROR;
 	}
 
@@ -73,7 +57,7 @@ epsonds_net_read_raw(epsonds_scanner *s, unsigned char *buf, ssize_t wanted,
 }
 
 static ssize_t
-epsonds_net_read_buf(epsonds_scanner *s, unsigned char *buf, ssize_t wanted,
+epsonds_net_read_buf(epsonds_scanner *s, unsigned char *buf, size_t wanted,
 		       SANE_Status * status)
 {
 	ssize_t read = 0;
@@ -103,14 +87,9 @@ epsonds_net_read_buf(epsonds_scanner *s, unsigned char *buf, ssize_t wanted,
 }
 
 ssize_t
-epsonds_net_read(epsonds_scanner *s, unsigned char *buf, ssize_t wanted,
+epsonds_net_read(epsonds_scanner *s, unsigned char *buf, size_t wanted,
 		       SANE_Status * status)
 {
-	if (wanted < 0) {
-		*status = SANE_STATUS_INVAL;
-		return 0;
-	}
-
 	size_t size;
 	ssize_t read = 0;
 	unsigned char header[12];
@@ -250,15 +229,15 @@ epsonds_net_write(epsonds_scanner *s, unsigned int cmd, const unsigned char *buf
 	if ((cmd >> 8) == 0x20 && (buf_size || reply_len)) {
 
 		// send header + data header
-		sanei_tcp_write(s->fd, packet, 12 + 8);
+		epsonds_tcp_write(s, packet, 12 + 8);
 
 	} else {
-		sanei_tcp_write(s->fd, packet, 12);
+		epsonds_tcp_write(s, packet, 12);
 	}
 
 	// send payload
 	if (buf_size)
-		sanei_tcp_write(s->fd, buf, buf_size);
+		epsonds_tcp_write(s, buf, buf_size);
 
 	free(packet);
 

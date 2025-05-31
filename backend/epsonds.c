@@ -64,6 +64,11 @@
 #include "epsonds-ops.h"
 #include "epsonds-jpeg.h"
 #include "epsonds-net.h"
+#include "epsonds-tcp.h"
+
+#ifdef HAVE_OPENSSL
+#include <openssl/ssl.h>
+#endif
 
 static SANE_Status
 setvalue(SANE_Handle handle, SANE_Int option, void *value, SANE_Int *info);
@@ -1186,83 +1191,85 @@ typedef struct
     char		productName[50]; // ESCI/2 procduct name
 	char 		deviceID[50]; // device ID (same as bonjour mdl name)
     int  lutID; // look up table no
+	int  hardwareLUT;
 }epsonds_profile_map;
 
 const  epsonds_profile_map epsonds_models_predefined[] = {
-  {0x0145, "DS-5500","DS-5500", 7},
-  {0x0145, "DS-6500","DS-6500", 7},
-  {0x0145, "DS-7500","DS-7500", 7},
-  {0x0146, "DS-50000","DS-50000", 7},
-  {0x0146, "DS-60000","DS-60000", 7},
-  {0x0146, "DS-70000","DS-70000", 7},
-  {0x014C, "DS-510","DS-510", 7},
-  {0x0150, "DS-560","DS-560", 7},
-  {0x0152, "DS-40","DS-40", 7},
-  {0x014D, "DS-760","DS-760", 7},
-  {0x014D, "DS-860","DS-860", 7},
-  {0x0154, "DS-520","DS-520", 7},
-  {0x08BC, "PID 08BC","PX-M7050 Series", 7},
-  {0x08BC, "PID 08BC","WF-8510 Series", 7},
-  {0x08BC, "PID 08BC","WF-8590 Series", 7},
-  {0x08CC, "PID 08CC","PX-M7050FX Series", 7},
-  {0x08CC, "PID 08CC","WF-R8590 Series", 7},
-  {0x0165, "DS-410","DS-410", 7},
-  {0x016C, "ES-50","ES-50", 6},
-  {0x0160, "DS-70","DS-70", 6},
-  {0x016D, "ES-55R","ES-55R", 6},
-  {0x018C, "RR-60","RR-60", 6},
-  {0x016E, "ES-60W","ES-60W", 6},
-  {0x0166, "DS-80W","DS-80W", 6},
-  {0x016F, "ES-65WR","ES-65WR", 6},
-  {0x018B, "RR-70W","RR-70W", 6},
-  {0x016E, "ES-60WW","ES-60WW", 6},
-  {0x016E, "ES-60WB","ES-60WB", 6},
-  {0x015C, "DS-1630","DS-1630", 4},
-  {0x015D, "DS-1610","DS-1610", 4},
-  {0x015E, "DS-1660W","DS-1660W", 4},
-  {0x0159, "DS-310","DS-310", 5},
-  {0x0159, "ES-200","ES-200", 5},
-  {0x0162, "DS-320","DS-320", 5},
-  {0x015A, "DS-360W","DS-360W", 5},
-  {0x015A, "ES-300W","ES-300W", 5},
-  {0x0177, "ES-300WR","ES-300WR", 5},
-  {0x0181, "ES-400II","ES-400II", 2},
-  {0x0183, "DS-535II","DS-535II", 2},
-  {0x0184, "DS-531","DS-531", 2},
-  {0x0182, "DS-530II","DS-530II", 2},
-  {0x0185, "ES-500WII","ES-500WII", 2},
-  {0x0188, "DS-571W","DS-571W", 2},
-  {0x0187, "DS-575WII","DS-575WII", 2},
-  {0x0186, "DS-570WII","DS-570WII", 2},
-  {0x017F, "ES-580W","ES-580W", 2},
-  {0x0180, "RR-600W","RR-600W", 2},
-  {0x0167, "DS-535","DS-535", 2},
-  {0x017A, "DS-535H","DS-535H", 2},
-  {0x0156, "ES-400","ES-400", 2},
-  {0x0155, "DS-530","DS-530", 2},
-  {0x016B, "FF-680W","FF-680W", 2},
-  {0x0157, "DS-570W","DS-570W", 2},
-  {0x0157, "ES-500W","ES-500W", 2},
-  {0x0169, "DS-575W","DS-575W", 2},
-  {0x0176, "ES-500WR","ES-500WR", 2},
-  {0x114E, "PID 114E","EW-052A Series", 7},
-  {0x114E, "PID 114E","XP-2100 Series", 7},
-  {0x1135, "PID 1135","ET-2700 Series", 7},
-  {0x1135, "PID 1135","L4150 Series", 7},
-  {0x114A, "PID 114A","ET-M2140 Series", 7},
-  {0x114A, "PID 114A","M2140 Series", 7},
-  {0x114F, "PID 114F","ET-M3140 Series", 7},
-  {0x114F, "PID 114F","M3140 Series", 7},
-  {0x1143, "PID 1143","L3150 Series", 7},
-  {0x1143, "PID 1143","ET-2710 Series", 7},
-  {0x118A, "PID 118A","ET-2810 Series", 7},
-  {0x118A, "PID 118A","L3250 Series", 7},
-  {0x119B, "PID 119B","XP-2150 Series", 7},
-  {0x11B1, "PID 11B1","XP-2200 Series", 7},
-  {0x0193, "ES-C220","ES-C220", 5},
-  {0x018F, "DS-C330","DS-C330", 5},
-  {0x0191, "DS-C490","DS-C490", 5},
-  {0x00, "","", 0x00 }
+  {0x0145, "DS-5500","DS-5500", 7, 0},
+  {0x0145, "DS-6500","DS-6500", 7, 0},
+  {0x0145, "DS-7500","DS-7500", 7, 0},
+  {0x0146, "DS-50000","DS-50000", 7, 0},
+  {0x0146, "DS-60000","DS-60000", 7, 0},
+  {0x0146, "DS-70000","DS-70000", 7, 0},
+  {0x014C, "DS-510","DS-510", 7, 0},
+  {0x0150, "DS-560","DS-560", 7, 0},
+  {0x0152, "DS-40","DS-40", 7, 0},
+  {0x014D, "DS-760","DS-760", 7, 0},
+  {0x014D, "DS-860","DS-860", 7, 0},
+  {0x0154, "DS-520","DS-520", 7, 0},
+  {0x08BC, "PID 08BC","PX-M7050 Series", 7, 0},
+  {0x08BC, "PID 08BC","WF-8510 Series", 7, 0},
+  {0x08BC, "PID 08BC","WF-8590 Series", 7, 0},
+  {0x08CC, "PID 08CC","PX-M7050FX Series", 7, 0},
+  {0x08CC, "PID 08CC","WF-R8590 Series", 7, 0},
+  {0x0165, "DS-410","DS-410", 7, 0},
+  {0x016C, "ES-50","ES-50", 6, 0},
+  {0x0160, "DS-70","DS-70", 6, 0},
+  {0x016D, "ES-55R","ES-55R", 6, 0},
+  {0x018C, "RR-60","RR-60", 6, 0},
+  {0x016E, "ES-60W","ES-60W", 6, 0},
+  {0x0166, "DS-80W","DS-80W", 6, 0},
+  {0x016F, "ES-65WR","ES-65WR", 6, 0},
+  {0x018B, "RR-70W","RR-70W", 6, 0},
+  {0x016E, "ES-60WW","ES-60WW", 6, 0},
+  {0x016E, "ES-60WB","ES-60WB", 6, 0},
+  {0x015C, "DS-1630","DS-1630", 4, 0},
+  {0x015D, "DS-1610","DS-1610", 4, 0},
+  {0x015E, "DS-1660W","DS-1660W", 4, 0},
+  {0x0159, "DS-310","DS-310", 5, 0},
+  {0x0159, "ES-200","ES-200", 5, 0},
+  {0x0162, "DS-320","DS-320", 5, 0},
+  {0x015A, "DS-360W","DS-360W", 5, 0},
+  {0x015A, "ES-300W","ES-300W", 5, 0},
+  {0x0177, "ES-300WR","ES-300WR", 5, 0},
+  {0x0181, "ES-400II","ES-400II", 2, 0},
+  {0x0183, "DS-535II","DS-535II", 2, 0},
+  {0x0184, "DS-531","DS-531", 2, 0},
+  {0x0182, "DS-530II","DS-530II", 2, 0},
+  {0x0185, "ES-500WII","ES-500WII", 2, 0},
+  {0x0188, "DS-571W","DS-571W", 2, 0},
+  {0x0187, "DS-575WII","DS-575WII", 2, 0},
+  {0x0186, "DS-570WII","DS-570WII", 2, 0},
+  {0x017F, "ES-580W","ES-580W", 2, 0},
+  {0x0180, "RR-600W","RR-600W", 2, 0},
+  {0x0167, "DS-535","DS-535", 2, 0},
+  {0x017A, "DS-535H","DS-535H", 2, 0},
+  {0x0156, "ES-400","ES-400", 2, 0},
+  {0x0155, "DS-530","DS-530", 2, 0},
+  {0x016B, "FF-680W","FF-680W", 2, 0},
+  {0x0157, "DS-570W","DS-570W", 2, 0},
+  {0x0157, "ES-500W","ES-500W", 2, 0},
+  {0x0169, "DS-575W","DS-575W", 2, 0},
+  {0x0176, "ES-500WR","ES-500WR", 2, 0},
+  {0x114E, "PID 114E","EW-052A Series", 7, 0},
+  {0x114E, "PID 114E","XP-2100 Series", 7, 0},
+  {0x1135, "PID 1135","ET-2700 Series", 7, 0},
+  {0x1135, "PID 1135","L4150 Series", 7, 0},
+  {0x114A, "PID 114A","ET-M2140 Series", 7, 0},
+  {0x114A, "PID 114A","M2140 Series", 7, 0},
+  {0x114F, "PID 114F","ET-M3140 Series", 7, 0},
+  {0x114F, "PID 114F","M3140 Series", 7, 0},
+  {0x1143, "PID 1143","L3150 Series", 7, 0},
+  {0x1143, "PID 1143","ET-2710 Series", 7, 0},
+  {0x118A, "PID 118A","ET-2810 Series", 7, 0},
+  {0x118A, "PID 118A","L3250 Series", 7, 0},
+  {0x119B, "PID 119B","XP-2150 Series", 7, 0},
+  {0x11B1, "PID 11B1","XP-2200 Series", 7, 0},
+  {0x0193, "ES-C220","ES-C220", 5, 0},
+  {0x018F, "DS-C330","DS-C330", 5, 0},
+  {0x0191, "DS-C490","DS-C490", 5, 0},
+  {0x0198, "DS-1730","DS-1730", 5, 1},
+  {0x00, "","", 0x00 , 0x00}
 };
 
 typedef struct
@@ -1384,9 +1391,13 @@ close_scanner(epsonds_scanner *s)
 		sane_cancel(s);
 	}
 
+#ifdef HAVE_OPENSSL
+	if (s->fd == -1 && s->cryptContext == NULL)
+		goto free;
+#else
 	if (s->fd == -1)
 		goto free;
-
+#endif
 	if (s->locked) {
 		DBG(7, " unlocking scanner\n");
 		esci2_fin(s);
@@ -1394,7 +1405,7 @@ close_scanner(epsonds_scanner *s)
 
 	if (s->hw->connection == SANE_EPSONDS_NET) {
 		epsonds_net_unlock(s);
-		sanei_tcp_close(s->fd);
+		epsonds_tcp_close(s);
 	} else if (s->hw->connection == SANE_EPSONDS_USB) {
 		sanei_usb_close(s->fd);
 	}
@@ -1415,39 +1426,22 @@ open_scanner(epsonds_scanner *s)
 	SANE_Status status = SANE_STATUS_INVAL;
 
 	DBG(7, "%s: %s\n", __func__, s->hw->sane.name);
-
+#ifdef HAVE_OPENSSL
+	if (s->fd != -1 || s->cryptContext != NULL) {
+		DBG(5, "scanner is already open: fd = %d\n", s->fd);
+		return SANE_STATUS_GOOD;	/* no need to open the scanner */
+	}
+#else
 	if (s->fd != -1) {
 		DBG(5, "scanner is already open: fd = %d\n", s->fd);
 		return SANE_STATUS_GOOD;	/* no need to open the scanner */
 	}
+#endif
 
 	if (s->hw->connection == SANE_EPSONDS_NET) {
-		unsigned char buf[5];
-
 		/* device name has the form net:ipaddr */
-		status = sanei_tcp_open(&s->hw->name[4], 1865, &s->fd);
+		status = epsonds_tcp_open(s, &s->hw->name[4], 1865);
 		if (status == SANE_STATUS_GOOD) {
-
-			ssize_t read;
-			struct timeval tv;
-
-			tv.tv_sec = 5;
-			tv.tv_usec = 0;
-
-			setsockopt(s->fd, SOL_SOCKET, SO_RCVTIMEO, (char *)&tv,  sizeof(tv));
-
-			s->netlen = 0;
-
-			DBG(32, "awaiting welcome message\n");
-
-			/* the scanner sends a kind of welcome msg */
-			// XXX check command type, answer to connect is 0x80
-			read = eds_recv(s, buf, 5, &status);
-			if (read != 5) {
-				sanei_tcp_close(s->fd);
-				s->fd = -1;
-				return SANE_STATUS_IO_ERROR;
-			}
 
 			DBG(32, "welcome message received, locking the scanner...\n");
 
@@ -1457,9 +1451,7 @@ open_scanner(epsonds_scanner *s)
 				DBG(1, "%s cannot lock scanner: %s\n", s->hw->sane.name,
 					sane_strstatus(status));
 
-				sanei_tcp_close(s->fd);
-				s->fd = -1;
-
+				epsonds_tcp_close(s);
 				return status;
 			}
 
@@ -1622,6 +1614,7 @@ device_detect(const char *name, int type, SANE_Status *status)
 
 
 	s->hw->lut_id = 0;
+	s->hw->has_hardware_lut = SANE_FALSE;
 
 	for (int i = 0; i < stProfileMapArray.used; i++) {
 
@@ -1638,6 +1631,8 @@ device_detect(const char *name, int type, SANE_Status *status)
 			}
 			{// set lutid
 				s->hw->lut_id = map->lutID;
+				if (map->hardwareLUT)
+					s->hw->has_hardware_lut = SANE_TRUE;
 			}
 			break;
 		}
@@ -2649,11 +2644,11 @@ sane_get_parameters(SANE_Handle handle, SANE_Parameters *params)
 
 	SANE_Status status = SANE_STATUS_GOOD;
 
-	status = get_next_image(s);
 
 	// if size auto, update page size value
 	if(s->val[OPT_ADF_CRP].w)
 	{
+		status = get_next_image(s);
 		// frontside
 		if (s->current == &s->front)
 		{
@@ -2949,14 +2944,17 @@ sane_start(SANE_Handle handle)
 	}
 
 	/* set GMM */
-	if (s->params.depth == 1)
-	{
-		sprintf(buf, "#GMMUG10");
-	} else
-	{
-		sprintf(buf, "#GMMUG18");
+	if (!s->hw->has_hardware_lut) {
+		if (s->params.depth == 1)
+		{
+			sprintf(buf, "#GMMUG10");
+		} else
+		{
+			sprintf(buf, "#GMMUG18");
+		}
+		strcat(cmd, buf);
 	}
-	strcat(cmd, buf);
+
 
 	/* resolution (RSMi not always supported) */
 
@@ -3004,21 +3002,18 @@ sane_start(SANE_Handle handle)
 
 	strcat(cmd, buf);
 
-
 	int pos = 0;
-
+	for (int i = 0; i < CMD_BUF_SIZE; i++)
 	{
-		for (int i = 0; i < CMD_BUF_SIZE; i++)
+		// find end of string
+		if(cmd[i] == 0)
 		{
-			// find end of string
-			if(cmd[i] == 0)
-			{
-				pos = i;
-				break;
-			}
+			pos = i;
+			break;
 		}
+	}
 
-
+	if (!s->hw->has_hardware_lut) {
 		if (s->params.format == SANE_FRAME_GRAY && s->params.depth == 8) {
 			DBG(10, "SANE_FRAME_GRAY\n");
 			cmd[pos++] = '#';
@@ -3113,7 +3108,7 @@ sane_start(SANE_Handle handle)
 		cmd[pos] = 0;
 
 	}
-	{// Set Color Matrix
+	if (!s->hw->has_hardware_lut) { // Set Color Matrix
 		if (s->params.format == SANE_FRAME_RGB && s->hw->lut_id != 0 )/*Color Matrix Target devide and color Scan*/
 		{
 			ColorMatrix matrix;
@@ -3584,7 +3579,11 @@ sane_read(SANE_Handle handle, SANE_Byte *data, SANE_Int max_length, SANE_Int *le
 {
 	epsonds_scanner *s = (epsonds_scanner *)handle;
 	SANE_Int read = 0;
-
+	SANE_Status status = SANE_STATUS_GOOD;
+	status = get_next_image(s);
+	if (status != SANE_STATUS_GOOD) {
+		return status;
+	}
 	if (s->canceling)
 	{
 		esci2_can(s);

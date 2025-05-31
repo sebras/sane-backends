@@ -316,6 +316,49 @@ AC_DEFUN([SANE_CHECK_TIFF],
   AC_SUBST(TIFF_LIBS)
 ])
 
+# Check for OpenSSL 1.1 or higher (optional)
+AC_DEFUN([SANE_CHECK_SSL], [
+
+  SSL_LIBS=""
+  # Check for libssl
+  AC_CHECK_LIB([ssl], [SSL_CTX_new], [
+    have_ssl_lib="yes"
+  ], [
+    have_ssl_lib="no"
+    AC_MSG_WARN([libssl not found. SSL support will be disabled.])
+  ])
+
+  # Check for headers
+  AC_CHECK_HEADER([openssl/ssl.h], [
+    have_ssl_h="yes"
+  ], [
+    have_ssl_h="no"
+    AC_MSG_WARN([Header <openssl/ssl.h> not found. SSL support will be disabled.])
+  ])
+
+  AC_CHECK_HEADER([openssl/crypto.h], [
+    have_crypto_h="yes"
+  ], [
+    have_crypto_h="no"
+    AC_MSG_WARN([Header <openssl/crypto.h> not found. SSL support will be disabled.])
+  ])
+
+  # If all basic checks passed, check version with pkg-config
+  if test "x$have_ssl_lib" = "xyes" && \
+     test "x$have_ssl_h" = "xyes" && \
+     test "x$have_crypto_h" = "xyes"; then
+
+    PKG_CHECK_MODULES([openssl], [openssl >= 1.1], [
+      SSL_LIBS="-lssl -lcrypto"
+      AC_DEFINE([HAVE_OPENSSL], [1], [Define to 1 if OpenSSL is available])
+    ], [
+      AC_MSG_WARN([OpenSSL 1.1 or higher not found. SSL support will be disabled.])
+    ])
+  fi
+
+  AC_SUBST([SSL_LIBS])
+])
+
 AC_DEFUN([SANE_CHECK_PNG],
 [
   AC_CHECK_LIB(png,png_init_io,

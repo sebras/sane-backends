@@ -257,6 +257,17 @@ eds_init_parameters(epsonds_scanner *s)
 			s->params.pixels_per_line, s->params.lines, dpi);
 	}
 
+	/* right aligned? */
+	if (s->hw->alignment == 2) {
+
+		SANE_Int offset = ((SANE_UNFIX(s->hw->x_range->max) / MM_PER_INCH) * dpi) + 0.5;
+
+		s->left += ((offset - s->params.pixels_per_line) );
+
+		DBG(5, "%s: right-aligned to tlx %d tly %d brx %d bry %d [dots @ %d dpi]\n",
+			__func__, s->left, s->top,
+			s->params.pixels_per_line, s->params.lines, dpi);
+	}
 	/*
 	 * Calculate bytes_per_pixel and bytes_per_line for
 	 * any color depths.
