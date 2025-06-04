@@ -1686,6 +1686,22 @@ scan_it (FILE *ofp, void* pw)
 			      buf8[col1 * 8 + col8] = (jpegbuf[col1] & (1 << (8 - col8 - 1))) ? 0 : 0xff;
 		          jpeg_write_scanlines(&cinfo, &buf8, 1);
 			  free(buf8);
+			} else if(parm.depth == 16) {
+				// JPEG is an 8-bit format, so we need to throw away the low
+				// byte from each 16-bit value.
+				int col;
+				JSAMPLE *buf8 = malloc(parm.bytes_per_line/2);
+				for(col = 0; col < parm.bytes_per_line; col+=2) {
+					#ifdef WORDS_BIGENDIAN
+						// platform is big-endian, so we want the first byte of each pair
+						buf8[col/2] = jpegbuf[col];
+					#else
+						// platform is little-endian, so we want the second byte of each pair
+						buf8[col/2] = jpegbuf[col+1];
+					#endif
+				}
+				jpeg_write_scanlines(&cinfo, &buf8, 1);
+				free(buf8);
 			} else {
 		          jpeg_write_scanlines(&cinfo, &jpegbuf, 1);
 			}
