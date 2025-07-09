@@ -376,13 +376,19 @@ AC_DEFUN([SANE_CHECK_SSL], [
 
 AC_DEFUN([SANE_CHECK_PNG],
 [
-  AC_CHECK_LIB(png,png_init_io,
-  [
-    AC_CHECK_HEADER(png.h,
-    [sane_cv_use_libpng="yes"; PNG_LIBS="-lpng"],)
-  ],)
+  AC_ARG_WITH(libpng,
+    AS_HELP_STRING([--without-libpng], [build without libpng]))
+  if test "$with_libpng" != "no" ; then
+    AC_CHECK_LIB(png,png_init_io,
+    [
+      AC_CHECK_HEADER(png.h,
+      [sane_cv_use_libpng="yes"; PNG_LIBS="-lpng"],)
+    ],)
+  fi
   if test "$sane_cv_use_libpng" = "yes" ; then
     AC_DEFINE(HAVE_LIBPNG,1,[Define to 1 if you have the libpng library.])
+  elif test "$with_libpng" = "yes" ; then
+    AC_MSG_ERROR([libpng requested but not found])
   fi
   AC_SUBST(PNG_LIBS)
 ])
