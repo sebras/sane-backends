@@ -284,23 +284,29 @@ AC_DEFUN([SANE_CHECK_PTHREAD],
 # GPHOTO2 and dell1600n_net backends.
 AC_DEFUN([SANE_CHECK_JPEG],
 [
-  AC_CHECK_LIB(jpeg,jpeg_start_decompress,
-  [
-    AC_CHECK_HEADER(jconfig.h,
+  AC_ARG_WITH(libjpeg,
+    AS_HELP_STRING([--without-libjpeg], [build without libjpeg]))
+  if test "$with_libjpeg" != "no" ; then
+    AC_CHECK_LIB(jpeg,jpeg_start_decompress,
     [
-      AC_MSG_CHECKING([for jpeglib - version >= 61 (6a)])
-      AC_EGREP_CPP(sane_correct_jpeg_lib_version_found,
+      AC_CHECK_HEADER(jconfig.h,
       [
-        #include <jpeglib.h>
-        #if JPEG_LIB_VERSION >= 61
-          sane_correct_jpeg_lib_version_found
-        #endif
-      ], [sane_cv_use_libjpeg="yes"; JPEG_LIBS="-ljpeg";
-      AC_MSG_RESULT(yes)],[AC_MSG_RESULT(no)])
+        AC_MSG_CHECKING([for jpeglib - version >= 61 (6a)])
+        AC_EGREP_CPP(sane_correct_jpeg_lib_version_found,
+        [
+          #include <jpeglib.h>
+          #if JPEG_LIB_VERSION >= 61
+            sane_correct_jpeg_lib_version_found
+          #endif
+        ], [sane_cv_use_libjpeg="yes"; JPEG_LIBS="-ljpeg";
+        AC_MSG_RESULT(yes)],[AC_MSG_RESULT(no)])
+      ],)
     ],)
-  ],)
+  fi
   if test "$sane_cv_use_libjpeg" = "yes" ; then
     AC_DEFINE(HAVE_LIBJPEG,1,[Define to 1 if you have the libjpeg library.])
+  elif test "$with_libjpeg" = "yes" ; then
+    AC_MSG_ERROR([libjpeg requested but not found])
   fi
   AC_SUBST(JPEG_LIBS)
 ])
