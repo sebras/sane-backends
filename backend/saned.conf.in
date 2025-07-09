@@ -25,7 +25,22 @@
 #[2001:db8:185e::42:12]
 #[2001:db8:185e::42:12]/64
 
-# NOTE: /etc/inetd.conf (or /etc/xinetd.conf) and
-# /etc/services must also be properly configured to start
-# the saned daemon as documented in saned(8), services(4)
-# and inetd.conf(4) (or xinetd.conf(5)).
+## Service config
+# NOTE: on systemd-based systems, you must enable automatic start of saned:
+#
+#    systemctl enable saned.socket
+#
+# Depending on your system you may need to add users to a specific group like "scanner":
+#
+#    adduser userxy scanner
+#
+# Then you must start the socket manually (or restart your system):
+#
+#    systemctl start saned.socket
+#
+# This will start saned on a network connect to the socket, which defaults to port 6566.
+# See /usr/share/doc/sane/saned.install.md for more information
+#
+# On non-systemd systems, /etc/inetd.conf (or /etc/xinetd.conf) and
+# /etc/services must also be properly configured to start the saned daemon,
+# as documented in saned(8), services(4) and inetd.conf(4) (or xinetd.conf(5)).
