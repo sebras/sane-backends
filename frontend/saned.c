@@ -3384,6 +3384,7 @@ run_standalone (char *user)
 		else if (fd >= 0)
 		  {
 		    handle_client (fd);
+		    poll_set_valid = SANE_FALSE; /* We will expect to add a pidfd */
 		    if (run_once == SANE_TRUE)
 		      running = SANE_FALSE; /* We have handled the only connection we're going to handle */
 		  }
