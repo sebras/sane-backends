@@ -314,13 +314,19 @@ AC_DEFUN([SANE_CHECK_JPEG],
 # Checks for tiff library dell1600n_net backend.
 AC_DEFUN([SANE_CHECK_TIFF],
 [
-  AC_CHECK_LIB(tiff,TIFFFdOpen,
-  [
-    AC_CHECK_HEADER(tiffio.h,
-    [sane_cv_use_libtiff="yes"; TIFF_LIBS="-ltiff"],)
-  ],)
+  AC_ARG_WITH(libtiff,
+    AS_HELP_STRING([--without-libtiff], [build without libtiff]))
+  if test "$with_libtiff" != "no" ; then
+    AC_CHECK_LIB(tiff,TIFFFdOpen,
+    [
+      AC_CHECK_HEADER(tiffio.h,
+      [sane_cv_use_libtiff="yes"; TIFF_LIBS="-ltiff"],)
+    ],)
+  fi
   if test "$sane_cv_use_libtiff" = "yes" ; then
      AC_DEFINE(HAVE_LIBTIFF,1,[Define to 1 if you have the libtiff library.])
+  elif test "$with_libtiff" = "yes" ; then
+    AC_MSG_ERROR([libtiff requested but not found])
   fi
   AC_SUBST(TIFF_LIBS)
 ])
