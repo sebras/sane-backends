@@ -22,7 +22,7 @@
 
 #include "image.h"
 
-#if defined(HAVE_TIFFIO_H)
+#if defined(HAVE_LIBTIFF)
 #include <tiffio.h>
 #endif
 
@@ -187,7 +187,7 @@ void write_tiff_file(const std::string& filename, const void* data, int depth, i
 {
     DBG_HELPER_ARGS(dbg, "depth=%d, channels=%d, ppl=%d, lines=%d", depth, channels,
                     pixels_per_line, lines);
-#if defined(HAVE_TIFFIO_H)
+#if defined(HAVE_LIBTIFF)
     auto image = TIFFOpen(filename.c_str(), "w");
     if (!image) {
         dbg.log(DBG_error, "Could not save debug image");

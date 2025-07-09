@@ -201,7 +201,7 @@ AC_CHECK_HEADERS(fcntl.h unistd.h libc.h sys/dsreq.h sys/select.h \
     sys/socket.h sys/io.h sys/hw.h sys/types.h linux/ppdev.h \
     dev/ppbus/ppi.h machine/cpufunc.h sys/sem.h poll.h \
     windows.h be/kernel/OS.h limits.h sys/ioctl.h asm/types.h\
-    netinet/in.h tiffio.h ifaddrs.h pwd.h getopt.h)
+    netinet/in.h ifaddrs.h pwd.h getopt.h)
 AC_CHECK_HEADERS([asm/io.h],,,[#include <sys/types.h>])
 
 SANE_CHECK_MISSING_HEADERS

@@ -313,6 +313,9 @@ AC_DEFUN([SANE_CHECK_TIFF],
     AC_CHECK_HEADER(tiffio.h,
     [sane_cv_use_libtiff="yes"; TIFF_LIBS="-ltiff"],)
   ],)
+  if test "$sane_cv_use_libtiff" = "yes" ; then
+     AC_DEFINE(HAVE_LIBTIFF,1,[Define to 1 if you have the libtiff library.])
+  fi
   AC_SUBST(TIFF_LIBS)
 ])
 

@@ -35,14 +35,14 @@
 #include <string.h>
 #include <unistd.h>
 
-#if(defined HAVE_TIFFIO_H)
+#if(defined HAVE_LIBTIFF)
 #include <tiffio.h>
 #endif
 
 #include <setjmp.h>
 
 
-#if(defined HAVE_TIFFIO_H)
+#if(defined HAVE_LIBTIFF)
 
 /**
  * \fn SANE_Status escl_sane_decompressor(escl_sane_t *handler)
