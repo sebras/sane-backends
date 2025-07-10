@@ -218,7 +218,7 @@ void write_tiff_file(const std::string& filename, const void* data, int depth, i
 #else
     (void)data;
     (void)filename;
-    
+
     dbg.log(DBG_error, "Backend has been built without TIFF library support. "
             "Debug images will not be saved");
 #endif
