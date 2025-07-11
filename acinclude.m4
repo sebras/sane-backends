@@ -284,23 +284,29 @@ AC_DEFUN([SANE_CHECK_PTHREAD],
 # GPHOTO2 and dell1600n_net backends.
 AC_DEFUN([SANE_CHECK_JPEG],
 [
-  AC_CHECK_LIB(jpeg,jpeg_start_decompress,
-  [
-    AC_CHECK_HEADER(jconfig.h,
+  AC_ARG_WITH(libjpeg,
+    AS_HELP_STRING([--without-libjpeg], [build without libjpeg]))
+  if test "$with_libjpeg" != "no" ; then
+    AC_CHECK_LIB(jpeg,jpeg_start_decompress,
     [
-      AC_MSG_CHECKING([for jpeglib - version >= 61 (6a)])
-      AC_EGREP_CPP(sane_correct_jpeg_lib_version_found,
+      AC_CHECK_HEADER(jconfig.h,
       [
-        #include <jpeglib.h>
-        #if JPEG_LIB_VERSION >= 61
-          sane_correct_jpeg_lib_version_found
-        #endif
-      ], [sane_cv_use_libjpeg="yes"; JPEG_LIBS="-ljpeg";
-      AC_MSG_RESULT(yes)],[AC_MSG_RESULT(no)])
+        AC_MSG_CHECKING([for jpeglib - version >= 61 (6a)])
+        AC_EGREP_CPP(sane_correct_jpeg_lib_version_found,
+        [
+          #include <jpeglib.h>
+          #if JPEG_LIB_VERSION >= 61
+            sane_correct_jpeg_lib_version_found
+          #endif
+        ], [sane_cv_use_libjpeg="yes"; JPEG_LIBS="-ljpeg";
+        AC_MSG_RESULT(yes)],[AC_MSG_RESULT(no)])
+      ],)
     ],)
-  ],)
+  fi
   if test "$sane_cv_use_libjpeg" = "yes" ; then
     AC_DEFINE(HAVE_LIBJPEG,1,[Define to 1 if you have the libjpeg library.])
+  elif test "$with_libjpeg" = "yes" ; then
+    AC_MSG_ERROR([libjpeg requested but not found])
   fi
   AC_SUBST(JPEG_LIBS)
 ])
@@ -308,11 +314,20 @@ AC_DEFUN([SANE_CHECK_JPEG],
 # Checks for tiff library dell1600n_net backend.
 AC_DEFUN([SANE_CHECK_TIFF],
 [
-  AC_CHECK_LIB(tiff,TIFFFdOpen,
-  [
-    AC_CHECK_HEADER(tiffio.h,
-    [sane_cv_use_libtiff="yes"; TIFF_LIBS="-ltiff"],)
-  ],)
+  AC_ARG_WITH(libtiff,
+    AS_HELP_STRING([--without-libtiff], [build without libtiff]))
+  if test "$with_libtiff" != "no" ; then
+    AC_CHECK_LIB(tiff,TIFFFdOpen,
+    [
+      AC_CHECK_HEADER(tiffio.h,
+      [sane_cv_use_libtiff="yes"; TIFF_LIBS="-ltiff"],)
+    ],)
+  fi
+  if test "$sane_cv_use_libtiff" = "yes" ; then
+     AC_DEFINE(HAVE_LIBTIFF,1,[Define to 1 if you have the libtiff library.])
+  elif test "$with_libtiff" = "yes" ; then
+    AC_MSG_ERROR([libtiff requested but not found])
+  fi
   AC_SUBST(TIFF_LIBS)
 ])
 
@@ -361,13 +376,19 @@ AC_DEFUN([SANE_CHECK_SSL], [
 
 AC_DEFUN([SANE_CHECK_PNG],
 [
-  AC_CHECK_LIB(png,png_init_io,
-  [
-    AC_CHECK_HEADER(png.h,
-    [sane_cv_use_libpng="yes"; PNG_LIBS="-lpng"],)
-  ],)
+  AC_ARG_WITH(libpng,
+    AS_HELP_STRING([--without-libpng], [build without libpng]))
+  if test "$with_libpng" != "no" ; then
+    AC_CHECK_LIB(png,png_init_io,
+    [
+      AC_CHECK_HEADER(png.h,
+      [sane_cv_use_libpng="yes"; PNG_LIBS="-lpng"],)
+    ],)
+  fi
   if test "$sane_cv_use_libpng" = "yes" ; then
     AC_DEFINE(HAVE_LIBPNG,1,[Define to 1 if you have the libpng library.])
+  elif test "$with_libpng" = "yes" ; then
+    AC_MSG_ERROR([libpng requested but not found])
   fi
   AC_SUBST(PNG_LIBS)
 ])
