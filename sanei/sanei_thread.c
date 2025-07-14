@@ -333,6 +333,10 @@ local_thread( void *arg )
 	static int     status;
 	pThreadDataDef ltd = (pThreadDataDef)arg;
 
+	/* Set signal handlers for Mac and Mach. On other systems,
+	 * thread cancellation is enabled in deferred mode,
+	 * which is glibc default.
+	 */
 #if defined (__APPLE__) && defined (__MACH__)
 	struct sigaction act;
 
@@ -340,11 +344,6 @@ local_thread( void *arg )
 	act.sa_flags   = 0;
 	act.sa_handler = thread_exit_handler;
 	sigaction( SIGUSR2, &act, 0 );
-#else
-	int old;
-
-	pthread_setcancelstate( PTHREAD_CANCEL_ENABLE, &old );
-	pthread_setcanceltype ( PTHREAD_CANCEL_ASYNCHRONOUS, &old );
 #endif
 
 	DBG( 2, "thread started, calling func() now...\n" );
