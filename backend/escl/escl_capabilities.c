@@ -234,7 +234,7 @@ find_valor_of_array_variables(xmlNode *node, capabilities_t *scanner, int type)
 	       scanner->caps[type].have_png = i;
             }
 #endif
-#if(defined HAVE_TIFFIO_H)
+#if(defined HAVE_LIBTIFF)
             else if(type == PLATEN && !strcmp(scanner->caps[type].DocumentFormats[i], "image/tiff"))
             {
                have_tiff = SANE_TRUE;
